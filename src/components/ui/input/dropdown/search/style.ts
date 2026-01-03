@@ -4,17 +4,14 @@ import { colors, zIndex, radius } from "@/styles/theme";
 export const DropdownWrapper = styled.div<{ $width?: string }>`
   display: flex;
   flex-direction: column;
-  font-family: 'Pretendard', sans-serif;
   gap: 0.5rem;
   width: ${props => props.$width || '100%'};
-  font-family: inherit;
 `
 
 export const Label = styled.label`
   font-size: 0.875rem;
   font-weight: 500;
   color: ${colors.text};
-  font-family: inherit;
 `
 
 export const DropdownContainer = styled.div<{ 
@@ -32,7 +29,6 @@ export const DropdownContainer = styled.div<{
   justify-content: space-between;
   padding: 0.75rem 1rem;
   font-size: 1rem;
-  font-family: inherit;
   border: 1px solid ${props => props.$hasError ? colors.error : props.$isOpen ? colors.primary : colors.n02};
   border-radius: ${props => props.$borderRadius || radius.md};
   background-color: ${props => props.$disabled ? colors.primaryBackground : colors.background};
@@ -71,7 +67,7 @@ export const ArrowIcon = styled.img<{ $isOpen?: boolean }>`
   height: 20px;
 `
 
-export const DropdownMenu = styled.ul<{ 
+export const DropdownMenu = styled.div<{ 
   $maxHeight?: string;
   $borderRadius?: string;
 }>`
@@ -83,13 +79,31 @@ export const DropdownMenu = styled.ul<{
   border: 1px solid ${colors.n02};
   border-radius: ${props => props.$borderRadius || radius.md};
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: ${zIndex.dropdown};
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+`
+
+export const SearchInput = styled.input`
+  width: 100%;
+  padding:  1rem 0.75rem;
+  border: none;
+  border-bottom: 1px solid ${colors.n02};
+  font-size: 1rem;
+  outline: none;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  
+  &::placeholder {
+    color: ${colors.primaryGray};
+  }
+`
+
+export const ItemList = styled.ul<{ $maxHeight?: string }>`
   max-height: ${props => props.$maxHeight || '15rem'};
   overflow-y: auto;
-  z-index: ${zIndex.dropdown};
   padding: 0.25rem;
   margin: 0;
   list-style: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   
   /* 스크롤바 스타일링 */
   &::-webkit-scrollbar {
@@ -122,6 +136,13 @@ export const DropdownItem = styled.li<{ $selected?: boolean }>`
   &:hover {
     background-color: ${props => props.$selected ? colors.primary200 : colors.primaryBackground};
   }
+`
+
+export const NoResult = styled.div`
+  padding: 1rem;
+  text-align: center;
+  color: ${colors.primaryGray};
+  font-size: 0.875rem;
 `
 
 export const ErrorMessage = styled.span`

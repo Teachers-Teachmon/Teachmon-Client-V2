@@ -2,12 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import * as S from "./style";
 import bottomArrow from "/icons/bottomArrow.svg";
 
-interface DropdownProps<T = string> {
+interface SearchDropdownProps<T = string> {
   label?: string;
   placeholder?: string;
+  searchPlaceholder?: string;
   items: T[];
   value?: T;
   onChange: (value: T) => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
   error?: string;
   helperText?: string;
   disabled?: boolean;
@@ -17,14 +20,18 @@ interface DropdownProps<T = string> {
   customMaxHeight?: string;
   renderItem?: (item: T) => React.ReactNode;
   getItemKey?: (item: T, index: number) => string | number;
+  noResultText?: string;
 }
 
-export default function Dropdown<T = string>({
+export default function SearchDropdown<T = string>({
   label,
   placeholder = "선택해주세요",
+  searchPlaceholder = "검색...",
   items,
   value,
   onChange,
+  searchQuery: externalSearchQuery,
+  onSearchChange,
   error,
   helperText,
   disabled = false,
@@ -33,11 +40,16 @@ export default function Dropdown<T = string>({
   customBorderRadius,
   customMaxHeight,
   renderItem,
-  getItemKey
-}: DropdownProps<T>) {
+  getItemKey,
+  noResultText = "검색 결과가 없습니다"
+}: SearchDropdownProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
+  const [internalSearchQuery, setInternalSearchQuery] = useState("");
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const hasError = !!error;
+
+  const searchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
 
   // 외부 클릭 감지
   useEffect(() => {
@@ -56,6 +68,15 @@ export default function Dropdown<T = string>({
     };
   }, [isOpen]);
 
+  // 드롭다운 열릴 때 검색창에 포커스
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current?.focus();
+      }, 0);
+    }
+  }, [isOpen]);
+
   const handleToggle = () => {
     if (!disabled) {
       setIsOpen(!isOpen);
@@ -65,6 +86,14 @@ export default function Dropdown<T = string>({
   const handleSelect = (item: T) => {
     onChange(item);
     setIsOpen(false);
+  };
+
+  const handleSearchChange = (query: string) => {
+    if (onSearchChange) {
+      onSearchChange(query);
+    } else {
+      setInternalSearchQuery(query);
+    }
   };
 
   const displayValue = value !== undefined && value !== null ? String(value) : null;
@@ -92,27 +121,41 @@ export default function Dropdown<T = string>({
 
         {isOpen && !disabled && (
           <S.DropdownMenu 
-            $maxHeight={customMaxHeight}
             $borderRadius={customBorderRadius}
           >
-            {items.map((item, index) => {
-              const isSelected = value === item;
-              const itemKey = keyGenerator(item, index);
-              const renderedItem = itemRenderer(item);
-              
-              return (
-                <S.DropdownItem
-                  key={itemKey}
-                  $selected={isSelected}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleSelect(item);
-                  }}
-                >
-                  {renderedItem}
-                </S.DropdownItem>
-              );
-            })}
+            <S.SearchInput
+              ref={searchInputRef}
+              type="text"
+              placeholder={searchPlaceholder}
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
+            
+            <S.ItemList $maxHeight={customMaxHeight}>
+              {items.length > 0 ? (
+                items.map((item, index) => {
+                  const isSelected = value === item;
+                  const itemKey = keyGenerator(item, index);
+                  const renderedItem = itemRenderer(item);
+                  
+                  return (
+                    <S.DropdownItem
+                      key={itemKey}
+                      $selected={isSelected}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSelect(item);
+                      }}
+                    >
+                      {renderedItem}
+                    </S.DropdownItem>
+                  );
+                })
+              ) : (
+                <S.NoResult>{noResultText}</S.NoResult>
+              )}
+            </S.ItemList>
           </S.DropdownMenu>
         )}
       </S.DropdownContainer>
