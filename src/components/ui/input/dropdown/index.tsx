@@ -3,20 +3,32 @@ import * as S from "./style";
 import bottomArrow from "/icons/bottomArrow.svg";
 
 interface DropdownProps<T = string> {
+  /** Dropdown 상단에 표시될 라벨 텍스트 */
   label?: string;
   placeholder?: string;
+  /** 드롭다운에 표시될 항목 배열 */
   items: T[];
+  /** 현재 선택된 값 */
   value?: T;
+  /** 항목 선택 시 호출되는 함수 */
   onChange: (value: T) => void;
+  /** 에러 메시지 (존재하면 빨간색 스타일 적용) */
   error?: string;
+  /** Dropdown 하단에 표시될 도움말 텍스트 */
   helperText?: string;
+  /** 비활성화 여부 */
   disabled?: boolean;
+  // 얘네는 웬만하면 안건들여도됨
+  /** 항목을 커스텀 렌더링하는 함수 */
+  renderItem?: (item: T) => React.ReactNode;
+  /** 항목의 고유 key를 생성하는 함수 */
+  getItemKey?: (item: T, index: number) => string | number;
+  
+  // 스타일 커스텀
   customWidth?: string;
   customHeight?: string;
   customBorderRadius?: string;
   customMaxHeight?: string;
-  renderItem?: (item: T) => React.ReactNode;
-  getItemKey?: (item: T, index: number) => string | number;
 }
 
 export default function Dropdown<T = string>({
