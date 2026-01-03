@@ -20,6 +20,11 @@ export default function Modal({children, isOpen, onClose, padding}: ModalProps) 
 	
 	if (!isOpen && !isClosing) return null
 	
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === 'Escape') {
+			closeModal()
+		}
+	}
 	const closeModal = () => {
 		setIsClosing(true)
 		setTimeout(() => {
@@ -33,6 +38,7 @@ export default function Modal({children, isOpen, onClose, padding}: ModalProps) 
 		<S.Black
 			$isClosing={isClosing}
 			onClick={closeModal}
+			onKeyDown={handleKeyDown}
 			role="dialog"
 			aria-modal="true"
 			tabIndex={-1}
