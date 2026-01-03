@@ -54,7 +54,7 @@ export default function Sidebar() {
               collapsed={isCollapsed}
               onClick={() => handleMenuClick(item.path)}
             >
-              <S.MenuIcon src={item.icon} alt={item.label} active={isActive} />
+              <S.MenuIcon src={isActive ? item.activeIcon : item.icon} alt={item.label} />
               <S.MenuLabel active={isActive} collapsed={isCollapsed}>
                 {item.label}
               </S.MenuLabel>

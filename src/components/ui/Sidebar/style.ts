@@ -5,11 +5,13 @@ export const SidebarContainer = styled.aside<{ collapsed: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  width: ${({ collapsed }) => (collapsed ? '5rem' : '17.5rem')};
+  width: ${({ collapsed }) => (collapsed ? '5rem' : '15vw')};
+  min-width: ${({ collapsed }) => (collapsed ? '4rem' : '12rem')};
+  max-width: ${({ collapsed }) => (collapsed ? '5rem' : '17.5rem')};
   height: 100vh;
   background-color: ${colors.n01};
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
-  transition: width 0.3s ease;
+  transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease;
   overflow: visible;
 `
 
@@ -43,11 +45,11 @@ export const LogoSection = styled.div<{ collapsed: boolean }>`
 `
 
 export const LogoImage = styled.img`
-  height: 2.2rem;
+  height: clamp(1.8rem, 2vw, 2.2rem);
 `
 
 export const LogoImageSmall = styled.img`
-  height: 2.0rem;
+  height: clamp(1.6rem, 1.8vw, 2rem);
 `
 
 export const MenuSection = styled.nav<{ collapsed: boolean }>`
@@ -59,13 +61,9 @@ export const MenuSection = styled.nav<{ collapsed: boolean }>`
   flex: 1;
 `
 
-export const MenuIcon = styled.img<{ active: boolean }>`
+export const MenuIcon = styled.img`
   width: 2.5rem;
   height: 2.5rem;
-  filter: ${({ active }) => active 
-    ? 'invert(36%) sepia(93%) saturate(1352%) hue-rotate(206deg) brightness(97%) contrast(92%)' 
-    : 'invert(72%) sepia(8%) saturate(654%) hue-rotate(189deg) brightness(91%) contrast(87%)'};
-  transition: filter 0.2s ease;
 `
 
 export const MenuItemButton = styled.button<{ active: boolean; collapsed: boolean }>`
