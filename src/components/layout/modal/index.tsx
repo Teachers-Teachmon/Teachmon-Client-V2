@@ -1,23 +1,29 @@
 import * as S from "./style";
-import {useModalStore} from "@/stores/modal";
 import {createPortal} from "react-dom";
-import React, { useState} from "react";
+import React, { useState, useEffect} from "react";
 
 interface ModalProps {
 	children: React.ReactNode
+	isOpen: boolean
+	onClose: () => void
 	padding?: string
 }
 
-export default function Modal({children, padding}: ModalProps) {
-	const {close, isOpen} = useModalStore();
+export default function Modal({children, isOpen, onClose, padding}: ModalProps) {
 	const [isClosing, setIsClosing] = useState(false)
+	
+	useEffect(() => {
+		if (isOpen) {
+			setIsClosing(false)
+		}
+	}, [isOpen])
 	
 	if (!isOpen && !isClosing) return null
 	
 	const closeModal = () => {
 		setIsClosing(true)
 		setTimeout(() => {
-			close()
+			onClose()
 			setIsClosing(false)
 		}, 100)
 	}
