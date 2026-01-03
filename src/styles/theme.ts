@@ -1,5 +1,3 @@
-
-
 export const colors = {
   subcolor: '#F87067',
   primary: '#2E6FF2',
