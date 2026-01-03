@@ -20,16 +20,15 @@ function App() {
   )
 }
 
-export default App;
-
-export const AppContainer = styled.div`
+const AppContainer = styled.div`
   display: flex;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
 `
-
-export const MainContent = styled.main`
+const MainContent = styled.main`
   flex: 1;
   overflow-y: auto;
 `
+
+export default App;
