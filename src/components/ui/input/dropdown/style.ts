@@ -82,33 +82,38 @@ export const DropdownMenu = styled.ul<{
   background-color: ${colors.background};
   border: 1px solid ${colors.n02};
   border-radius: ${props => props.$borderRadius || radius.md};
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+              0 2px 4px -1px rgba(0, 0, 0, 0.06);
   max-height: ${props => props.$maxHeight || '15rem'};
   overflow-y: auto;
   z-index: ${zIndex.dropdown};
   padding: 0.25rem;
   margin: 0;
   list-style: none;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  
-  /* 스크롤바 스타일링 */
+
+  /* 기본: 스크롤바 숨김 */
   &::-webkit-scrollbar {
+    width: 0;
+  }
+
+  /* hover 시 스크롤바 표시 */
+  &:hover::-webkit-scrollbar {
     width: 6px;
   }
-  
-  &::-webkit-scrollbar-track {
+
+  &:hover::-webkit-scrollbar-track {
     background: transparent;
   }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${colors.n03};
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: ${colors.n02};
     border-radius: 3px;
   }
-  
-  &::-webkit-scrollbar-thumb:hover {
-    background: ${colors.primaryGray};
+
+  &:hover::-webkit-scrollbar-thumb:hover {
+    background: ${colors.n03};
   }
-`
+`;
 
 export const DropdownItem = styled.li<{ $selected?: boolean }>`
   padding: 0.625rem 0.75rem;

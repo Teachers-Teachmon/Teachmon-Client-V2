@@ -105,22 +105,27 @@ export const ItemList = styled.ul<{ $maxHeight?: string }>`
   margin: 0;
   list-style: none;
   
-  /* 스크롤바 스타일링 */
+  /* 기본: 스크롤바 숨김 */
   &::-webkit-scrollbar {
+    width: 0;
+  }
+
+  /* hover 시 스크롤바 표시 */
+  &:hover::-webkit-scrollbar {
     width: 6px;
   }
-  
-  &::-webkit-scrollbar-track {
+
+  &:hover::-webkit-scrollbar-track {
     background: transparent;
   }
-  
-  &::-webkit-scrollbar-thumb {
-    background: ${colors.n03};
+
+  &:hover::-webkit-scrollbar-thumb {
+    background: ${colors.n02};
     border-radius: 3px;
   }
-  
-  &::-webkit-scrollbar-thumb:hover {
-    background: ${colors.primaryGray};
+
+  &:hover::-webkit-scrollbar-thumb:hover {
+    background: ${colors.n03};
   }
 `
 
