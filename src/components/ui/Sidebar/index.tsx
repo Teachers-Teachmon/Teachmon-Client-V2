@@ -4,7 +4,6 @@ import { SIDEBAR_MENU_ITEMS, SIDEBAR_ICONS, LOGO, MINI_LOGO } from '@/constants/
 import type { MenuItemType } from '@/constants/sidebar'
 import * as S from './style'
 
-// TODO: zustand에서 가져올 예정
 const userName = '이혜정 선생님'
 
 export default function Sidebar() {
@@ -27,7 +26,6 @@ export default function Sidebar() {
   }
 
   const handleLogout = () => {
-    // TODO: 로그아웃 로직 구현
     console.log('로그아웃')
   }
 
