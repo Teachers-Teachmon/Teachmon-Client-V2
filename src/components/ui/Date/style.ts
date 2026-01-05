@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { colors } from '@/styles/theme'
 
 export const DateInputContainer = styled.div`
   display: flex;
@@ -13,7 +14,7 @@ export const InputWrapper = styled.div<{ $isFocused?: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  border-bottom: 2px solid ${({ $isFocused }) => ($isFocused ? '#1A73E8' : '#ccc')};
+  border-bottom: 2px solid ${({ $isFocused }) => ($isFocused ? colors.primary : '#ccc')};
   transition: border-color 0.2s ease-in-out;
   padding-top: 1rem;
 `;
@@ -23,7 +24,7 @@ export const Label = styled.label<{ $isFocused?: boolean }>`
   top: ${({ $isFocused }) => ($isFocused ? '0px' : '24px')};
   left: 10px;
   font-size: ${({ $isFocused }) => ($isFocused ? '12px' : '18px')};
-  color: ${({ $isFocused }) => ($isFocused ? '#1A73E8' : '#999')};
+  color: ${({ $isFocused }) => ($isFocused ? colors.primary : '#999')};
   transition: all 0.15s ease-in-out;
   pointer-events: none;
 `;
@@ -34,7 +35,7 @@ export const StyledInput = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  color: #212121;
+  color: ${colors.text};
   padding: 5px 10px;
   width: 100%;
   cursor: pointer;
