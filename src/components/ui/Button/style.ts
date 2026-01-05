@@ -21,7 +21,7 @@ const variantStyle = {
   },
 };
 
-export const Container = styled.div<{
+export const Container = styled.button<{
   $variant: keyof typeof variantStyle;
   $width?: string;
   $disabled?: boolean;
@@ -48,6 +48,10 @@ export const Container = styled.div<{
       $disabled ? '#ccc' : variantStyle[$variant].border};
 
   transition: all 0.2s ease-in-out;
+
+  &:hover {
+    filter: ${({ $disabled }) => ($disabled ? 'none' : 'brightness(0.94)')};
+  }
 `;
 
 export const Name = styled.span`
