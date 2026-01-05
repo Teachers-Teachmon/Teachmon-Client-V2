@@ -1,11 +1,6 @@
 import styled from '@emotion/styled'
-import { keyframes } from '@emotion/react'
 import { colors, radius } from '@/styles/theme'
-
-const fadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`
+import { fadeIn } from '@/styles/animations'
 
 export const CalendarContainer = styled.div`
   display: flex;
