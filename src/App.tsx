@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import Sidebar from '@/components/ui/Sidebar'
-import DateInput from '@/components/ui/Date'
+import DateInput from '@/components/ui/input/date'
 import styled from '@emotion/styled';
 
 function App() {

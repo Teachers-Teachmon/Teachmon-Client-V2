@@ -10,11 +10,12 @@ export const DateInputContainer = styled.div`
   padding-top: 0.4rem;
 `;
 
-export const InputWrapper = styled.div<{ $isFocused?: boolean }>`
+export const InputWrapper = styled.div<{ $isFocused?: boolean; $hasError?: boolean }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  border-bottom: 2px solid ${({ $isFocused }) => ($isFocused ? colors.primary : '#ccc')};
+  border-bottom: 2px solid ${({ $isFocused, $hasError }) => 
+    $hasError ? colors.subcolor : $isFocused ? colors.primary : '#ccc'};
   transition: border-color 0.2s ease-in-out;
   padding-top: 1rem;
 `;
@@ -49,4 +50,18 @@ export const HiddenDateInput = styled.input`
   height: 100%;
   left: 0;
   top: 0;
+`;
+
+export const ErrorMessage = styled.p`
+  color: ${colors.subcolor};
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  margin-left: 0.5rem;
+`;
+
+export const HelperText = styled.p`
+  color: #666;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  margin-left: 0.5rem;
 `;
