@@ -1,21 +1,5 @@
 import React from 'react';
-import {
-  FooterContainer,
-  IntroSection,
-  IntroTitle,
-  ImagesGrid,
-  PrizeImage,
-  FooterBottom,
-  FooterContent,
-  LogoSection,
-  LogoImage,
-  AddressText,
-  LinksSection,
-  NavLinks,
-  NavLink,
-  SocialLinks,
-  SocialIcon,
-} from './style';
+import * as S from './style';
 
 const FooterLanding: React.FC = () => {
   const menuItems = [
@@ -31,50 +15,50 @@ const FooterLanding: React.FC = () => {
   };
 
   return (
-    <FooterContainer>
-      <IntroSection>
-        <IntroTitle>티치몬 소개 현장</IntroTitle>
-        <ImagesGrid>
-          <PrizeImage src="/assets/prize1.png" alt="티치몬 소개 1" />
-          <PrizeImage src="/assets/prize2.png" alt="티치몬 소개 2" />
-        </ImagesGrid>
-      </IntroSection>
+    <S.FooterContainer>
+      <S.IntroSection>
+        <S.IntroTitle>티치몬 소개 현장</S.IntroTitle>
+        <S.ImagesGrid>
+          <S.PrizeImage src="/assets/prize1.png" alt="티치몬 소개 1" />
+          <S.PrizeImage src="/assets/prize2.png" alt="티치몬 소개 2" />
+        </S.ImagesGrid>
+      </S.IntroSection>
 
-      <FooterBottom>
-        <FooterContent>
-          <LogoSection>
-            <LogoImage>
+      <S.FooterBottom>
+        <S.FooterContent>
+          <S.LogoSection>
+            <S.LogoImage>
               <img src="/assets/logoGray.svg" alt="Teach Mon Logo" />
-            </LogoImage>
-            <AddressText>
+            </S.LogoImage>
+            <S.AddressText>
               주소: 부산광역시 강서구 가락대로 1393 봉림동 15 (46708)
               <br />
               <br />
               Copyright © 솔빗 all rights reserved.
-            </AddressText>
-          </LogoSection>
+            </S.AddressText>
+          </S.LogoSection>
 
-          <LinksSection>
-            <NavLinks>
+          <S.LinksSection>
+            <S.NavLinks>
               {menuItems.map((item, index) => (
-                <NavLink key={index} onClick={() => handleNavClick(item.anchor)}>
+                <S.NavLink key={index} onClick={() => handleNavClick(item.anchor)}>
                   {item.label}
-                </NavLink>
+                </S.NavLink>
               ))}
-            </NavLinks>
-            <SocialLinks>
-              <SocialIcon
+            </S.NavLinks>
+            <S.SocialLinks>
+              <S.SocialIcon
                 href="https://github.com/your-repo"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <img src="/icons/landing/mdi_github.svg" alt="GitHub" />
-              </SocialIcon>
-            </SocialLinks>
-          </LinksSection>
-        </FooterContent>
-      </FooterBottom>
-    </FooterContainer>
+              </S.SocialIcon>
+            </S.SocialLinks>
+          </S.LinksSection>
+        </S.FooterContent>
+      </S.FooterBottom>
+    </S.FooterContainer>
   );
 };
 

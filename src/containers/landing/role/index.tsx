@@ -1,19 +1,5 @@
 import { useState } from 'react';
-import {
-  RoleContainer,
-  BackgroundOverlay,
-  ContentWrapper,
-  SliderWrapper,
-  SlideContent,
-  TextSection,
-  Title,
-  Description,
-  NavigationDots,
-  Dot,
-  ArrowButton,
-  StartButton,
-  ScreenshotImage,
-} from './style';
+import * as S from './style';
 
 export default function RoleLanding() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -42,40 +28,40 @@ export default function RoleLanding() {
   };
 
   return (
-    <RoleContainer>
-      <BackgroundOverlay />
-      <ContentWrapper>
-        <ArrowButton direction="left" onClick={prevSlide}>
+    <S.RoleContainer>
+      <S.BackgroundOverlay />
+      <S.ContentWrapper>
+        <S.ArrowButton direction="left" onClick={prevSlide}>
           <img src="/icons/landing/leftArrowWhite.svg" alt="Previous" />
-        </ArrowButton>
+        </S.ArrowButton>
 
-        <SliderWrapper>
-          <SlideContent currentSlide={currentSlide}>
+        <S.SliderWrapper>
+          <S.SlideContent currentSlide={currentSlide}>
             {slides.map((slide, index) => (
-              <TextSection key={index}>
-                <Title>{slide.title}</Title>
-                <Description>{slide.description}</Description>
-                <StartButton>자습감독 시작하기</StartButton>
-                <ScreenshotImage src={slide.image} alt={slide.title} />
-              </TextSection>
+              <S.TextSection key={index}>
+                <S.Title>{slide.title}</S.Title>
+                <S.Description>{slide.description}</S.Description>
+                <S.StartButton>자습감독 시작하기</S.StartButton>
+                <S.ScreenshotImage src={slide.image} alt={slide.title} />
+              </S.TextSection>
             ))}
-          </SlideContent>
-        </SliderWrapper>
+          </S.SlideContent>
+        </S.SliderWrapper>
 
-        <ArrowButton direction="right" onClick={nextSlide}>
+        <S.ArrowButton direction="right" onClick={nextSlide}>
                 <img src="/icons/landing/leftArrowWhite.svg" alt="Next" style={{transform: 'rotate(180deg)'}} />
-        </ArrowButton>
-      </ContentWrapper>
+        </S.ArrowButton>
+      </S.ContentWrapper>
 
-      <NavigationDots>
+      <S.NavigationDots>
         {slides.map((_, index) => (
-          <Dot
+          <S.Dot
             key={index}
             active={currentSlide === index}
             onClick={() => setCurrentSlide(index)}
           />
         ))}
-      </NavigationDots>
-    </RoleContainer>
+      </S.NavigationDots>
+    </S.RoleContainer>
   );
 }

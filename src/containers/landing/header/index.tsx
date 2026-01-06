@@ -1,14 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  HeaderContainer, 
-  LogoContainer, 
-  Navigation, 
-  NavItem, 
-  LoginButton,
-  MobileMenuButton,
-  MobileMenu,
-  MobileNavItem
-} from './style';
+import * as S from './style';
 
 interface LandingHeaderProps {
   currentSection: number;
@@ -37,24 +28,24 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ currentSection, onNavigat
 
   return (
     <>
-      <HeaderContainer>
-        <LogoContainer>
+      <S.HeaderContainer>
+        <S.LogoContainer>
           <img src="/assets/logo.svg" alt="Teach Mon Logo" />
-        </LogoContainer>
+        </S.LogoContainer>
 
-        <Navigation>
+        <S.Navigation>
           {menuItems.map((item) => (
-            <NavItem
+            <S.NavItem
               key={item.anchor}
               active={currentSection === item.index}
               onClick={() => onNavigate(item.anchor)}
             >
               {item.label}
-            </NavItem>
+            </S.NavItem>
           ))}
-        </Navigation>
+        </S.Navigation>
 
-        <MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <S.MobileMenuButton onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             {isMobileMenuOpen ? (
               <>
@@ -69,22 +60,22 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ currentSection, onNavigat
               </>
             )}
           </svg>
-        </MobileMenuButton>
+        </S.MobileMenuButton>
 
-        <LoginButton onClick={handleLogin}>로그인</LoginButton>
-      </HeaderContainer>
+        <S.LoginButton onClick={handleLogin}>로그인</S.LoginButton>
+      </S.HeaderContainer>
 
-      <MobileMenu isOpen={isMobileMenuOpen}>
+      <S.MobileMenu isOpen={isMobileMenuOpen}>
         {menuItems.map((item) => (
-          <MobileNavItem
+          <S.MobileNavItem
             key={item.anchor}
             active={currentSection === item.index}
             onClick={() => handleNavigateWithClose(item.anchor)}
           >
             {item.label}
-          </MobileNavItem>
+          </S.MobileNavItem>
         ))}
-      </MobileMenu>
+      </S.MobileMenu>
     </>
   );
 };

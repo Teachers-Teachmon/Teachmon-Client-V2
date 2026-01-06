@@ -1,22 +1,5 @@
 import React from 'react';
-import {
-  MainContainer,
-  HeroSection,
-  HeroContent,
-  Subtitle,
-  Title,
-  Description,
-  ButtonGroup,
-  ActionButton,
-  CardsSection,
-  Card,
-  CardHeader,
-  CardIcon,
-  CardTitle,
-  CardDescription,
-  CardArrow,
-  BackgroundOverlay
-} from './style';
+import * as S from './style';
 
 interface CardData {
   icon: string;
@@ -63,44 +46,44 @@ const MainLanding: React.FC = () => {
   };
 
   return (
-    <MainContainer>
-      <HeroSection>
-        <HeroContent>
-          <Subtitle>선생님들의 일을 보다 더 쉽게, 더 편리하게</Subtitle>
-          <Title>방과후 자습감독 도우미 프로그램</Title>
-          <Description>
+    <S.MainContainer>
+      <S.HeroSection>
+        <S.HeroContent>
+          <S.Subtitle>선생님들의 일을 보다 더 쉽게, 더 편리하게</S.Subtitle>
+          <S.Title>방과후 자습감독 도우미 프로그램</S.Title>
+          <S.Description>
             티치몬은 부산소프트웨어 마이스터고등학교에서 자습감독을 해주시는
             선생님들께서 더 편리하게 감독해주실 수 있도록 하기위해 개발되었어요!
-          </Description>
-          <ButtonGroup>
-            <ActionButton onClick={handleLogin}>
+          </S.Description>
+          <S.ButtonGroup>
+            <S.ActionButton onClick={handleLogin}>
               <img src="/assets/use.svg" alt="사용" />
-            </ActionButton>
-            <ActionButton onClick={handleVideo}>
+            </S.ActionButton>
+            <S.ActionButton onClick={handleVideo}>
               <img src="/assets/demo.svg" alt="시연" />
-            </ActionButton>
-          </ButtonGroup>
-        </HeroContent>
-      </HeroSection>
+            </S.ActionButton>
+          </S.ButtonGroup>
+        </S.HeroContent>
+      </S.HeroSection>
 
-      <CardsSection>
+      <S.CardsSection>
         {cards.map((card, index) => (
-          <Card key={index} onClick={card.onClick}>
-            <CardHeader>
-              <CardIcon>
+          <S.Card key={index} onClick={card.onClick}>
+            <S.CardHeader>
+              <S.CardIcon>
                 <img src={card.icon} alt={card.title} />
-              </CardIcon>
-              <CardArrow className="card-arrow">
+              </S.CardIcon>
+              <S.CardArrow className="card-arrow">
                 <img src="/icons/landing/rightArrowGray.svg" alt="arrow" />
-              </CardArrow>
-            </CardHeader>
-            <CardTitle>{card.title}</CardTitle>
-            <CardDescription>{card.description}</CardDescription>
-          </Card>
+              </S.CardArrow>
+            </S.CardHeader>
+            <S.CardTitle>{card.title}</S.CardTitle>
+            <S.CardDescription>{card.description}</S.CardDescription>
+          </S.Card>
         ))}
-      </CardsSection>
-      <BackgroundOverlay />
-    </MainContainer>
+      </S.CardsSection>
+      <S.BackgroundOverlay />
+    </S.MainContainer>
   );
 };
 

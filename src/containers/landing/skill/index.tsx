@@ -1,15 +1,5 @@
 import { useState } from 'react';
-import {
-  SkillContainer,
-  ContentWrapper,
-  FeatureCard,
-  FeatureTitle,
-  TabsContainer,
-  Tab,
-  TabIndicator,
-  FeatureDescription,
-  TabletImage,
-} from './style';
+import * as S from './style';
 
 const SkillLanding = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -45,9 +35,9 @@ const SkillLanding = () => {
   ];
 
   return (
-    <SkillContainer>
+    <S.SkillContainer>
         {features[activeTab].images.map((image, index) => (
-          <TabletImage
+          <S.TabletImage
             key={index}
             src={image.src}
             alt={`${features[activeTab].title} ${index + 1}`}
@@ -55,25 +45,25 @@ const SkillLanding = () => {
             activeTab={activeTab}
           />
         ))}
-      <ContentWrapper>
-        <FeatureCard>
-          <FeatureTitle>기능설명</FeatureTitle>
-          <TabsContainer>
-            <TabIndicator activeIndex={activeTab} />
+      <S.ContentWrapper>
+        <S.FeatureCard>
+          <S.FeatureTitle>기능설명</S.FeatureTitle>
+          <S.TabsContainer>
+            <S.TabIndicator activeIndex={activeTab} />
             {features.map((feature, index) => (
-              <Tab
+              <S.Tab
                 key={index}
                 active={activeTab === index}
                 onClick={() => setActiveTab(index)}
               >
                 {feature.title}
-              </Tab>
+              </S.Tab>
             ))}
-          </TabsContainer>
-          <FeatureDescription>{features[activeTab].description}</FeatureDescription>
-        </FeatureCard>
-      </ContentWrapper>
-    </SkillContainer>
+          </S.TabsContainer>
+          <S.FeatureDescription>{features[activeTab].description}</S.FeatureDescription>
+        </S.FeatureCard>
+      </S.ContentWrapper>
+    </S.SkillContainer>
   );
 };
 
