@@ -59,7 +59,7 @@ const MainLanding: React.FC = () => {
 
   const handleVideo = () => {
     // 시연 영상 URL로 이동
-    window.open('https://www.youtube.com/watch?v=your-video-id', '_blank');
+    window.open('https://youtu.be/A8gOKTAveXs', '_blank');
   };
 
   return (

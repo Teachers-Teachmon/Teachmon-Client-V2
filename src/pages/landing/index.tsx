@@ -7,9 +7,9 @@ import styled from '@emotion/styled';
 import LandingHeader from '@/containers/landing/header';
 import MainLanding from '@/containers/landing/main';
 import IntroduceLanding from '@/containers/landing/introduce';
-// import RoleLanding from '@/containers/landing/role';
-// import SkillLanding from '@/containers/landing/skill';
-// import MethodLanding from '@/containers/landing/method';
+import RoleLanding from '@/containers/landing/role';
+import SkillLanding from '@/containers/landing/skill';
+import ExplainLanding from '@/containers/landing/explain';
 import FooterLanding from '@/containers/landing/footer';
 
 const LandingPage: React.FC = () => {
@@ -47,24 +47,24 @@ const LandingPage: React.FC = () => {
       content: <IntroduceLanding />,
       backgroundColor: '#ffffff',
     },
-    // {
-    //   id: 'role',
-    //   anchor: 'role',
-    //   content: <RoleLanding />,
-    //   backgroundColor: '#ffffff',
-    // },
-    // {
-    //   id: 'skill',
-    //   anchor: 'skill',
-    //   content: <SkillLanding />,
-    //   backgroundColor: '#ffffff',
-    // },
-    // {
-    //   id: 'method',
-    //   anchor: 'method',
-    //   content: <MethodLanding />,
-    //   backgroundColor: '#ffffff',
-    // },
+    {
+      id: 'role',
+      anchor: 'role',
+      content: <RoleLanding />,
+      backgroundColor: '#ffffff',
+    },
+    {
+      id: 'skill',
+      anchor: 'skill',
+      content: <SkillLanding />,
+      backgroundColor: '#ffffff',
+    },
+    {
+      id: 'ExplainLanding',
+      anchor: 'ExplainLanding',
+      content: <ExplainLanding />,
+      backgroundColor: '#ffffff',
+    },
     {
       id: 'footer',
       anchor: 'footer',
