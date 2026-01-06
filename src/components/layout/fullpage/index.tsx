@@ -56,19 +56,20 @@ const FullPageLayout: React.FC<FullPageLayoutProps> = ({
       navigation: false,
       credits: false,
       anchors,
-      onLeave: (origin: any, destination: any) => {
-        if (isScrolling.current) return;
+      scrollingSpeed: 700,
+      onLeave: (origin: any, destination: any, direction: string) => {
+        if (isScrolling.current) {
+          return false;
+        }
 
         isScrolling.current = true;
-        fullpage_api.setAllowScrolling(false);
-
+        
         onSectionChange?.(destination.index);
-        onLeave?.(origin, destination, '');
+        onLeave?.(origin, destination, direction);
 
         setTimeout(() => {
           isScrolling.current = false;
-          fullpage_api.setAllowScrolling(true);
-        }, 1000);
+        }, 800);
       },
     });
 

@@ -52,3 +52,25 @@ export const VideoIframe = styled.iframe`
     border-radius: 12px;
   }
 `;
+
+export const VideoOverlay = styled.div<{ isLoading?: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: ${({ isLoading }) => (isLoading ? 'wait' : 'pointer')};
+  z-index: 1;
+  border-radius: 16px;
+  background: transparent;
+  transition: background 0.2s ease;
+  pointer-events: auto;
+
+  &:hover {
+    background: ${({ isLoading }) => (isLoading ? 'transparent' : 'rgba(0, 0, 0, 0.05)')};
+  }
+
+  ${mq.mobile} {
+    border-radius: 12px;
+  }
+`;
