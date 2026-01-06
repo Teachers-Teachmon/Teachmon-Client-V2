@@ -11,10 +11,12 @@ import RoleLanding from '@/containers/landing/role';
 import SkillLanding from '@/containers/landing/skill';
 import ExplainLanding from '@/containers/landing/explain';
 import FooterLanding from '@/containers/landing/footer';
+import LoginModal from '@/containers/login';
 
 const LandingPage: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   // 인증 체크 로직
   useEffect(() => {
@@ -82,9 +84,23 @@ const LandingPage: React.FC = () => {
   const handleNavigate = (anchor: string) => {
     moveToSection(anchor);
   };
+
+  // 로그인 모달 핸들러
+  const handleLoginClick = () => {
+    setIsLoginModalOpen(true);
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
+
   return (
     <Container>
-      <LandingHeader currentSection={currentSection} onNavigate={handleNavigate} />
+      <LandingHeader 
+        currentSection={currentSection} 
+        onNavigate={handleNavigate}
+        onLoginClick={handleLoginClick}
+      />
       
       {/* FullPage 레이아웃 */}
       <FullPageLayout
@@ -92,6 +108,9 @@ const LandingPage: React.FC = () => {
         sections={sections}
         onSectionChange={handleSectionChange}
       />
+
+      {/* 로그인 모달 */}
+      <LoginModal isOpen={isLoginModalOpen} onClose={handleCloseLoginModal} />
     </Container>
   );
 };

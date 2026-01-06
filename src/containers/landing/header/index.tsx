@@ -4,9 +4,10 @@ import * as S from './style';
 interface LandingHeaderProps {
   currentSection: number;
   onNavigate: (anchor: string) => void;
+  onLoginClick: () => void;
 }
 
-const LandingHeader: React.FC<LandingHeaderProps> = ({ currentSection, onNavigate }) => {
+const LandingHeader: React.FC<LandingHeaderProps> = ({ currentSection, onNavigate, onLoginClick }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const menuItems = [
@@ -16,10 +17,6 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ currentSection, onNavigat
     { label: '기능', anchor: 'skill', index: 3 },
     { label: '사용방법', anchor: 'method', index: 4 },
   ];
-
-  const handleLogin = () => {
-    window.location.href = '/login';
-  };
 
   const handleNavigateWithClose = (anchor: string) => {
     onNavigate(anchor);
@@ -62,7 +59,7 @@ const LandingHeader: React.FC<LandingHeaderProps> = ({ currentSection, onNavigat
           </svg>
         </S.MobileMenuButton>
 
-        <S.LoginButton onClick={handleLogin}>로그인</S.LoginButton>
+        <S.LoginButton onClick={onLoginClick}>로그인</S.LoginButton>
       </S.HeaderContainer>
 
       <S.MobileMenu isOpen={isMobileMenuOpen}>
