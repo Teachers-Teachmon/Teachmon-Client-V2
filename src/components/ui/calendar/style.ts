@@ -189,7 +189,7 @@ export const EventList = styled.div`
   margin-top: auto;
 `
 
-export const EventTag = styled.span<{ bgColor: string; textColor: string; clickable?: boolean }>`
+export const EventTag = styled.span<{ bgColor: string; textColor: string; $clickable?: boolean; $disabled?: boolean; $isSelected?: boolean }>`
   display: inline-block;
   width: fit-content;
   padding: 4px 8px;
@@ -198,13 +198,16 @@ export const EventTag = styled.span<{ bgColor: string; textColor: string; clicka
   font-weight: 500;
   font-size: 14px;
   white-space: nowrap;
-  background: ${({ bgColor }) => bgColor};
-  color: ${({ textColor }) => textColor};
-  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
-  transition: opacity 0.15s;
+  background: ${({ bgColor, $disabled }) => $disabled ? '#E5E5E5' : bgColor};
+  color: ${({ textColor, $disabled }) => $disabled ? '#999' : textColor};
+  cursor: ${({ $clickable, $disabled }) => $disabled ? 'not-allowed' : $clickable ? 'pointer' : 'default'};
+  transition: all 0.15s;
+  opacity: ${({ $disabled }) => $disabled ? 0.6 : 1};
+  outline: ${({ $isSelected }) => $isSelected ? '2px solid #2E6FF2' : 'none'};
+  outline-offset: 2px;
 
   &:hover {
-    opacity: ${({ clickable }) => (clickable ? 0.8 : 1)};
+    opacity: ${({ $clickable, $disabled }) => $disabled ? 0.6 : $clickable ? 0.8 : 1};
   }
 `
 
