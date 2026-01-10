@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { colors, fontSizes, radius } from '../../../styles/theme';
-import { mq } from '../../../styles/media';
+import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const IntroduceContainer = styled.div`
   width: 100vw;
@@ -56,11 +56,8 @@ export const LogoIcon = styled.div`
 
 export const Title = styled.h2`
   font-family: 'Paperlogy', sans-serif;
-  font-weight: 800;
   font-size: clamp(24px, 2.2vw, 31.66px);
   color: ${colors.text};
-  margin: 0;
-  line-height: 1.2;
 
   ${mq.mobile} {
     font-size: ${fontSizes.H2};
@@ -88,7 +85,7 @@ export const Tag = styled.span`
   border: 1px solid ${colors.primary};
   border-radius: 30px;
   padding: 6px 16px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
   font-size: clamp(12px, 1vw, 14.77px);
   line-height: 1.2;
@@ -100,7 +97,7 @@ export const Tag = styled.span`
 `;
 
 export const Description = styled.p`
-  font-family: 'Inter', sans-serif;
+  font-family: 'Paperlogy', sans-serif;
   font-weight: 700;
   font-size: clamp(14px, 1.3vw, 19px);
   color: ${colors.text};

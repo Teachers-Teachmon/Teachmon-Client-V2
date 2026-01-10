@@ -22,7 +22,7 @@ export const HeroSection = styled.div`
   border-radius: 0 0 150px 12px ;
   background: 
     linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.83) 37.67%, rgba(0, 0, 0, 0.10) 100%),
-    url('/assets/landing.svg');
+    url('/assets/mainBg.svg');
   background-size: cover;
   background-position: center;
 
@@ -61,14 +61,9 @@ export const HeroContent = styled.div`
 `;
 
 export const Subtitle = styled.p`
-  font-family: 'Paperlogy', sans-serif;
-  font-weight: 400;
   font-size: clamp(14px, 2.5vw, 31.5px);
-  line-height: 37px;
-
   ${mq.mobile} {
     font-size: clamp(14px, 5vw, 20px);
-    line-height: 24px;
   }
 `;
 
@@ -248,7 +243,7 @@ export const CardTitle = styled.h3`
 `;
 
 export const CardDescription = styled.p`
-  font-family: 'Inter', sans-serif;
+  font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
   font-size: clamp(14px, 1vw, 14px);
   line-height: 1.5;

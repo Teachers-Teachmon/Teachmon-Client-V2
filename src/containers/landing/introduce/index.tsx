@@ -6,16 +6,16 @@ export default function IntroduceLanding() {
       <S.ContentWrapper>
         <S.TextSection>
           <S.LogoIcon>
-            <img src="/icons/landing/small-logo.svg" alt="Teach Mon" />
+            <img src="/icons/landing/small-logo.svg" alt="TeachMon" />
           </S.LogoIcon>
-          <S.Title>Teach Mon소개</S.Title>
+          <S.Title>TeachMon소개</S.Title>
           <S.TagsContainer>
             <S.Tag>개선</S.Tag>
             <S.Tag>간단한 UI</S.Tag>
             <S.Tag>편리</S.Tag>
           </S.TagsContainer>
           <S.Description>
-            Teach Mon은 학교 선생님들께서 자습감독을 
+            TeachMon은 학교 선생님들께서 자습감독을 
             <br />
             보다 효율적이게 하실 수 있도록 돕고자 제작하게 되었습니다.
             <br />

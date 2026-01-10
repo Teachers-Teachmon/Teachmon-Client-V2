@@ -80,7 +80,7 @@ export const Title = styled.h2`
 `;
 
 export const Description = styled.p`
-  font-family: 'Inter', sans-serif;
+  font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
   font-size: clamp(14px, 1.2vw, 18px);
   line-height: 1.8;

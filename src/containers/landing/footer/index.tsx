@@ -28,7 +28,7 @@ const FooterLanding: React.FC = () => {
         <S.FooterContent>
           <S.LogoSection>
             <S.LogoImage>
-              <img src="/assets/logoGray.svg" alt="Teach Mon Logo" />
+              <img src="/assets/logoGray.svg" alt="TeachMon Logo" />
             </S.LogoImage>
             <S.AddressText>
               주소: 부산광역시 강서구 가락대로 1393 봉림동 15 (46708)
@@ -48,7 +48,7 @@ const FooterLanding: React.FC = () => {
             </S.NavLinks>
             <S.SocialLinks>
               <S.SocialIcon
-                href="https://github.com/your-repo"
+                href="https://github.com/Teachers-Teachmon"
                 target="_blank"
                 rel="noopener noreferrer"
               >

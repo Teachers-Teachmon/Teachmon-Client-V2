@@ -1,40 +1,13 @@
 import React from 'react';
+import { LANDING_CARDS, LANDING_CARD_ANCHORS } from '@/constants/landing';
+import type { CardData } from '@/types/landing';
 import * as S from './style';
 
-interface CardData {
-  icon: string;
-  title: string;
-  description: string;
-  onClick: () => void;
-}
-
 const MainLanding: React.FC = () => {
-  const cards: CardData[] = [
-    {
-      icon: '/icons/landing/small-logo.svg',
-      title: 'TeachMon소개',
-      description: 'TeachMon이 무엇인지 소개해드릴게요!',
-      onClick: () => window.fullpage_api?.moveTo('introduce'),
-    },
-    {
-      icon: '/icons/landing/role.svg',
-      title: '역할',
-      description: 'TeachMon에는 2가지의 \n역할이 있어요. 어떤게 있는지 알아보아요',
-      onClick: () => window.fullpage_api?.moveTo('role'),
-    },
-    {
-      icon: '/icons/landing/skill.svg',
-      title: '기능소개',
-      description: 'TeachMon에있는 주요기능에 대해서 소개해드릴게요!',
-      onClick: () => window.fullpage_api?.moveTo('skill'),
-    },
-    {
-      icon: '/icons/landing/method.svg',
-      title: '사용방법',
-      description: 'TeachMon의 기능들을 어떻게\n사용하는지 알려드릴게요!',
-      onClick: () => window.fullpage_api?.moveTo('method'),
-    },
-  ];
+  const cards: CardData[] = LANDING_CARDS.map((card, index) => ({
+    ...card,
+    onClick: () => window.fullpage_api?.moveTo(LANDING_CARD_ANCHORS[index]),
+  }));
 
   const handleLogin = () => {
     window.location.href = '/login';

@@ -16,7 +16,7 @@ export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
     <Modal isOpen={isOpen} onClose={onClose} padding="0">
       <S.LoginContainer>
         <S.LogoSection>
-          <S.Logo src="/assets/logo.svg" alt="Teach Mon" />
+          <S.Logo src="/assets/logo.svg" alt="TeachMon" />
         </S.LogoSection>
         <S.LoginButton onClick={handleGoogleLogin}>
           <S.GoogleIcon src="/icons/landing/google.svg" alt="Google" />

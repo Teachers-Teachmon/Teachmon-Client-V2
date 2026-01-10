@@ -1,33 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
 // @ts-ignore
 import fullpage from 'fullpage.js';
 import 'fullpage.js/dist/fullpage.css';
 import { FullPageWrapper } from './style';
+import type { FullPageLayoutProps } from '@/types/fullpage';
 
 // fullpage_api 전역 선언
 declare const fullpage_api: any;
-
-export interface FullPageSection {
-  id: string;
-  anchor?: string;
-  content: ReactNode;
-  backgroundColor?: string;
-}
-
-export interface FullPageLayoutProps {
-  sections: FullPageSection[];
-  licenseKey?: string;
-  navigation?: boolean;
-  autoScrolling?: boolean;
-  scrollingSpeed?: number;
-  fitToSection?: boolean;
-  credits?: boolean;
-  hasHeader?: boolean;
-  onLeave?: (origin: any, destination: any, direction: string) => void;
-  onSectionChange?: (sectionIndex: number) => void;
-  customOptions?: any;
-}
 
 const FullPageLayout: React.FC<FullPageLayoutProps> = ({
   sections,

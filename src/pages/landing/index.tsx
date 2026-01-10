@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import FullPageLayout, {
   moveToSection,
-} from '../../components/layout/fullpage';
-import type { FullPageSection } from '../../components/layout/fullpage';
+} from '@/components/layout/fullpage';
+import type { FullPageSection } from '@/components/layout/fullpage';
 import styled from '@emotion/styled';
 import LandingHeader from '@/containers/landing/header';
 import MainLanding from '@/containers/landing/main';

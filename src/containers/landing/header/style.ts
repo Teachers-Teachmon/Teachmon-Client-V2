@@ -53,7 +53,7 @@ export const Navigation = styled.nav`
 export const NavItem = styled.button<{ active?: boolean }>`
   background: none;
   border: none;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
   font-size: 18px;
   line-height: 1.4;
@@ -74,7 +74,7 @@ export const LoginButton = styled.button`
   background-color: #ffffff;
   border: 1px solid #000000;
   border-radius: 22px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
   font-size: 16px;
   line-height: 1.4;
@@ -137,7 +137,7 @@ export const MobileMenu = styled.div<{ isOpen: boolean }>`
 export const MobileNavItem = styled.button<{ active?: boolean }>`
   background: none;
   border: none;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
   font-size: 16px;
   line-height: 1.4;

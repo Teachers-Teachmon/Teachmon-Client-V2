@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
-import { colors, fontSizes } from '../../../styles/theme';
-import { mq } from '../../../styles/media';
+import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const FooterContainer = styled.footer`
   width: 100%;
