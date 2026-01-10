@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/components/layout/MainLayout'
+import Manage from '@/pages/manage'
 
 function App() {
   return (
@@ -7,7 +8,7 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/" element={<div>홈</div>} />
         <Route path="/supervision" element={<div>자습감독</div>} />
-        <Route path="/manage" element={<div>학생관리</div>} />
+        <Route path="/manage" element={<Manage />} />
         <Route path="/after-school" element={<div>방과후</div>} />
         <Route path="/admin" element={<div>관리자</div>} />
       </Route>
