@@ -41,7 +41,7 @@ export default function ExchangeRequestSection({
                                         </S.ExchangeItemText>
                                     </S.ExchangeItem>
                                     <S.ExchangeIcon>
-                                        <img src="/icons/Exchange.svg" alt="교체" />
+                                        <img src="/icons/exchange.svg" alt="교체" />
                                         <S.ExchangeIconLabel onClick={() => onOpenModal(exchange)}>
                                             자세히보기
                                         </S.ExchangeIconLabel>

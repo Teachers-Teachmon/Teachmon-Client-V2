@@ -14,11 +14,11 @@ export default function QuickLinkSection() {
                     </S.QuickLinkDescription>
                 </S.QuickLinkTextContainer>
                 <S.ArrowButton>
-                    <img src="/icons/RightArrow.svg" alt="바로가기" />
+                    <img src="/icons/rightArrow.svg" alt="바로가기" />
                 </S.ArrowButton>
             </S.QuickLinkHeader>
             <S.PencilIcon>
-                <img src="/icons/BigPencil.svg" alt="연필" />
+                <img src="/icons/bigPencil.svg" alt="연필" />
             </S.PencilIcon>
         </S.QuickLinkCard>
     );

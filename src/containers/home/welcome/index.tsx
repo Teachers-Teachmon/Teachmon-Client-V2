@@ -2,7 +2,7 @@ import * as S from './style';
 
 export default function WelcomeSection() {
     return (
-        <S.WelcomeCard bgImage="/assets/mageBg.png">
+        <S.WelcomeCard bgImage="/assets/mainBg.png">
             <S.WelcomeContent>
                 <S.WelcomeTitle>티치몬에 오신 것을 환영합니다.</S.WelcomeTitle>
                 <S.WelcomeBottom>
