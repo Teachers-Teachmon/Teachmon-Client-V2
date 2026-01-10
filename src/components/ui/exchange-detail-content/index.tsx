@@ -1,5 +1,6 @@
 import type { ExchangeDetailContentProps } from '@/types/home';
 import { formatDateFull, formatSupervisionType } from '@/utils/format';
+import Button from '@/components/ui/button';
 import * as S from './style';
 
 export default function ExchangeDetailContent({
@@ -78,21 +79,13 @@ export default function ExchangeDetailContent({
       <S.ButtonContainer>
         {isReceiver && isPending ? (
           <>
-            <S.Button variant="secondary" onClick={onReject}>
-              거절
-            </S.Button>
-            <S.Button variant="primary" onClick={onAccept}>
-              수락
-            </S.Button>
+            <Button variant="delete" text="거절" onClick={onReject} width="50%" />
+            <Button variant="confirm" text="수락" onClick={onAccept} width="50%" />
           </>
         ) : (
           <>
-            <S.Button variant="secondary" onClick={onClose}>
-              취소
-            </S.Button>
-            <S.Button variant="primary" onClick={onClose}>
-              확인
-            </S.Button>
+            <Button variant="cancel" text="취소" onClick={onClose} width="50%" />
+            <Button variant="confirm" text="확인" onClick={onClose} width="50%" />
           </>
         )}
       </S.ButtonContainer>

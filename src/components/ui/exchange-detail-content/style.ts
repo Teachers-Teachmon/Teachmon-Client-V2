@@ -1,18 +1,18 @@
 import styled from '@emotion/styled';
-import { colors, fontSizes, radius } from '@/styles/theme';
+import { colors } from '@/styles/theme';
 
 export const Container = styled.div`
-  width: 700px;
+  width: 43.8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 
 export const Title = styled.h2`
-  font-size: 36px;
+  font-size: 2.3rem;
   font-weight: 500;
   color: ${colors.n04};
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 `;
 
 export const StatusText = styled.span<{ status: 'rejected' | 'accepted' }>`
@@ -21,86 +21,87 @@ export const StatusText = styled.span<{ status: 'rejected' | 'accepted' }>`
 
 export const CardsContainer = styled.div`
   display: flex;
-  gap: 60px;
-  margin-bottom: 24px;
+  gap: 3.8rem;
+  margin-bottom: 1.5rem;
 `;
 
 export const Card = styled.div`
-  width: 258px;
-  padding: 26px 28px;
+  width: 16.1rem;
+  padding: 1.6rem 1.8rem;
   border: 0.33px solid #969696;
-  border-radius: 5px;
+  border-radius: 0.3rem;
   background: white;
 `;
 
 export const CardTitle = styled.h3`
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: ${colors.n04};
-  margin-bottom: 10px;
+  margin-bottom: 0.6rem;
 `;
 
 export const CardInfo = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 0.3rem;
 `;
 
 export const InfoRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 0.3rem;
 `;
 
 export const InfoIcon = styled.img`
-  width: 19px;
-  height: 19px;
+  width: 1.2rem;
+  height: 1.2rem;
 `;
 
 export const InfoText = styled.span`
-  font-size: 16px;
+  font-size: 1rem;
   color: #969696;
 `;
 
 export const ReasonSection = styled.div`
-  width: 576px;
+  width: 82%;
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  margin-bottom: 24px;
+  gap: 0.3rem;
+  margin-bottom: 1.5rem;
 `;
 
 export const ReasonLabel = styled.label`
-  font-size: 20px;
+  font-size: 1.3rem;
   font-weight: 500;
   color: ${colors.n04};
 `;
 
 export const ReasonBox = styled.div`
   width: 100%;
-  height: 187px;
-  padding: 9px 12px;
+  height: 11.7rem;
+  padding: 0.6rem 0.8rem;
   border: 0.5px solid #969696;
-  border-radius: 4px;
+  border-radius: 0.3rem;
   background: white;
 `;
 
 export const ReasonText = styled.p`
-  font-size: 16px;
+  font-size: 1rem;
   color: #969696;
   font-weight: 300;
 `;
 
 export const ButtonContainer = styled.div`
+  width: 82%;
   display: flex;
-  gap: 14px;
+  gap: 0.9rem;
 `;
 
 export const Button = styled.button<{ variant: 'primary' | 'secondary' }>`
-  width: 245px;
-  height: 45px;
-  border-radius: 10px;
-  font-size: 18px;
+  width: 15.3rem;
+  height: 2.8rem;
+  border-radius: 0.6rem;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   border: none;
