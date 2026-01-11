@@ -2,6 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import TextInput from '@/components/ui/input/text-input';
+
+import { mockStudents } from './data';
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
 
@@ -16,11 +18,6 @@ export interface Student {
 interface StudentsProps {
   searchQuery: string;
 }
-
-const mockStudents: Student[] = [
-  { id: '1', grade: 1, classNum: 4, number: 10, name: '윤도훈' },
-  { id: '2', grade: 2, classNum: 2, number: 9, name: '윤도훈' },
-];
 
 export default function Students({ searchQuery }: StudentsProps) {
   const [students, setStudents] = useState<Student[]>(mockStudents);

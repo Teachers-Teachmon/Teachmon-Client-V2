@@ -4,6 +4,8 @@ import StatusBadge, { type StatusType } from '@/components/ui/status';
 import Button from '@/components/ui/button';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
+import { USER_ROLES } from '@/constants/admin';
+import { mockTeachers } from './data';
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
 
@@ -24,11 +26,6 @@ interface TeachersProps {
   sortOrder: SortOrder;
   onOpenForbiddenDates: (teacher: Teacher) => void;
 }
-
-const mockTeachers: Teacher[] = [
-  { id: '1', role: '관리자', name: '이혜정', email: 'teacher068@bssm.hs.kr', supervisionCount: 36 },
-  { id: '2', role: '일반', name: '이혜정', email: 'teacher068@bssm.hs.kr', supervisionCount: 36 },
-];
 
 export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates }: TeachersProps) {
   const [teachers, setTeachers] = useState<Teacher[]>(mockTeachers);
@@ -92,7 +89,7 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
   const handleAdd = () => {
     const newTeacher: Teacher = {
       id: String(Date.now()),
-      role: '일반',
+      role: USER_ROLES.NORMAL,
       name: '',
       email: '',
       supervisionCount: 0,
@@ -119,7 +116,7 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
         editingIds.has(row.id) ? (
           <div style={{ width: '100%' }}>
             <Dropdown
-              items={['관리자', '일반']}
+              items={[USER_ROLES.ADMIN, USER_ROLES.NORMAL]}
               value={editingTeacher?.id === row.id ? editingTeacher.role : row.role}
               onChange={(value) => {
                 if (editingTeacher?.id === row.id) {

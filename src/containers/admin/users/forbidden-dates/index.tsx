@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Button from '@/components/ui/button';
 import Checkbox from '@/components/ui/input/checkbox';
+import { WEEKDAYS } from '@/constants/admin';
 import * as S from './style';
 
 interface ForbiddenDatesProps {
@@ -9,8 +10,6 @@ interface ForbiddenDatesProps {
   onSave: (dates: string[]) => void;
   onCancel: () => void;
 }
-
-const DAYS = ['월요일', '화요일', '수요일', '목요일'];
 
 export default function ForbiddenDates({
   teacherName,
@@ -36,7 +35,7 @@ export default function ForbiddenDates({
         <S.Title>{teacherName} 선생님 금지날짜</S.Title>
 
         <S.DaysGrid>
-          {DAYS.map((day) => (
+          {WEEKDAYS.map((day) => (
             <S.DayItem
               key={day}
               $selected={selectedDays.includes(day)}
