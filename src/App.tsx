@@ -1,6 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/components/layout/MainLayout'
 import Manage from '@/pages/manage'
+import Record from '@/pages/manage/record'
+import Movement from '@/pages/manage/movement'
 
 function App() {
   return (
@@ -9,6 +11,8 @@ function App() {
         <Route path="/" element={<div>홈</div>} />
         <Route path="/supervision" element={<div>자습감독</div>} />
         <Route path="/manage" element={<Manage />} />
+        <Route path="/manage/record" element={<Record />} />
+        <Route path="/manage/movement" element={<Movement />} />
         <Route path="/after-school" element={<div>방과후</div>} />
         <Route path="/admin" element={<div>관리자</div>} />
       </Route>

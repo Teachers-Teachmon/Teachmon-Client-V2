@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import LegendPopup from '../question-popup';
 import * as S from './style';
 
@@ -9,15 +10,16 @@ interface HeaderRightProps {
 
 export default function HeaderRight({ isMapEnabled, onMapToggle }: HeaderRightProps) {
     const [isLegendOpen, setIsLegendOpen] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <S.Container $isEnabled={isMapEnabled}>
             <S.ActionButtons>
-                <S.ActionButton>
+                <S.ActionButton onClick={() => navigate('/manage/record')}>
                     <S.ButtonIcon src="/icons/student/table.svg" alt="record" />
                     기록
                 </S.ActionButton>
-                <S.ActionButton>
+                <S.ActionButton onClick={() => navigate('/manage/movement')}>
                     <S.WriteIcon src="/icons/student/writeMovement.svg" alt="write" />
                     이석작성
                 </S.ActionButton>
