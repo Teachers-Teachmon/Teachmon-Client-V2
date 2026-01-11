@@ -2,15 +2,16 @@ import styled from '@emotion/styled';
 
 export const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  gap: 12px;
   margin-bottom: 20px;
 `;
 
 export const SearchContainer = styled.div`
   display: flex;
   align-items: center;
-  background-color: #F8F9FA;
+  border: 1px solid #999999;
   border-radius: 8px;
   padding: 10px 16px;
   width: 300px;
@@ -28,9 +29,8 @@ export const SearchInput = styled.input`
   outline: none;
   width: 100%;
   font-size: 16px;
-  color: #333;
-
+  font-family: 'Paperlogy', sans-serif;
   &::placeholder {
-    color: #AAA;
+    color: #858585;
   }
 `;

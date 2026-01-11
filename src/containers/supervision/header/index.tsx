@@ -35,7 +35,7 @@ export default function SupervisionHeader({
     return (
         <S.Header>
             <S.SearchContainer>
-                <S.SearchIcon src="/icons/Search.svg" alt="검색" />
+                <S.SearchIcon src="/icons/search.svg" alt="검색" />
                 <S.SearchInput
                     type="text"
                     placeholder="이름을 입력해주세요."
