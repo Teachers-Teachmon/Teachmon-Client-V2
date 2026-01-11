@@ -1,5 +1,5 @@
 import type { CalendarEvent, CalendarRangeEvent, LegendItem, DayInfo, CalendarProps } from '@/types/calendar'
-import { useCalendar, useDragSelect } from '@/hooks/calendar'
+import { useCalendar, useDragSelect } from '@/hooks/useCalendar'
 import { DAYS_OF_WEEK, LEFT_DOUBLE_ARROW, RIGHT_DOUBLE_ARROW, getDayType } from '@/utils/calendar'
 import * as S from './style'
 
@@ -18,11 +18,28 @@ export default function Calendar({
   showYear = true,
   showLegend = true,
   selectable = false,
+  exchangeMode = false,
+  currentTeacherId,
+  selectedMyEvent,
+  onMyEventSelect,
+  onTargetEventSelect,
 }: CalendarProps) {
   const { year, month, calendarDays, rangeEventRows, handlePrevMonth, handleNextMonth, getEventsForDate, getRangeEventsForDate } = useCalendar({ controlledYear, controlledMonth, onMonthChange, events, rangeEvents })
   const { isDateInDragRange, handleMouseDown, handleMouseEnter, handleMouseUp } = useDragSelect({ enabled: selectable, onRangeSelect })
   const prevMonthNum = month === 1 ? 12 : month - 1
   const nextMonthNum = month === 12 ? 1 : month + 1
+
+  const handleEventClick = (event: CalendarEvent) => {
+    if (exchangeMode) {
+      if (event.teacherId === currentTeacherId) {
+        onMyEventSelect?.(event)
+      } else {
+        onTargetEventSelect?.(event)
+      }
+    } else {
+      onEventClick?.(event)
+    }
+  }
 
   return (
     <S.CalendarContainer onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
@@ -71,17 +88,37 @@ export default function Calendar({
                 >
                   <S.DayNumber dayType={dayType} isCurrentMonth={isCurrentMonth}>{date.getDate()}</S.DayNumber>
                   <S.EventList>
-                    {dayEvents.map((event) => (
-                      <S.EventTag
-                        key={event.id}
-                        bgColor={event.bgColor}
-                        textColor={event.textColor}
-                        clickable={!!onEventClick}
-                        onClick={(e) => { if (onEventClick) { e.stopPropagation(); onEventClick(event) } }}
-                      >
-                        {event.label}
-                      </S.EventTag>
-                    ))}
+                    {dayEvents.map((event) => {
+                      const isMyEvent = event.teacherId === currentTeacherId
+                      let isDisabled = false
+
+                      if (exchangeMode) {
+                        if (!selectedMyEvent) {
+                          isDisabled = !isMyEvent
+                        } else {
+                          isDisabled = isMyEvent
+                        }
+                      }
+
+                      return (
+                        <S.EventTag
+                          key={event.id}
+                          bgColor={event.bgColor}
+                          textColor={event.textColor}
+                          clickable={!!onEventClick || (exchangeMode && !isDisabled)}
+                          isSelected={selectedMyEvent?.id === event.id}
+                          isDisabled={isDisabled}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (!isDisabled) {
+                              handleEventClick(event)
+                            }
+                          }}
+                        >
+                          {event.label}
+                        </S.EventTag>
+                      )
+                    })}
                   </S.EventList>
                 </S.DayCell>
               )
