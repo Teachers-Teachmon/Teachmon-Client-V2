@@ -8,6 +8,7 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       label,
       error,
       helperText,
+      leftIcon,
       customPadding,
       customFontSize,
       disabled,
@@ -21,11 +22,13 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       <S.InputWrapper>
         {label && <S.Label>{label}</S.Label>}
         <S.InputContainer $hasError={hasError} $disabled={disabled}>
+          {leftIcon && <S.LeftIcon>{leftIcon}</S.LeftIcon>}
           <S.StyledInput
             ref={ref}
             $hasError={hasError}
             $padding={customPadding}
             $fontSize={customFontSize}
+            $hasLeftIcon={!!leftIcon}
             disabled={disabled}
             {...props}
           />

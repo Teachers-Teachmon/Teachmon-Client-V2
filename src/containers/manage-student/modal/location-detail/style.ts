@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { colors } from '../../../../styles/theme';
+import { colors } from '@/styles/theme';
 
 export const ModalContainer = styled.div`
   display: flex;

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { colors } from '../../../styles/theme';
+import { colors } from '@/styles/theme';
 
 type StatusType = '방과후' | '자습' | '이석' | '조퇴' | '결석' | '이탈' | '취소';
 
