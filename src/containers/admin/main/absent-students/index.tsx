@@ -1,4 +1,5 @@
 import * as S from './style';
+import Button from '@/components/ui/button';
 
 export interface AbsentStudentItem {
   id: number;
@@ -32,9 +33,11 @@ export default function AbsentStudents({ students, currentPage, totalPages, onPr
       <S.AbsentStudentGrid>
         {students.map((student) => (
           <S.AbsentStudentRow key={student.id}>
-            <S.StudentDate>{student.date}</S.StudentDate>
-            <S.StudentName>{student.name}</S.StudentName>
-            <S.DeleteButton onClick={() => onDelete(student.id)}>삭제</S.DeleteButton>
+            <div style={{ display: 'flex', alignItems: 'left', flexDirection: 'column', gap: '8px' }}  >
+              <S.StudentDate>{student.date}</S.StudentDate>
+              <S.StudentName>{student.name}</S.StudentName>
+            </div>
+            <Button text="삭제" variant="delete" onClick={() => onDelete(student.id)} />
           </S.AbsentStudentRow>
         ))}
       </S.AbsentStudentGrid>

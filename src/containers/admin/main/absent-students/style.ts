@@ -1,3 +1,4 @@
+import { colors } from '@/styles/theme';
 import styled from '@emotion/styled';
 export const AbsentStudentSection = styled.div`
   flex: 1;
@@ -60,8 +61,9 @@ export const AbsentStudentRow = styled.div`
   align-items: center;
   gap: 10px;
   padding: 14px 28px;
-  border-bottom: 1px solid #f2f3f6;
+  justify-content: space-between;
   width: 100%;
+  border-bottom: 1px solid #f2f3f6;
   max-height: 100px;
   box-sizing: border-box;
   border-right: 1px solid #f2f3f6;
@@ -80,23 +82,8 @@ export const StudentDate = styled.span`
 export const StudentName = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 20px;
-  color: #000000;
+  color: ${colors.primaryGray};
   flex: 1;
-`;
-export const DeleteButton = styled.button`
-  background-color: #f87067;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  font-family: 'Paperlogy', sans-serif;
-  font-weight: 600;
-  font-size: 12px;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  &:hover {
-    background-color: #e65c53;
-  }
 `;
