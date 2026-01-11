@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/components/layout/MainLayout'
+import AdminUsersPage from '@/pages/admin/users'
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/manage" element={<div>학생관리</div>} />
         <Route path="/after-school" element={<div>방과후</div>} />
         <Route path="/admin" element={<div>관리자</div>} />
+        <Route path="/admin/users" element={<AdminUsersPage />} />
       </Route>
 
       <Route path="*" element={<div>Not Found</div>} />
