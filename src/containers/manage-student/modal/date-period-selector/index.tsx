@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Modal from '@/components/layout/modal';
+import Button from '@/components/ui/button';
 import * as S from './style';
 
 interface DatePeriodSelectorProps {
@@ -79,8 +80,8 @@ export default function DatePeriodSelector({
                 </S.Section>
 
                 <S.ButtonGroup>
-                    <S.CancelButton onClick={onClose}>취소</S.CancelButton>
-                    <S.ConfirmButton onClick={handleConfirm}>확인</S.ConfirmButton>
+                    <Button text="취소" width='100%' onClick={onClose} variant="cancel" />
+                    <Button text="확인" width='100%' onClick={handleConfirm} variant="confirm" />
                 </S.ButtonGroup>
             </S.Container>
         </Modal>

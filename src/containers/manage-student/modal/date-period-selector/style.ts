@@ -90,37 +90,3 @@ export const ButtonGroup = styled.div`
     justify-content: flex-end;
     margin-top: 2rem;
 `;
-
-export const CancelButton = styled.button`
-    padding: 0.75rem 1.5rem;
-    border: 1px solid ${colors.n02};
-    border-radius: ${radius.md};
-    background: white;
-    font-family: 'Paperlogy', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    color: ${colors.n03};
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-        background: ${colors.n01};
-    }
-`;
-
-export const ConfirmButton = styled.button`
-    padding: 0.75rem 1.5rem;
-    border: none;
-    border-radius: ${radius.md};
-    background: ${colors.primary};
-    font-family: 'Paperlogy', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    &:hover {
-        opacity: 0.9;
-    }
-`;
