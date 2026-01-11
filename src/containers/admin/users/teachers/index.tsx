@@ -86,19 +86,6 @@ export default function Teachers({ searchQuery, sortOrder }: TeachersProps) {
     setOpenMenuId(null);
   };
 
-  const handleAdd = () => {
-    const newTeacher: Teacher = {
-      id: String(Date.now()),
-      role: '일반',
-      name: '',
-      email: '',
-      supervisionCount: 0,
-    };
-    setTeachers([...teachers, newTeacher]);
-    setEditingTeacher(newTeacher);
-    setEditingIds((prev) => new Set(prev).add(newTeacher.id));
-  };
-
   const filteredTeachers = teachers
     .filter((teacher) => teacher.name.includes(searchQuery) || teacher.email.includes(searchQuery))
     .sort((a, b) => {
@@ -218,10 +205,6 @@ export default function Teachers({ searchQuery, sortOrder }: TeachersProps) {
       <S.TableWrapper>
         <TableLayout columns={columns} data={filteredTeachers} renderActions={renderActions} />
       </S.TableWrapper>
-      <S.AddButton onClick={handleAdd}>
-        <img src="/icons/common/plusBlue.svg" alt="추가" />
-        <span>추가</span>
-      </S.AddButton>
     </>
   );
 }

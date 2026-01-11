@@ -17,6 +17,10 @@ export default function AdminUsersPage() {
     setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
   };
 
+  const handleAdd = () => {
+    // 추가 버튼 클릭 시 필요한 로직 (예: 스크롤 등)
+  };
+
   return (
     <S.Container>
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
@@ -48,6 +52,11 @@ export default function AdminUsersPage() {
       ) : (
         <Students searchQuery={searchQuery} />
       )}
+
+      <S.AddButton onClick={handleAdd}>
+        <img src="/icons/common/plusBlue.svg" alt="추가" />
+        <span>추가</span>
+      </S.AddButton>
     </S.Container>
   );
 }

@@ -60,3 +60,36 @@ export const ArrowDown = styled.span<{ $active?: boolean }>`
   font-size: 16px;
   color: ${({ $active }) => ($active ? colors.primary : colors.primaryGray)};
 `;
+
+export const AddButton = styled.button`
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 283px;
+  height: 50px;
+  background: ${colors.background};
+  border: 1px solid ${colors.primary};
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+
+  span {
+    font-size: ${fontSizes.H4};
+    font-weight: 600;
+    color: ${colors.primary};
+  }
+
+  &:hover {
+    background: ${colors.primary100};
+  }
+`;

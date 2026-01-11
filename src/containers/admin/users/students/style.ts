@@ -61,39 +61,6 @@ export const DropdownItem = styled.button<{ $danger?: boolean }>`
   }
 `;
 
-export const AddButton = styled.button`
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  width: 283px;
-  height: 50px;
-  background: ${colors.background};
-  border: 1px solid ${colors.primary};
-  border-radius: ${radius.md};
-  cursor: pointer;
-  transition: background 0.2s;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
-
-  span {
-    font-size: ${fontSizes.H4};
-    font-weight: 600;
-    color: ${colors.primary};
-  }
-
-  &:hover {
-    background: ${colors.primary100};
-  }
-`;
-
 export const EditButtonGroup = styled.div`
   display: flex;
   gap: 15px;

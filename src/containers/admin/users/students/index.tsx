@@ -80,19 +80,6 @@ export default function Students({ searchQuery }: StudentsProps) {
     setOpenMenuId(null);
   };
 
-  const handleAdd = () => {
-    const newStudent: Student = {
-      id: String(Date.now()),
-      grade: 1,
-      classNum: 1,
-      number: 1,
-      name: '',
-    };
-    setStudents([...students, newStudent]);
-    setEditingStudent(newStudent);
-    setEditingIds((prev) => new Set(prev).add(newStudent.id));
-  };
-
   const filteredStudents = students.filter(
     (student) => student.name.includes(searchQuery) || String(student.grade).includes(searchQuery)
   );
@@ -218,10 +205,6 @@ export default function Students({ searchQuery }: StudentsProps) {
       <S.TableWrapper>
         <TableLayout columns={columns} data={filteredStudents} renderActions={renderActions} />
       </S.TableWrapper>
-      <S.AddButton onClick={handleAdd}>
-        <img src="/icons/common/plusBlue.svg" alt="추가" />
-        <span>추가</span>
-      </S.AddButton>
     </>
   );
 }
