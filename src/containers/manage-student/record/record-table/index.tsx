@@ -1,5 +1,5 @@
 import Button from '@/components/ui/button';
-import Checkbox from '@/components/ui/checkbox';
+import Checkbox from '@/components/ui/input/checkbox';
 import StatusBadge from '@/components/ui/status';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import type { RecordData, LeaveData, StudentData } from '@/types/record';

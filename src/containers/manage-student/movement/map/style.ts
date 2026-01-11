@@ -46,8 +46,3 @@ export const MapContainer = styled.div`
     overflow: hidden;
 `;
 
-export const ButtonWrapper = styled.div`
-    display: flex;
-    gap: 20px;
-    margin-top: 24px;
-`;
