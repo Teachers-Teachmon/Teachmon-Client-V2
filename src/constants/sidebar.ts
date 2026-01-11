@@ -26,7 +26,7 @@ export const LOGO = '/assets/logo.svg'
 export const MINI_LOGO = '/assets/MiniLogo.svg'
 
 export const SIDEBAR_MENU_ITEMS: SidebarMenuItem[] = [
-  { id: 'home', label: '홈', icon: SIDEBAR_ICONS.home, activeIcon: SIDEBAR_ICONS.homeActive, path: '/' },
+  { id: 'home', label: '홈', icon: SIDEBAR_ICONS.home, activeIcon: SIDEBAR_ICONS.homeActive, path: '/main' },
   { id: 'supervision', label: '자습감독', icon: SIDEBAR_ICONS.supervision, activeIcon: SIDEBAR_ICONS.supervisionActive, path: '/supervision' },
   { id: 'manage', label: '학생관리', icon: SIDEBAR_ICONS.manage, activeIcon: SIDEBAR_ICONS.manageActive, path: '/manage' },
   { id: 'afterSchool', label: '방과후', icon: SIDEBAR_ICONS.afterSchool, activeIcon: SIDEBAR_ICONS.afterSchoolActive, path: '/after-school' },
