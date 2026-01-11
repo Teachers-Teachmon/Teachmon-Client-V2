@@ -93,11 +93,11 @@ export default function ExchangeDetailModal({
                         <S.CardTitle>{exchange.responser.teacher.name} 선생님</S.CardTitle>
                         <S.CardInfo>
                             <S.InfoRow>
-                                <S.InfoIcon src="/icons/Calendar.svg" alt="날짜" />
+                                <S.InfoIcon src="/icons/calendar.svg" alt="날짜" />
                                 <S.InfoText>{formatDateFull(exchange.responser.day)}</S.InfoText>
                             </S.InfoRow>
                             <S.InfoRow>
-                                <S.InfoIcon src="/icons/ManageType.svg" alt="감독" />
+                                <S.InfoIcon src="/icons/manageType.svg" alt="감독" />
                                 <S.InfoText>{formatSupervisionType(exchange.responser.type)}</S.InfoText>
                             </S.InfoRow>
                         </S.CardInfo>
