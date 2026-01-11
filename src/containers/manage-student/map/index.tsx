@@ -68,9 +68,15 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
                 {({ zoomIn, zoomOut, resetTransform }) => (
                     <>
                         <S.ZoomControls>
-                            <S.ZoomButton onClick={() => zoomIn()}>+</S.ZoomButton>
-                            <S.ZoomButton onClick={() => resetTransform()}>⟲</S.ZoomButton>
-                            <S.ZoomButton onClick={() => zoomOut()}>−</S.ZoomButton>
+                            <S.ZoomButton onClick={() => zoomIn()}>
+                                <img src="/icons/student/zoom-in.svg" alt="zoom in" style={{ width: '30px', height: '30px' }} />
+                            </S.ZoomButton>
+                            <S.ZoomButton onClick={() => resetTransform()}>
+                                           <img src="/icons/student/mdi_reload.svg" alt="zoom out" style={{ width: '20px', height: '20px' }} />
+                                       </S.ZoomButton>
+                            <S.ZoomButton onClick={() => zoomOut()}>
+                                <img src="/icons/student/zoom-out.svg" alt="zoom out" style={{ width: '30px', height: '30px' }} />
+                            </S.ZoomButton>
                         </S.ZoomControls>
                         <TransformComponent
                             wrapperStyle={{

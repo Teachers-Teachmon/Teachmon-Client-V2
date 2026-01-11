@@ -154,7 +154,7 @@ export const StudentDropdownItem = styled.div`
     padding: 0 25px;
     display: flex;
     align-items: center;
-    background-color: '#ffffff';
+    background-color: #ffffff;
     cursor: pointer;
     
     font-family: 'Poppins', sans-serif;
@@ -164,7 +164,7 @@ export const StudentDropdownItem = styled.div`
     color: #000000;
     
     &:hover {
-        background-color: '#7f7f7f';
+        background-color: #d0d0d0;
     }
 `;
 
@@ -250,4 +250,3 @@ export const NextButton = styled.button`
         background-color: #2558c9;
     }
 `;
-
