@@ -1,5 +1,5 @@
 import type { CalendarEvent, CalendarRangeEvent, LegendItem, DayInfo, CalendarProps } from '@/types/calendar'
-import { useCalendar, useDragSelect } from '@/hooks/calendar'
+import { useCalendar, useDragSelect } from '@/hooks/useCalendar'
 import { DAYS_OF_WEEK, LEFT_DOUBLE_ARROW, RIGHT_DOUBLE_ARROW, getDayType } from '@/utils/calendar'
 import * as S from './style'
 
