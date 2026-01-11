@@ -5,6 +5,7 @@ import Button from '@/components/ui/button';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import * as S from './style';
+import * as PageS from '@/pages/admin/users/style';
 
 type UserRole = '관리자' | '일반';
 type SortOrder = 'asc' | 'desc';
@@ -15,11 +16,13 @@ export interface Teacher {
   name: string;
   email: string;
   supervisionCount: number;
+  forbiddenDates?: string[];
 }
 
 interface TeachersProps {
   searchQuery: string;
   sortOrder: SortOrder;
+  onOpenForbiddenDates: (teacher: Teacher) => void;
 }
 
 const mockTeachers: Teacher[] = [
@@ -27,7 +30,7 @@ const mockTeachers: Teacher[] = [
   { id: '2', role: '일반', name: '이혜정', email: 'teacher068@bssm.hs.kr', supervisionCount: 36 },
 ];
 
-export default function Teachers({ searchQuery, sortOrder }: TeachersProps) {
+export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates }: TeachersProps) {
   const [teachers, setTeachers] = useState<Teacher[]>(mockTeachers);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
@@ -84,6 +87,19 @@ export default function Teachers({ searchQuery, sortOrder }: TeachersProps) {
       return newSet;
     });
     setOpenMenuId(null);
+  };
+
+  const handleAdd = () => {
+    const newTeacher: Teacher = {
+      id: String(Date.now()),
+      role: '일반',
+      name: '',
+      email: '',
+      supervisionCount: 0,
+    };
+    setTeachers([...teachers, newTeacher]);
+    setEditingTeacher(newTeacher);
+    setEditingIds((prev) => new Set(prev).add(newTeacher.id));
   };
 
   const filteredTeachers = teachers
@@ -188,7 +204,7 @@ export default function Teachers({ searchQuery, sortOrder }: TeachersProps) {
           </S.KebabButton>
           {openMenuId === row.id && (
             <S.DropdownMenu>
-              <S.DropdownItem>금지날짜</S.DropdownItem>
+              <S.DropdownItem onClick={() => onOpenForbiddenDates(row)}>금지날짜</S.DropdownItem>
               <S.DropdownItem onClick={() => handleEdit(row)}>수정</S.DropdownItem>
               <S.DropdownItem $danger onClick={() => handleDelete(row.id)}>
                 삭제
@@ -205,6 +221,10 @@ export default function Teachers({ searchQuery, sortOrder }: TeachersProps) {
       <S.TableWrapper>
         <TableLayout columns={columns} data={filteredTeachers} renderActions={renderActions} />
       </S.TableWrapper>
+      <PageS.AddButton onClick={handleAdd}>
+        <img src="/icons/common/plusBlue.svg" alt="추가" />
+        <span>추가</span>
+      </PageS.AddButton>
     </>
   );
 }

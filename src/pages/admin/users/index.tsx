@@ -2,7 +2,9 @@ import { useState } from 'react';
 import Header from '@/containers/admin/users/header';
 import Teachers from '@/containers/admin/users/teachers';
 import Students from '@/containers/admin/users/students';
+import ForbiddenDates from '@/containers/admin/users/forbidden-dates';
 import TextInput from '@/components/ui/input/text-input';
+import type { Teacher } from '@/containers/admin/users/teachers';
 import * as S from './style';
 
 type TabType = '선생님' | '학생';
@@ -12,13 +14,24 @@ export default function AdminUsersPage() {
   const [activeTab, setActiveTab] = useState<TabType>('선생님');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   const handleSort = () => {
     setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
   };
 
-  const handleAdd = () => {
-    // 추가 버튼 클릭 시 필요한 로직 (예: 스크롤 등)
+  const handleOpenForbiddenDates = (teacher: Teacher) => {
+    setSelectedTeacher(teacher);
+  };
+
+  const handleSaveForbiddenDates = (dates: string[]) => {
+    // TODO: API 호출하여 금지날짜 저장
+    console.log('Saving forbidden dates:', dates, 'for teacher:', selectedTeacher?.name);
+    setSelectedTeacher(null);
+  };
+
+  const handleCancelForbiddenDates = () => {
+    setSelectedTeacher(null);
   };
 
   return (
@@ -48,15 +61,23 @@ export default function AdminUsersPage() {
       </S.FilterSection>
 
       {activeTab === '선생님' ? (
-        <Teachers searchQuery={searchQuery} sortOrder={sortOrder} />
+        <Teachers
+          searchQuery={searchQuery}
+          sortOrder={sortOrder}
+          onOpenForbiddenDates={handleOpenForbiddenDates}
+        />
       ) : (
         <Students searchQuery={searchQuery} />
       )}
 
-      <S.AddButton onClick={handleAdd}>
-        <img src="/icons/common/plusBlue.svg" alt="추가" />
-        <span>추가</span>
-      </S.AddButton>
+      {selectedTeacher && (
+        <ForbiddenDates
+          teacherName={selectedTeacher.name}
+          initialDates={selectedTeacher.forbiddenDates || []}
+          onSave={handleSaveForbiddenDates}
+          onCancel={handleCancelForbiddenDates}
+        />
+      )}
     </S.Container>
   );
 }

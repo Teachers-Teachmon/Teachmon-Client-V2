@@ -3,6 +3,7 @@ import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import TextInput from '@/components/ui/input/text-input';
 import * as S from './style';
+import * as PageS from '@/pages/admin/users/style';
 
 export interface Student {
   id: string;
@@ -78,6 +79,19 @@ export default function Students({ searchQuery }: StudentsProps) {
       return newSet;
     });
     setOpenMenuId(null);
+  };
+
+  const handleAdd = () => {
+    const newStudent: Student = {
+      id: String(Date.now()),
+      grade: 1,
+      classNum: 1,
+      number: 1,
+      name: '',
+    };
+    setStudents([...students, newStudent]);
+    setEditingStudent(newStudent);
+    setEditingIds((prev) => new Set(prev).add(newStudent.id));
   };
 
   const filteredStudents = students.filter(
@@ -205,6 +219,10 @@ export default function Students({ searchQuery }: StudentsProps) {
       <S.TableWrapper>
         <TableLayout columns={columns} data={filteredStudents} renderActions={renderActions} />
       </S.TableWrapper>
+      <PageS.AddButton onClick={handleAdd}>
+        <img src="/icons/common/plusBlue.svg" alt="추가" />
+        <span>추가</span>
+      </PageS.AddButton>
     </>
   );
 }

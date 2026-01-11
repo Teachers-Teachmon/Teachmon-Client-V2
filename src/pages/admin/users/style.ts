@@ -63,7 +63,7 @@ export const ArrowDown = styled.span<{ $active?: boolean }>`
 
 export const AddButton = styled.button`
   position: absolute;
-  bottom: 40px;
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -79,8 +79,8 @@ export const AddButton = styled.button`
   transition: background 0.2s;
 
   img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
 
   span {
