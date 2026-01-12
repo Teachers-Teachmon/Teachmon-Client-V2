@@ -1,5 +1,5 @@
 import type { CalendarEvent, CalendarRangeEvent, LegendItem, DayInfo, CalendarProps } from '@/types/calendar'
-import { useCalendar, useDragSelect } from '@/hooks/calendar'
+import { useCalendar, useDragSelect } from '@/hooks/useCalendar'
 import { DAYS_OF_WEEK, LEFT_DOUBLE_ARROW, RIGHT_DOUBLE_ARROW, getDayType } from '@/utils/calendar'
 import * as S from './style'
 
@@ -67,7 +67,11 @@ export default function Calendar({
                   isSelected={isInDragRange}
                   onMouseDown={() => handleMouseDown(date)}
                   onMouseEnter={() => handleMouseEnter(date)}
-                  onClick={() => !selectable && onDateClick?.(date, { date, isCurrentMonth, events: dayEvents, rangeEvents: dayRangeEvents })}
+                  onClick={(e) => !selectable && onDateClick?.(
+                    date,
+                    { date, isCurrentMonth, events: dayEvents, rangeEvents: dayRangeEvents },
+                    (e.currentTarget as HTMLElement).getBoundingClientRect()
+                  )}
                 >
                   <S.DayNumber dayType={dayType} isCurrentMonth={isCurrentMonth}>{date.getDate()}</S.DayNumber>
                   <S.EventList>
@@ -77,7 +81,12 @@ export default function Calendar({
                         bgColor={event.bgColor}
                         textColor={event.textColor}
                         clickable={!!onEventClick}
-                        onClick={(e) => { if (onEventClick) { e.stopPropagation(); onEventClick(event) } }}
+                        onClick={(e) => {
+                          if (onEventClick) {
+                            e.stopPropagation()
+                            onEventClick(event, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                          }
+                        }}
                       >
                         {event.label}
                       </S.EventTag>
