@@ -17,6 +17,7 @@ export default function BusinessTripPage() {
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
   const businessTripEvents: CalendarEvent[] = useMemo(() => {
     if (!classData) return [];
@@ -52,9 +53,16 @@ export default function BusinessTripPage() {
     setIsModalOpen(true);
   };
 
-  const handleConfirm = () => {
-    // TODO: 출장 처리 API 호출
-    console.log('출장 처리:', { classData, selectedDate });
+  const handleConfirm = () => { 
+    setIsModalOpen(false);
+    setIsSecondModalOpen(true);
+  };
+
+  const handleSecondModalConfirm = () => {
+    navigate('/after-school/extra', { state: { classData, businessTripDate: selectedDate } });
+  };
+
+  const handleSecondModalCancel = () => {
     navigate(-1);
   };
 
@@ -72,12 +80,10 @@ export default function BusinessTripPage() {
     
     if (hasEvent) {
       setSelectedDate(date);
-      console.log('선택된 날짜:', date);
     }
   };
 
   const handleEventClick = (event: CalendarEvent) => {
-    console.log('출장 이벤트 클릭:', event);
   };
 
   const selectedDateRange: CalendarRangeEvent[] = useMemo(() => {
@@ -128,6 +134,16 @@ export default function BusinessTripPage() {
             을<br />출장 처리 하시겠습니까?
           </S.ModalMessage>
         }
+        cancelText="취소"
+        confirmText="완료"
+      />
+
+      <ConfirmModal
+        isOpen={isSecondModalOpen}
+        onClose={handleSecondModalCancel}
+        onConfirm={handleSecondModalConfirm}
+        title="출장"
+        message="보강 날짜도 미리 정하시겠습니까?"
         cancelText="취소"
         confirmText="완료"
       />
