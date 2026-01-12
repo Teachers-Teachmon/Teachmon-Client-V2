@@ -105,11 +105,11 @@ export default function AdminSupervisionSection() {
   const selectedEventType = selectedEvent ? getEventType(selectedEvent) : null;
   const availableTypeLabels = selectedDate
     ? (() => {
-      const availableTypes = getAvailableTypesForDate(selectedDate, selectedEventId);
-      const allowedTypes = selectedEventType
-        ? Array.from(new Set([selectedEventType, ...availableTypes]))
-        : availableTypes;
-      return allowedTypes.map((type) => SUPERVISION_TYPE_LABELS[type]);
+      if (!selectedEventId) {
+        const availableTypes = getAvailableTypesForDate(selectedDate, null);
+        return availableTypes.map((type) => SUPERVISION_TYPE_LABELS[type]);
+      }
+      return SUPERVISION_TYPE_OPTIONS;
     })()
     : SUPERVISION_TYPE_OPTIONS;
 
@@ -204,25 +204,41 @@ export default function AdminSupervisionSection() {
     if (!selectedTeacher || !selectedDate) return;
     const selectedTypeValue = SUPERVISION_LABEL_TO_TYPE[type];
     if (!selectedTypeValue) return;
-    const availableTypes = getAvailableTypesForDate(selectedDate, selectedEventId);
-    const canSelect = selectedEventType === selectedTypeValue || availableTypes.includes(selectedTypeValue);
-    if (!canSelect) return;
     const style = SUPERVISION_TYPE_STYLES[selectedTypeValue];
     if (selectedEventId) {
+      const otherEvent = events.find(
+        (event) =>
+          event.id !== selectedEventId &&
+          isSameDay(event.date, selectedDate) &&
+          getEventType(event) === selectedTypeValue
+      );
       setEvents((prev) =>
-        prev.map((event) =>
-          event.id === selectedEventId
-            ? {
+        prev.map((event) => {
+          if (event.id === selectedEventId) {
+            return {
               ...event,
               label: selectedTeacher,
               bgColor: style.bgColor,
               textColor: style.textColor,
               supervisionType: selectedTypeValue,
-            }
-            : event
-        )
+            };
+          }
+          if (otherEvent && event.id === otherEvent.id) {
+            const fallbackType: SupervisionType = selectedEventType ?? 'self_study';
+            const fallbackStyle = SUPERVISION_TYPE_STYLES[fallbackType];
+            return {
+              ...event,
+              bgColor: fallbackStyle.bgColor,
+              textColor: fallbackStyle.textColor,
+              supervisionType: fallbackType,
+            };
+          }
+          return event;
+        })
       );
     } else if (selectedDate) {
+      const availableTypes = getAvailableTypesForDate(selectedDate, null);
+      if (!availableTypes.includes(selectedTypeValue)) return;
       const nextId = `${selectedDate.getTime()}-${Math.random().toString(36).slice(2, 8)}`;
       setEvents((prev) => [
         ...prev,

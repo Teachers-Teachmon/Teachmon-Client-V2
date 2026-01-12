@@ -35,8 +35,16 @@ export function useCalendar({ controlledYear, controlledMonth, onMonthChange, ev
   }, [year, month])
 
   const eventsMap = useMemo(() => {
+    const getPriority = (event: CalendarEvent) => {
+      if (event.supervisionType === 'self_study') return 0
+      if (event.supervisionType === 'leave_seat') return 1
+      return 2
+    }
     const map = new Map<string, CalendarEvent[]>()
     events.forEach(e => map.set(getDateKey(e.date), [...(map.get(getDateKey(e.date)) || []), e]))
+    map.forEach((dayEvents, key) => {
+      map.set(key, [...dayEvents].sort((a, b) => getPriority(a) - getPriority(b)))
+    })
     return map
   }, [events])
 
