@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Button from '@/components/ui/button';
+import TextInput from '@/components/ui/input/text-input';
 import * as S from './style';
 
 interface SupervisionHeaderProps {
@@ -35,13 +36,12 @@ export default function SupervisionHeader({
     return (
         <S.Header>
             <S.SearchContainer>
-                <S.SearchIcon src="/icons/search.svg" alt="검색" />
-                <S.SearchInput
-                    type="text"
+                <TextInput
                     placeholder="이름을 입력해주세요."
                     value={value}
                     onChange={(e) => setValue(e.target.value)}
                     onKeyDown={handleKeyDown}
+                    customHeight={"2.5rem"}
                 />
             </S.SearchContainer>
             <Button
