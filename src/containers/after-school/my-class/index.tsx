@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ConfirmModal from '@/components/layout/modal/confirm';
 import * as S from './style';
 import type { AfterSchoolClass } from '@/types/after-school';
 import { MENU_OPTIONS } from '@/constants/after-school';
+import { colors } from '@/styles/theme';
 
 interface MyClassTableProps {
   classes: AfterSchoolClass[];
@@ -10,6 +12,8 @@ interface MyClassTableProps {
 
 export default function MyClassTable({ classes }: MyClassTableProps) {
   const navigate = useNavigate();
+  const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
+  const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<AfterSchoolClass | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
@@ -42,8 +46,14 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
     } else if (option === '보강') {
       console.log('보강:', classData);
     } else if (option === '종료') {
-      console.log('종료:', classData);
+      setSelectedClassForTerminate(classData);
+      setIsTerminateModalOpen(true);
     }
+  };
+
+  const handleTerminateConfirm = () => {
+    setIsTerminateModalOpen(false);
+    setSelectedClassForTerminate(null);
   };
 
   return (
@@ -100,6 +110,24 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
           <S.EmptyState>데이터가 없습니다</S.EmptyState>
         )}
       </S.Container>
+
+      <ConfirmModal
+        isOpen={isTerminateModalOpen}
+        onClose={() => setIsTerminateModalOpen(false)}
+        onConfirm={handleTerminateConfirm}
+        title="종료"
+        message={
+          <div style={{ fontSize: '1.125rem', lineHeight: '1.6', textAlign: 'center' }}>
+            정말로{' '}
+            <span style={{ color: colors.primary, fontWeight: 600, fontSize: '1.25rem' }}>
+              {selectedClassForTerminate?.subject}
+            </span>
+            {' '}방과후를<br />종료하시겠습니까?
+          </div>
+        }
+        cancelText="취소"
+        confirmText="종료"
+      />
     </S.Wrapper>
   );
 }
