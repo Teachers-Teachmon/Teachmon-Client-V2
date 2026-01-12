@@ -20,10 +20,14 @@ export const Message = styled.p`
   font-size: 1rem;
   color: #666;
   line-height: 1.5;
+  text-align: center;
 `
 
 export const ButtonGroup = styled.div`
   display: flex;
   gap: 0.75rem;
-  justify-content: flex-end;
+
+  & > button {
+    flex: 1;
+  }
 `
