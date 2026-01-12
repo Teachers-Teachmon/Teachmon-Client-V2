@@ -29,3 +29,21 @@ export const CalendarWrapper = styled.div`
   padding: 2rem;
   width: 100%;
 `;
+
+export const ModalMessage = styled.div`
+  font-size: 1.125rem;
+  line-height: 1.6;
+  text-align: center;
+  color: #666;
+  min-width: 180px;
+`;
+
+export const ModalHighlight = styled.span`
+  color: ${colors.primary};
+  font-weight: 600;
+  font-size: 1.25rem;
+`;
+
+export const StyledButton = styled.div`
+  width: 180px;
+`;

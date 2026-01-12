@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import Calendar from '@/components/ui/calendar';
 import type { CalendarEvent, CalendarRangeEvent } from '@/components/ui/calendar';
 import Button from '@/components/ui/button';
+import ConfirmModal from '@/components/layout/modal/confirm';
 import { colors } from '@/styles/theme';
 import * as S from './style';
 
@@ -15,6 +16,7 @@ export default function BusinessTripPage() {
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const businessTripEvents: CalendarEvent[] = useMemo(() => {
     if (!classData) return [];
@@ -43,6 +45,16 @@ export default function BusinessTripPage() {
   }, [classData, selectedYear, selectedMonth]);
 
   const handleComplete = () => {
+    if (!selectedDate) {
+      alert('출장 날짜를 선택해주세요.');
+      return;
+    }
+    setIsModalOpen(true);
+  };
+
+  const handleConfirm = () => {
+    // TODO: 출장 처리 API 호출
+    console.log('출장 처리:', { classData, selectedDate });
     navigate(-1);
   };
 
@@ -102,6 +114,23 @@ export default function BusinessTripPage() {
           showLegend={false}
         />
       </S.CalendarWrapper>
+
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleConfirm}
+        title="출장"
+        message={
+          <S.ModalMessage>
+            <S.ModalHighlight>
+              {selectedDate?.getFullYear()}년 {(selectedDate?.getMonth() || 0) + 1}월 {selectedDate?.getDate()}일 {classData?.subject || '스프링 수업'}
+            </S.ModalHighlight>
+            을<br />출장 처리 하시겠습니까?
+          </S.ModalMessage>
+        }
+        cancelText="취소"
+        confirmText="완료"
+      />
     </S.PageContainer>
   );
 }
