@@ -10,6 +10,8 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
       helperText,
       customPadding,
       customFontSize,
+      customBorderRadius,
+      customHeight,
       disabled,
       ...props
     },
@@ -26,6 +28,8 @@ const TextInput = forwardRef<HTMLInputElement, TextInputProps>(
             $hasError={hasError}
             $padding={customPadding}
             $fontSize={customFontSize}
+            $borderRadius={customBorderRadius}
+            $height={customHeight}
             disabled={disabled}
             {...props}
           />
