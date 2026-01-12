@@ -49,7 +49,10 @@ export default function DailySection() {
     setSelectedMonth(month);
   };
 
-  const handleDateClick = (date: Date) => {
+    const handleDateClick = (date: Date, dayInfo?: { isCurrentMonth: boolean }) => {
+    if (!dayInfo?.isCurrentMonth) return;
+    const dayOfWeek = date.getDay();
+    if (dayOfWeek === 0 || dayOfWeek === 6) return;
     if (!startDate || (startDate && endDate)) {
       setStartDate(date);
       setEndDate(null);
