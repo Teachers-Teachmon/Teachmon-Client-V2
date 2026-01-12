@@ -1,0 +1,100 @@
+import { useState, useEffect } from 'react';
+import * as S from './style';
+import type { AfterSchoolClass } from '@/types/after-school';
+import { MENU_OPTIONS } from '@/constants/after-school';
+
+interface MyClassTableProps {
+  classes: AfterSchoolClass[];
+}
+
+export default function MyClassTable({ classes }: MyClassTableProps) {
+  const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
+  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+
+  const filteredClasses = classes.filter(cls => cls.grade === selectedGrade);
+
+  useEffect(() => {
+    if (!menuOpenId) return;
+
+    const handleClickOutside = () => {
+      setMenuOpenId(null);
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [menuOpenId]);
+
+  const handleMenuToggle = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setMenuOpenId(menuOpenId === id ? null : id);
+  };
+
+  return (
+    <S.Wrapper>
+      <S.TitleSection>
+        <S.Title>나의 방과후({filteredClasses.length})</S.Title>
+        <S.GradeTabs>
+          <S.GradeTab
+            $active={selectedGrade === 1}
+            onClick={() => setSelectedGrade(1)}
+          >
+            1학년
+          </S.GradeTab>
+          <S.GradeTab
+            $active={selectedGrade === 2}
+            onClick={() => setSelectedGrade(2)}
+          >
+            2학년
+          </S.GradeTab>
+          <S.GradeTab
+            $active={selectedGrade === 3}
+            onClick={() => setSelectedGrade(3)}
+          >
+            3학년
+          </S.GradeTab>
+        </S.GradeTabs>
+      </S.TitleSection>
+
+      <S.Container>
+        {filteredClasses.length > 0 ? (
+          <S.Table>
+            <S.TableBody>
+              {filteredClasses.map(cls => (
+                <S.TableRow key={cls.id}>
+                  <S.TableCell>
+                    <S.DayText>{cls.day}</S.DayText>
+                  </S.TableCell>
+                  <S.TableCell>
+                    <S.TimeTag>{cls.time}</S.TimeTag>
+                  </S.TableCell>
+                  <S.TableCell>
+                    <S.ClassText>{cls.subject}</S.ClassText>
+                  </S.TableCell>
+                  <S.TableCell>
+                    <S.ProgramText>{cls.program}</S.ProgramText>
+                  </S.TableCell>
+                  <S.TableCell>
+                    <S.MenuButton onClick={(e) => handleMenuToggle(e, cls.id)}>
+                      <img src="/icons/common/expand.svg" alt="메뉴" />
+                    </S.MenuButton>
+                    {menuOpenId === cls.id && (
+                      <S.MenuDropdown onClick={(e) => e.stopPropagation()}>
+                        {MENU_OPTIONS.map((option) => (
+                          <S.MenuItem key={option}>{option}</S.MenuItem>
+                        ))}
+                      </S.MenuDropdown>
+                    )}
+                  </S.TableCell>
+                </S.TableRow>
+              ))}
+            </S.TableBody>
+          </S.Table>
+        ) : (
+          <S.EmptyState>데이터가 없습니다</S.EmptyState>
+        )}
+      </S.Container>
+    </S.Wrapper>
+  );
+}

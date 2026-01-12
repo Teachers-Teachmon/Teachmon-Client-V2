@@ -1,0 +1,133 @@
+import { useState, useEffect } from 'react';
+import * as S from './style';
+import type { AfterSchoolClass } from '@/types/after-school';
+import { DAYS, ITEMS_PER_PAGE, DAY_MAPPING } from '@/constants/after-school';
+
+interface AllClassSectionProps {
+  selectedGrade: 1 | 2 | 3;
+  onGradeChange: (grade: 1 | 2 | 3) => void;
+  classes: AfterSchoolClass[];
+}
+
+const getInitialDay = () => {
+  const today = new Date().getDay();
+  if (today === 0 || today === 5 || today === 6) return 0;
+  return today - 1;
+};
+
+export default function AllClassSection({
+  selectedGrade,
+  onGradeChange,
+  classes
+}: AllClassSectionProps) {
+  const [selectedDay, setSelectedDay] = useState(getInitialDay());
+  const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    setTimeSlotPages({});
+  }, [selectedGrade]);
+  
+  const selectedDayKey = DAY_MAPPING[DAYS[selectedDay]];
+  const filteredClasses = classes.filter(cls => cls.day === selectedDayKey);
+
+
+  const groupedByTime = filteredClasses.reduce((acc, cls) => {
+    if (!acc[cls.time]) {
+      acc[cls.time] = [];
+    }
+    acc[cls.time].push(cls);
+    return acc;
+  }, {} as Record<string, AfterSchoolClass[]>);
+
+  const handlePrevDay = () => {
+    setSelectedDay(prev => (prev > 0 ? prev - 1 : DAYS.length - 1));
+  };
+
+  const handleNextDay = () => {
+    setSelectedDay(prev => (prev < DAYS.length - 1 ? prev + 1 : 0));
+  };
+
+  const handlePrevPage = (time: string) => {
+    setTimeSlotPages(prev => ({
+      ...prev,
+      [time]: Math.max(0, (prev[time] || 0) - 1)
+    }));
+  };
+
+  const handleNextPage = (time: string, maxPage: number) => {
+    setTimeSlotPages(prev => ({
+      ...prev,
+      [time]: Math.min(maxPage, (prev[time] || 0) + 1)
+    }));
+  };
+
+  return (
+    <S.Wrapper>
+      <S.TitleSection>
+        <S.Title>전체 방과후</S.Title>
+        <S.GradeTabs>
+          <S.GradeTab $active={selectedGrade === 1} onClick={() => onGradeChange(1)}>1학년</S.GradeTab>
+          <S.GradeTab $active={selectedGrade === 2} onClick={() => onGradeChange(2)}>2학년</S.GradeTab>
+          <S.GradeTab $active={selectedGrade === 3} onClick={() => onGradeChange(3)}>3학년</S.GradeTab>
+        </S.GradeTabs>
+      </S.TitleSection>
+
+      <S.Container>
+        <S.DayNavigation>
+          <S.DayNavButton onClick={handlePrevDay}>
+            <img src="/icons/LeftDoubleArrow.svg" alt="이전 요일" />
+          </S.DayNavButton>
+          <S.DayText>{DAYS[selectedDay]}</S.DayText>
+          <S.DayNavButton onClick={handleNextDay}>
+            <img src="/icons/RightDoubleArrow.svg" alt="다음 요일" />
+          </S.DayNavButton>
+        </S.DayNavigation>
+
+        <S.TimeSlotList>
+          {Object.keys(groupedByTime).length > 0 ? (
+            Object.entries(groupedByTime).map(([time, timeClasses]) => {
+              const currentPage = timeSlotPages[time] || 0;
+              const totalPages = Math.ceil(timeClasses.length / ITEMS_PER_PAGE);
+              const startIndex = currentPage * ITEMS_PER_PAGE;
+              const endIndex = startIndex + ITEMS_PER_PAGE;
+              const displayClasses = timeClasses.slice(startIndex, endIndex);
+
+              return (
+                <S.TimeSlotSection key={time}>
+                  <S.TimeHeader>
+                    <S.TimeText>{time}</S.TimeText>
+                    <S.ArrowButtons>
+                      <S.ArrowButton 
+                        onClick={() => handlePrevPage(time)}
+                        disabled={currentPage === 0}
+                      >
+                        <img src="/icons/common/leftArrow.svg" alt="이전" />
+                      </S.ArrowButton>
+                      <S.ArrowButton 
+                        onClick={() => handleNextPage(time, totalPages - 1)}
+                        disabled={currentPage >= totalPages - 1}
+                      >
+                        <img src="/icons/common/rightArrow.svg" alt="다음" />
+                      </S.ArrowButton>
+                    </S.ArrowButtons>
+                  </S.TimeHeader>
+                  <S.ClassList>
+                    {displayClasses.map(cls => (
+                      <S.ClassCard key={cls.id}>
+                        <S.ClassSubject>{cls.subject}</S.ClassSubject>
+                        <S.ClassInfo>{cls.program}</S.ClassInfo>
+                        <S.TeacherName>{cls.teacher} 선생님</S.TeacherName>
+                      </S.ClassCard>
+                    ))}
+                  </S.ClassList>
+                </S.TimeSlotSection>
+              );
+            })
+          ) : (
+            <S.EmptyState>데이터가 없습니다</S.EmptyState>
+          )}
+        </S.TimeSlotList>
+      </S.Container>
+    </S.Wrapper>
+  );
+}
