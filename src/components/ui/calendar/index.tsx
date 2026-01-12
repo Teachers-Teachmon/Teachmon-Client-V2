@@ -28,6 +28,7 @@ export default function Calendar({
   const { isDateInDragRange, handleMouseDown, handleMouseEnter, handleMouseUp } = useDragSelect({ enabled: selectable, onRangeSelect })
   const prevMonthNum = month === 1 ? 12 : month - 1
   const nextMonthNum = month === 12 ? 1 : month + 1
+  const isInteractive = selectable || exchangeMode || !!onDateClick || !!onEventClick
 
   const handleEventClick = (event: CalendarEvent) => {
     if (exchangeMode) {
@@ -82,6 +83,7 @@ export default function Calendar({
                   key={index}
                   isCurrentMonth={isCurrentMonth}
                   isSelected={isInDragRange}
+                  isInteractive={isInteractive}
                   onMouseDown={() => handleMouseDown(date)}
                   onMouseEnter={() => handleMouseEnter(date)}
                   onClick={() => !selectable && onDateClick?.(date, { date, isCurrentMonth, events: dayEvents, rangeEvents: dayRangeEvents })}
@@ -106,7 +108,7 @@ export default function Calendar({
                           bgColor={event.bgColor}
                           textColor={event.textColor}
                           clickable={!!onEventClick || (exchangeMode && !isDisabled)}
-                          isSelected={selectedMyEvent?.id === event.id}
+                          isSelected={exchangeMode && selectedMyEvent?.id === event.id}
                           isDisabled={isDisabled}
                           onClick={(e) => {
                             e.stopPropagation()

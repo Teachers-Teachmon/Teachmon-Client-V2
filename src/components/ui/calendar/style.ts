@@ -140,7 +140,7 @@ export const DaysGrid = styled.div`
   position: relative;
 `
 
-export const DayCell = styled.div<{ isCurrentMonth: boolean; isSelected?: boolean }>`
+export const DayCell = styled.div<{ isCurrentMonth: boolean; isSelected?: boolean; isInteractive?: boolean }>`
   display: flex;
   flex-direction: column;
   width: calc(100% / 7);
@@ -149,14 +149,18 @@ export const DayCell = styled.div<{ isCurrentMonth: boolean; isSelected?: boolea
   background: ${({ isCurrentMonth, isSelected }) =>
     isSelected ? 'rgba(0, 133, 255, 0.1)' : isCurrentMonth ? colors.background : '#F8F8F8'};
   border: 1px solid #E8E8E8;
-  cursor: pointer;
+  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   transition: background 0.15s;
   position: relative;
   z-index: 1;
 
   &:hover {
-    background: ${({ isCurrentMonth, isSelected }) =>
-    isSelected ? 'rgba(0, 133, 255, 0.15)' : isCurrentMonth ? '#FAFAFA' : '#F0F0F0'};
+    background: ${({ isCurrentMonth, isSelected, isInteractive }) => {
+    if (!isInteractive) {
+      return isSelected ? 'rgba(0, 133, 255, 0.1)' : isCurrentMonth ? colors.background : '#F8F8F8'
+    }
+    return isSelected ? 'rgba(0, 133, 255, 0.15)' : isCurrentMonth ? '#FAFAFA' : '#F0F0F0'
+  }};
   }
 `
 
