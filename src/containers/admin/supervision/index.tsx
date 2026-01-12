@@ -4,6 +4,7 @@ import Button from '@/components/ui/button';
 import Modal from '@/components/layout/modal';
 import DateInput from '@/components/ui/input/date';
 import Dropdown from '@/components/ui/input/dropdown';
+import SearchDropdown from '@/components/ui/input/dropdown/search';
 import type { CalendarEvent } from '@/types/calendar';
 import type { SupervisionCount } from '@/types/admin';
 import * as S from './style';
@@ -73,6 +74,7 @@ export default function AdminSupervisionSection() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [editAnchor, setEditAnchor] = useState<{ top: number; left: number } | null>(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
 
   const [events, setEvents] = useState<CalendarEvent[]>(SAMPLE_EVENTS);
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
@@ -111,6 +113,11 @@ export default function AdminSupervisionSection() {
     })()
     : SUPERVISION_TYPE_OPTIONS;
 
+  const filteredTeacherOptions = useMemo(() => {
+    if (!teacherSearchQuery) return TEACHER_OPTIONS;
+    return TEACHER_OPTIONS.filter((teacher) => teacher.includes(teacherSearchQuery));
+  }, [teacherSearchQuery]);
+
   const filteredCounts = useMemo(() => {
     let result = [...SAMPLE_COUNTS];
     if (searchQuery) {
@@ -139,6 +146,7 @@ export default function AdminSupervisionSection() {
       setSelectedTeacher(event.label);
       setSelectedType(eventType ? SUPERVISION_TYPE_LABELS[eventType] : '');
       setSelectedDate(event.date);
+      setTeacherSearchQuery('');
       if (anchorRect && calendarWrapperRef.current) {
         const wrapperRect = calendarWrapperRef.current.getBoundingClientRect();
         const editorWidth = 240;
@@ -168,6 +176,7 @@ export default function AdminSupervisionSection() {
     setSelectedTeacher('');
     setSelectedType('');
     setSelectedDate(date);
+    setTeacherSearchQuery('');
     if (anchorRect && calendarWrapperRef.current) {
       const wrapperRect = calendarWrapperRef.current.getBoundingClientRect();
       const editorWidth = 240;
@@ -245,6 +254,7 @@ export default function AdminSupervisionSection() {
     setSelectedType('');
     setSelectedDate(null);
     setEditAnchor(null);
+    setTeacherSearchQuery('');
   };
 
   const handleCancel = () => {
@@ -335,11 +345,13 @@ export default function AdminSupervisionSection() {
           />
           {viewMode === 'edit' && editAnchor && (
             <S.FloatingEditor $top={editAnchor.top} $left={editAnchor.left}>
-              <Dropdown
+              <SearchDropdown
                 placeholder="이름을 입력해주세요"
-                items={TEACHER_OPTIONS}
+                searchPlaceholder="선생님 검색"
+                items={filteredTeacherOptions}
                 value={selectedTeacher}
                 onChange={handleTeacherSelect}
+                onSearchChange={setTeacherSearchQuery}
                 customWidth="100%"
               />
               <S.EditTitle>자습/이석 선택</S.EditTitle>
