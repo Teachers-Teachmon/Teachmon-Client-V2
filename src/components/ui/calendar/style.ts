@@ -110,7 +110,6 @@ export const WeekDay = styled.div<{
   padding: 10px;
   background: ${colors.background};
   border: 1px solid #E8E8E8;
-  font-family: 'Paperlogy', sans-serif;
   font-weight: 500;
   font-size: 15px;
 
@@ -225,7 +224,6 @@ export const RangeEventOverlay = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Paperlogy', sans-serif;
   font-weight: 500;
   font-size: 14px;
   pointer-events: none;
