@@ -39,3 +39,21 @@ export const slideDown = keyframes`
     opacity: 0;
   }
 `
+
+export const slideInLeft = keyframes`
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+`
+
+export const slideOutLeft = keyframes`
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+`
