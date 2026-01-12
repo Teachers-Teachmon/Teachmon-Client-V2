@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as S from './style';
 import type { AfterSchoolClass } from '@/types/after-school';
 import { MENU_OPTIONS } from '@/constants/after-school';
@@ -8,6 +9,7 @@ interface MyClassTableProps {
 }
 
 export default function MyClassTable({ classes }: MyClassTableProps) {
+  const navigate = useNavigate();
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
@@ -31,30 +33,28 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
     setMenuOpenId(menuOpenId === id ? null : id);
   };
 
+  const handleMenuItemClick = (e: React.MouseEvent, option: string, classData: AfterSchoolClass) => {
+    e.stopPropagation();
+    setMenuOpenId(null);
+    
+    if (option === '출장') {
+      navigate('/after-school/business-trip', { state: { classData } });
+    } else if (option === '보강') {
+      console.log('보강:', classData);
+    } else if (option === '종료') {
+      console.log('종료:', classData);
+    }
+  };
+
   return (
     <S.Wrapper>
       <S.TitleSection>
         <S.Title>나의 방과후({filteredClasses.length})</S.Title>
         <S.GradeTabs>
-          <S.GradeTab
-            $active={selectedGrade === 1}
-            onClick={() => setSelectedGrade(1)}
-          >
-            1학년
-          </S.GradeTab>
-          <S.GradeTab
-            $active={selectedGrade === 2}
-            onClick={() => setSelectedGrade(2)}
-          >
-            2학년
-          </S.GradeTab>
-          <S.GradeTab
-            $active={selectedGrade === 3}
-            onClick={() => setSelectedGrade(3)}
-          >
-            3학년
-          </S.GradeTab>
-        </S.GradeTabs>
+                  <S.GradeTab $active={selectedGrade === 1} onClick={() => setSelectedGrade(1)}>1학년</S.GradeTab>
+                  <S.GradeTab $active={selectedGrade === 2} onClick={() => setSelectedGrade(2)}>2학년</S.GradeTab>
+                  <S.GradeTab $active={selectedGrade === 3} onClick={() => setSelectedGrade(3)}>3학년</S.GradeTab>
+                </S.GradeTabs>
       </S.TitleSection>
 
       <S.Container>
@@ -82,7 +82,12 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
                     {menuOpenId === cls.id && (
                       <S.MenuDropdown onClick={(e) => e.stopPropagation()}>
                         {MENU_OPTIONS.map((option) => (
-                          <S.MenuItem key={option}>{option}</S.MenuItem>
+                          <S.MenuItem 
+                            key={option}
+                            onClick={(e) => handleMenuItemClick(e, option, cls)}
+                          >
+                            {option}
+                          </S.MenuItem>
                         ))}
                       </S.MenuDropdown>
                     )}

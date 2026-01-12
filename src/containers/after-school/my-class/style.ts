@@ -120,15 +120,14 @@ export const MenuButton = styled.button`
 
 export const MenuDropdown = styled.div`
   position: absolute;
-  right: 0;
-  top: 100%;
+  right: 10%;
+  top: 90%;
   background: ${colors.background};
   border: 1px solid ${colors.n02};
   border-radius: ${radius.md};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 10;
   overflow: hidden;
-  margin-top: 0.25rem;
   min-width: 80px;
 `;
 
@@ -145,7 +144,7 @@ export const MenuItem = styled.button`
   white-space: nowrap;
   
   &:hover {
-    background: ${colors.primaryBackground};
+    color: ${colors.primary};
   }
 `;
 

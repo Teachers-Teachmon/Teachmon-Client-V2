@@ -1,0 +1,107 @@
+import { useState, useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import Calendar from '@/components/ui/calendar';
+import type { CalendarEvent, CalendarRangeEvent } from '@/components/ui/calendar';
+import Button from '@/components/ui/button';
+import { colors } from '@/styles/theme';
+import * as S from './style';
+
+export default function BusinessTripPage() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const classData = location.state?.classData;
+  
+  const currentDate = new Date();
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const businessTripEvents: CalendarEvent[] = useMemo(() => {
+    if (!classData) return [];
+    
+    const dayMap: Record<string, number> = { '월': 1, '화': 2, '수': 3, '목': 4, '금': 5 };
+    const targetDay = dayMap[classData.day];
+    if (!targetDay) return [];
+    
+    const events: CalendarEvent[] = [];
+    const firstDay = new Date(selectedYear, selectedMonth - 1, 1);
+    const lastDay = new Date(selectedYear, selectedMonth, 0);
+    
+    for (let date = new Date(firstDay); date <= lastDay; date.setDate(date.getDate() + 1)) {
+      if (date.getDay() === targetDay) {
+        events.push({
+          id: `event-${date.getDate()}`,
+          date: new Date(date),
+          label: classData.subject,
+          bgColor: 'rgba(0, 133, 255, 0.1)',
+          textColor: '#0085FF'
+        });
+      }
+    }
+    
+    return events;
+  }, [classData, selectedYear, selectedMonth]);
+
+  const handleComplete = () => {
+    navigate(-1);
+  };
+
+  const handleMonthChange = (year: number, month: number) => {
+    setSelectedYear(year);
+    setSelectedMonth(month);
+  };
+
+  const handleDateClick = (date: Date) => {
+    const hasEvent = businessTripEvents.some(event => 
+      event.date.getFullYear() === date.getFullYear() &&
+      event.date.getMonth() === date.getMonth() &&
+      event.date.getDate() === date.getDate()
+    );
+    
+    if (hasEvent) {
+      setSelectedDate(date);
+      console.log('선택된 날짜:', date);
+    }
+  };
+
+  const handleEventClick = (event: CalendarEvent) => {
+    console.log('출장 이벤트 클릭:', event);
+  };
+
+  const selectedDateRange: CalendarRangeEvent[] = useMemo(() => {
+    if (!selectedDate) return [];
+    return [
+      {
+        id: 'selected-date',
+        startDate: selectedDate,
+        endDate: selectedDate,
+        label: '',
+        bgColor: colors.primaryBackground,
+        textColor: 'transparent',
+      },
+    ];
+  }, [selectedDate]);
+
+  return (
+    <S.PageContainer>
+      <S.Header>
+        <S.Title>"{classData?.subject || '스프링 수업'}" 방과후 출장 날짜를 선택해주세요.</S.Title>
+        <Button text="완료" variant="confirm" width="120px" onClick={handleComplete} />
+      </S.Header>
+      
+      <S.CalendarWrapper>
+        <Calendar
+          year={selectedYear}
+          month={selectedMonth}
+          onMonthChange={handleMonthChange}
+          events={businessTripEvents}
+          rangeEvents={selectedDateRange}
+          onDateClick={handleDateClick}
+          onEventClick={handleEventClick}
+          showYear={false}
+          showLegend={false}
+        />
+      </S.CalendarWrapper>
+    </S.PageContainer>
+  );
+}

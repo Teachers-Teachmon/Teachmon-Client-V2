@@ -12,7 +12,7 @@ export const DAY_MAPPING: Record<string, string> = {
 
 export const ITEMS_PER_PAGE = 4;
 
-export const MENU_OPTIONS = ['출석', '보강', '종료'] as const;
+export const MENU_OPTIONS = ['출장', '보강', '종료'] as const;
 
 export const MOCK_TODAY_CLASSES: TodayClass[] = [
   {
