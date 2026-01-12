@@ -1,8 +1,9 @@
-import * as S from './style';
+import Modal from '@/components/layout/modal';
 import Dropdown from '@/components/ui/input/dropdown';
 import DateInput from '@/components/ui/input/date';
 import Button from '@/components/ui/button';
 import { useState } from 'react';
+import * as S from './style';
 
 interface QuarterSettingsModalProps {
     isOpen: boolean;
@@ -21,8 +22,6 @@ export default function QuarterSettingsModal({
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
 
-    if (!isOpen) return null;
-
     const handleConfirm = () => {
         if (selectedQuarter && startDate && endDate) {
             onConfirm(selectedQuarter, startDate, endDate);
@@ -37,15 +36,9 @@ export default function QuarterSettingsModal({
         onClose();
     };
 
-    const handleOverlayClick = (e: React.MouseEvent) => {
-        if (e.target === e.currentTarget) {
-            handleClose();
-        }
-    };
-
     return (
-        <S.Overlay onClick={handleOverlayClick}>
-            <S.ModalContainer onClick={(e) => e.stopPropagation()}>
+        <Modal isOpen={isOpen} onClose={handleClose} padding="40px 77px">
+            <S.ModalContent>
                 <S.Title>분기설정</S.Title>
 
                 <S.FormSection>
@@ -87,7 +80,7 @@ export default function QuarterSettingsModal({
                         onClick={handleConfirm}
                     />
                 </S.ButtonRow>
-            </S.ModalContainer>
-        </S.Overlay>
+            </S.ModalContent>
+        </Modal>
     );
 }

@@ -18,7 +18,8 @@ export const ContentArea = styled.div`
 `;
 
 export const Row = styled.div`
-    display: flex;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
     height: 100%;
     min-height: 0;
     gap: 24px;

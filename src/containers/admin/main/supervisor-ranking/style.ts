@@ -5,6 +5,7 @@ export const SupervisorSection = styled.div`
   background-color: #ffffff;
   border: 1px solid #f2f3f6;
   border-radius: 16px;
+  width:100%;
   padding: 0;
   min-height: 0;
   overflow: hidden;
@@ -34,7 +35,7 @@ export const TopThreeContainer = styled.div`
   margin-bottom: 14px;
 `;
 export const TopRankCard = styled.div<{ $isFirst?: boolean }>`
-  width: 145px;
+  width: 100%;
   background-color: #fbfcff;
   border: 1px solid #f2f3f6;
   border-radius: 8px;

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 export const QuarterSection = styled.div`
-  width: 480px;
+  width: 100%;
   flex-shrink: 0;
   background-color: #ffffff;
   border: 1px solid #f2f3f6;
@@ -30,6 +30,10 @@ export const SectionTitle = styled.h2`
   color: #000000;
   margin: 0;
 `;
+export const YearSelectorWrapper = styled.div`
+  position: relative;
+`;
+
 export const YearSelector = styled.div`
   display: flex;
   align-items: center;
@@ -39,9 +43,43 @@ export const YearSelector = styled.div`
   line-height: 24px;
   color: #9ca4ba;
   cursor: pointer;
+  user-select: none;
+  
+  &:hover {
+    color: #7a82a0;
+  }
+  
   img {
     width: 16px;
     height: 16px;
+  }
+`;
+
+export const YearPopup = styled.div`
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  min-width: 100px;
+  overflow: hidden;
+`;
+
+export const YearOption = styled.div<{ $selected: boolean }>`
+  padding: 10px 16px;
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: ${({ $selected }) => ($selected ? 600 : 400)};
+  font-size: 16px;
+  color: ${({ $selected }) => ($selected ? '#2e6ff2' : '#000000')};
+  background: ${({ $selected }) => ($selected ? '#ebf1ff' : '#ffffff')};
+  cursor: pointer;
+  transition: background 0.2s;
+  
+  &:hover {
+    background: ${({ $selected }) => ($selected ? '#ebf1ff' : '#f5f5f5')};
   }
 `;
 export const EditButton = styled.button`

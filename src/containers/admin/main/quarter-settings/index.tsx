@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import * as S from './style';
 import QuarterSettingsModal from '../quarter-settings-modal';
+import { AVAILABLE_YEARS, DEFAULT_YEAR } from '@/constants/quarterSettings';
 
 export interface QuarterSettingItem {
   quarter: number;
@@ -14,6 +15,25 @@ interface QuarterSettingsProps {
 
 export default function QuarterSettings({ quarters }: QuarterSettingsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isYearPopupOpen, setIsYearPopupOpen] = useState(false);
+  const [selectedYear, setSelectedYear] = useState(DEFAULT_YEAR);
+  const yearPopupRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (yearPopupRef.current && !yearPopupRef.current.contains(event.target as Node)) {
+        setIsYearPopupOpen(false);
+      }
+    };
+
+    if (isYearPopupOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isYearPopupOpen]);
 
   const handleEditClick = () => {
     setIsModalOpen(true);
@@ -28,16 +48,50 @@ export default function QuarterSettings({ quarters }: QuarterSettingsProps) {
     // TODO: 실제 저장 로직 추가
   };
 
+  const handleYearClick = () => {
+    setIsYearPopupOpen(!isYearPopupOpen);
+  };
+
+  const handleYearSelect = (year: number) => {
+    setSelectedYear(year);
+    setIsYearPopupOpen(false);
+    // TODO: 연도 변경 로직 추가
+    console.log('선택된 연도:', year);
+  };
+
   return (
     <>
       <S.QuarterSection>
         <S.QuarterHeader>
           <S.QuarterTitleGroup>
             <S.SectionTitle>분기설정</S.SectionTitle>
-            <S.YearSelector>
-              2026
-              <img src="/icons/admin/leftArrowGray.svg" alt="dropdown" style={{ transform: 'rotate(-90deg)', marginLeft: '8px' }} />
-            </S.YearSelector>
+            <S.YearSelectorWrapper ref={yearPopupRef}>
+              <S.YearSelector onClick={handleYearClick}>
+                {selectedYear}
+                <img 
+                  src="/icons/admin/leftArrowGray.svg" 
+                  alt="dropdown" 
+                  style={{ 
+                    transform: isYearPopupOpen ? 'rotate(90deg)' : 'rotate(-90deg)', 
+                    marginLeft: '8px',
+                    transition: 'transform 0.2s'
+                  }} 
+                />
+              </S.YearSelector>
+              {isYearPopupOpen && (
+                <S.YearPopup>
+                  {AVAILABLE_YEARS.map((year) => (
+                    <S.YearOption
+                      key={year}
+                      $selected={year === selectedYear}
+                      onClick={() => handleYearSelect(year)}
+                    >
+                      {year}
+                    </S.YearOption>
+                  ))}
+                </S.YearPopup>
+              )}
+            </S.YearSelectorWrapper>
           </S.QuarterTitleGroup>
           <S.EditButton onClick={handleEditClick}>
             <img src="/icons/admin/rewrite.svg" alt="edit" />

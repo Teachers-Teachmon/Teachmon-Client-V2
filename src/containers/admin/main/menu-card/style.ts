@@ -6,6 +6,7 @@ export const MenuCardGrid = styled.div`
   grid-template-rows: repeat(2, 1fr);
   gap: 12px;
   min-height: 0;
+  width:100%;
   overflow: auto;
 `;
 export const MenuCard = styled.div`

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import * as S from './style';
 
-import type { MenuCardItem } from '@/constants/menuCards';
+import type { MenuCardItem } from '@/constants/adminMenuCards';
 
 type MenuCardProps = {
   items: MenuCardItem[];
