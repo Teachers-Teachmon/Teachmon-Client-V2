@@ -9,6 +9,7 @@ import AdminUsersPage from '@/pages/admin/users'
 import HomePage from '@/pages/home'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
+import SelfStudyPage from '@/pages/admin/self-study'
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/admin">
             <Route index element={<AdminMain />} />
             <Route path="users" element={<AdminUsersPage />} />
+            <Route path="self-study" element={<SelfStudyPage />} />
         </Route>
       </Route>
 
