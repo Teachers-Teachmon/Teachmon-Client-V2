@@ -1,35 +1,188 @@
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Calendar from '@/components/ui/calendar';
 import Dropdown from '@/components/ui/input/dropdown';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
-import { useAdminSupervision } from '@/hooks/useAdminSupervision';
+import type { CalendarEvent, DayInfo } from '@/types/calendar';
+import type { SupervisionCount } from '@/types/admin';
+import { SAMPLE_COUNTS, SAMPLE_EVENTS, SAMPLE_TEACHERS } from '@/containers/admin/supervision/data';
+import { SUPERVISION_LABEL_TO_TYPE, SUPERVISION_TYPE_LABELS, SUPERVISION_TYPE_STYLES, type SupervisionType } from '@/constants/adminSupervision';
+import {
+  filterCounts,
+  filterTeachers,
+  getAvailableTypeLabels,
+  getAvailableTypesForDate,
+  getEditorAnchor,
+  getEventType,
+  isSameDay,
+} from './utils';
 import * as S from './style';
 
-export default function AdminSupervisionContent() {
-  const {
-    viewMode,
-    isClosing,
-    handleCloseCountPanel,
-    searchQuery,
-    setSearchQuery,
-    sortOrder,
-    setSortOrder,
-    filteredCounts,
-    year,
-    month,
-    handleMonthChange,
-    events,
-    handleEventClick,
-    handleDateClick,
-    calendarWrapperRef,
-    editAnchor,
-    filteredTeacherOptions,
-    selectedTeacher,
-    selectedType,
-    availableTypeLabels,
-    setTeacherSearchQuery,
-    handleTeacherSelect,
-    handleTypeSelect,
-  } = useAdminSupervision();
+type ViewMode = 'default' | 'count' | 'edit';
+
+type SortOrder = 'asc' | 'desc';
+
+interface AdminSupervisionContentProps {
+  viewMode: ViewMode;
+  onViewModeChange: (mode: ViewMode) => void;
+}
+
+export default function AdminSupervisionContent({ viewMode, onViewModeChange }: AdminSupervisionContentProps) {
+  const currentDate = new Date();
+  const [year, setYear] = useState(currentDate.getFullYear());
+  const [month, setMonth] = useState(currentDate.getMonth() + 1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [selectedTeacher, setSelectedTeacher] = useState<string>('');
+  const [selectedType, setSelectedType] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [editAnchor, setEditAnchor] = useState<{ top: number; left: number } | null>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
+
+  const [events, setEvents] = useState<CalendarEvent[]>(SAMPLE_EVENTS);
+  const calendarWrapperRef = useRef<HTMLDivElement>(null);
+
+  const selectedEvent = selectedEventId ? events.find((event) => event.id === selectedEventId) ?? null : null;
+  const selectedEventType = selectedEvent ? getEventType(selectedEvent) : null;
+  const availableTypeLabels = getAvailableTypeLabels(events, selectedDate, selectedEventId);
+
+  const filteredTeacherOptions = useMemo(() => {
+    return filterTeachers(SAMPLE_TEACHERS, teacherSearchQuery);
+  }, [teacherSearchQuery]);
+
+  const filteredCounts = useMemo<SupervisionCount[]>(() => {
+    return filterCounts(SAMPLE_COUNTS, searchQuery, sortOrder);
+  }, [searchQuery, sortOrder]);
+
+  const handleMonthChange = (newYear: number, newMonth: number) => {
+    setYear(newYear);
+    setMonth(newMonth);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedEventId(null);
+    setSelectedTeacher('');
+    setSelectedType('');
+    setSelectedDate(null);
+    setEditAnchor(null);
+    setTeacherSearchQuery('');
+  };
+
+  const handleCloseCountPanel = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      onViewModeChange('default');
+      setIsClosing(false);
+    }, 300);
+  };
+
+  const handleEventClick = (event: CalendarEvent, anchorRect?: DOMRect) => {
+    if (viewMode !== 'edit') return;
+    const eventType = getEventType(event);
+    setSelectedEventId(event.id);
+    setSelectedTeacher(event.label);
+    setSelectedType(eventType ? SUPERVISION_TYPE_LABELS[eventType] : '');
+    setSelectedDate(event.date);
+    setTeacherSearchQuery('');
+    if (anchorRect && calendarWrapperRef.current) {
+      const wrapperRect = calendarWrapperRef.current.getBoundingClientRect();
+      setEditAnchor(getEditorAnchor(wrapperRect, anchorRect));
+    }
+  };
+
+  const handleDateClick = (date: Date, _dayInfo: DayInfo, anchorRect?: DOMRect) => {
+    if (viewMode !== 'edit') return;
+    const availableTypes = getAvailableTypesForDate(events, date);
+    if (availableTypes.length === 0) {
+      handleClearSelection();
+      return;
+    }
+    setSelectedEventId(null);
+    setSelectedTeacher('');
+    setSelectedType('');
+    setSelectedDate(date);
+    setTeacherSearchQuery('');
+    if (anchorRect && calendarWrapperRef.current) {
+      const wrapperRect = calendarWrapperRef.current.getBoundingClientRect();
+      setEditAnchor(getEditorAnchor(wrapperRect, anchorRect));
+    }
+  };
+
+  const handleTeacherSelect = (teacher: string) => {
+    setSelectedTeacher(teacher);
+    setSelectedType('');
+  };
+
+  const handleTypeSelect = (type: string) => {
+    setSelectedType(type);
+    if (!selectedTeacher || !selectedDate) return;
+    const selectedTypeValue = SUPERVISION_LABEL_TO_TYPE[type];
+    if (!selectedTypeValue) return;
+    const style = SUPERVISION_TYPE_STYLES[selectedTypeValue];
+    if (selectedEventId) {
+      const otherEvent = events.find(
+        (event) =>
+          event.id !== selectedEventId &&
+          isSameDay(event.date, selectedDate) &&
+          getEventType(event) === selectedTypeValue
+      );
+      setEvents((prev) =>
+        prev.map((event) => {
+          if (event.id === selectedEventId) {
+            return {
+              ...event,
+              label: selectedTeacher,
+              bgColor: style.bgColor,
+              textColor: style.textColor,
+              supervisionType: selectedTypeValue,
+            };
+          }
+          if (otherEvent && event.id === otherEvent.id) {
+            const fallbackType: SupervisionType = selectedEventType ?? 'self_study';
+            const fallbackStyle = SUPERVISION_TYPE_STYLES[fallbackType];
+            return {
+              ...event,
+              bgColor: fallbackStyle.bgColor,
+              textColor: fallbackStyle.textColor,
+              supervisionType: fallbackType,
+            };
+          }
+          return event;
+        })
+      );
+    } else if (selectedDate) {
+      const availableTypes = getAvailableTypesForDate(events, selectedDate, null);
+      if (!availableTypes.includes(selectedTypeValue)) return;
+      const nextId = `${selectedDate.getTime()}-${Math.random().toString(36).slice(2, 8)}`;
+      setEvents((prev) => [
+        ...prev,
+        {
+          id: nextId,
+          date: selectedDate,
+          label: selectedTeacher,
+          bgColor: style.bgColor,
+          textColor: style.textColor,
+          supervisionType: selectedTypeValue,
+        },
+      ]);
+    }
+    setSelectedEventId(null);
+    setSelectedTeacher('');
+    setSelectedType('');
+    setSelectedDate(null);
+    setEditAnchor(null);
+  };
+
+  useEffect(() => {
+    if (viewMode !== 'edit') {
+      handleClearSelection();
+    }
+    if (viewMode !== 'count') {
+      setIsClosing(false);
+    }
+  }, [viewMode]);
 
   return (
     <S.ContentWrapper>

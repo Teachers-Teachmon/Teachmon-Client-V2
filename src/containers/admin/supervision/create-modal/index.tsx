@@ -1,22 +1,27 @@
+import { useState } from 'react';
 import Modal from '@/components/layout/modal';
 import DateInput from '@/components/ui/input/date';
 import Button from '@/components/ui/button';
-import { useAdminSupervision } from '@/hooks/useAdminSupervision';
 import * as S from './style';
 
-export default function AdminSupervisionCreateModal() {
-  const {
-    isCreateModalOpen,
-    startDate,
-    endDate,
-    setStartDate,
-    setEndDate,
-    setIsCreateModalOpen,
-    handleCreate,
-  } = useAdminSupervision();
+interface AdminSupervisionCreateModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AdminSupervisionCreateModal({ isOpen, onClose }: AdminSupervisionCreateModalProps) {
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  const handleCreate = () => {
+    console.log('생성:', { startDate, endDate });
+    setStartDate('');
+    setEndDate('');
+    onClose();
+  };
 
   return (
-    <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} padding="2.5rem">
+    <Modal isOpen={isOpen} onClose={onClose} padding="2.5rem">
       <S.ModalContainer>
         <S.ModalTitle>자습감독 일정 생성</S.ModalTitle>
         <S.DateRangeContainer>
@@ -25,7 +30,7 @@ export default function AdminSupervisionCreateModal() {
           <DateInput label="Date" value={endDate} onChange={setEndDate} />
         </S.DateRangeContainer>
         <S.ModalButtonGroup>
-          <Button variant="cancel" text="취소" onClick={() => setIsCreateModalOpen(false)} width="50%" />
+          <Button variant="cancel" text="취소" onClick={onClose} width="50%" />
           <Button variant="confirm" text="생성" onClick={handleCreate} width="50%" />
         </S.ModalButtonGroup>
       </S.ModalContainer>
