@@ -141,6 +141,7 @@ export const ArrowButton = styled.button`
 export const ClassList = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: minmax(140px, auto);
   gap: 1rem;
 `;
 

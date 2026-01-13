@@ -6,6 +6,7 @@ export const Wrapper = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   flex: 1;
+  height: 100%;
 `;
 
 export const TitleSection = styled.div`
@@ -41,16 +42,14 @@ export const Container = styled.div`
   border: 1px solid ${colors.n02};
   border-radius: ${radius.lg};
   padding: 1rem 0;
-  max-height: 400px;
-  overflow: visible;
+  flex: 1;
+  overflow-y: auto;
 `;
 
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
 `;
-
-export const TableBody = styled.tbody``;
 
 export const TableRow = styled.tr`
   border-bottom: 1px solid ${colors.n02};

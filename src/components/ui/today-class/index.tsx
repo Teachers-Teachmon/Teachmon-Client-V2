@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import * as S from './style';
 import type { TodayClass } from '@/types/after-school';
 
@@ -7,8 +9,7 @@ interface TodayClassCardProps {
 
 export default function TodayClassCard({ classData }: TodayClassCardProps) {
   const today = new Date();
-  const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
-  const dateString = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')} ${days[today.getDay()]}`;
+  const dateString = format(today, "yyyy.MM.dd EEEE", { locale: ko });
 
   return (
     <S.Card>

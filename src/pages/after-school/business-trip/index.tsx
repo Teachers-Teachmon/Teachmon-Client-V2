@@ -45,12 +45,8 @@ export default function BusinessTripPage() {
     return events;
   }, [classData, selectedYear, selectedMonth]);
 
-  const handleComplete = () => {
-    if (!selectedDate) {
-      alert('출장 날짜를 선택해주세요.');
-      return;
-    }
-    setIsModalOpen(true);
+  const handleGoBack = () => {
+    navigate(-1);
   };
 
   const handleConfirm = () => { 
@@ -80,31 +76,18 @@ export default function BusinessTripPage() {
     
     if (hasEvent) {
       setSelectedDate(date);
+      setIsModalOpen(true);
     }
   };
 
   const handleEventClick = (event: CalendarEvent) => {
   };
 
-  const selectedDateRange: CalendarRangeEvent[] = useMemo(() => {
-    if (!selectedDate) return [];
-    return [
-      {
-        id: 'selected-date',
-        startDate: selectedDate,
-        endDate: selectedDate,
-        label: '',
-        bgColor: colors.primaryBackground,
-        textColor: 'transparent',
-      },
-    ];
-  }, [selectedDate]);
-
   return (
     <S.PageContainer>
       <S.Header>
         <S.Title>"{classData?.subject || '스프링 수업'}" 방과후 출장 날짜를 선택해주세요.</S.Title>
-        <Button text="완료" variant="confirm" width="120px" onClick={handleComplete} />
+        <Button text="돌아가기" variant="cancel" width="120px" onClick={handleGoBack} />
       </S.Header>
       
       <S.CalendarWrapper>
@@ -113,7 +96,6 @@ export default function BusinessTripPage() {
           month={selectedMonth}
           onMonthChange={handleMonthChange}
           events={businessTripEvents}
-          rangeEvents={selectedDateRange}
           onDateClick={handleDateClick}
           onEventClick={handleEventClick}
           showYear={false}

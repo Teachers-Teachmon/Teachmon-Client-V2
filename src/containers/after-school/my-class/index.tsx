@@ -70,7 +70,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
       <S.Container>
         {filteredClasses.length > 0 ? (
           <S.Table>
-            <S.TableBody>
+            <tbody>
               {filteredClasses.map(cls => (
                 <S.TableRow key={cls.id}>
                   <S.TableCell>
@@ -104,7 +104,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
                   </S.TableCell>
                 </S.TableRow>
               ))}
-            </S.TableBody>
+            </tbody>
           </S.Table>
         ) : (
           <S.EmptyState>데이터가 없습니다</S.EmptyState>
