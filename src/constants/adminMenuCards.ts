@@ -47,6 +47,6 @@ export const MENU_CARDS: MenuCardItem[] = [
     title: '고정 이석',
     description: '고정 이석 설정하기',
     icon: '/icons/admin/fixMovement.svg',
-    url: '/admin/main',
+    url: '/admin/fixed-movement',
   },
 ];
