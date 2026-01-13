@@ -46,12 +46,6 @@ export const Container = styled.button<{
   border: 1px solid
     ${({ $variant, $disabled }) =>
       $disabled ? '#ccc' : variantStyle[$variant].border};
-
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    filter: ${({ $disabled }) => ($disabled ? 'none' : 'brightness(0.94)')};
-  }
 `;
 
 export const Name = styled.span`
