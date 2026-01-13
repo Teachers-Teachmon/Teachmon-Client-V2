@@ -86,7 +86,11 @@ export default function Calendar({
                   isInteractive={isInteractive}
                   onMouseDown={() => handleMouseDown(date)}
                   onMouseEnter={() => handleMouseEnter(date)}
-                  onClick={() => !selectable && onDateClick?.(date, { date, isCurrentMonth, events: dayEvents, rangeEvents: dayRangeEvents })}
+                  onClick={(e) => !selectable && onDateClick?.(
+                    date,
+                    { date, isCurrentMonth, events: dayEvents, rangeEvents: dayRangeEvents },
+                    (e.currentTarget as HTMLElement).getBoundingClientRect()
+                  )}
                 >
                   <S.DayNumber dayType={dayType} isCurrentMonth={isCurrentMonth}>{date.getDate()}</S.DayNumber>
                   <S.EventList>
@@ -114,6 +118,10 @@ export default function Calendar({
                             e.stopPropagation()
                             if (!isDisabled) {
                               handleEventClick(event)
+                            }
+                            if (onEventClick) {
+                              e.stopPropagation()
+                              onEventClick(event, (e.currentTarget as HTMLElement).getBoundingClientRect())
                             }
                           }}
                         >
