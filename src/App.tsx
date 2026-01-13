@@ -17,6 +17,7 @@ import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
 import AfterSchoolPage from '@/pages/after-school'
+import BusinessTripPage from '@/pages/after-school/business-trip'
 
 function App() {
   return (
