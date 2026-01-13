@@ -1,13 +1,3 @@
-<<<<<<< HEAD
-import * as S from './style';
-
-export default function DailySection() {
-  return (
-    <S.Container>
-    </S.Container>
-  );
-}
-=======
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Calendar from '@/components/ui/calendar';
 import type { CalendarRangeEvent } from '@/components/ui/calendar';
@@ -193,4 +183,3 @@ export default function DailySection() {
     </S.Container>
   );
 }
->>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)

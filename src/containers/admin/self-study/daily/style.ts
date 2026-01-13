@@ -1,12 +1,4 @@
 import styled from '@emotion/styled';
-<<<<<<< HEAD
-
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-`;
-=======
 import { colors, fontSizes, radius } from '@/styles/theme';
 
 export const Container = styled.div`
@@ -164,4 +156,3 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
 export const ButtonWrapper = styled.div`
   margin-top: auto;
 `;
->>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
