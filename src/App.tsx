@@ -8,6 +8,7 @@ import AdminMain from './pages/admin/main'
 import AdminUsersPage from '@/pages/admin/users'
 import HomePage from '@/pages/home'
 import AdminSupervisionPage from '@/pages/admin/supervision'
+import BusinessTripPage from '@/pages/admin/business-trip'
 import SupervisionPage from '@/pages/supervision'
 import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
 import ErrorPage from './pages/error'
@@ -32,6 +33,7 @@ function App() {
         <Route path="/admin">
           <Route index element={<AdminMain />} />
           <Route path="supervision" element={<AdminSupervisionPage />} />
+          <Route path="business-trip" element={<BusinessTripPage />} />
           <Route path="users" element={<AdminUsersPage />} />
         </Route>
       </Route>
