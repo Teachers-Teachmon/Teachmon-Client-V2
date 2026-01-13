@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as S from './style';
 import Dropdown from '@/components/ui/input/dropdown';
 import Button from '@/components/ui/button';
+import { DAY_LABELS, PERIOD_OPTIONS } from '@/constants/adminSelfStudy';
 import plusIcon from '/icons/admin-self-study/plus.svg';
 import minusIcon from '/icons/admin-self-study/minus.svg';
 
@@ -20,19 +21,6 @@ interface DaySchedule {
   label: string;
   periods: PeriodItem[];
 }
-
-const DAY_LABELS: Record<DayOfWeek, string> = {
-  mon: '월',
-  tue: '화',
-  wed: '수',
-  thu: '목',
-};
-
-const PERIOD_OPTIONS = [
-  '7교시',
-  '8~9교시',
-  '10~11교시',
-];
 
 const QUARTER_OPTIONS: Quarter[] = [1, 2, 3, 4];
 
