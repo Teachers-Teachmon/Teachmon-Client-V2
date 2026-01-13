@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { CalendarEvent } from '@/types/calendar';
 import type { ExchangeRequest } from '@/types/home';
-import { SAMPLE_DATA } from '@/constants/supervision';
+import { SAMPLE_DATA, CURRENT_TEACHER_ID } from '@/constants/supervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
 
 export const useSupervision = () => {
@@ -15,11 +15,16 @@ export const useSupervision = () => {
 
     const [exchangeMode, setExchangeMode] = useState(false);
     const [selectedMyEvent, setSelectedMyEvent] = useState<CalendarEvent | null>(null);
+    const [showMyOnly, setShowMyOnly] = useState(false);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [exchangeRequest, setExchangeRequest] = useState<ExchangeRequest | null>(null);
 
-    const events = useMemo(() => convertToCalendarEvents(SAMPLE_DATA), []);
+    const events = useMemo(() => {
+        const baseEvents = convertToCalendarEvents(SAMPLE_DATA);
+        if (!showMyOnly) return baseEvents;
+        return baseEvents.filter((event) => event.teacherId === CURRENT_TEACHER_ID);
+    }, [showMyOnly]);
 
     useEffect(() => {
         const newParams = new URLSearchParams(searchParams);
@@ -88,10 +93,12 @@ export const useSupervision = () => {
         events,
         exchangeMode,
         selectedMyEvent,
+        showMyOnly,
         isModalOpen,
         exchangeRequest,
         handleMonthChange,
         handleExchangeClick,
+        setShowMyOnly,
         handleMyEventSelect,
         handleTargetEventSelect,
         handleCloseModal,

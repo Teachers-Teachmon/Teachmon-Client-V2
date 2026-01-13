@@ -12,6 +12,8 @@ export default function SupervisionPage() {
     events,
     exchangeMode,
     selectedMyEvent,
+    showMyOnly,
+    setShowMyOnly,
     isModalOpen,
     exchangeRequest,
     handleMonthChange,
@@ -27,6 +29,8 @@ export default function SupervisionPage() {
       <SupervisionHeader
         exchangeMode={exchangeMode}
         onExchangeClick={handleExchangeClick}
+        showMyOnly={showMyOnly}
+        onToggleMyOnly={() => setShowMyOnly((prev) => !prev)}
       />
       <S.CalendarWrapper>
         <Calendar

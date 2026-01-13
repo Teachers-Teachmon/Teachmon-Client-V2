@@ -7,11 +7,15 @@ import * as S from './style';
 interface SupervisionHeaderProps {
     exchangeMode: boolean;
     onExchangeClick: () => void;
+    showMyOnly: boolean;
+    onToggleMyOnly: () => void;
 }
 
 export default function SupervisionHeader({
     exchangeMode,
     onExchangeClick,
+    showMyOnly,
+    onToggleMyOnly,
 }: SupervisionHeaderProps) {
     const [searchParams, setSearchParams] = useSearchParams();
     const queryParam = searchParams.get('query') || '';
@@ -35,15 +39,28 @@ export default function SupervisionHeader({
 
     return (
         <S.Header>
-            <S.SearchContainer>
-                <TextInput
-                    placeholder="이름을 입력해주세요."
-                    value={value}
-                    onChange={(e) => setValue(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    customHeight={"2.5rem"}
-                />
-            </S.SearchContainer>
+            <S.LeftGroup>
+                <S.ToggleWrapper>
+                    <S.ToggleInput
+                        type="checkbox"
+                        checked={showMyOnly}
+                        onChange={onToggleMyOnly}
+                        aria-label="자신만 보기"
+                    />
+                    <S.ToggleLabel>자신만 보기</S.ToggleLabel>
+                    <S.ToggleTrack $checked={showMyOnly} />
+                </S.ToggleWrapper>
+                <S.SearchContainer>
+                    <TextInput
+                        placeholder="이름을 입력해주세요."
+                        value={value}
+                        onChange={(e) => setValue(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        customHeight="2.5rem"
+                        customPadding="0.5rem 0.75rem"
+                    />
+                </S.SearchContainer>
+            </S.LeftGroup>
             <Button
                 text={exchangeMode ? '교체 취소' : '교체하기'}
                 variant="confirm"
