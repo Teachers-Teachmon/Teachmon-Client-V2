@@ -6,7 +6,7 @@ import QuarterlySection from '@/containers/admin/self-study/quarterly';
 type TabType = 'daily' | 'quarterly';
 
 export default function SelfStudyPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('quarterly');
+  const [activeTab, setActiveTab] = useState<TabType>('daily');
 
   return (
     <S.Container>
