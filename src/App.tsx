@@ -16,6 +16,7 @@ import SupervisionPage from '@/pages/supervision'
 import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
+import AfterSchoolPage from '@/pages/after-school'
 
 function App() {
   return (
