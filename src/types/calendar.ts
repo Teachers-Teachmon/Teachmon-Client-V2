@@ -51,8 +51,8 @@ export interface CalendarProps {
   events?: CalendarEvent[]
   rangeEvents?: CalendarRangeEvent[]
   legends?: LegendItem[]
-  onDateClick?: (date: Date, dayInfo: DayInfo) => void
-  onEventClick?: (event: CalendarEvent) => void
+  onDateClick?: (date: Date, dayInfo: DayInfo, anchorRect?: DOMRect) => void
+  onEventClick?: (event: CalendarEvent, anchorRect?: DOMRect) => void
   onRangeSelect?: (startDate: Date, endDate: Date) => void
   showYear?: boolean
   showLegend?: boolean
