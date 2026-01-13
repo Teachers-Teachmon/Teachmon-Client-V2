@@ -4,8 +4,8 @@ export interface CalendarEvent {
   label: string
   bgColor: string
   textColor: string
-  teacherId?: string
-  supervisionType?: string
+  teacherId?: number
+  supervisionType?: 'self_study' | 'leave_seat'
 }
 
 export interface CalendarRangeEvent {
@@ -57,4 +57,9 @@ export interface CalendarProps {
   showYear?: boolean
   showLegend?: boolean
   selectable?: boolean
+  exchangeMode?: boolean
+  currentTeacherId?: number
+  selectedMyEvent?: CalendarEvent | null
+  onMyEventSelect?: (event: CalendarEvent) => void
+  onTargetEventSelect?: (event: CalendarEvent) => void
 }

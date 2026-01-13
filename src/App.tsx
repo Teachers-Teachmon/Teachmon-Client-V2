@@ -7,6 +7,7 @@ import Movement from '@/pages/manage/movement'
 import AdminMain from './pages/admin/main'
 import AdminUsersPage from '@/pages/admin/users'
 import HomePage from '@/pages/home'
+import SupervisionPage from '@/pages/supervision'
 import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
@@ -17,7 +18,7 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route element={<MainLayout />}>
         <Route path="/main" element={<HomePage />} />
-        <Route path="/supervision" element={<div>자습감독</div>} />
+        <Route path="/supervision" element={<SupervisionPage />} />
         <Route path="/manage">
           <Route index element={<Manage />} />
           <Route path="record" element={<Record />} />
