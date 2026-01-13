@@ -17,12 +17,26 @@ export const Label = styled.label`
 export const InputContainer = styled.div<{ $hasError?: boolean; $disabled?: boolean }>`
   position: relative;
   width: 100%;
+  display: flex;
+  align-items: center;
   
   ${props => props.$disabled && `
     opacity: 0.6;
     cursor: not-allowed;
   `}
 `
+
+export const LeftIcon = styled.div`
+  position: absolute;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  color: ${colors.n03};
+  z-index: 1;
+`;
+
 // e5e7eb
 export const StyledInput = styled.input<{ 
   $hasError?: boolean;
@@ -30,10 +44,11 @@ export const StyledInput = styled.input<{
   $fontSize?: string;
   $borderRadius?: string;
   $height?: string;
+  $hasLeftIcon?: boolean;
 }>`
   width: 100%;
   height: ${props => props.$height || '3rem'};
-  padding: ${props => props.$padding || '0.75rem 1rem'};
+  padding: ${props => props.$hasLeftIcon ? '0.75rem 1rem 0.75rem 3rem' : props.$padding || '0.75rem 1rem'};
   font-size: ${props => props.$fontSize || '1rem'};
   border: 1px solid ${props => props.$hasError ? '#ef4444' : colors.n03};
   border-radius: ${props => props.$borderRadius || '0.5rem'};
