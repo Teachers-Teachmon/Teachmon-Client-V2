@@ -4,6 +4,8 @@ export interface CalendarEvent {
   label: string
   bgColor: string
   textColor: string
+  teacherId?: string
+  supervisionType?: string
 }
 
 export interface CalendarRangeEvent {
