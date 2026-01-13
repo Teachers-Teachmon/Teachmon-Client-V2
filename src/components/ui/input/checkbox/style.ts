@@ -25,7 +25,6 @@ export const CheckboxBase = styled.div<{ $checked: boolean; $disabled?: boolean 
         border-color: ${({ $disabled }) => ($disabled ? '#999999' : '#0070ff')};
     }
 `;
-
 export const CheckIcon = styled.img`
     width: 14px;
     height: 14px;
