@@ -35,7 +35,7 @@ export const MOCK_ADMIN_AFTER_SCHOOL: AdminAfterSchoolClass[] = [
     teacher: '자수만',
     location: '객체지향 프로그래밍',
     subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
+    students: ['1410 윤도훈', '1420 윤도훈', '1430 윤도훈', '1440 윤도훈', '1450 윤도훈'],
   },
   {
     id: '2',
@@ -45,7 +45,7 @@ export const MOCK_ADMIN_AFTER_SCHOOL: AdminAfterSchoolClass[] = [
     teacher: '자수만',
     location: '파이썬을 이용한 문제해결',
     subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
+    students: ['1410 윤도훈', '1420 윤도훈', '1430 윤도훈', '1440 윤도훈', '1450 윤도훈'],
   },
   {
     id: '3',
@@ -55,7 +55,7 @@ export const MOCK_ADMIN_AFTER_SCHOOL: AdminAfterSchoolClass[] = [
     teacher: '자수만',
     location: '스프링 수업',
     subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
+    students: ['1410 윤도훈', '1420 윤도훈', '1430 윤도훈', '1440 윤도훈', '1450 윤도훈'],
   },
   {
     id: '4',
@@ -65,7 +65,7 @@ export const MOCK_ADMIN_AFTER_SCHOOL: AdminAfterSchoolClass[] = [
     teacher: '자수만',
     location: '1학년 1반',
     subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
+    students: ['1410 윤도훈', '1420 윤도훈', '1430 윤도훈', '1440 윤도훈', '1450 윤도훈'],
   },
   {
     id: '5',
@@ -75,7 +75,7 @@ export const MOCK_ADMIN_AFTER_SCHOOL: AdminAfterSchoolClass[] = [
     teacher: '자수만',
     location: '1학년 2반',
     subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
+    students: ['1410 윤도훈', '1420 윤도훈', '1430 윤도훈', '1440 윤도훈', '1450 윤도훈'],
   },
   {
     id: '6',
@@ -85,7 +85,7 @@ export const MOCK_ADMIN_AFTER_SCHOOL: AdminAfterSchoolClass[] = [
     teacher: '자수만',
     location: '음악실',
     subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
+    students: ['1410 윤도훈', '1420 윤도훈', '1430 윤도훈', '1440 윤도훈', '1450 윤도훈'],
   },
 ];
 

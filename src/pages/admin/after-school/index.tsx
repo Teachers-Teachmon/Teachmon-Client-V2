@@ -1,14 +1,17 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@/components/ui/button';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import TableLayout from '@/components/layout/table';
 import type { TableColumn } from '@/components/layout/table/types';
+import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
 import * as S from './style';
 import { WEEKDAYS, MOCK_ADMIN_AFTER_SCHOOL } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 
 export default function AdminAfterSchoolPage() {
+  const navigate = useNavigate();
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [selectedQuarter, setSelectedQuarter] = useState('1분기');
   const [selectedDay, setSelectedDay] = useState(WEEKDAYS[0]);
@@ -16,21 +19,35 @@ export default function AdminAfterSchoolPage() {
   const [selectedSmiles, setSelectedSmiles] = useState<Record<string, string>>({});
   const [classes, setClasses] = useState<AdminAfterSchoolClass[]>(MOCK_ADMIN_AFTER_SCHOOL);
   const [googleSheetUrl, setGoogleSheetUrl] = useState('');
+  const [selectedClass, setSelectedClass] = useState<AdminAfterSchoolClass | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const filteredClasses = classes.filter(
     cls => cls.grade === selectedGrade && cls.day === selectedDay
   );
 
-  const handleEdit = (classData: AdminAfterSchoolClass) => {
-    console.log('수정:', classData);
+  const handleEdit = (classData: AdminAfterSchoolClass, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/admin/after-school/edit/${classData.id}`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setClasses(prev => prev.filter(cls => cls.id !== id));
   };
 
   const handleAdd = () => {
-    console.log('추가');
+    navigate('/admin/after-school/create');
+  };
+
+  const handleRowClick = (classData: AdminAfterSchoolClass) => {
+    setSelectedClass(classData);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedClass(null);
   };
 
   const handleGoogleSheetSync = () => {
@@ -106,80 +123,83 @@ export default function AdminAfterSchoolPage() {
 
   const renderActions = (row: AdminAfterSchoolClass) => (
     <S.ActionButtons>
-      <Button text="수정" variant="confirm" width="100px" onClick={() => handleEdit(row)} />
-      <Button text="삭제" variant="delete" width="100px" onClick={() => handleDelete(row.id)} />
+      <Button text="수정" variant="confirm" width="100px" onClick={(e) => handleEdit(row, e)} />
+      <Button text="삭제" variant="delete" width="100px" onClick={(e) => handleDelete(row.id, e)} />
     </S.ActionButtons>
   );
 
   return (
-    <S.PageContainer>
-      <S.Header>
-        <S.LeftSection>
-          <S.QuarterDropdown>
-            <Dropdown
-              options={['1분기', '2분기', '3분기', '4분기']}
-              value={selectedQuarter}
-              onChange={setSelectedQuarter}
-              placeholder="분기 선택"
+    <>
+      <AfterSchoolDetailModal
+        classData={selectedClass}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
+      
+      <S.PageContainer>
+        <S.Header>
+          <S.LeftSection>
+            <S.QuarterDropdown>
+              <Dropdown
+                items={['1분기', '2분기', '3분기', '4분기']}
+                value={selectedQuarter}
+                onChange={setSelectedQuarter}
+                placeholder="분기 선택"
+              />
+            </S.QuarterDropdown>
+
+            <S.GradeTabs>
+              <S.GradeTab $active={selectedGrade === 1} onClick={() => setSelectedGrade(1)}>1학년</S.GradeTab>
+              <S.GradeTab $active={selectedGrade === 2} onClick={() => setSelectedGrade(2)}>2학년</S.GradeTab>
+              <S.GradeTab $active={selectedGrade === 3} onClick={() => setSelectedGrade(3)}>3학년</S.GradeTab>
+            </S.GradeTabs>
+          </S.LeftSection>
+
+          <S.HeaderButtons>
+            <TextInput
+              placeholder="구글스프레드시트"
+              value={googleSheetUrl}
+              onChange={(e) => setGoogleSheetUrl(e.target.value)}
             />
-          </S.QuarterDropdown>
+            <S.GoogleSheetActionButton onClick={handleGoogleSheetSync}>시트 동기화</S.GoogleSheetActionButton>
+            <S.GoogleSheetActionButton onClick={handleGoogleSheetUpload}>시트 업로드</S.GoogleSheetActionButton>
+          </S.HeaderButtons>
+        </S.Header>
 
-          <S.GradeTabs>
-            <S.GradeTab $active={selectedGrade === 1} onClick={() => setSelectedGrade(1)}>
-              1학년
-            </S.GradeTab>
-            <S.GradeTab $active={selectedGrade === 2} onClick={() => setSelectedGrade(2)}>
-              2학년
-            </S.GradeTab>
-            <S.GradeTab $active={selectedGrade === 3} onClick={() => setSelectedGrade(3)}>
-              3학년
-            </S.GradeTab>
-          </S.GradeTabs>
-        </S.LeftSection>
+        <S.DaySelector>
+          <S.NavButton onClick={handlePrevDay}>
+            «
+          </S.NavButton>
+          <S.DayText $active={false} onClick={handlePrevDay}>
+            {prevDay}
+          </S.DayText>
+          <S.DayText $active={true}>
+            {selectedDay}
+          </S.DayText>
+          <S.DayText $active={false} onClick={handleNextDay}>
+            {nextDay}
+          </S.DayText>
+          <S.NavButton onClick={handleNextDay}>
+            »
+          </S.NavButton>
+        </S.DaySelector>
 
-        <S.HeaderButtons>
-          <TextInput
-            placeholder="구글스프레드시트"
-            value={googleSheetUrl}
-            onChange={setGoogleSheetUrl}
-          />
-          <S.GoogleSheetActionButton onClick={handleGoogleSheetSync}>시트 동기화</S.GoogleSheetActionButton>
-          <S.GoogleSheetActionButton onClick={handleGoogleSheetUpload}>시트 업로드</S.GoogleSheetActionButton>
-        </S.HeaderButtons>
-      </S.Header>
+        <S.ContentWrapper>
+          <S.TableWrapper>
+            <TableLayout
+              columns={columns}
+              data={filteredClasses}
+              renderActions={renderActions}
+              actionsHeader=""
+              onRowClick={handleRowClick}
+            />
+          </S.TableWrapper>
 
-      <S.DaySelector>
-        <S.NavButton onClick={handlePrevDay}>
-          «
-        </S.NavButton>
-        <S.DayText $active={false} onClick={handlePrevDay}>
-          {prevDay}
-        </S.DayText>
-        <S.DayText $active={true}>
-          {selectedDay}
-        </S.DayText>
-        <S.DayText $active={false} onClick={handleNextDay}>
-          {nextDay}
-        </S.DayText>
-        <S.NavButton onClick={handleNextDay}>
-          »
-        </S.NavButton>
-      </S.DaySelector>
-
-      <S.ContentWrapper>
-        <S.TableWrapper>
-          <TableLayout
-            columns={columns}
-            data={filteredClasses}
-            renderActions={renderActions}
-            actionsHeader=""
-          />
-        </S.TableWrapper>
-
-        <S.AddButtonWrapper>
-          <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
-        </S.AddButtonWrapper>
-      </S.ContentWrapper>
-    </S.PageContainer>
+          <S.AddButtonWrapper>
+            <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
+          </S.AddButtonWrapper>
+        </S.ContentWrapper>
+      </S.PageContainer>
+    </>
   );
 }
