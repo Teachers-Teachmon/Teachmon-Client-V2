@@ -1,7 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/components/layout/MainLayout'
+import AdminUsersPage from '@/pages/admin/users'
 import HomePage from '@/pages/home'
 import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
+import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
 
 function App() {
@@ -16,10 +18,13 @@ function App() {
           <Route index element={<div>방과후</div>} />
           <Route path="extra" element={<AfterSchoolExtraPage />} />
         </Route>
-        <Route path="/admin" element={<div>관리자</div>} />
+        <Route path="/admin">
+            <Route index element={<div>관리자</div>} />
+            <Route path="users" element={<AdminUsersPage />} />
+        </Route>
       </Route>
 
-      <Route path="*" element={<div>Not Found</div>} />
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   )
 }
