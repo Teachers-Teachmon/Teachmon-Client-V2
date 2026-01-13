@@ -2,6 +2,7 @@ import { useState } from 'react';
 import DateInput from '@/components/ui/input/date';
 import TextInput from '@/components/ui/input/text-input';
 import Dropdown from '@/components/ui/input/dropdown';
+import SearchDropdown from '@/components/ui/input/dropdown/search';
 import * as S from './style';
 
 interface MovementFormProps {
@@ -13,6 +14,7 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
     const [selectedDate] = useState<string>('2024-12-12');
     const [selectedPeriod, setSelectedPeriod] = useState<string>('');
     const [selectedLocation, setSelectedLocation] = useState<string>('');
+    const [locationSearch, setLocationSearch] = useState<string>('');
     const [reason, setReason] = useState<string>('');
     const [studentSearch, setStudentSearch] = useState<string>('');
     const [isTeamMode, setIsTeamMode] = useState(false);
@@ -21,6 +23,10 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
     const periodOptions = ['5교시', '6교시', '7교시', '8~9교시', '10~11교시'];
     const locationOptions = ['베르실 7', '인공지능 개발실', '도서관', '체육관', '음악실'];
     const mockStudents = ['1401 공덕현', '1402 김민수', '1403 박서준', '1404 이지은', '1405 최유진'];
+
+    const filteredLocations = locationOptions.filter(location => 
+        location.toLowerCase().includes(locationSearch.toLowerCase())
+    );
 
     const handleRemoveStudent = (student: string) => {
         setSelectedStudents((prev) => prev.filter((s) => s !== student));
@@ -57,11 +63,14 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                         {/* 장소 */}
                         <S.FormGroup>
                             <S.Label>장소</S.Label>
-                            <Dropdown
+                            <SearchDropdown
                                 placeholder="장소"
-                                items={locationOptions}
+                                searchPlaceholder="장소 검색..."
+                                items={filteredLocations}
                                 value={selectedLocation}
                                 onChange={setSelectedLocation}
+                                searchQuery={locationSearch}
+                                onSearchChange={setLocationSearch}
                                 customHeight="44px"
                                 customBorderRadius="8px"
                             />
@@ -132,14 +141,16 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                 {/* 선택된 학생 목록 */}
                 <S.SelectedStudentsSection>
                     <S.SelectedTitle>학생</S.SelectedTitle>
-                    {selectedStudents.map((student, idx) => (
-                        <S.SelectedStudentCard 
-                            key={idx}
-                            onClick={() => handleRemoveStudent(student)}
-                        >
-                            <S.StudentName>{student}</S.StudentName>
-                        </S.SelectedStudentCard>
-                    ))}
+                    <S.SelectedStudentsGrid>
+                        {selectedStudents.map((student, idx) => (
+                            <S.SelectedStudentCard 
+                                key={idx}
+                                onClick={() => handleRemoveStudent(student)}
+                            >
+                                <S.StudentName>{student}</S.StudentName>
+                            </S.SelectedStudentCard>
+                        ))}
+                    </S.SelectedStudentsGrid>
                 </S.SelectedStudentsSection>
             </S.ContentWrapper>
 

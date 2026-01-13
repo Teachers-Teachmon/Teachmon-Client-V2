@@ -1,21 +1,8 @@
 import styled from '@emotion/styled';
 import { keyframes, css } from '@emotion/react';
 import { colors } from '@/styles/theme';
+import {fadeInBounce} from '@/styles/animations'
 
-const fadeInBounce = keyframes`
-  0% {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(5px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
 
 export const PopupContainer = styled.div<{ $isAnimation: boolean }>`
   position: absolute;

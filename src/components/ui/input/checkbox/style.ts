@@ -19,13 +19,16 @@ export const CheckboxBase = styled.div<{ $checked: boolean; $disabled?: boolean 
     transition: all 0.2s;
     opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
     cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+    flex-shrink: 0;
 
     &:hover {
         border-color: ${({ $disabled }) => ($disabled ? '#999999' : '#0070ff')};
     }
 `;
 
-export const CheckIcon = styled.svg`
+export const CheckIcon = styled.img`
     width: 14px;
     height: 14px;
+    display: block;
+    flex-shrink: 0;
 `;

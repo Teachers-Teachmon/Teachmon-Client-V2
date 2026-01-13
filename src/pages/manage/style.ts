@@ -44,6 +44,8 @@ export const SearchContainer = styled.div`
   position: relative;
   width: 300px;
   z-index: 100;
+  border-radius: 8px;
+  overflow: hidden;
 `;
 
 export const SearchInputWrapper = styled.div`

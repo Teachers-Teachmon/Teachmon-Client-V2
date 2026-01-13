@@ -10,7 +10,7 @@ export default function FloorSelector({ selectedFloor, onFloorChange }: FloorSel
 
     return (
         <S.Container>
-            <S.HintText>스크롤로 확대, 축소하실 수 있어요</S.HintText>
+            <S.HintText>스크롤로 확대, 축소할 수 있어요</S.HintText>
             <S.FloorTabs>
                 {floors.map((floor) => (
                     <S.FloorTab

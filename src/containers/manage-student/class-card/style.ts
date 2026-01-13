@@ -87,66 +87,11 @@ export const StatusPopupContainer = styled.div`
   width: max-content;
 `;
 
-export const StatusBadge = styled.div<{ $status: string }>`
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 6px 12px;
-    background: ${({ $status }) => {
-        const statusConfig: { [key: string]: string } = {
-            '방과후': '#ECF3FD',
-            '자습': '#ECFDF3',
-            '이석': '#F0ECFD',
-            '조퇴': '#FFF6E4',
-            '결석': '#FDF0EC',
-            '이탈': '#FFEBEA',
-            '취소': '#F5F5F5',
-        };
-        return statusConfig[$status] || '#F5F5F5';
-    }};
-    border-radius: 20px;
-    width: fit-content;
-    cursor: pointer;
-    transition: opacity 0.2s;
+export const StatusBadgeWrapper = styled.div`
+  cursor: pointer;
+  transition: opacity 0.2s;
 
-    &:hover {
-        opacity: 0.8;
-    }
-`;
-
-export const StatusDot = styled.div<{ $status: string }>`
-    width: 7px;
-    height: 7px;
-    background: ${({ $status }) => {
-        const statusConfig: { [key: string]: string } = {
-            '방과후': colors.primary,
-            '자습': '#14BA6D',
-            '이석': '#6A1EC1',
-            '조퇴': '#FF9000',
-            '결석': colors.subcolor,
-            '이탈': colors.exit,
-            '취소': '#9CA4BA',
-        };
-        return statusConfig[$status] || '#9CA4BA';
-    }};
-    border-radius: 50%;
-`;
-
-export const StatusText = styled.span<{ $status: string }>`
-    font-family: 'Paperlogy', sans-serif;
-    font-size: 14px;
-    font-weight: 500;
-    color: ${({ $status }) => {
-        const statusConfig: { [key: string]: string } = {
-            '방과후': colors.primary,
-            '자습': '#037847',
-            '이석': '#6A1EC1',
-            '조퇴': '#FF9000',
-            '결석': colors.subcolor,
-            '이탈': colors.exit,
-            '취소': '#9CA4BA',
-        };
-        return statusConfig[$status] || '#9CA4BA';
-    }};
-    line-height: 20px;
+  &:hover {
+    opacity: 0.8;
+  }
 `;

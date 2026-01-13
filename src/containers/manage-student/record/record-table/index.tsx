@@ -1,8 +1,11 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Button from '@/components/ui/button';
-import Checkbox from '@/components/ui/input/checkbox';
-import StatusBadge from '@/components/ui/status';
-import TableLayout, { type TableColumn } from '@/components/layout/table';
+import TableLayout from '@/components/layout/table';
+import MovementDetailModal from '@/containers/manage-student/record/movement-detail';
 import type { RecordData, LeaveData, StudentData } from '@/types/record';
+import type { StatusType } from '@/components/ui/status';
+import { useRecordTableColumns } from '@/hooks/useRecordTableColumns';
 import * as S from './style';
 
 interface RecordTableProps {
@@ -10,140 +13,120 @@ interface RecordTableProps {
     movementData: RecordData[];
     leaveData: LeaveData[];
     studentData: StudentData[];
-    selectedStudents: Set<string>;
-    selectAll: boolean;
-    onSelectAll: (checked: boolean) => void;
-    onSelectStudent: (id: string, checked: boolean) => void;
-    onEdit: (id: string) => void;
-    onDelete: (id: string) => void;
-    onMovementRowClick?: (data: RecordData) => void;
 }
 
 export default function RecordTable({
     activeTab,
     movementData,
     leaveData,
-    studentData,
-    selectedStudents,
-    selectAll,
-    onSelectAll,
-    onSelectStudent,
-    onEdit,
-    onDelete,
-    onMovementRowClick,
+    studentData: initialStudentData,
 }: RecordTableProps) {
-    const movementColumns: TableColumn<RecordData>[] = [
-        {
-            key: 'period',
-            header: '교시',
-            width: '150px',
-        },
-        {
-            key: 'teacher',
-            header: '작성교사',
-            width: '150px',
-        },
-        {
-            key: 'location',
-            header: '장소',
-            width: '150px',
-        },
-        {
-            key: 'count',
-            header: '인원',
-            width: '150px',
-        },
-        {
-            key: 'students',
-            header: '학생',
-            render: (row) => (
-                <S.StudentNames>
-                    {row.students.map((student, idx) => (
-                        <S.StudentName key={idx}>{student}</S.StudentName>
-                    ))}
-                    <S.StudentName>....</S.StudentName>
-                </S.StudentNames>
-            ),
-        },
-    ];
+    const navigate = useNavigate();
+    const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
+    const [selectAll, setSelectAll] = useState(false);
+    const [studentData, setStudentData] = useState<StudentData[]>(initialStudentData);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedMovement, setSelectedMovement] = useState<RecordData | null>(null);
 
-    const leaveColumns: TableColumn<LeaveData>[] = [
-        {
-            key: 'studentInfo',
-            header: '학번 / 이름',
-            width: '200px',
-        },
-        {
-            key: 'time',
-            header: '시간',
-            width: '180px',
-        },
-        {
-            key: 'handlingTeacher',
-            header: '처리 담당 선생님',
-            width: '180px',
-        },
-    ];
+    const handleEdit = (id: string) => {
+        navigate("/manage/movement?edit=true");
+        console.log('수정:', id);
+    };
 
-    const studentColumns: TableColumn<StudentData>[] = [
-        {
-            key: 'checkbox',
-            header: <Checkbox checked={selectAll} onChange={onSelectAll} />,
-            width: '66px',
-            render: (row) => (
-                <Checkbox
-                    checked={selectedStudents.has(row.id)}
-                    onChange={(checked) => onSelectStudent(row.id, checked)}
-                />
-            ),
-        },
-        {
-            key: 'studentInfo',
-            header: '학번 / 이름',
-            width: '505px',
-        },
-        {
-            key: 'period5',
-            header: '5교시',
-            width: '180px',
-            render: (row) => (row.period5 ? <StatusBadge status={row.period5} /> : null),
-        },
-        {
-            key: 'period6',
-            header: '6교시',
-            width: '180px',
-            render: (row) => (row.period6 ? <StatusBadge status={row.period6} /> : null),
-        },
-        {
-            key: 'period7',
-            header: '7교시',
-            width: '180px',
-            render: (row) => (row.period7 ? <StatusBadge status={row.period7} /> : null),
-        },
-        {
-            key: 'period89',
-            header: '8~9교시',
-            width: '180px',
-            render: (row) => (row.period89 ? <StatusBadge status={row.period89} /> : null),
-        },
-        {
-            key: 'period1011',
-            header: '10~11교시',
-            width: '180px',
-            render: (row) => (row.period1011 ? <StatusBadge status={row.period1011} /> : null),
-        },
-    ];
+    const handleDelete = (id: string) => {
+        console.log('삭제:', id);
+    };
+
+    const handleSelectAll = (checked: boolean) => {
+        setSelectAll(checked);
+        if (checked) {
+            setSelectedStudents(new Set(studentData.map((s) => s.id)));
+        } else {
+            setSelectedStudents(new Set());
+        }
+    };
+
+    const handleSelectStudent = (id: string, checked: boolean) => {
+        const newSelected = new Set(selectedStudents);
+        if (checked) {
+            newSelected.add(id);
+        } else {
+            newSelected.delete(id);
+        }
+        setSelectedStudents(newSelected);
+        setSelectAll(newSelected.size === studentData.length);
+    };
+
+    const handleMovementRowClick = (data: RecordData) => {
+        setSelectedMovement(data);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedMovement(null);
+    };
+
+    const handleStatusChange = (studentId: string, period: string, status: StatusType) => {
+        setStudentData((prevData) =>
+            prevData.map((student) =>
+                student.id === studentId
+                    ? { ...student, [period]: status }
+                    : student
+            )
+        );
+    };
+
+    const handleBulkStatusChange = (studentIds: string[], period: string, status: StatusType) => {
+        setStudentData((prevData) =>
+            prevData.map((student) =>
+                studentIds.includes(student.id)
+                    ? { ...student, [period]: status }
+                    : student
+            )
+        );
+    };
+
+    const { movementColumns, leaveColumns, studentColumns } = useRecordTableColumns({
+        selectedStudents,
+        selectAll,
+        onSelectAll: handleSelectAll,
+        onSelectStudent: handleSelectStudent,
+        onStatusChange: handleStatusChange,
+        onBulkStatusChange: handleBulkStatusChange,
+    });
 
     const renderMovementActions = (row: RecordData) => (
         <S.ActionButtons>
-            <Button text="수정" onClick={() => onEdit(row.id)} variant="confirm" />
-            <Button text="삭제" onClick={() => onDelete(row.id)} variant="delete" />
+            <Button 
+                text="수정" 
+                onClick={(e) => {
+                    e?.stopPropagation();
+                    handleEdit(row.id);
+                }} 
+                variant="confirm" 
+            />
+            <Button 
+                text="삭제" 
+                onClick={(e) => {
+                    e?.stopPropagation();
+                    handleDelete(row.id);
+                }} 
+                variant="delete" 
+            />
         </S.ActionButtons>
     );
 
     const renderLeaveActions = (row: LeaveData) => (
         <S.ActionButtons>
-            <Button text="삭제" onClick={() => onDelete(row.id)} variant="delete" />
+            <Button 
+                text="삭제" 
+                onClick={(e) => {
+                    e?.stopPropagation();
+                    handleDelete(row.id);
+                }} 
+                variant="delete" 
+            />
         </S.ActionButtons>
     );
 
@@ -154,7 +137,7 @@ export default function RecordTable({
                     columns={movementColumns}
                     data={movementData}
                     renderActions={renderMovementActions}
-                    onRowClick={onMovementRowClick}
+                    onRowClick={handleMovementRowClick}
                 />
             )}
             {activeTab === 'leave' && (
@@ -169,6 +152,18 @@ export default function RecordTable({
                     columns={studentColumns}
                     data={studentData}
                     renderActions={() => <></>}
+                />
+            )}
+            {selectedMovement && (
+                <MovementDetailModal
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    data={{
+                        location: selectedMovement.location,
+                        teacher: selectedMovement.teacher,
+                        reason: selectedMovement.reason || '',
+                        students: selectedMovement.students,
+                    }}
                 />
             )}
         </>

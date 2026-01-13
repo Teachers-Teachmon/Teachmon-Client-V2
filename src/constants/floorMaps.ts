@@ -107,7 +107,7 @@ export const FLOOR_3_ELEMENTS: FloorElement[] = [
   { id: 9, name: "3-4", x: 46, y: 13, width: 5.5, height: 6, whether: true },
   { id: 10, name: "3-3", x: 51.5, y: 13, width: 5.5, height: 6, whether: true },
   { id: 11, name: "3-2", x: 57, y: 13, width: 5.5, height: 6, whether: true },
-  { id: 12, name: "3-1", x: 62.5, y: 13, width: 5.5, height: 6, whether: true },
+  { id: 12, name: "3-1", x: 62.49, y: 13, width: 5.59, height: 6, whether: true },
   { id: 13, name: "학습지원실(3학년)", x: 68, y: 13, width: 3, height: 6, whether: true },
   { id: 14, name: "진로활동실", x: 71, y: 13, width: 6, height: 6, whether: true },
   { id: 15, name: "계단", x: 77, y: 13, width: 2, height: 6 },

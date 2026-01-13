@@ -10,9 +10,11 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/" element={<div>홈</div>} />
         <Route path="/supervision" element={<div>자습감독</div>} />
-        <Route path="/manage" element={<Manage />} />
-        <Route path="/manage/record" element={<Record />} />
-        <Route path="/manage/movement" element={<Movement />} />
+       <Route path="/manage">
+          <Route index element={<Manage />} />
+          <Route path="record" element={<Record />} />
+          <Route path="movement" element={<Movement />} />
+      </Route>
         <Route path="/after-school" element={<div>방과후</div>} />
         <Route path="/admin" element={<div>관리자</div>} />
       </Route>

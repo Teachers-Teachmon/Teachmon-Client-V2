@@ -1,17 +1,16 @@
-import { type ReactNode } from 'react';
 import * as S from './style';
 
 export interface TableColumn<T> {
     key: string;
-    header: string | ReactNode;
+    header: string | React.ReactNode;
     width?: string;
-    render?: (row: T) => ReactNode;
+    render?: (row: T) => React.ReactNode;
 }
 
 interface TableLayoutProps<T> {
     columns: TableColumn<T>[];
     data: T[];
-    renderActions?: (row: T) => ReactNode;
+    renderActions?: (row: T) => React.ReactNode;
     actionsHeader?: string;
     onRowClick?: (row: T) => void;
 }
@@ -39,7 +38,7 @@ export default function TableLayout<T extends { id: string }>({
                         {renderActions && <S.TableHeader>{actionsHeader}</S.TableHeader>}
                     </S.TableRow>
                 </S.TableHead>
-                <S.TableBody>
+                <tbody>
                     {data.map((row) => (
                         <S.TableRow 
                             key={row.id}
@@ -50,7 +49,7 @@ export default function TableLayout<T extends { id: string }>({
                                 <S.TableCell key={`${row.id}-${column.key}`}>
                                     {column.render
                                         ? column.render(row)
-                                        : (row as any)[column.key]}
+                                        : String(row[column.key as keyof T] ?? '')}
                                 </S.TableCell>
                             ))}
                             {renderActions && (
@@ -58,7 +57,7 @@ export default function TableLayout<T extends { id: string }>({
                             )}
                         </S.TableRow>
                     ))}
-                </S.TableBody>
+                </tbody>
             </S.Table>
         </S.TableContainer>
     );

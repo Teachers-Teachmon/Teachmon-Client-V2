@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import StatusBadge from '@/components/ui/status';
 import type { StatusType } from '@/components/ui/status';
 import * as S from './style';
 
@@ -49,10 +50,9 @@ export default function ClassCard({ classNum, students }: ClassCardProps) {
                         {selectedStudentId === student.id && (
                             <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
                                 {getStatusOptions(student).map((status, index) => (
-                                    <S.StatusBadge key={index} $status={status}>
-                                        <S.StatusDot $status={status} />
-                                        <S.StatusText $status={status}>{status}</S.StatusText>
-                                    </S.StatusBadge>
+                                    <S.StatusBadgeWrapper key={index}>
+                                        <StatusBadge status={status} />
+                                    </S.StatusBadgeWrapper>
                                 ))}
                             </S.StatusPopupContainer>
                         )}

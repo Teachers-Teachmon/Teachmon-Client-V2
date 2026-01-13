@@ -22,8 +22,6 @@ export const TableHead = styled.thead`
     z-index: 1;
 `;
 
-export const TableBody = styled.tbody``;
-
 export const TableRow = styled.tr<{ $clickable?: boolean }>`
     border-bottom: 1px solid #eaecf0;
 
@@ -53,6 +51,7 @@ export const TableHeader = styled.th`
     font-size: clamp(12px, 1.1vw, 14px);
     font-weight: 500;
     color: ${colors.primaryGray};
+    height: 56px;
 
     &:first-child {
         padding-left: 40px;
@@ -69,6 +68,7 @@ export const TableCell = styled.td`
     font-weight: 500;
     color: ${colors.text};
     vertical-align: middle;
+    min-height: 72px;
 
     &:first-child {
         padding-left: 40px;

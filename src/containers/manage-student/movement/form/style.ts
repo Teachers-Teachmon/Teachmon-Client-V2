@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
+import { colors, fontSizes, radius } from '@/styles/theme';
 
 export const Container = styled.div`
     width: 100%;
     height: 100%;
-    background-color: #fbfcff;
+    background-color: ${colors.primaryBackground};
     padding: 40px 160px;
     display: flex;
     flex-direction: column;
@@ -12,7 +13,7 @@ export const Container = styled.div`
 export const ContentWrapper = styled.div`
     display: grid;
     width: 100%;
-    grid-template-columns: 7fr 2fr;
+    grid-template-columns: 7fr 3fr;
     gap: 20px;
     flex: 1;
     margin-bottom: 20px;
@@ -21,9 +22,9 @@ export const ContentWrapper = styled.div`
 export const FormSection = styled.div`
     width: 100%;
     flex: 1;
-    background-color: #ffffff;
-    border: 1px solid #c8dbff;
-    border-radius: 8px;
+    background-color: ${colors.background};
+    border: 1px solid ${colors.primary200};
+    border-radius: ${radius.md};
     padding: 32px 44px;
 `;
 
@@ -32,7 +33,7 @@ export const FormTitle = styled.h1`
     font-weight: 600;
     font-size: 28px;
     line-height: 28px;
-    color: #101828;
+    color: ${colors.text};
     margin: 0 0 24px 0;
 `;
 
@@ -51,10 +52,10 @@ export const FormGroup = styled.div`
 export const Label = styled.label`
     font-family: 'Paperlogy', sans-serif;
     font-weight: 500;
-    font-size: 20px;
+    font-size: ${fontSizes.H4};
     line-height: 18px;
     letter-spacing: 0.6px;
-    color: #000000;
+    color: ${colors.text};
 `;
 
 export const InputRow = styled.div`
@@ -75,24 +76,24 @@ export const TextAreaWrapper = styled.div`
 export const TextArea = styled.textarea`
     width: 100%;
     height: 70px;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    background-color: ${colors.background};
+    border: 1px solid ${colors.n02};
+    border-radius: ${radius.md};
     padding: 12px 20px;
     font-family: 'Paperlogy', sans-serif;
     font-weight: 400;
-    font-size: 16px;
+    font-size: ${fontSizes.Body};
     line-height: 18.84px;
-    color: #000000;
+    color: ${colors.text};
     resize: none;
     
     &::placeholder {
-        color: #858585;
+        color: ${colors.primaryGray};
     }
     
     &:focus {
         outline: none;
-        border-color: #2e6ff2;
+        border-color: ${colors.primary};
     }
 `;
 
@@ -111,16 +112,16 @@ export const TeamToggle = styled.div`
     span {
         font-family: 'Paperlogy', sans-serif;
         font-weight: 400;
-        font-size: 20px;
+        font-size: ${fontSizes.H4};
         line-height: 20px;
-        color: #000000;
+        color: ${colors.text};
     }
 `;
 
 export const Switch = styled.div<{ $isOn: boolean }>`
     width: 50px;
     height: 22.5px;
-    background-color: ${({ $isOn }) => ($isOn ? '#2e6ff2' : '#e5e7eb')};
+    background-color: ${({ $isOn }) => ($isOn ? colors.primary : colors.n02)};
     border-radius: 12.5px;
     position: relative;
     cursor: pointer;
@@ -130,7 +131,7 @@ export const Switch = styled.div<{ $isOn: boolean }>`
 export const SwitchKnob = styled.div<{ $isOn: boolean }>`
     width: 17.5px;
     height: 17.5px;
-    background: linear-gradient(180deg, #ffffff 0%, #e8eaea 100%);
+    background: linear-gradient(180deg, ${colors.n01} 0%, #e8eaea 100%);
     border-radius: 50%;
     position: absolute;
     top: 2.5px;
@@ -140,9 +141,8 @@ export const SwitchKnob = styled.div<{ $isOn: boolean }>`
 
 export const StudentDropdown = styled.div`
     width: 100%;
-    max-width: 594px;
-    background-color: #ffffff;
-    border-radius: 4px;
+    background-color: ${colors.background};
+    border-radius: ${radius.sm};
     overflow: hidden;
     margin-top: -8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -154,27 +154,28 @@ export const StudentDropdownItem = styled.div`
     padding: 0 25px;
     display: flex;
     align-items: center;
-    background-color: #ffffff;
+    background-color: ${colors.background};
     cursor: pointer;
     
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    font-size: 16px;
+    font-size: ${fontSizes.Body};
     letter-spacing: 0.36px;
-    color: #000000;
+    color: ${colors.text};
     
     &:hover {
-        background-color: #d0d0d0;
+        background-color: ${colors.n03};
     }
 `;
 
 export const SelectedStudentsSection = styled.div`
-    width: 203px;
-    min-width: 203px;
-    background-color: #ffffff;
-    border: 1px solid #c8dbff;
-    border-radius: 8px;
+    width: 100%;
+    background-color: ${colors.background};
+    border: 1px solid ${colors.primary200};
+    border-radius: ${radius.md};
     padding: 32px 17px;
+    display: flex;
+    flex-direction: column;
 `;
 
 export const SelectedTitle = styled.h2`
@@ -182,32 +183,37 @@ export const SelectedTitle = styled.h2`
     font-weight: 600;
     font-size: 28px;
     line-height: 28px;
-    color: #101828;
+    color: ${colors.text};
     margin: 0 0 16px 0;
 `;
 
+export const SelectedStudentsGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+`;
+
 export const SelectedStudentCard = styled.div`
-    width: 169px;
+    width: 100%;
     height: 50px;
-    border: 1px solid #2e6ff2;
-    border-radius: 8px;
+    border: 1px solid ${colors.primary};
+    border-radius: ${radius.md};
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    margin-bottom: 8px;
     
     &:hover {
-        background-color: #f0f5ff;
+        background-color: ${colors.primary100};
     }
 `;
 
 export const StudentName = styled.span`
     font-family: 'Paperlogy', sans-serif;
     font-weight: 400;
-    font-size: 18px;
+    font-size: clamp(14px, 1.1vw, 18px);
     line-height: 21.2px;
-    color: #2e6ff2;
+    color: ${colors.primary};
 `;
 
 export const ButtonWrapper = styled.div`
@@ -225,7 +231,7 @@ export const CancelButton = styled.button`
     font-weight: 600;
     font-size: 18px;
     line-height: 21.2px;
-    color: #999999;
+    color: ${colors.primaryGray};
     cursor: pointer;
     
     &:hover {
@@ -236,14 +242,14 @@ export const CancelButton = styled.button`
 export const NextButton = styled.button`
     flex: 1;
     height: 45px;
-    background-color: #2e6ff2;
+    background-color: ${colors.primary};
     border: none;
-    border-radius: 8px;
+    border-radius: ${radius.md};
     font-family: 'Paperlogy', sans-serif;
     font-weight: 600;
     font-size: 18px;
     line-height: 21.2px;
-    color: #ffffff;
+    color: ${colors.background};
     cursor: pointer;
     
     &:hover {
