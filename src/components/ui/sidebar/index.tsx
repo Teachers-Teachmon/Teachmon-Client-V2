@@ -13,13 +13,9 @@ export default function Sidebar() {
 
   const getActiveMenu = (): MenuItemType => {
     const currentPath = location.pathname
-    
-    // /manage로 시작하는 경로는 학생관리 메뉴 활성화
-    if (currentPath.startsWith('/manage')) {
-      return 'manage'
-    }
-    
-    const menuItem = SIDEBAR_MENU_ITEMS.find(item => item.path === currentPath)
+    const menuItem = SIDEBAR_MENU_ITEMS.find(item =>
+      currentPath === item.path || currentPath.startsWith(`${item.path}/`)
+    )
     return menuItem?.id || 'home'
   }
 
