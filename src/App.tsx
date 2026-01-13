@@ -2,10 +2,12 @@ import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/components/layout/MainLayout'
 import HomePage from '@/pages/home'
 import SupervisionPage from '@/pages/supervision'
+import LandingPage from '@/pages/landing'
 
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<LandingPage />} />
       <Route element={<MainLayout />}>
         <Route path="/main" element={<HomePage />} />
         <Route path="/supervision" element={<SupervisionPage />} />
