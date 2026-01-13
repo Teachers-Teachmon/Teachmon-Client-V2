@@ -8,6 +8,7 @@ import AdminMain from './pages/admin/main'
 import AdminUsersPage from '@/pages/admin/users'
 import AdminFixedMovementPage from '@/pages/admin/fixed-movement'
 import AdminFixedMovementCreatePage from '@/pages/admin/fixed-movement/create'
+import AdminFixedMovementEditPage from '@/pages/admin/fixed-movement/edit'
 import HomePage from '@/pages/home'
 import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
 import ErrorPage from './pages/error'
@@ -34,6 +35,7 @@ function App() {
             <Route path="users" element={<AdminUsersPage />} />
             <Route path="fixed-movement" element={<AdminFixedMovementPage />} />
             <Route path="fixed-movement/create" element={<AdminFixedMovementCreatePage />} />
+            <Route path="fixed-movement/edit/:id" element={<AdminFixedMovementEditPage />} />
         </Route>
       </Route>
 

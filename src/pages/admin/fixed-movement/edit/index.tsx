@@ -1,15 +1,17 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
-import { WEEKDAYS, PERIOD_OPTIONS, LOCATION_OPTIONS } from '@/constants/fixedMovement';
+import { WEEKDAYS, PERIOD_OPTIONS, LOCATION_OPTIONS, MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
 import type { Student } from '@/types/fixedMovement';
-import * as S from './style';
+import * as S from '../create/style';
 
-export default function FixedMovementCreatePage() {
+export default function FixedMovementEditPage() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  
   const [dayOfWeek, setDayOfWeek] = useState<string>('');
   const [period, setPeriod] = useState<string>('');
   const [location, setLocation] = useState<string>('');
@@ -28,6 +30,17 @@ export default function FixedMovementCreatePage() {
     { studentNumber: 1405, name: '김동욱' },
   ];
 
+  useEffect(() => {
+    const movement = MOCK_FIXED_MOVEMENTS.find(m => m.id === id);
+    if (movement) {
+      setDayOfWeek(WEEKDAYS[movement.day as keyof typeof WEEKDAYS]);
+      setPeriod(movement.period);
+      setLocation(movement.location);
+      setReason(movement.reason);
+      setSelectedStudents(movement.students);
+    }
+  }, [id]);
+
   const handleAddStudent = (student: Student) => {
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
       setSelectedStudents([...selectedStudents, student]);
@@ -45,6 +58,7 @@ export default function FixedMovementCreatePage() {
 
   const handleSubmit = () => {
     console.log({
+      id,
       dayOfWeek,
       period,
       location,
@@ -58,7 +72,7 @@ export default function FixedMovementCreatePage() {
   return (
     <S.Container>
       <S.Content>
-        <S.Title>고정 이석 설정</S.Title>
+        <S.Title>고정 이석 수정</S.Title>
 
         <S.Form>
           <S.FormSection>
@@ -102,16 +116,13 @@ export default function FixedMovementCreatePage() {
 
           <S.FormSection>
             <S.ToggleRow>
-              <S.SectionTitle>학생</S.SectionTitle>
-              <S.ToggleContent>
-                <S.SectionTitle>팀</S.SectionTitle>
+              <S.SectionTitle>학생 팀</S.SectionTitle>
               <S.Toggle
                 $active={isTeamMode}
                 onClick={() => setIsTeamMode(!isTeamMode)}
               >
                 <S.ToggleCircle $active={isTeamMode} />
               </S.Toggle>
-              </S.ToggleContent>
             </S.ToggleRow>
 
             <SearchDropdown

@@ -80,7 +80,14 @@ export const InputRow = styled.div`
 export const ToggleRow = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.5rem;
+`;
+
+export const ToggleContent = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: 1rem;
 `;
 
 export const Toggle = styled.div<{ $active: boolean }>`

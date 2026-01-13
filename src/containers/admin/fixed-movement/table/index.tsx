@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { WEEKDAYS, MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
@@ -11,15 +12,18 @@ interface FixedMovementTableProps {
 }
 
 export default function FixedMovementTable({ searchQuery }: FixedMovementTableProps) {
+  const navigate = useNavigate();
   const [movements, setMovements] = useState<FixedMovement[]>(MOCK_FIXED_MOVEMENTS);
   const [selectedMovement, setSelectedMovement] = useState<FixedMovement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleEdit = (id: string) => {
-    console.log('수정:', id);
+  const handleEdit = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/admin/fixed-movement/edit/${id}`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     setMovements(movements.filter(m => m.id !== id));
   };
 
@@ -85,8 +89,8 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
 
   const renderActions = (row: FixedMovement) => (
     <S.ActionCell>
-      <Button text="수정" variant="confirm" width="100px" onClick={() => handleEdit(row.id)} />
-      <Button text="삭제" variant="delete" width="100px" onClick={() => handleDelete(row.id)} />
+      <Button text="수정" variant="confirm" width="100px" onClick={(e) => handleEdit(row.id, e)} />
+      <Button text="삭제" variant="delete" width="100px" onClick={(e) => handleDelete(row.id, e)} />
     </S.ActionCell>
   );
 
