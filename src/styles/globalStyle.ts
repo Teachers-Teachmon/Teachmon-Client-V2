@@ -72,6 +72,11 @@ export const globalStyles = css`
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: 'Paperlogy', sans-serif;
+  }
+
+  button, input, textarea, select {
+    font-family: inherit;
   }
 
   .main-container {
