@@ -47,25 +47,35 @@ export const SelectionContainer = styled.div`
   gap: 12px;
 `;
 
-export const SelectionBox = styled.div<{ $isSelected: boolean }>`
+export const SelectionBox = styled.div<{ $isSelected: boolean; $isDisabled: boolean }>`
   padding: 20px;
-  border: 2px solid ${({ $isSelected }) => ($isSelected ? colors.primary : colors.n02)};
+  border: 1px solid ${({ $isSelected, $isDisabled }) => {
+    if ($isDisabled) return colors.n02;
+    return $isSelected ? colors.primary : colors.n02;
+  }};
   border-radius: ${radius.md};
-  cursor: pointer;
-  background-color: ${({ $isSelected }) => ($isSelected ? colors.primary100 : 'transparent')};
-  font-size: ${fontSizes.Body};
-  font-weight: 500;
-  text-align: center;
+  cursor: ${({ $isDisabled }) => ($isDisabled ? 'not-allowed' : 'pointer')};
+  background-color: ${({ $isSelected, $isDisabled }) => {
+    if ($isDisabled) return colors.n02;
+    return $isSelected ? colors.primary100 : 'transparent';
+  }};
+  opacity: ${({ $isDisabled }) => ($isDisabled ? 0.6 : 1)};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   transition: all 0.2s ease-in-out;
 
   &:hover {
-    border-color: ${colors.primary};
-    background-color: ${({ $isSelected }) => ($isSelected ? colors.primary100 : colors.primary100)};
+    border-color: ${({ $isDisabled, $isSelected }) => {
+      if ($isDisabled) return colors.n02;
+      return $isSelected ? colors.primary : colors.primary;
+    }};
   }
+`;
 
-  &:active {
-    transform: scale(0.98);
-  }
+export const SelectionText = styled.span`
+  font-size: ${fontSizes.Body};
+  font-weight: 500;
 `;
 
 export const DropdownSection = styled.div`

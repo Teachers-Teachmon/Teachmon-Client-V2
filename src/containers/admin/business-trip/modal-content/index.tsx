@@ -1,5 +1,5 @@
 import Button from '@/components/ui/button';
-import Dropdown from '@/components/ui/input/dropdown';
+import SearchDropdown from '@/components/ui/input/dropdown/search';
 import { formatDate } from '@/utils/admin';
 import type { AfterSchoolTeacher } from '@/types/admin';
 import { LOCATION_OPTIONS } from '../data';
@@ -55,27 +55,33 @@ export function MakeupSelectionContent({
       <S.ModalDateText>{selectedMakeupDate && formatDate(selectedMakeupDate)}</S.ModalDateText>
 
       <S.SelectionContainer>
-        {availableMakeupPeriods.includes('8~9') && (
-          <S.SelectionBox
-            $isSelected={selectedMakeupPeriods.includes('8~9')}
-            onClick={() => onTogglePeriod('8~9')}
-          >
-            8~9교시 보강
-          </S.SelectionBox>
-        )}
-        {availableMakeupPeriods.includes('10~11') && (
-          <S.SelectionBox
-            $isSelected={selectedMakeupPeriods.includes('10~11')}
-            onClick={() => onTogglePeriod('10~11')}
-          >
-            10~11교시 보강
-          </S.SelectionBox>
-        )}
+        {[
+          { label: '8~9교시 보강', value: '8~9' },
+          { label: '10~11교시 보강', value: '10~11' },
+        ].map(({ label, value }) => {
+          const isAvailable = availableMakeupPeriods.includes(value);
+          const isSelected = selectedMakeupPeriods.includes(value);
+
+          return (
+            <S.SelectionBox
+              key={value}
+              $isSelected={isSelected}
+              $isDisabled={!isAvailable}
+              onClick={() => {
+                if (isAvailable) {
+                  onTogglePeriod(value);
+                }
+              }}
+            >
+              <S.SelectionText>{label}</S.SelectionText>
+            </S.SelectionBox>
+          );
+        })}
       </S.SelectionContainer>
 
       <S.DropdownSection>
         <S.DropdownLabel>장소</S.DropdownLabel>
-        <Dropdown
+        <SearchDropdown
           items={LOCATION_OPTIONS}
           placeholder="장소"
           value={selectedLocation}
