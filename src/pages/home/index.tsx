@@ -5,7 +5,7 @@ import WelcomeSection from '@/containers/home/welcome';
 import QuickLinkSection from '@/containers/home/quick-link';
 import ExchangeRequestSection from '@/containers/home/exchange-request';
 import WeeklyExitSection from '@/containers/home/weekly-exit';
-import ExchangeDetailModal from '@/containers/home/exchange-detail-modal';
+import ExchangeDetailModal from '@/components/ui/exchange-detail-modal';
 
 const CURRENT_TEACHER_ID = 353526346;
 

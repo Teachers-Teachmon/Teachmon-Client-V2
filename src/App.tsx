@@ -9,6 +9,10 @@ import AdminUsersPage from '@/pages/admin/users'
 import HomePage from '@/pages/home'
 import AfterSchoolPage from '@/pages/after-school'
 import BusinessTripPage from '@/pages/after-school/business-trip'
+import SelfStudyPage from '@/pages/admin/self-study'
+import AdminSupervisionPage from '@/pages/admin/supervision'
+import BusinessTripPage from '@/pages/admin/business-trip'
+import SupervisionPage from '@/pages/supervision'
 import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
@@ -19,7 +23,7 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route element={<MainLayout />}>
         <Route path="/main" element={<HomePage />} />
-        <Route path="/supervision" element={<div>자습감독</div>} />
+        <Route path="/supervision" element={<SupervisionPage />} />
         <Route path="/manage">
           <Route index element={<Manage />} />
           <Route path="record" element={<Record />} />
@@ -30,8 +34,11 @@ function App() {
           <Route path="extra" element={<AfterSchoolExtraPage />} />
         </Route>
         <Route path="/admin">
-            <Route index element={<AdminMain />} />
-            <Route path="users" element={<AdminUsersPage />} />
+          <Route index element={<AdminMain />} />
+          <Route path="self-study" element={<SelfStudyPage />} />
+          <Route path="supervision" element={<AdminSupervisionPage />} />
+          <Route path="business-trip" element={<BusinessTripPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
         </Route>
       </Route>
 

@@ -76,9 +76,9 @@ export default function SearchDropdown<T = string>({
     }
   };
 
-  const displayValue = value !== undefined && value !== null ? String(value) : null;
   const defaultRenderItem = (item: T) => String(item);
   const itemRenderer = renderItem || defaultRenderItem;
+  const displayValue = value !== undefined && value !== null ? itemRenderer(value) : null;
   const keyGenerator = getItemKey || ((_item: T, index: number) => index);
 
   return (

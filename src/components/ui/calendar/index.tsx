@@ -18,11 +18,29 @@ export default function Calendar({
   showYear = true,
   showLegend = true,
   selectable = false,
+  exchangeMode = false,
+  currentTeacherId,
+  selectedMyEvent,
+  onMyEventSelect,
+  onTargetEventSelect,
 }: CalendarProps) {
   const { year, month, calendarDays, rangeEventRows, handlePrevMonth, handleNextMonth, getEventsForDate, getRangeEventsForDate } = useCalendar({ controlledYear, controlledMonth, onMonthChange, events, rangeEvents })
   const { isDateInDragRange, handleMouseDown, handleMouseEnter, handleMouseUp } = useDragSelect({ enabled: selectable, onRangeSelect })
   const prevMonthNum = month === 1 ? 12 : month - 1
   const nextMonthNum = month === 12 ? 1 : month + 1
+  const isInteractive = selectable || exchangeMode || !!onDateClick || !!onEventClick
+
+  const handleEventClick = (event: CalendarEvent) => {
+    if (exchangeMode) {
+      if (event.teacherId === currentTeacherId) {
+        onMyEventSelect?.(event)
+      } else {
+        onTargetEventSelect?.(event)
+      }
+    } else {
+      onEventClick?.(event)
+    }
+  }
 
   return (
     <S.CalendarContainer onMouseUp={handleMouseUp} onMouseLeave={handleMouseUp}>
@@ -65,23 +83,52 @@ export default function Calendar({
                   key={index}
                   isCurrentMonth={isCurrentMonth}
                   isSelected={isInDragRange}
+                  isInteractive={isInteractive}
                   onMouseDown={() => handleMouseDown(date)}
                   onMouseEnter={() => handleMouseEnter(date)}
-                  onClick={() => !selectable && onDateClick?.(date, { date, isCurrentMonth, events: dayEvents, rangeEvents: dayRangeEvents })}
+                  onClick={(e) => !selectable && onDateClick?.(
+                    date,
+                    { date, isCurrentMonth, events: dayEvents, rangeEvents: dayRangeEvents },
+                    (e.currentTarget as HTMLElement).getBoundingClientRect()
+                  )}
                 >
                   <S.DayNumber dayType={dayType} isCurrentMonth={isCurrentMonth}>{date.getDate()}</S.DayNumber>
                   <S.EventList>
-                    {dayEvents.map((event) => (
-                      <S.EventTag
-                        key={event.id}
-                        bgColor={event.bgColor}
-                        textColor={event.textColor}
-                        clickable={!!onEventClick}
-                        onClick={(e) => { if (onEventClick) { e.stopPropagation(); onEventClick(event) } }}
-                      >
-                        {event.label}
-                      </S.EventTag>
-                    ))}
+                    {dayEvents.map((event) => {
+                      const isMyEvent = event.teacherId === currentTeacherId
+                      let isDisabled = false
+
+                      if (exchangeMode) {
+                        if (!selectedMyEvent) {
+                          isDisabled = !isMyEvent
+                        } else {
+                          isDisabled = isMyEvent
+                        }
+                      }
+
+                      return (
+                        <S.EventTag
+                          key={event.id}
+                          bgColor={event.bgColor}
+                          textColor={event.textColor}
+                          clickable={!!onEventClick || (exchangeMode && !isDisabled)}
+                          isSelected={exchangeMode && selectedMyEvent?.id === event.id}
+                          isDisabled={isDisabled}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            if (!isDisabled) {
+                              handleEventClick(event)
+                            }
+                            if (onEventClick) {
+                              e.stopPropagation()
+                              onEventClick(event, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                            }
+                          }}
+                        >
+                          {event.label}
+                        </S.EventTag>
+                      )
+                    })}
                   </S.EventList>
                 </S.DayCell>
               )

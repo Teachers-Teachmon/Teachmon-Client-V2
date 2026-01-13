@@ -139,7 +139,7 @@ export const DaysGrid = styled.div`
   position: relative;
 `
 
-export const DayCell = styled.div<{ isCurrentMonth: boolean; isSelected?: boolean }>`
+export const DayCell = styled.div<{ isCurrentMonth: boolean; isSelected?: boolean; isInteractive?: boolean }>`
   display: flex;
   flex-direction: column;
   width: calc(100% / 7);
@@ -148,14 +148,18 @@ export const DayCell = styled.div<{ isCurrentMonth: boolean; isSelected?: boolea
   background: ${({ isCurrentMonth, isSelected }) =>
     isSelected ? 'rgba(0, 133, 255, 0.1)' : isCurrentMonth ? colors.background : '#F8F8F8'};
   border: 1px solid #E8E8E8;
-  cursor: pointer;
+  cursor: ${({ isInteractive }) => (isInteractive ? 'pointer' : 'default')};
   transition: background 0.15s;
   position: relative;
   z-index: 1;
 
   &:hover {
-    background: ${({ isCurrentMonth, isSelected }) =>
-      isSelected ? 'rgba(0, 133, 255, 0.15)' : isCurrentMonth ? '#FAFAFA' : '#F0F0F0'};
+    background: ${({ isCurrentMonth, isSelected, isInteractive }) => {
+    if (!isInteractive) {
+      return isSelected ? 'rgba(0, 133, 255, 0.1)' : isCurrentMonth ? colors.background : '#F8F8F8'
+    }
+    return isSelected ? 'rgba(0, 133, 255, 0.15)' : isCurrentMonth ? '#FAFAFA' : '#F0F0F0'
+  }};
   }
 `
 
@@ -188,7 +192,7 @@ export const EventList = styled.div`
   margin-top: auto;
 `
 
-export const EventTag = styled.span<{ bgColor: string; textColor: string; clickable?: boolean }>`
+export const EventTag = styled.span<{ bgColor: string; textColor: string; clickable?: boolean; isSelected?: boolean; isDisabled?: boolean }>`
   display: inline-block;
   width: fit-content;
   padding: 4px 8px;
@@ -199,11 +203,16 @@ export const EventTag = styled.span<{ bgColor: string; textColor: string; clicka
   white-space: nowrap;
   background: ${({ bgColor }) => bgColor};
   color: ${({ textColor }) => textColor};
-  cursor: ${({ clickable }) => (clickable ? 'pointer' : 'default')};
-  transition: opacity 0.15s;
+  cursor: ${({ clickable, isDisabled }) => (isDisabled ? 'not-allowed' : clickable ? 'pointer' : 'default')};
+  transition: all 0.15s;
+  border: ${({ isSelected, textColor }) => (isSelected ? `2px solid ${textColor}` : '2px solid transparent')};
+  box-sizing: border-box;
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.4 : 1)};
+  filter: ${({ isDisabled }) => (isDisabled ? 'grayscale(100%)' : 'none')};
+  pointer-events: ${({ isDisabled }) => (isDisabled ? 'none' : 'auto')};
 
   &:hover {
-    opacity: ${({ clickable }) => (clickable ? 0.8 : 1)};
+    opacity: ${({ clickable, isDisabled }) => (isDisabled ? 0.4 : clickable ? 0.8 : 1)};
   }
 `
 
