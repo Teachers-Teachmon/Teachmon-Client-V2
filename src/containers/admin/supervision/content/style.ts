@@ -1,19 +1,7 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { SUPERVISION_EDITOR_HEIGHT, SUPERVISION_EDITOR_WIDTH } from '@/constants/adminSupervision';
 import { slideInLeft, slideOutLeft } from '@/styles/animations';
-
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-export const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-bottom: 16px;
-`;
 
 export const ContentWrapper = styled.div`
   display: flex;
@@ -155,7 +143,8 @@ export const FloatingEditor = styled.div<{ $top: number; $left: number }>`
   position: absolute;
   top: ${({ $top }) => `${$top}px`};
   left: ${({ $left }) => `${$left}px`};
-  width: 240px;
+  width: ${SUPERVISION_EDITOR_WIDTH}px;
+  min-height: ${SUPERVISION_EDITOR_HEIGHT}px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -165,33 +154,4 @@ export const FloatingEditor = styled.div<{ $top: number; $left: number }>`
   background: ${colors.background};
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   z-index: 20;
-`;
-
-export const ModalContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  min-width: 450px;
-`;
-
-export const ModalTitle = styled.h2`
-  font-size: ${fontSizes.H3};
-  font-weight: 600;
-  text-align: center;
-`;
-
-export const DateRangeContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-`;
-
-export const DateSeparator = styled.span`
-  font-size: ${fontSizes.H4};
-  color: ${colors.n03};
-`;
-
-export const ModalButtonGroup = styled.div`
-  display: flex;
-  gap: 12px;
 `;
