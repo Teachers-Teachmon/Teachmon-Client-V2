@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/components/layout/MainLayout'
 import HomePage from '@/pages/home'
+import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
 
 function App() {
@@ -15,7 +16,7 @@ function App() {
         <Route path="/admin" element={<div>관리자</div>} />
       </Route>
 
-      <Route path="*" element={<div>Not Found</div>} />
+      <Route path="*" element={<ErrorPage />} />
     </Routes>
   )
 }
