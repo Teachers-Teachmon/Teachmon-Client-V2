@@ -5,13 +5,20 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-height: 0;
 `;
 
 export const FilterContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;
   margin-bottom: 24px;
+`;
+
+export const FilterLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
 `;
 
 export const QuarterDropdownWrapper = styled.div`
@@ -43,12 +50,19 @@ export const ScheduleContainer = styled.div`
   display: flex;
   gap: 16px;
   flex: 1;
+  min-height: 0;
   overflow-x: auto;
+`;
+
+export const ActionGroup = styled.div`
+  display: flex;
+  gap: 8px;
 `;
 
 export const DayColumn = styled.div`
   flex: 1;
   min-width: 180px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   border: 1px solid ${colors.n02};
@@ -71,6 +85,7 @@ export const PeriodSection = styled.div`
   flex: 1;
   padding: 16px;
   background: ${colors.background};
+  min-height: 0;
 `;
 
 export const PeriodHeader = styled.div`
@@ -111,6 +126,30 @@ export const PeriodList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: ${colors.n03} transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.n02};
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${colors.n03};
+  }
 `;
 
 export const PeriodRow = styled.div`

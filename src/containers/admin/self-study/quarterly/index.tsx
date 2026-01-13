@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as S from './style';
 import Dropdown from '@/components/ui/input/dropdown';
+import Button from '@/components/ui/button';
 import plusIcon from '/icons/admin-self-study/plus.svg';
 import minusIcon from '/icons/admin-self-study/minus.svg';
 
@@ -46,9 +48,10 @@ const createInitialSchedule = (): DaySchedule[] => {
 };
 
 export default function QuarterlySection() {
+  const navigate = useNavigate();
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(1);
   const [selectedGrade, setSelectedGrade] = useState<Grade>(1);
-  const [schedules, setSchedules] = useState<DaySchedule[]>(createInitialSchedule());
+  const [schedules, setSchedules] = useState<DaySchedule[]>(() => createInitialSchedule());
 
   const handleGradeSelect = (grade: Grade) => {
     setSelectedGrade(grade);
@@ -92,32 +95,46 @@ export default function QuarterlySection() {
     });
   };
 
+  const handleSave = () => {
+    console.log('저장:', { selectedQuarter, selectedGrade, schedules });
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
   return (
     <S.Container>
       <S.FilterContainer>
-        <S.QuarterDropdownWrapper>
-          <Dropdown<Quarter>
-            placeholder="분기"
-            items={QUARTER_OPTIONS}
-            value={selectedQuarter}
-            onChange={setSelectedQuarter}
-            renderItem={(item) => `${item}분기`}
-            customWidth="100px"
-            customHeight="40px"
-          />
-        </S.QuarterDropdownWrapper>
+        <S.FilterLeft>
+          <S.QuarterDropdownWrapper>
+            <Dropdown<Quarter>
+              placeholder="분기"
+              items={QUARTER_OPTIONS}
+              value={selectedQuarter}
+              onChange={setSelectedQuarter}
+              renderItem={(item) => `${item}분기`}
+              customWidth="100px"
+              customHeight="40px"
+            />
+          </S.QuarterDropdownWrapper>
 
-        <S.GradeButtonGroup>
-          {([1, 2, 3] as Grade[]).map(grade => (
-            <S.GradeButton
-              key={grade}
-              $active={selectedGrade === grade}
-              onClick={() => handleGradeSelect(grade)}
-            >
-              {grade}학년
-            </S.GradeButton>
-          ))}
-        </S.GradeButtonGroup>
+          <S.GradeButtonGroup>
+            {([1, 2, 3] as Grade[]).map(grade => (
+              <S.GradeButton
+                key={grade}
+                $active={selectedGrade === grade}
+                onClick={() => handleGradeSelect(grade)}
+              >
+                {grade}학년
+              </S.GradeButton>
+            ))}
+          </S.GradeButtonGroup>
+        </S.FilterLeft>
+        <S.ActionGroup>
+          <Button variant="confirm" text="돌아가기" onClick={handleCancel} />
+          <Button variant="confirm" text="저장" onClick={handleSave} />
+        </S.ActionGroup>
       </S.FilterContainer>
 
       <S.ScheduleContainer>
