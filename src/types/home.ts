@@ -18,6 +18,7 @@ export interface ExchangeRequest {
   requestor: ExchangeParty;
   responser: ExchangeParty;
   status: ExchangeStatus;
+  reason?: string;
 }
 
 export type PeriodType =
@@ -41,5 +42,7 @@ export interface ExchangeDetailContentProps {
   onClose: () => void;
   onAccept?: () => void;
   onReject?: () => void;
+  onReasonChange?: (value: string) => void;
+  onSubmit?: () => void;
 }
 
