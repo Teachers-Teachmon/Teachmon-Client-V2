@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Button from '@/components/ui/button';
-import Dropdown from '@/components/ui/input/dropdown';
+import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Modal from '@/components/layout/modal';
 import * as S from './style';
 
@@ -52,27 +52,25 @@ export default function MakeupSelectionModal({
                 </div>
 
                 <S.SelectionContainer>
-                    {availablePeriods.includes('8~9') && (
-                        <S.SelectionBox
-                            isSelected={selectedPeriods.includes('8~9')}
-                            onClick={() => handleTogglePeriod('8~9')}
-                        >
-                            <S.SelectionText>8~9교시 보강</S.SelectionText>
-                        </S.SelectionBox>
-                    )}
-                    {availablePeriods.includes('10~11') && (
-                        <S.SelectionBox
-                            isSelected={selectedPeriods.includes('10~11')}
-                            onClick={() => handleTogglePeriod('10~11')}
-                        >
-                            <S.SelectionText>10~11교시 보강</S.SelectionText>
-                        </S.SelectionBox>
-                    )}
+                    <S.SelectionBox
+                        isSelected={selectedPeriods.includes('8~9')}
+                        isDisabled={!availablePeriods.includes('8~9')}
+                        onClick={() => availablePeriods.includes('8~9') && handleTogglePeriod('8~9')}
+                    >
+                        <S.SelectionText>8~9교시 보강</S.SelectionText>
+                    </S.SelectionBox>
+                    <S.SelectionBox
+                        isSelected={selectedPeriods.includes('10~11')}
+                        isDisabled={!availablePeriods.includes('10~11')}
+                        onClick={() => availablePeriods.includes('10~11') && handleTogglePeriod('10~11')}
+                    >
+                        <S.SelectionText>10~11교시 보강</S.SelectionText>
+                    </S.SelectionBox>
                 </S.SelectionContainer>
 
                 <S.DropdownContainer>
                     <S.Label>장소</S.Label>
-                    <Dropdown
+                    <SearchDropdown
                         items={['1학년 1반', '1학년 2반', '음악실', '미술실']}
                         placeholder="장소 선택"
                         value={location}

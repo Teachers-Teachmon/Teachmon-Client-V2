@@ -2,41 +2,8 @@ import { useState, useMemo } from 'react';
 import Calendar from '@/components/ui/calendar';
 import MakeupSelectionModal from '@/components/ui/makeup-selection-modal';
 import { transformAffordableToCalendarEvents } from '@/utils/afterSchool';
-import type { AffordableReinforcement } from '@/types/afterSchool';
+import { SAMPLE_DATA } from './data';
 import * as S from './style';
-
-const SAMPLE_DATA: AffordableReinforcement[] = [
-    {
-        day: "2026-01-01",
-        start_period: 8,
-        end_period: 9
-    },
-    {
-        day: "2026-01-10",
-        start_period: 10,
-        end_period: 11
-    },
-    {
-        day: "2026-01-15",
-        start_period: 8,
-        end_period: 9
-    },
-    {
-        day: "2026-01-20",
-        start_period: 10,
-        end_period: 11
-    },
-    {
-        day: "2026-01-25",
-        start_period: 8,
-        end_period: 9
-    },
-    {
-        day: "2026-01-25",
-        start_period: 10,
-        end_period: 11
-    }
-];
 
 export default function AfterSchoolExtraPage() {
     const currentDate = new Date();

@@ -21,16 +21,23 @@ export const SelectionContainer = styled.div`
   gap: 12px;
 `;
 
-export const SelectionBox = styled.div<{ isSelected: boolean }>`
+export const SelectionBox = styled.div<{ isSelected: boolean; isDisabled: boolean }>`
   padding: 20px;
   border: 1px solid ${({ isSelected }) => (isSelected ? colors.primary : colors.n02)};
   border-radius: ${radius.md};
-  cursor: pointer;
-  background-color: ${({ isSelected }) => (isSelected ? colors.primary100 : 'transparent')};
+  cursor: ${({ isDisabled }) => (isDisabled ? 'not-allowed' : 'pointer')};
+  background-color: ${({ isSelected, isDisabled }) => {
+    if (isDisabled) return colors.n02;
+    return isSelected ? colors.primary100 : 'transparent';
+  }};
   transition: all 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity: ${({ isDisabled }) => (isDisabled ? 0.6 : 1)};
 
   &:hover {
-    border-color: ${colors.primary};
+    border-color: ${({ isDisabled }) => (isDisabled ? colors.n02 : colors.primary)};
   }
 `;
 
