@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import TableLayout, { type TableColumn } from '@/components/layout/table';
+import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import TextInput from '@/components/ui/input/text-input';
-
 import { mockStudents } from './data';
+import { useStudentColumns } from '../../../../hooks/useStudentUserManageColumns';
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
 
@@ -25,6 +24,12 @@ export default function Students({ searchQuery }: StudentsProps) {
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const columns = useStudentColumns({
+    editingIds,
+    editingStudent,
+    onEditingStudentChange: setEditingStudent,
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -94,97 +99,6 @@ export default function Students({ searchQuery }: StudentsProps) {
   const filteredStudents = students.filter(
     (student) => student.name.includes(searchQuery) || String(student.grade).includes(searchQuery)
   );
-
-  const columns: TableColumn<Student>[] = [
-    {
-      key: 'grade',
-      header: '학년',
-      width: '180px',
-      render: (row) =>
-        editingIds.has(row.id) ? (
-          <TextInput
-            value={editingStudent?.id === row.id ? editingStudent.grade : row.grade}
-            onChange={(e) => {
-              if (editingStudent?.id === row.id) {
-                setEditingStudent({ ...editingStudent, grade: Number(e.target.value) });
-              } else {
-                setEditingStudent({ ...row, grade: Number(e.target.value) });
-              }
-            }}
-            customPadding="0 14px"
-            customFontSize="16px"
-          />
-        ) : (
-          row.grade
-        ),
-    },
-    {
-      key: 'classNum',
-      header: '반',
-      width: '180px',
-      render: (row) =>
-        editingIds.has(row.id) ? (
-          <TextInput
-            value={editingStudent?.id === row.id ? editingStudent.classNum : row.classNum}
-            onChange={(e) => {
-              if (editingStudent?.id === row.id) {
-                setEditingStudent({ ...editingStudent, classNum: Number(e.target.value) });
-              } else {
-                setEditingStudent({ ...row, classNum: Number(e.target.value) });
-              }
-            }}
-            customPadding="0 14px"
-            customFontSize="16px"
-          />
-        ) : (
-          row.classNum
-        ),
-    },
-    {
-      key: 'number',
-      header: '번호',
-      width: '180px',
-      render: (row) =>
-        editingIds.has(row.id) ? (
-          <TextInput
-            value={editingStudent?.id === row.id ? editingStudent.number : row.number}
-            onChange={(e) => {
-              if (editingStudent?.id === row.id) {
-                setEditingStudent({ ...editingStudent, number: Number(e.target.value) });
-              } else {
-                setEditingStudent({ ...row, number: Number(e.target.value) });
-              }
-            }}
-            customPadding="0 14px"
-            customFontSize="16px"
-          />
-        ) : (
-          row.number
-        ),
-    },
-    {
-      key: 'name',
-      header: '이름',
-      width: '180px',
-      render: (row) =>
-        editingIds.has(row.id) ? (
-          <TextInput
-            value={editingStudent?.id === row.id ? editingStudent.name : row.name}
-            onChange={(e) => {
-              if (editingStudent?.id === row.id) {
-                setEditingStudent({ ...editingStudent, name: e.target.value });
-              } else {
-                setEditingStudent({ ...row, name: e.target.value });
-              }
-            }}
-            customPadding="0 14px"
-            customFontSize="16px"
-          />
-        ) : (
-          row.name
-        ),
-    },
-  ];
 
   const renderActions = (row: Student) => (
     <S.ActionCell>

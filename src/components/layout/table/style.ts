@@ -22,8 +22,6 @@ export const TableHead = styled.thead`
     z-index: 1;
 `;
 
-export const TableBody = styled.tbody``;
-
 export const TableRow = styled.tr<{ $clickable?: boolean }>`
     border-bottom: 1px solid #eaecf0;
 

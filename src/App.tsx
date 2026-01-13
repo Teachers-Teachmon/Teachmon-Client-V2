@@ -11,8 +11,10 @@ function App() {
         <Route path="/supervision" element={<div>자습감독</div>} />
         <Route path="/manage" element={<div>학생관리</div>} />
         <Route path="/after-school" element={<div>방과후</div>} />
-        <Route path="/admin" element={<div>관리자</div>} />
-        <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/admin">
+            <Route index element={<div>관리자</div>} />
+            <Route path="users" element={<AdminUsersPage />} />
+        </Route>
       </Route>
 
       <Route path="*" element={<div>Not Found</div>} />

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
 import Checkbox from '@/components/ui/input/checkbox';
 import { WEEKDAYS } from '@/constants/admin';
@@ -30,8 +31,8 @@ export default function ForbiddenDates({
   };
 
   return (
-    <S.Overlay onClick={onCancel}>
-      <S.Modal onClick={(e) => e.stopPropagation()}>
+    <Modal isOpen={true} onClose={onCancel} padding="60px 81px">
+      <S.Content>
         <S.Title>{teacherName} 선생님 금지날짜</S.Title>
 
         <S.DaysGrid>
@@ -54,7 +55,7 @@ export default function ForbiddenDates({
           <Button text="취소" variant="cancel" onClick={onCancel} />
           <Button text="저장" variant="confirm" onClick={handleSave} />
         </S.ButtonGroup>
-      </S.Modal>
-    </S.Overlay>
+      </S.Content>
+    </Modal>
   );
 }

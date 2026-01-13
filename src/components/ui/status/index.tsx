@@ -1,6 +1,5 @@
+import { type StatusType } from '@/constants/status';
 import * as S from './style';
-
-export type StatusType = '방과후' | '자습' | '이석' | '조퇴' | '결석' | '이탈' | '취소' | '관리자' | '일반';
 
 interface StatusBadgeProps {
     status: StatusType;
@@ -16,3 +15,4 @@ function StatusBadge({ status }: StatusBadgeProps) {
 }
 
 export default StatusBadge;
+export type { StatusType };

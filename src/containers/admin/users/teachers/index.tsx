@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import TableLayout, { type TableColumn } from '@/components/layout/table';
-import StatusBadge, { type StatusType } from '@/components/ui/status';
+import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import Dropdown from '@/components/ui/input/dropdown';
-import TextInput from '@/components/ui/input/text-input';
 import { USER_ROLES } from '@/constants/admin';
 import { mockTeachers } from './data';
+import { useTeacherColumns } from '../../../../hooks/useTeacherUserManageColumns';
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
 
@@ -33,6 +31,12 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const columns = useTeacherColumns({
+    editingIds,
+    editingTeacher,
+    onEditingTeacherChange: setEditingTeacher,
+  });
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -106,86 +110,6 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
       if (sortOrder === 'desc') return b.supervisionCount - a.supervisionCount;
       return 0;
     });
-
-  const columns: TableColumn<Teacher>[] = [
-    {
-      key: 'role',
-      header: '권한',
-      width: '160px',
-      render: (row) =>
-        editingIds.has(row.id) ? (
-          <div style={{ width: '100%' }}>
-            <Dropdown
-              items={[USER_ROLES.ADMIN, USER_ROLES.NORMAL]}
-              value={editingTeacher?.id === row.id ? editingTeacher.role : row.role}
-              onChange={(value) => {
-                if (editingTeacher?.id === row.id) {
-                  setEditingTeacher({ ...editingTeacher, role: value as UserRole });
-                } else {
-                  setEditingTeacher({ ...row, role: value as UserRole });
-                }
-              }}
-              customHeight="50px"
-              customWidth="100%"
-            />
-          </div>
-        ) : (
-          <StatusBadge status={row.role as StatusType} />
-        ),
-    },
-    {
-      key: 'name',
-      header: '이름',
-      width: '150px',
-      render: (row) =>
-        editingIds.has(row.id) ? (
-          <TextInput
-            value={editingTeacher?.id === row.id ? editingTeacher.name : row.name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              if (editingTeacher?.id === row.id) {
-                setEditingTeacher({ ...editingTeacher, name: e.target.value });
-              } else {
-                setEditingTeacher({ ...row, name: e.target.value });
-              }
-            }}
-            customPadding="0 14px"
-            customFontSize="16px"
-          />
-        ) : (
-          row.name
-        ),
-    },
-    {
-      key: 'email',
-      header: '이메일',
-      width: '320px',
-      render: (row) =>
-        editingIds.has(row.id) ? (
-          <div style={{ width: '250px' }}>
-            <TextInput
-              value={editingTeacher?.id === row.id ? editingTeacher.email : row.email}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                if (editingTeacher?.id === row.id) {
-                  setEditingTeacher({ ...editingTeacher, email: e.target.value });
-                } else {
-                  setEditingTeacher({ ...row, email: e.target.value });
-                }
-              }}
-              customPadding="0 14px"
-              customFontSize="16px"
-            />
-          </div>
-        ) : (
-          row.email
-        ),
-    },
-    {
-      key: 'supervisionCount',
-      header: '자습감독 횟수',
-      width: '150px',
-      render: (row) => `${row.supervisionCount}회`,
-    },
-  ];
 
   const renderActions = (row: Teacher) => (
     <S.ActionCell>

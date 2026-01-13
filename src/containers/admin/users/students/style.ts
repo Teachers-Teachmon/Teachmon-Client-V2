@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { colors, fontSizes, radius } from '@/styles/theme';
+import { colors, fontSizes } from '@/styles/theme';
 
 export const TableWrapper = styled.div`
   flex: 1;
