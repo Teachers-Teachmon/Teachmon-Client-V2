@@ -15,4 +15,6 @@ function StatusBadge({ status }: StatusBadgeProps) {
 }
 
 export default StatusBadge;
+
 export type { StatusType };
+

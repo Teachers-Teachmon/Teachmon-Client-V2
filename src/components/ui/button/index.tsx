@@ -2,7 +2,7 @@ import * as S from './style';
 
 interface ButtonProps {
   text: string;
-  onClick?: () => void;
+  onClick?: (e?: React.MouseEvent<HTMLDivElement>) => void;
   // 취소, 확인(저장), 삭제
   variant: 'cancel' | 'confirm' | 'delete';
   width?: string;
@@ -10,9 +10,9 @@ interface ButtonProps {
 }
 
 export default function Button({ text, onClick, variant, width, isLoading = false }: ButtonProps) {
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (isLoading) return;
-    onClick?.();
+    onClick?.(e);
   };
 
   return (

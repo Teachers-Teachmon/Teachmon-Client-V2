@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { colors, radius } from '@/styles/theme'
+import { colors, radius, zIndex } from '@/styles/theme'
 
 export const SidebarContainer = styled.aside<{ collapsed: boolean }>`
   position: relative;
@@ -13,6 +13,7 @@ export const SidebarContainer = styled.aside<{ collapsed: boolean }>`
   box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
   transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease;
   overflow: visible;
+  z-index: ${zIndex.dropdown};
 `
 
 export const CollapseButton = styled.button`

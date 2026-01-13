@@ -1,5 +1,9 @@
 import { Routes, Route } from 'react-router-dom'
 import MainLayout from '@/components/layout/MainLayout'
+
+import Manage from '@/pages/manage'
+import Record from '@/pages/manage/record'
+import Movement from '@/pages/manage/movement'
 import AdminMain from './pages/admin/main'
 import AdminUsersPage from '@/pages/admin/users'
 import HomePage from '@/pages/home'
@@ -13,7 +17,11 @@ function App() {
       <Route element={<MainLayout />}>
         <Route path="/main" element={<HomePage />} />
         <Route path="/supervision" element={<div>자습감독</div>} />
-        <Route path="/manage" element={<div>학생관리</div>} />
+       <Route path="/manage">
+          <Route index element={<Manage />} />
+          <Route path="record" element={<Record />} />
+          <Route path="movement" element={<Movement />} />
+      </Route>
         <Route path="/after-school" element={<div>방과후</div>} />
         <Route path="/admin">
             <Route index element={<AdminMain />} />

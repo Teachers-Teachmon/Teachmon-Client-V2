@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 
 export interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   /** Input 상단에 표시될 라벨 텍스트 */
@@ -7,6 +7,8 @@ export interface TextInputProps extends Omit<InputHTMLAttributes<HTMLInputElemen
   error?: string;
   /** Input 하단에 표시될 도움말 텍스트 */
   helperText?: string;
+  /** 왼쪽 아이콘 */
+  leftIcon?: ReactNode;
   
   // 스타일 커스텀
   customPadding?: string;
