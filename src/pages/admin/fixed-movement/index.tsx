@@ -17,7 +17,7 @@ export default function FixedMovementPage() {
   };
 
   const handleTeamSettings = () => {
-    console.log('팀 설정');
+    navigate('/admin/fixed-movement/team-settings');
   };
 
   return (
