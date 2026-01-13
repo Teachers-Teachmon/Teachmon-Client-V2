@@ -19,7 +19,7 @@ export const ContentArea = styled.div`
 
 export const Row = styled.div`
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 3fr 2fr;
     height: 100%;
     min-height: 0;
     gap: 24px;
