@@ -1,9 +1,14 @@
 import { useState } from 'react';
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import * as S from './style';
 import Dropdown from '@/components/ui/input/dropdown';
 import Button from '@/components/ui/button';
 import { DAY_LABELS, PERIOD_OPTIONS } from '@/constants/adminSelfStudy';
+=======
+import * as S from './style';
+import Dropdown from '@/components/ui/input/dropdown';
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
 import plusIcon from '/icons/admin-self-study/plus.svg';
 import minusIcon from '/icons/admin-self-study/minus.svg';
 
@@ -22,6 +27,22 @@ interface DaySchedule {
   periods: PeriodItem[];
 }
 
+<<<<<<< HEAD
+=======
+const DAY_LABELS: Record<DayOfWeek, string> = {
+  mon: '월',
+  tue: '화',
+  wed: '수',
+  thu: '목',
+};
+
+const PERIOD_OPTIONS = [
+  '7교시',
+  '8~9교시',
+  '10~11교시',
+];
+
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
 const QUARTER_OPTIONS: Quarter[] = [1, 2, 3, 4];
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -36,10 +57,16 @@ const createInitialSchedule = (): DaySchedule[] => {
 };
 
 export default function QuarterlySection() {
+<<<<<<< HEAD
   const navigate = useNavigate();
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(1);
   const [selectedGrade, setSelectedGrade] = useState<Grade>(1);
   const [schedules, setSchedules] = useState<DaySchedule[]>(() => createInitialSchedule());
+=======
+  const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(1);
+  const [selectedGrade, setSelectedGrade] = useState<Grade>(1);
+  const [schedules, setSchedules] = useState<DaySchedule[]>(createInitialSchedule());
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
 
   const handleGradeSelect = (grade: Grade) => {
     setSelectedGrade(grade);
@@ -83,6 +110,7 @@ export default function QuarterlySection() {
     });
   };
 
+<<<<<<< HEAD
   const handleSave = () => {
     console.log('저장:', { selectedQuarter, selectedGrade, schedules });
   };
@@ -123,6 +151,34 @@ export default function QuarterlySection() {
           <Button variant="confirm" text="돌아가기" onClick={handleCancel} />
           <Button variant="confirm" text="저장" onClick={handleSave} />
         </S.ActionGroup>
+=======
+  return (
+    <S.Container>
+      <S.FilterContainer>
+        <S.QuarterDropdownWrapper>
+          <Dropdown<Quarter>
+            placeholder="분기"
+            items={QUARTER_OPTIONS}
+            value={selectedQuarter}
+            onChange={setSelectedQuarter}
+            renderItem={(item) => `${item}분기`}
+            customWidth="100px"
+            customHeight="40px"
+          />
+        </S.QuarterDropdownWrapper>
+
+        <S.GradeButtonGroup>
+          {([1, 2, 3] as Grade[]).map(grade => (
+            <S.GradeButton
+              key={grade}
+              $active={selectedGrade === grade}
+              onClick={() => handleGradeSelect(grade)}
+            >
+              {grade}학년
+            </S.GradeButton>
+          ))}
+        </S.GradeButtonGroup>
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
       </S.FilterContainer>
 
       <S.ScheduleContainer>
@@ -134,7 +190,11 @@ export default function QuarterlySection() {
                 <S.PeriodLabel>교시</S.PeriodLabel>
                 <S.AddButton onClick={() => handleAddPeriod(dayIndex)}>
                   <img src={plusIcon} alt="추가" />
+<<<<<<< HEAD
                 </S.AddButton>
+=======
+                  </S.AddButton>
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
               </S.PeriodHeader>
               <S.PeriodList>
                 {schedule.periods.map(period => (
@@ -161,4 +221,8 @@ export default function QuarterlySection() {
       </S.ScheduleContainer>
     </S.Container>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)

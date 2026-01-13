@@ -5,12 +5,16 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+<<<<<<< HEAD
   min-height: 0;
+=======
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
 `;
 
 export const FilterContainer = styled.div`
   display: flex;
   align-items: center;
+<<<<<<< HEAD
   justify-content: space-between;
   margin-bottom: 24px;
 `;
@@ -19,6 +23,10 @@ export const FilterLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
+=======
+  gap: 16px;
+  margin-bottom: 24px;
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
 `;
 
 export const QuarterDropdownWrapper = styled.div`
@@ -40,7 +48,10 @@ export const GradeButton = styled.button<{ $active: boolean }>`
   border-radius: ${radius.full};
   cursor: pointer;
   transition: all 0.2s ease;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
   &:hover {
     background: ${({ $active }) => ($active ? colors.primary : colors.primary100)};
   }
@@ -50,6 +61,7 @@ export const ScheduleContainer = styled.div`
   display: flex;
   gap: 16px;
   flex: 1;
+<<<<<<< HEAD
   min-height: 0;
   overflow-x: auto;
 `;
@@ -63,6 +75,14 @@ export const DayColumn = styled.div`
   flex: 1;
   min-width: 180px;
   height: 100%;
+=======
+  overflow-x: auto;
+`;
+
+export const DayColumn = styled.div`
+  flex: 1;
+  min-width: 180px;
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
   display: flex;
   flex-direction: column;
   border: 1px solid ${colors.n02};
@@ -85,7 +105,10 @@ export const PeriodSection = styled.div`
   flex: 1;
   padding: 16px;
   background: ${colors.background};
+<<<<<<< HEAD
   min-height: 0;
+=======
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
 `;
 
 export const PeriodHeader = styled.div`
@@ -111,11 +134,17 @@ export const AddButton = styled.button`
   border: none;
   cursor: pointer;
   transition: opacity 0.2s ease;
+<<<<<<< HEAD
 
   &:hover {
     opacity: 0.7;
   }
 
+=======
+  &:hover {
+    opacity: 0.7;
+  }
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
   img {
     width: 100%;
     height: 100%;
@@ -126,6 +155,7 @@ export const PeriodList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+<<<<<<< HEAD
   flex: 1;
   min-height: 0;
   overflow-y: auto;
@@ -150,6 +180,8 @@ export const PeriodList = styled.div`
   &::-webkit-scrollbar-thumb:hover {
     background: ${colors.n03};
   }
+=======
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
 `;
 
 export const PeriodRow = styled.div`
@@ -172,13 +204,23 @@ export const RemoveButton = styled.button`
   border: none;
   cursor: pointer;
   transition: opacity 0.2s ease;
+<<<<<<< HEAD
 
   &:hover {
     opacity: 0.7;
   }
 
+=======
+  &:hover {
+    opacity: 0.7;
+  }
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
   img {
     width: 100%;
     height: 100%;
   }
+<<<<<<< HEAD
 `;
+=======
+`;
+>>>>>>> 03d895d (feat/TC-25 :: 어드민 추가 자습 설정 페이지 퍼블리싱)
