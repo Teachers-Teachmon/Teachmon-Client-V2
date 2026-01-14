@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-// import Dropdown from '@/components/ui/input/dropdown';
+import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
@@ -25,6 +25,7 @@ export default function AfterSchoolFormPage() {
   const [teacher, setTeacher] = useState<string>('');
   const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
   const [location, setLocation] = useState<string>('');
+  const [period, setPeriod] = useState<string>('');
   const [subject, setSubject] = useState<string>('');
   const [isTeamMode, setIsTeamMode] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
@@ -54,6 +55,7 @@ export default function AfterSchoolFormPage() {
       if (classData) {
         setTeacher(classData.teacher);
         setLocation(classData.location);
+        setPeriod(classData.period || '');
         setSubject(classData.subject);
         const students = classData.students.map((studentStr, idx) => {
           const parts = studentStr.split(' ');
@@ -92,6 +94,7 @@ export default function AfterSchoolFormPage() {
       id: isEditMode ? id : undefined,
       teacher,
       location,
+      period,
       subject,
       isTeamMode,
       students: selectedStudents,
@@ -117,6 +120,7 @@ export default function AfterSchoolFormPage() {
             />
           </S.FormSection>
 
+
           <S.FormSection>
             <S.SectionTitle>장소</S.SectionTitle>
             <SearchDropdown
@@ -126,6 +130,17 @@ export default function AfterSchoolFormPage() {
               onChange={setLocation}
               searchQuery={locationSearchQuery}
               onSearchChange={setLocationSearchQuery}
+            />
+          </S.FormSection>
+
+          <S.FormSection>
+            <S.SectionTitle>교시</S.SectionTitle>
+            <Dropdown
+              placeholder="교시 선택"
+              items={["8~9교시", "10~11교시"]}
+              value={period}
+              onChange={setPeriod}
+              customWidth="100%"
             />
           </S.FormSection>
 
@@ -193,12 +208,12 @@ export default function AfterSchoolFormPage() {
           {selectedStudents.length > 0 && (
             <S.StudentGrid>
               {selectedStudents.map((student) => (
-                <S.StudentCard key={student.studentNumber}>
+                <S.StudentCard key={student.id || student.studentNumber}>
                   <S.StudentInfo>
                     <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
                     <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
-                  <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>
+                  <S.RemoveButton onClick={() => handleRemoveStudent(student.id || String(student.studentNumber))}>
                     <img src="/icons/common/x.svg" alt="삭제" width={20} height={20} />
                   </S.RemoveButton>
                 </S.StudentCard>

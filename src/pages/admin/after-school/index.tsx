@@ -59,8 +59,8 @@ export default function AdminAfterSchoolPage() {
   };
 
   const renderStudents = (students: string[]) => {
-    const displayStudents = students.slice(0, 4);
-    const hasMore = students.length > 4;
+    const displayStudents = students.slice(0, 3);
+    const hasMore = students.length > 3;
     return (
       <S.StudentList>
         {displayStudents.map((student, idx) => (
@@ -78,6 +78,12 @@ export default function AdminAfterSchoolPage() {
       width: '120px',
     },
     {
+      key: 'period',
+      header: '교시',
+      width: '100px',
+      render: (row: AdminAfterSchoolClass) => row.period,
+    },
+    {
       key: 'location',
       header: '장소이름',
       width: '250px',
@@ -90,7 +96,7 @@ export default function AdminAfterSchoolPage() {
     {
       key: 'students',
       header: '학생',
-      width: '350px',
+      width: '200px',
       render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
     },
   ];

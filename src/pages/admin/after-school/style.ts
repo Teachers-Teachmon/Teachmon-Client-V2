@@ -136,16 +136,19 @@ export const AddButtonWrapper = styled.div`
 
 export const StudentList = styled.div`
   display: flex;
-  gap: 0.5rem;
+  gap: 0.3rem;
   flex-wrap: nowrap;
   justify-content: flex-start;
   overflow: hidden;
+  max-width: 350px;
+  min-width: 0;
+  white-space: nowrap;
 `;
 
 export const StudentBadge = styled.span`
-  padding: 0.25rem 0.75rem;
+  padding: 0.1rem 0.5rem;
   border-radius: ${radius.sm};
-  font-size: ${fontSizes.Small};
+  font-size: 1rem;
   color: ${colors.text};
   white-space: nowrap;
   transition: background 0.2s, color 0.2s;
@@ -154,7 +157,7 @@ export const StudentBadge = styled.span`
 
 export const MoreBadge = styled.span`
   color: ${colors.n03};
-  font-size: ${fontSizes.Small};
+  font-size: 1.1rem;
 `;
 
 export const ActionButtons = styled.div`
