@@ -97,18 +97,39 @@ export const ContentWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 `;
 
+export const TableRowHoverColor = '#f9f9f9';
+
 export const TableWrapper = styled.div`
-  flex: 1;
-  overflow: auto;
+  flex: 1 1 auto;
+  min-height: 700px;
+  max-height: 700px;
+  height: auto;
+  margin-bottom: 2.5rem;
+  border: 1px solid #eaecf0;
+  border-radius: 18px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  & > div,
+  & > table {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 700px;
+    max-height: 700px;
+    border-radius: 18px;
+    background: #fff;
+  }
 `;
 
 export const AddButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
-  padding: 1.5rem 0;
+  padding: 0 0 2.5rem 0;
 `;
 
 export const StudentList = styled.div`
@@ -120,12 +141,13 @@ export const StudentList = styled.div`
 `;
 
 export const StudentBadge = styled.span`
-  background: ${colors.n01};
   padding: 0.25rem 0.75rem;
   border-radius: ${radius.sm};
   font-size: ${fontSizes.Small};
   color: ${colors.text};
   white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
 `;
 
 export const MoreBadge = styled.span`

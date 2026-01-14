@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Dropdown from '@/components/ui/input/dropdown';
+// import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
@@ -9,10 +9,7 @@ import * as S from './style';
 
 const TEACHER_OPTIONS = ['차수민', '차수민2', '차수민3', '차수민4'];
 
-interface Location {
-  id: string;
-  name: string;
-}
+
 
 interface Student {
   id?: string;
@@ -26,6 +23,7 @@ export default function AfterSchoolFormPage() {
   const isEditMode = !!id;
   
   const [teacher, setTeacher] = useState<string>('');
+  const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
   const [location, setLocation] = useState<string>('');
   const [subject, setSubject] = useState<string>('');
   const [isTeamMode, setIsTeamMode] = useState(false);
@@ -109,11 +107,13 @@ export default function AfterSchoolFormPage() {
         <S.Form>
           <S.FormSection>
             <S.SectionTitle>담당 교사</S.SectionTitle>
-            <Dropdown
+            <SearchDropdown
               placeholder="교사"
-              items={TEACHER_OPTIONS}
+              items={TEACHER_OPTIONS.filter((t) => t.includes(teacherSearchQuery))}
               value={teacher}
               onChange={setTeacher}
+              searchQuery={teacherSearchQuery}
+              onSearchChange={setTeacherSearchQuery}
             />
           </S.FormSection>
 
@@ -142,7 +142,7 @@ export default function AfterSchoolFormPage() {
             <S.ToggleRow>
               <S.SectionTitle>학생</S.SectionTitle>
               <S.ToggleContent>
-                <S.SectionTitle>반</S.SectionTitle>
+                <S.SectionTitle>팀</S.SectionTitle>
                 <S.Toggle
                   $active={isTeamMode}
                   onClick={() => setIsTeamMode(!isTeamMode)}
@@ -152,49 +152,54 @@ export default function AfterSchoolFormPage() {
               </S.ToggleContent>
             </S.ToggleRow>
 
-            <TextInput
-              placeholder="학생을 입력해주세요"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              leftIcon={
-                <img 
-                  src="/icons/common/search.svg" 
-                  alt="search"
-                  style={{ width: '20px', height: '20px' }}
-                />
-              }
-            />
-
-            {searchQuery && (
-              <S.StudentDropdown>
-                {mockStudents
-                  .filter(student => 
-                    `${student.studentNumber} ${student.name}`.includes(searchQuery)
-                  )
-                  .slice(0, 3)
-                  .map((student) => (
-                    <S.StudentDropdownItem 
-                      key={student.id}
-                      onClick={() => handleAddStudent(student)}
-                    >
-                      {student.studentNumber} {student.name}
-                    </S.StudentDropdownItem>
-                  ))
+            <S.DropdownWrapper>
+              <TextInput
+                placeholder="학생을 입력해주세요"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                leftIcon={
+                  <img 
+                    src="/icons/common/search.svg" 
+                    alt="search"
+                    style={{ width: '20px', height: '20px' }}
+                  />
                 }
-              </S.StudentDropdown>
-            )}
+              />
+
+              {searchQuery && (
+                <S.StudentDropdown>
+                  {mockStudents
+                    .filter(student => 
+                      `${student.studentNumber} ${student.name}`.includes(searchQuery)
+                    )
+                    .filter(student => 
+                      !selectedStudents.find(s => s.studentNumber === student.studentNumber)
+                    )
+                    .slice(0, 3)
+                    .map((student) => (
+                      <S.StudentDropdownItem 
+                        key={student.studentNumber}
+                        onClick={() => handleAddStudent(student)}
+                      >
+                        {student.studentNumber} {student.name}
+                      </S.StudentDropdownItem>
+                    ))
+                  }
+                </S.StudentDropdown>
+              )}
+            </S.DropdownWrapper>
           </S.FormSection>
 
           {selectedStudents.length > 0 && (
             <S.StudentGrid>
               {selectedStudents.map((student) => (
-                <S.StudentCard key={student.id}>
+                <S.StudentCard key={student.studentNumber}>
                   <S.StudentInfo>
                     <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
                     <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
-                  <S.RemoveButton onClick={() => handleRemoveStudent(student.id!)}>
-                    ✕
+                  <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>
+                    <img src="/icons/common/x.svg" alt="삭제" width={20} height={20} />
                   </S.RemoveButton>
                 </S.StudentCard>
               ))}

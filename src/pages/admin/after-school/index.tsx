@@ -58,14 +58,6 @@ export default function AdminAfterSchoolPage() {
     console.log('시트 업로드:', googleSheetUrl);
   };
 
-  const handleTeacherChange = (id: string, value: string) => {
-    setSelectedTeachers(prev => ({ ...prev, [id]: value }));
-  };
-
-  const handleSmileChange = (id: string, value: string) => {
-    setSelectedSmiles(prev => ({ ...prev, [id]: value }));
-  };
-
   const renderStudents = (students: string[]) => {
     const displayStudents = students.slice(0, 4);
     const hasMore = students.length > 4;
@@ -99,7 +91,7 @@ export default function AdminAfterSchoolPage() {
       key: 'students',
       header: '학생',
       width: '350px',
-      render: (row) => renderStudents(row.students),
+      render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
     },
   ];
 
