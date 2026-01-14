@@ -94,18 +94,19 @@ export const GradeTab = styled.button<{ $active: boolean }>`
 `;
 
 export const ContentWrapper = styled.div`
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  overflow: visible;
+  min-height: 0;
+  overflow: hidden;
 `;
 
 export const TableRowHoverColor = '#f9f9f9';
 
 export const TableWrapper = styled.div`
-  flex: 1 1 auto;
-  min-height: 700px;
-  max-height: 700px;
+  flex: 1 1 0;
+  min-height: 0;
+  max-height: none;
   height: auto;
   margin-bottom: 2.5rem;
   border: 1px solid #eaecf0;
@@ -117,10 +118,10 @@ export const TableWrapper = styled.div`
 
   & > div,
   & > table {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     overflow-y: auto;
-    min-height: 700px;
-    max-height: 700px;
+    min-height: 0;
+    max-height: none;
     border-radius: 18px;
     background: #fff;
   }
@@ -130,6 +131,7 @@ export const AddButtonWrapper = styled.div`
   display: flex;
   justify-content: center;
   padding: 0 0 2.5rem 0;
+  flex-shrink: 0;
 `;
 
 export const StudentList = styled.div`
