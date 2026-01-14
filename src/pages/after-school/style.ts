@@ -38,7 +38,7 @@ export const MainLayout = styled.div`
 export const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 7rem;
+  gap: 4rem;
   height: 100%;
   min-height: 0;
   overflow: hidden;
