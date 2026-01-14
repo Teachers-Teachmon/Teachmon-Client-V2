@@ -87,7 +87,7 @@ export default function BusinessTripPage() {
     <S.PageContainer>
       <S.Header>
         <S.Title>"{classData?.subject || '스프링 수업'}" 방과후 출장 날짜를 선택해주세요.</S.Title>
-        <Button text="돌아가기" variant="cancel" width="120px" onClick={handleGoBack} />
+        <Button text="돌아가기" variant="confirm" width="120px" onClick={handleGoBack} />
       </S.Header>
       
       <S.CalendarWrapper>

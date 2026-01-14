@@ -35,6 +35,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
   cursor: pointer;
   transition: all 0.2s;
+  
+  @media (max-width: 1024px) {
+    padding: 0.5rem 1.5rem;
+    font-size: ${fontSizes.Body};
+  }
 `;
 
 export const Container = styled.div`
@@ -44,6 +49,8 @@ export const Container = styled.div`
   padding: 1.5rem;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
 `;
 
 export const DayNavigation = styled.div`
@@ -92,7 +99,6 @@ export const TimeSlotSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  min-height: 350px;
 `;
 
 export const TimeHeader = styled.div`
@@ -106,6 +112,8 @@ export const TimeText = styled.span`
   font-size: ${fontSizes.H3};
   font-weight: 600;
   color: ${colors.text};
+  white-space: nowrap;
+  flex-shrink: 0;
 `;
 
 export const ArrowButtons = styled.div`
@@ -143,6 +151,10 @@ export const ClassList = styled.div`
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: minmax(140px, auto);
   gap: 1rem;
+  
+  @media (max-width: 1400px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const ClassCard = styled.div`
@@ -154,23 +166,34 @@ export const ClassCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  overflow: hidden;
+  min-width: 0;
 `;
 
 export const ClassSubject = styled.h4`
   font-size: ${fontSizes.Body};
   font-weight: 600;
   color: ${colors.text};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const ClassInfo = styled.p`
   font-size: ${fontSizes.Small};
   color: ${colors.n03};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const TeacherName = styled.p`
   font-size: ${fontSizes.Small};
   color: ${colors.n03};
   margin-top: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 export const EmptyState = styled.div`
   display: flex;

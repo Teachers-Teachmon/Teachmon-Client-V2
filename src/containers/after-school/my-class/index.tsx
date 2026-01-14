@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '@/components/layout/modal/confirm';
 import * as S from './style';
@@ -16,6 +16,8 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
   const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<AfterSchoolClass | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const filteredClasses = classes.filter(cls => cls.grade === selectedGrade);
 
@@ -34,7 +36,16 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
 
   const handleMenuToggle = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    setMenuOpenId(menuOpenId === id ? null : id);
+    if (menuOpenId === id) {
+      setMenuOpenId(null);
+    } else {
+      const button = menuButtonRefs.current[id];
+      if (button) {
+        const rect = button.getBoundingClientRect();
+        setMenuPosition({ top: rect.bottom + 4, left: rect.right - 55 });
+      }
+      setMenuOpenId(id);
+    }
   };
 
   const handleMenuItemClick = (e: React.MouseEvent, option: string, classData: AfterSchoolClass) => {
@@ -71,7 +82,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
         {filteredClasses.length > 0 ? (
           <S.Table>
             <tbody>
-              {filteredClasses.map(cls => (
+              {filteredClasses.map((cls, index) => (
                 <S.TableRow key={cls.id}>
                   <S.TableCell>
                     <S.DayText>{cls.day}</S.DayText>
@@ -86,11 +97,17 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
                     <S.ProgramText>{cls.program}</S.ProgramText>
                   </S.TableCell>
                   <S.TableCell>
-                    <S.MenuButton onClick={(e) => handleMenuToggle(e, cls.id)}>
+                    <S.MenuButton 
+                      ref={(el) => { menuButtonRefs.current[cls.id] = el; }}
+                      onClick={(e) => handleMenuToggle(e, cls.id)}
+                    >
                       <img src="/icons/common/expand.svg" alt="메뉴" />
                     </S.MenuButton>
                     {menuOpenId === cls.id && (
-                      <S.MenuDropdown onClick={(e) => e.stopPropagation()}>
+                      <S.MenuDropdown 
+                        $openUp={index >= filteredClasses.length - 2}
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         {MENU_OPTIONS.map((option) => (
                           <S.MenuItem 
                             key={option}

@@ -5,8 +5,7 @@ export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  flex: 1;
-  height: 100%;
+  min-height: 0;
 `;
 
 export const TitleSection = styled.div`
@@ -35,6 +34,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
   cursor: pointer;
   transition: all 0.2s;
+  
+  @media (max-width: 1024px) {
+    padding: 0.5rem 1.5rem;
+    font-size: ${fontSizes.Body};
+  }
 `;
 
 export const Container = styled.div`
@@ -42,8 +46,23 @@ export const Container = styled.div`
   border: 1px solid ${colors.n02};
   border-radius: ${radius.lg};
   padding: 1rem 0;
-  flex: 1;
-  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: visible;
+  min-width: 0;
+  max-height: 600px;
+  position: relative;
+  
+  @media (max-height: 900px) {
+    max-height: 500px;
+  }
+  
+  @media (max-height: 800px) {
+    max-height: 400px;
+  }
+  
+  @media (max-height: 700px) {
+    max-height: 350px;
+  }
 `;
 
 export const Table = styled.table`
@@ -72,6 +91,19 @@ export const TableCell = styled.td`
     padding-right: 2rem;
     text-align: right;
     width: 80px;
+    overflow: visible;
+  }
+  
+  @media (max-width: 1024px) {
+    padding: 1rem 0.5rem;
+    
+    &:first-of-type {
+      padding-left: 1rem;
+    }
+    
+    &:last-child {
+      padding-right: 1rem;
+    }
   }
 `;
 
@@ -88,6 +120,7 @@ export const TimeTag = styled.span`
   border-radius: ${radius.md};
   font-size: ${fontSizes.Body};
   font-weight: 400;
+  white-space: nowrap;
 `;
 
 export const ClassText = styled.span`
@@ -117,15 +150,21 @@ export const MenuButton = styled.button`
   }
 `;
 
-export const MenuDropdown = styled.div`
+export const MenuDropdown = styled.div<{ $openUp?: boolean }>`
   position: absolute;
-  right: 10%;
-  top: 90%;
+  right: 0;
+  ${({ $openUp }) => $openUp ? `
+    bottom: 100%;
+    margin-bottom: 4px;
+  ` : `
+    top: 100%;
+    margin-top: 4px;
+  `}
   background: ${colors.background};
   border: 1px solid ${colors.n02};
   border-radius: ${radius.md};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 1000;
   overflow: hidden;
   min-width: 80px;
 `;

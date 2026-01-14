@@ -28,6 +28,34 @@ export const CalendarWrapper = styled.div`
   border-radius: ${radius.lg};
   padding: 2rem;
   width: 100%;
+  min-height: 0;
+  overflow: hidden;
+  
+  & > div > div > div > div {
+    overflow: hidden;
+  }
+
+  & > div > div > div > div > div:last-child {
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  & span {
+    max-width: calc(100% - 16px) !important;
+    width: auto !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    display: block !important;
+  }
+  
+  @media (max-width: 1400px) {
+    padding: 1.5rem;
+  }
+  
+  @media (max-width: 1024px) {
+    padding: 1rem;
+  }
 `;
 
 export const ModalMessage = styled.div`
