@@ -91,26 +91,24 @@ export const ReasonText = styled.p`
   font-weight: 300;
 `;
 
+export const ReasonInput = styled.textarea`
+  width: 100%;
+  height: 100%;
+  border: none;
+  resize: none;
+  outline: none;
+  font-size: 1rem;
+  color: ${colors.n04};
+  font-weight: 300;
+  font-family: inherit;
+
+  &::placeholder {
+    color: #969696;
+  }
+`;
+
 export const ButtonContainer = styled.div`
   width: 82%;
   display: flex;
   gap: 0.9rem;
-`;
-
-export const Button = styled.button<{ variant: 'primary' | 'secondary' }>`
-  width: 15.3rem;
-  height: 2.8rem;
-  border-radius: 0.6rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: none;
-  transition: opacity 0.2s ease;
-
-  background: ${(props) => (props.variant === 'primary' ? colors.primary : '#f3f3f3')};
-  color: ${(props) => (props.variant === 'primary' ? colors.n01 : '#999')};
-
-  &:hover {
-    opacity: 0.9;
-  }
 `;
