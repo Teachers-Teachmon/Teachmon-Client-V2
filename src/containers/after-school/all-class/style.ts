@@ -55,6 +55,13 @@ export const Container = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   min-width: 0;
+  
+  /* 스크롤바 숨김 */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 export const DayNavigation = styled.div`

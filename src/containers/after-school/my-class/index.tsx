@@ -55,7 +55,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
     if (option === '출장') {
       navigate('/after-school/business-trip', { state: { classData } });
     } else if (option === '보강') {
-      console.log('보강:', classData);
+      navigate('/after-school/extra', { state: { classData } });
     } else if (option === '종료') {
       setSelectedClassForTerminate(classData);
       setIsTerminateModalOpen(true);
