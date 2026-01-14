@@ -152,16 +152,37 @@ export default function AfterSchoolFormPage() {
               </S.ToggleContent>
             </S.ToggleRow>
 
-            <SearchDropdown
+            <TextInput
               placeholder="학생을 입력해주세요"
-              items={mockStudents}
-              value={null}
-              onChange={handleAddStudent}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              renderItem={(student) => `${student.studentNumber} ${student.name}`}
-              getItemKey={(student) => student.studentNumber.toString()}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              leftIcon={
+                <img 
+                  src="/icons/common/search.svg" 
+                  alt="search"
+                  style={{ width: '20px', height: '20px' }}
+                />
+              }
             />
+
+            {searchQuery && (
+              <S.StudentDropdown>
+                {mockStudents
+                  .filter(student => 
+                    `${student.studentNumber} ${student.name}`.includes(searchQuery)
+                  )
+                  .slice(0, 3)
+                  .map((student) => (
+                    <S.StudentDropdownItem 
+                      key={student.id}
+                      onClick={() => handleAddStudent(student)}
+                    >
+                      {student.studentNumber} {student.name}
+                    </S.StudentDropdownItem>
+                  ))
+                }
+              </S.StudentDropdown>
+            )}
           </S.FormSection>
 
           {selectedStudents.length > 0 && (
