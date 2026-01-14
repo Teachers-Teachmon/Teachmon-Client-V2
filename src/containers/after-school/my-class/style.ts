@@ -15,9 +15,13 @@ export const TitleSection = styled.div`
 `;
 
 export const Title = styled.h2`
-  font-size: ${fontSizes.H2};
+  font-size: ${fontSizes.H3};
   font-weight: 600;
   color: ${colors.text};
+  
+  @media (max-width: 1400px) {
+    font-size: ${fontSizes.H4};
+  }
 `;
 
 export const GradeTabs = styled.div`

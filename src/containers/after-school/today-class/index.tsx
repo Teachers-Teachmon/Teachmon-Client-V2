@@ -28,7 +28,7 @@ export default function TodayClassSection({ classes }: TodayClassSectionProps) {
             </S.Card>
           ))
         ) : (
-          <S.EmptyState>데이터가 없습니다</S.EmptyState>
+          <S.EmptyState>나의 오늘 방과후가 없습니다</S.EmptyState>
         )}
       </S.ClassList>
     </S.Container>

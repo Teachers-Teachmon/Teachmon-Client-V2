@@ -55,6 +55,18 @@ export const LeftColumn = styled.div`
     gap: 2rem;
   }
   
+  @media (max-height: 900px) {
+    gap: 3rem;
+  }
+  
+  @media (max-height: 800px) {
+    gap: 2rem;
+  }
+  
+  @media (max-height: 700px) {
+    gap: 1.5rem;
+  }
+  
   @media (max-width: 1024px) {
     gap: 2rem;
     height: auto;

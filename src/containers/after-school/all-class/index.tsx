@@ -124,7 +124,7 @@ export default function AllClassSection({
               );
             })
           ) : (
-            <S.EmptyState>데이터가 없습니다</S.EmptyState>
+            <S.EmptyState>전체 방과후가 없습니다</S.EmptyState>
           )}
         </S.TimeSlotList>
       </S.Container>
