@@ -108,7 +108,7 @@ export default function DailySection() {
           onMonthChange={handleMonthChange}
           onDateClick={handleDateClick}
           rangeEvents={dateRangeEvents}
-          showYear={false}
+          showYear={true}
           showLegend={false}
         />
       </S.CalendarWrapper>
@@ -167,6 +167,21 @@ export default function DailySection() {
                   </S.DropdownMenu>
                 )}
               </S.PeriodDropdown>
+              {selectedPeriods.length > 0 && (
+                <S.SelectedPeriodsWrapper>
+                  {selectedPeriods
+                    .sort((a, b) => parseInt(a) - parseInt(b))
+                    .map(period => (
+                      <S.SelectedPeriodTag key={period}>
+                        {period}
+                        <S.RemovePeriodButton onClick={() => handlePeriodToggle(period)}>
+                          ✕
+                        </S.RemovePeriodButton>
+                      </S.SelectedPeriodTag>
+                    ))
+                  }
+                </S.SelectedPeriodsWrapper>
+              )}
             </S.PeriodDropdownWrapper>
           </S.PanelSection>
 

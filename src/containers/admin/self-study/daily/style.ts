@@ -156,3 +156,40 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
 export const ButtonWrapper = styled.div`
   margin-top: auto;
 `;
+
+export const SelectedPeriodsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+`;
+
+export const SelectedPeriodTag = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: ${colors.primary100};
+  border-radius: ${radius.sm};
+  color: ${colors.primary};
+  font-size: ${fontSizes.Small};
+  font-weight: 500;
+`;
+
+export const RemovePeriodButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: ${colors.primary};
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
+  }
+`;
