@@ -56,12 +56,16 @@ export const Container = styled.div`
   overflow-x: hidden;
   min-width: 0;
   
-  /* 스크롤바 숨김 */
   &::-webkit-scrollbar {
-    display: none;
+    width: 6px;
   }
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.n02};
+    border-radius: 3px;
+  }
 `;
 
 export const DayNavigation = styled.div`

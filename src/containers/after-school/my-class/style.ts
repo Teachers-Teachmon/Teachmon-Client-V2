@@ -51,10 +51,21 @@ export const Container = styled.div`
   border-radius: ${radius.lg};
   padding: 1rem 0;
   overflow-x: hidden;
-  overflow-y: visible;
+  overflow-y: auto;
   min-width: 0;
   max-height: 600px;
   position: relative;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.n02};
+    border-radius: 3px;
+  }
   
   @media (max-height: 900px) {
     max-height: 500px;
