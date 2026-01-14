@@ -1,4 +1,5 @@
 import Modal from "..";
+import Button from "@/components/ui/button";
 import * as S from "./style";
 
 interface ConfirmModalProps {
@@ -20,24 +21,14 @@ export default function ConfirmModal({
     cancelText = "취소",
     confirmText = "확인"
 }: ConfirmModalProps) {
-    const handleConfirm = () => {
-        onConfirm()
-        onClose()
-    }
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} padding="2.5rem">
             <S.Container>
                 <S.Title>{title}</S.Title>
                 <S.Message>{message}</S.Message>
                 <S.ButtonGroup>
-                    {/* 여기있는 버튼은 나중 컴포넌트 버튼으로대체 */}
-                    <button onClick={onClose}>
-                        {cancelText}
-                    </button>
-                    <button onClick={handleConfirm}>
-                        {confirmText}
-                    </button>
+                    <Button variant="cancel" text={cancelText} onClick={onClose} />
+                    <Button variant="confirm" text={confirmText} onClick={onConfirm} />
                 </S.ButtonGroup>
             </S.Container>
         </Modal>

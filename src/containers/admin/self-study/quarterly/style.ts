@@ -40,6 +40,7 @@ export const GradeButton = styled.button<{ $active: boolean }>`
   border-radius: ${radius.full};
   cursor: pointer;
   transition: all 0.2s ease;
+
   &:hover {
     background: ${({ $active }) => ($active ? colors.primary : colors.primary100)};
   }

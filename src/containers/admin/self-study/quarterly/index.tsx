@@ -48,11 +48,17 @@ export default function QuarterlySection() {
   const handleAddPeriod = (dayIndex: number) => {
     setSchedules(prev => {
       const newSchedules = [...prev];
+      const currentPeriods = newSchedules[dayIndex].periods;
+      if (currentPeriods.length >= PERIOD_OPTIONS.length) {
+        return prev;
+      }
+      const usedValues = new Set(currentPeriods.map(period => period.value));
+      const nextValue = PERIOD_OPTIONS.find(option => !usedValues.has(option)) ?? PERIOD_OPTIONS[0];
       newSchedules[dayIndex] = {
         ...newSchedules[dayIndex],
         periods: [
-          ...newSchedules[dayIndex].periods,
-          { id: generateId(), value: '8~9교시' },
+          ...currentPeriods,
+          { id: generateId(), value: nextValue },
         ],
       };
       return newSchedules;
@@ -132,28 +138,38 @@ export default function QuarterlySection() {
             <S.PeriodSection>
               <S.PeriodHeader>
                 <S.PeriodLabel>교시</S.PeriodLabel>
-                <S.AddButton onClick={() => handleAddPeriod(dayIndex)}>
+                <S.AddButton
+                  onClick={() => handleAddPeriod(dayIndex)}
+                  disabled={schedule.periods.length >= PERIOD_OPTIONS.length}
+                >
                   <img src={plusIcon} alt="추가" />
                 </S.AddButton>
               </S.PeriodHeader>
               <S.PeriodList>
-                {schedule.periods.map(period => (
-                  <S.PeriodRow key={period.id}>
-                    <S.PeriodDropdownWrapper>
-                      <Dropdown<string>
-                        placeholder="교시"
-                        items={PERIOD_OPTIONS}
-                        value={period.value}
-                        onChange={(value) => handlePeriodChange(dayIndex, period.id, value)}
-                        customWidth="100%"
-                        customHeight="40px"
-                      />
-                    </S.PeriodDropdownWrapper>
-                    <S.RemoveButton onClick={() => handleRemovePeriod(dayIndex, period.id)}>
-                      <img src={minusIcon} alt="삭제" />
-                    </S.RemoveButton>
-                  </S.PeriodRow>
-                ))}
+                {schedule.periods.map((period) => {
+                  const availableOptions = PERIOD_OPTIONS.filter(option =>
+                    option === period.value ||
+                    !schedule.periods.some(item => item.value === option)
+                  );
+
+                  return (
+                    <S.PeriodRow key={period.id}>
+                      <S.PeriodDropdownWrapper>
+                        <Dropdown<string>
+                          placeholder="교시"
+                          items={availableOptions}
+                          value={period.value}
+                          onChange={(value) => handlePeriodChange(dayIndex, period.id, value)}
+                          customWidth="100%"
+                          customHeight="40px"
+                        />
+                      </S.PeriodDropdownWrapper>
+                      <S.RemoveButton onClick={() => handleRemovePeriod(dayIndex, period.id)}>
+                        <img src={minusIcon} alt="삭제" />
+                      </S.RemoveButton>
+                    </S.PeriodRow>
+                  );
+                })}
               </S.PeriodList>
             </S.PeriodSection>
           </S.DayColumn>

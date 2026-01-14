@@ -8,6 +8,10 @@ import AdminMain from './pages/admin/main'
 import AdminUsersPage from '@/pages/admin/users'
 import HomePage from '@/pages/home'
 import SelfStudyPage from '@/pages/admin/self-study'
+import AdminSupervisionPage from '@/pages/admin/supervision'
+import BusinessTripPage from '@/pages/admin/business-trip'
+import SupervisionPage from '@/pages/supervision'
+import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
 import SelfStudyPage from '@/pages/admin/self-study'
@@ -18,17 +22,22 @@ function App() {
       <Route path="/" element={<LandingPage />} />
       <Route element={<MainLayout />}>
         <Route path="/main" element={<HomePage />} />
-        <Route path="/supervision" element={<div>자습감독</div>} />
-       <Route path="/manage">
+        <Route path="/supervision" element={<SupervisionPage />} />
+        <Route path="/manage">
           <Route index element={<Manage />} />
           <Route path="record" element={<Record />} />
           <Route path="movement" element={<Movement />} />
-      </Route>
-        <Route path="/after-school" element={<div>방과후</div>} />
+        </Route>
+        <Route path="/after-school">
+          <Route index element={<div>방과후</div>} />
+          <Route path="extra" element={<AfterSchoolExtraPage />} />
+        </Route>
         <Route path="/admin">
-            <Route index element={<AdminMain />} />
-            <Route path="users" element={<AdminUsersPage />} />
-            <Route path="self-study" element={<SelfStudyPage />} />
+          <Route index element={<AdminMain />} />
+          <Route path="self-study" element={<SelfStudyPage />} />
+          <Route path="supervision" element={<AdminSupervisionPage />} />
+          <Route path="business-trip" element={<BusinessTripPage />} />
+          <Route path="users" element={<AdminUsersPage />} />
         </Route>
       </Route>
 
