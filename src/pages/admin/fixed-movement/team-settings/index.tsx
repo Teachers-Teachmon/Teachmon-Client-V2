@@ -64,11 +64,12 @@ export default function TeamSettingsPage() {
 
           <S.FormSection>
             <S.SectionTitle>장소</S.SectionTitle>
-            <Dropdown
+            <SearchDropdown
               placeholder="장소"
               items={LOCATION_OPTIONS}
               value={location}
               onChange={setLocation}
+              itemRenderer={(item) => item}
             />
           </S.FormSection>
 
