@@ -202,8 +202,7 @@ export const ButtonRow = styled.div`
   gap: 1rem;
   padding: 1.5rem 3rem;
   width: 100%;
-  max-width: 60rem;
-  margin: 2.5rem auto 0 auto;
+  align-items: center;
 
   > button {
     flex: 1;
