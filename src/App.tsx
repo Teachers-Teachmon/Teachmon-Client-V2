@@ -9,9 +9,6 @@ import AdminUsersPage from '@/pages/admin/users'
 import AdminFixedMovementPage from '@/pages/admin/fixed-movement'
 import AdminFixedMovementFormPage from '@/pages/admin/fixed-movement/create'
 import AdminFixedMovementTeamSettingsPage from '@/pages/admin/fixed-movement/team-settings'
-import AdminAfterSchoolPage from '@/pages/admin/after-school'
-import AdminAfterSchoolCreatePage from '@/pages/admin/after-school/create'
-import AdminAfterSchoolEditPage from '@/pages/admin/after-school/edit'
 import HomePage from '@/pages/home'
 import SelfStudyPage from '@/pages/admin/self-study'
 import AdminSupervisionPage from '@/pages/admin/supervision'
@@ -40,20 +37,16 @@ function App() {
         <Route path="/admin">
             <Route index element={<AdminMain />} />
             <Route path="users" element={<AdminUsersPage />} />
-            <Route path="after-school" element={<AdminAfterSchoolPage />} />
-            <Route path="after-school/create" element={<AdminAfterSchoolCreatePage />} />
-            <Route path="after-school/edit/:id" element={<AdminAfterSchoolEditPage />} />
             <Route path="fixed-movement" element={<AdminFixedMovementPage />} />
             <Route path="fixed-movement/create" element={<AdminFixedMovementFormPage />} />
             <Route path="fixed-movement/edit/:id" element={<AdminFixedMovementFormPage />} />
             <Route path="fixed-movement/team-settings" element={<AdminFixedMovementTeamSettingsPage />} />
             <Route path="self-study" element={<SelfStudyPage />} />
             <Route path="supervision" element={<AdminSupervisionPage />} />
-            <Route path="business-trip" element={<BusinessTripPage />}
+            <Route path="business-trip" element={<BusinessTripPage />} />
         </Route>
+        <Route path="*" element={<ErrorPage />} />
       </Route>
-
-      <Route path="*" element={<ErrorPage />} />
     </Routes>
   )
 }
