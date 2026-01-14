@@ -156,13 +156,13 @@ export const MenuButton = styled.button`
 
 export const MenuDropdown = styled.div<{ $openUp?: boolean }>`
   position: absolute;
-  right: 0;
+  right: 0.5rem;
   ${({ $openUp }) => $openUp ? `
     bottom: 100%;
-    margin-bottom: 4px;
+    margin-bottom: 0;
   ` : `
     top: 100%;
-    margin-top: 4px;
+    margin-top: -0.5rem;
   `}
   background: ${colors.background};
   border: 1px solid ${colors.n02};
