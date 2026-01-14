@@ -7,6 +7,15 @@ import * as S from './style';
 
 const PERIODS = ['1교시', '2교시', '3교시', '4교시', '5교시', '6교시', '7교시', '8교시', '9교시'];
 
+const existingSelfStudySettings = [
+  { startDate: new Date(2026, 0, 10), endDate: new Date(2026, 0, 12), grade: 1 },
+  { startDate: new Date(2026, 0, 15), endDate: new Date(2026, 0, 16), grade: 2 },
+].filter(setting => {
+  const startDay = setting.startDate.getDay();
+  const endDay = setting.endDate.getDay();
+  return startDay !== 0 && startDay !== 6 && endDay !== 0 && endDay !== 6;
+});
+
 export default function DailySection() {
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
@@ -16,6 +25,7 @@ export default function DailySection() {
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(2);
   const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [hideExistingSettings, setHideExistingSettings] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -39,13 +49,14 @@ export default function DailySection() {
     setSelectedMonth(month);
   };
 
-    const handleDateClick = (date: Date, dayInfo?: { isCurrentMonth: boolean }) => {
+  const handleDateClick = (date: Date, dayInfo?: { isCurrentMonth: boolean }) => {
     if (!dayInfo?.isCurrentMonth) return;
     const dayOfWeek = date.getDay();
     if (dayOfWeek === 0 || dayOfWeek === 6) return;
     if (!startDate || (startDate && endDate)) {
       setStartDate(date);
       setEndDate(null);
+      setHideExistingSettings(true);
     } else {
       if (date < startDate) {
         setEndDate(startDate);
@@ -68,34 +79,60 @@ export default function DailySection() {
     setStartDate(null);
     setEndDate(null);
     setSelectedPeriods([]);
+    setHideExistingSettings(false);
+  };
+
+  const handleCancelSelection = () => {
+    setStartDate(null);
+    setEndDate(null);
+    setHideExistingSettings(false);
+  };
+
+  const handleDeleteAllSettings = () => {
+    existingSelfStudySettings.length = 0;
+    console.log('All settings deleted');
   };
 
   const dateRangeEvents: CalendarRangeEvent[] = useMemo(() => {
-    if (!startDate) return [];
-    
-    if (!endDate) {
-      return [
-        {
+    const events = [];
+
+    if (!hideExistingSettings) {
+      events.push(
+        ...existingSelfStudySettings.map((setting, index) => ({
+          id: `existing-${index}`,
+          startDate: setting.startDate,
+          endDate: setting.endDate,
+          label: `${setting.grade}학년 자습`,
+          bgColor: colors.primaryBackground,
+          textColor: colors.primary,
+        }))
+      );
+    }
+
+    if (startDate) {
+      if (!endDate) {
+        events.push({
           id: 'selected-start',
           startDate,
           endDate: startDate,
           label: '',
           bgColor: colors.primaryBackground,
           textColor: 'transparent',
-        },
-      ];
+        });
+      } else {
+        events.push({
+          id: 'selected-range',
+          startDate,
+          endDate,
+          label: '',
+          bgColor: colors.primaryBackground,
+          textColor: 'transparent',
+        });
+      }
     }
-    return [
-      {
-        id: 'selected-range',
-        startDate,
-        endDate,
-        label: '',
-        bgColor: colors.primaryBackground,
-        textColor: 'transparent',
-      },
-    ];
-  }, [startDate, endDate]);
+
+    return events;
+  }, [startDate, endDate, hideExistingSettings]);
 
   const showPanel = startDate && endDate;
 
@@ -111,6 +148,15 @@ export default function DailySection() {
           showYear={true}
           showLegend={false}
         />
+        {startDate && (
+          <div style={{ position: 'absolute', top: '0px', right: '30px' }}>
+            <Button
+              text="취소하기"
+              variant="confirm"
+              onClick={handleCancelSelection}
+            />
+          </div>
+        )}
       </S.CalendarWrapper>
 
       {showPanel && (
@@ -178,8 +224,7 @@ export default function DailySection() {
                           ✕
                         </S.RemovePeriodButton>
                       </S.SelectedPeriodTag>
-                    ))
-                  }
+                    ))}
                 </S.SelectedPeriodsWrapper>
               )}
             </S.PeriodDropdownWrapper>

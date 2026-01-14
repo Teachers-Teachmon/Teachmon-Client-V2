@@ -26,9 +26,10 @@ export const SidePanel = styled.div`
   gap: 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   align-self: flex-start;
-  
+  margin-top: 20px;
+
   animation: slideIn 0.3s ease-out;
-  
+
   @keyframes slideIn {
     from {
       opacity: 0;
@@ -158,10 +159,10 @@ export const ButtonWrapper = styled.div`
 `;
 
 export const SelectedPeriodsWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
-  margin-top: 0.75rem;
+  margin-top: 1rem;
 `;
 
 export const SelectedPeriodTag = styled.div`
@@ -172,7 +173,7 @@ export const SelectedPeriodTag = styled.div`
   background: ${colors.primary100};
   border-radius: ${radius.sm};
   color: ${colors.primary};
-  font-size: ${fontSizes.Small};
+  font-size: 12px;
   font-weight: 500;
 `;
 
@@ -191,5 +192,81 @@ export const RemovePeriodButton = styled.button`
 
   &:hover {
     opacity: 1;
+  }
+`;
+
+export const CancelButton = styled.button`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+export const CancelButtonInCalendar = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
+export const ExistingSettingTag = styled.div`
+  background: ${colors.primaryBackground};
+  color: ${colors.primary};
+  padding: 0.5rem 1rem;
+  border-radius: ${radius.md};
+  font-size: ${fontSizes.Small};
+  display: inline-block;
+  margin: 0.25rem;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s;
+
+  &:hover {
+    background: ${colors.primaryBackground};
+  }
+`;
+
+export const DeleteButton = styled.button`
+  background: transparent;
+  border: none;
+  color: ${colors.primary};
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: ${fontSizes.Small};
+
+  &:hover {
+    color: ${colors.primaryBackground};
   }
 `;
