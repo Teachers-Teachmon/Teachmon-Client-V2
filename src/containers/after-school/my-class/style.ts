@@ -6,6 +6,7 @@ export const Wrapper = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   min-height: 0;
+  flex: 1;
 `;
 
 export const TitleSection = styled.div`
@@ -53,7 +54,7 @@ export const Container = styled.div`
   overflow-x: hidden;
   overflow-y: auto;
   min-width: 0;
-  max-height: 600px;
+  flex: 1;
   position: relative;
   
   &::-webkit-scrollbar {
@@ -65,18 +66,6 @@ export const Container = styled.div`
   &::-webkit-scrollbar-thumb {
     background: ${colors.n02};
     border-radius: 3px;
-  }
-  
-  @media (max-height: 900px) {
-    max-height: 500px;
-  }
-  
-  @media (max-height: 800px) {
-    max-height: 400px;
-  }
-  
-  @media (max-height: 700px) {
-    max-height: 350px;
   }
 `;
 

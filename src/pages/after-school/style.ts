@@ -38,33 +38,13 @@ export const MainLayout = styled.div`
 export const LeftColumn = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 11rem;
+  gap: 7rem;
   height: 100%;
   min-height: 0;
   overflow: hidden;
   
-  @media (max-width: 1600px) {
-    gap: 6rem;
-  }
-  
   @media (max-width: 1400px) {
-    gap: 3rem;
-  }
-  
-  @media (max-width: 1200px) {
-    gap: 2rem;
-  }
-  
-  @media (max-height: 900px) {
-    gap: 3rem;
-  }
-  
-  @media (max-height: 800px) {
-    gap: 2rem;
-  }
-  
-  @media (max-height: 700px) {
-    gap: 1.5rem;
+    gap: 6.5rem;
   }
   
   @media (max-width: 1024px) {

@@ -81,6 +81,8 @@ export default function BusinessTripPage() {
   };
 
   const handleEventClick = (event: CalendarEvent) => {
+    setSelectedDate(event.date);
+    setIsModalOpen(true);
   };
 
   return (
