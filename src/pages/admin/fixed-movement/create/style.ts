@@ -117,6 +117,31 @@ export const StudentGrid = styled.div`
   margin-top: 1rem;
 `;
 
+export const StudentDropdown = styled.div`
+  width: 100%;
+  background-color: ${colors.background};
+  border-radius: ${radius.sm};
+  overflow: hidden;
+  margin-top: -8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+export const StudentDropdownItem = styled.div`
+  width: 100%;
+  height: 45px;
+  padding: 0 25px;
+  display: flex;
+  align-items: center;
+  background-color: ${colors.background};
+  cursor: pointer;
+  font-size: ${fontSizes.Body};
+  color: ${colors.text};
+  
+  &:hover {
+    background-color: ${colors.n01};
+  }
+`;
+
 export const StudentCard = styled.div`
   display: flex;
   justify-content: space-between;

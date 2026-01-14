@@ -17,13 +17,13 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
   const [selectedMovement, setSelectedMovement] = useState<FixedMovement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleEdit = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEdit = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     navigate(`/admin/fixed-movement/edit/${id}`);
   };
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     setMovements(movements.filter(m => m.id !== id));
   };
 

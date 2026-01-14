@@ -1,45 +1,34 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
-import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
-import { WEEKDAYS, PERIOD_OPTIONS, LOCATION_OPTIONS, MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
+import { MOCK_TEAMS } from '@/constants/fixedMovement';
 import type { Student } from '@/types/fixedMovement';
-import * as S from './style';
+import * as S from '../../create/style';
 
-export default function FixedMovementFormPage() {
+export default function TeamFormPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
-  
-  const [dayOfWeek, setDayOfWeek] = useState<string>('');
-  const [period, setPeriod] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
-  const [reason, setReason] = useState<string>('');
-  const [isTeamMode, setIsTeamMode] = useState(false);
+
+  const [teamName, setTeamName] = useState<string>('');
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const dayOptions = Object.values(WEEKDAYS);
-  
   const mockStudents: Student[] = [
     { studentNumber: 1401, name: '김동욱' },
-    { studentNumber: 1402, name: '김동욱' },
-    { studentNumber: 1403, name: '김동욱' },
-    { studentNumber: 1404, name: '김동욱' },
-    { studentNumber: 1405, name: '김동욱' },
+    { studentNumber: 1402, name: '이민수' },
+    { studentNumber: 1403, name: '박지훈' },
+    { studentNumber: 1404, name: '최예준' },
+    { studentNumber: 1405, name: '정서연' },
   ];
 
   useEffect(() => {
     if (isEditMode) {
-      const movement = MOCK_FIXED_MOVEMENTS.find(m => m.id === id);
-      if (movement) {
-        setDayOfWeek(WEEKDAYS[movement.day as keyof typeof WEEKDAYS]);
-        setPeriod(movement.period);
-        setLocation(movement.location);
-        setReason(movement.reason);
-        setSelectedStudents(movement.students);
+      const team = MOCK_TEAMS.find(t => t.id === id);
+      if (team) {
+        setTeamName(team.name);
+        setSelectedStudents(team.students);
       }
     }
   }, [id, isEditMode]);
@@ -56,88 +45,42 @@ export default function FixedMovementFormPage() {
   };
 
   const handleCancel = () => {
-    navigate('/admin/fixed-movement');
+    navigate('/admin/fixed-movement/team-settings');
   };
 
   const handleSubmit = () => {
     console.log({
       id: isEditMode ? id : undefined,
-      dayOfWeek,
-      period,
-      location,
-      reason,
-      isTeamMode,
+      teamName,
       students: selectedStudents,
     });
-    navigate('/admin/fixed-movement');
+    navigate('/admin/fixed-movement/team-settings');
   };
 
   return (
     <S.Container>
       <S.Content>
-        <S.Title>{isEditMode ? '고정 이석 수정' : '고정 이석 설정'}</S.Title>
+        <S.Title>{isEditMode ? '팀 수정' : '팀 추가'}</S.Title>
 
         <S.Form>
           <S.FormSection>
-            <S.SectionTitle>시간</S.SectionTitle>
-            <S.InputRow>
-              <Dropdown
-                placeholder="요일"
-                items={dayOptions}
-                value={dayOfWeek}
-                onChange={setDayOfWeek}
-                customWidth="48%"
-              />
-              <Dropdown
-                placeholder="시간"
-                items={PERIOD_OPTIONS}
-                value={period}
-                onChange={setPeriod}
-                customWidth="48%"
-              />
-            </S.InputRow>
-          </S.FormSection>
-
-          <S.FormSection>
-            <S.SectionTitle>장소</S.SectionTitle>
-            <SearchDropdown
-              placeholder="장소"
-              items={LOCATION_OPTIONS}
-              value={location}
-              onChange={setLocation}
-            />
-          </S.FormSection>
-
-          <S.FormSection>
-            <S.SectionTitle>사유</S.SectionTitle>
+            <S.SectionTitle>팀 이름</S.SectionTitle>
             <TextInput
-              placeholder="사유를 입력해주세요"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              placeholder="팀 이름을 입력해주세요"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
             />
           </S.FormSection>
 
           <S.FormSection>
-            <S.ToggleRow>
-              <S.SectionTitle>학생</S.SectionTitle>
-              <S.ToggleContent>
-                <S.SectionTitle>팀</S.SectionTitle>
-              <S.Toggle
-                $active={isTeamMode}
-                onClick={() => setIsTeamMode(!isTeamMode)}
-              >
-                <S.ToggleCircle $active={isTeamMode} />
-              </S.Toggle>
-              </S.ToggleContent>
-            </S.ToggleRow>
-
+            <S.SectionTitle>학생</S.SectionTitle>
             <TextInput
               placeholder="학생을 입력해주세요"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftIcon={
-                <img 
-                  src="/icons/common/search.svg" 
+                <img
+                  src="/icons/common/search.svg"
                   alt="search"
                   style={{ width: '20px', height: '20px' }}
                 />
@@ -147,12 +90,12 @@ export default function FixedMovementFormPage() {
             {searchQuery && (
               <S.StudentDropdown>
                 {mockStudents
-                  .filter(student => 
+                  .filter(student =>
                     `${student.studentNumber} ${student.name}`.includes(searchQuery)
                   )
                   .slice(0, 3)
                   .map((student) => (
-                    <S.StudentDropdownItem 
+                    <S.StudentDropdownItem
                       key={student.studentNumber}
                       onClick={() => handleAddStudent(student)}
                     >

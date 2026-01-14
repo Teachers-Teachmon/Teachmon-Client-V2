@@ -11,3 +11,9 @@ export interface FixedMovement {
   reason: string;
   students: Student[];
 }
+
+export interface Team {
+  id: string;
+  name: string;
+  students: Student[];
+}

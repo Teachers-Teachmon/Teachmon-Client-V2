@@ -1,4 +1,4 @@
-import type { FixedMovement } from '@/types/fixedMovement';
+import type { FixedMovement, Team } from '@/types/fixedMovement';
 
 export const WEEKDAYS = {
   mon: '월',
@@ -69,6 +69,39 @@ export const MOCK_FIXED_MOVEMENTS: FixedMovement[] = [
       { studentNumber: 1410, name: '윤도훈' },
       { studentNumber: 1410, name: '윤도훈' },
       { studentNumber: 1410, name: '윤도훈' },
+    ],
+  },
+];
+
+export const MOCK_TEAMS: Team[] = [
+  {
+    id: '1',
+    name: '전공동아리A',
+    students: [
+      { studentNumber: 1401, name: '김동욱' },
+      { studentNumber: 1402, name: '이민수' },
+      { studentNumber: 1403, name: '박지훈' },
+      { studentNumber: 1404, name: '최예준' },
+    ],
+  },
+  {
+    id: '2',
+    name: '전공동아리B',
+    students: [
+      { studentNumber: 1405, name: '정서연' },
+      { studentNumber: 1406, name: '한소희' },
+      { studentNumber: 1407, name: '강민지' },
+    ],
+  },
+  {
+    id: '3',
+    name: '스터디그룹',
+    students: [
+      { studentNumber: 1408, name: '오준서' },
+      { studentNumber: 1409, name: '임하늘' },
+      { studentNumber: 1410, name: '윤도훈' },
+      { studentNumber: 1411, name: '송민아' },
+      { studentNumber: 1412, name: '백승호' },
     ],
   },
 ];

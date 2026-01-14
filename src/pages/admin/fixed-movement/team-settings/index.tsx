@@ -1,114 +1,85 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Dropdown from '@/components/ui/input/dropdown';
-import TextInput from '@/components/ui/input/text-input';
-import SearchDropdown from '@/components/ui/input/dropdown/search';
+import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import { LOCATION_OPTIONS } from '@/constants/fixedMovement';
-import type { Student } from '@/types/fixedMovement';
-import * as S from '../create/style';
+import { MOCK_TEAMS } from '@/constants/fixedMovement';
+import type { Team } from '@/types/fixedMovement';
+import * as S from './style';
 
 export default function TeamSettingsPage() {
   const navigate = useNavigate();
-  const [teamName, setTeamName] = useState<string>('');
-  const [location, setLocation] = useState<string>('');
-  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const mockStudents: Student[] = [
-    { studentNumber: 1401, name: '김동욱' },
-    { studentNumber: 1402, name: '김동욱' },
-    { studentNumber: 1403, name: '김동욱' },
-    { studentNumber: 1404, name: '김동욱' },
-    { studentNumber: 1405, name: '김동욱' },
+  const [teams, setTeams] = useState<Team[]>(MOCK_TEAMS);
+
+  const handleBack = () => {
+    navigate('/admin/fixed-movement');
+  };
+
+  const handleAdd = () => {
+    navigate('/admin/fixed-movement/team-settings/create');
+  };
+
+  const handleEdit = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    navigate(`/admin/fixed-movement/team-settings/edit/${id}`);
+  };
+
+  const handleDelete = (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setTeams(teams.filter(t => t.id !== id));
+  };
+
+  const columns: TableColumn<Team>[] = [
+    {
+      key: 'name',
+      header: '팀 이름',
+      width: '200px',
+      render: (row) => row.name,
+    },
+    {
+      key: 'students',
+      header: '학생',
+      width: 'auto',
+      render: (row) => (
+        <S.StudentList>
+          {row.students.slice(0, 5).map((student, idx) => (
+            <S.StudentTag key={idx}>
+              {student.studentNumber} {student.name}
+            </S.StudentTag>
+          ))}
+          {row.students.length > 5 && (
+            <S.StudentTag>...</S.StudentTag>
+          )}
+        </S.StudentList>
+      ),
+    },
   ];
 
-  const handleAddStudent = (student: Student) => {
-    if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
-      setSelectedStudents([...selectedStudents, student]);
-    }
-    setSearchQuery('');
-  };
-
-  const handleRemoveStudent = (studentNumber: number) => {
-    setSelectedStudents(selectedStudents.filter(s => s.studentNumber !== studentNumber));
-  };
-
-  const handleCancel = () => {
-    navigate('/admin/fixed-movement');
-  };
-
-  const handleSubmit = () => {
-    console.log({
-      teamName,
-      location,
-      students: selectedStudents,
-    });
-    navigate('/admin/fixed-movement');
-  };
+  const renderActions = (row: Team) => (
+    <S.ActionCell>
+      <Button text="수정" variant="confirm" width="100px" onClick={(e) => handleEdit(row.id, e)} />
+      <Button text="삭제" variant="delete" width="100px" onClick={(e) => handleDelete(row.id, e)} />
+    </S.ActionCell>
+  );
 
   return (
     <S.Container>
-      <S.Content>
+      <S.Header>
         <S.Title>팀 설정</S.Title>
-
-        <S.Form>
-          <S.FormSection>
-            <S.SectionTitle>팀 이름</S.SectionTitle>
-            <TextInput
-              placeholder="팀 이름을 입력해주세요"
-              value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
-            />
-          </S.FormSection>
-
-          <S.FormSection>
-            <S.SectionTitle>장소</S.SectionTitle>
-            <SearchDropdown
-              placeholder="장소"
-              items={LOCATION_OPTIONS}
-              value={location}
-              onChange={setLocation}
-              itemRenderer={(item) => item}
-            />
-          </S.FormSection>
-
-          <S.FormSection>
-            <S.SectionTitle>학생</S.SectionTitle>
-            <SearchDropdown
-              placeholder="학생을 입력해주세요"
-              items={mockStudents}
-              value={null}
-              onChange={handleAddStudent}
-              searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
-              renderItem={(student) => `${student.studentNumber} ${student.name}`}
-              getItemKey={(student) => student.studentNumber.toString()}
-            />
-          </S.FormSection>
-
-          {selectedStudents.length > 0 && (
-            <S.StudentGrid>
-              {selectedStudents.map((student) => (
-                <S.StudentCard key={student.studentNumber}>
-                  <S.StudentInfo>
-                    <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
-                    <S.StudentName>{student.name}</S.StudentName>
-                  </S.StudentInfo>
-                  <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>
-                    ✕
-                  </S.RemoveButton>
-                </S.StudentCard>
-              ))}
-            </S.StudentGrid>
-          )}
-        </S.Form>
-      </S.Content>
-
-      <S.ButtonRow>
-        <Button text="취소" variant="cancel" onClick={handleCancel} />
-        <Button text="완료" variant="confirm" onClick={handleSubmit} />
-      </S.ButtonRow>
+        <S.ButtonGroup>
+          <S.HeaderButton onClick={handleAdd}>
+            <img src="/icons/admin/team.svg" alt="팀 추가하기" />
+            <span>팀 추가하기</span>
+          </S.HeaderButton>
+          <Button text="돌아가기" variant="confirm" width="100px" onClick={handleBack} />
+        </S.ButtonGroup>
+      </S.Header>
+      <S.TableWrapper>
+        <TableLayout
+          columns={columns}
+          data={teams}
+          renderActions={renderActions}
+        />
+      </S.TableWrapper>
     </S.Container>
   );
 }

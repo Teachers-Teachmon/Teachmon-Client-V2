@@ -9,6 +9,7 @@ import AdminUsersPage from '@/pages/admin/users'
 import AdminFixedMovementPage from '@/pages/admin/fixed-movement'
 import AdminFixedMovementFormPage from '@/pages/admin/fixed-movement/create'
 import AdminFixedMovementTeamSettingsPage from '@/pages/admin/fixed-movement/team-settings'
+import AdminFixedMovementTeamFormPage from '@/pages/admin/fixed-movement/team-settings/create'
 import HomePage from '@/pages/home'
 import SelfStudyPage from '@/pages/admin/self-study'
 import AdminSupervisionPage from '@/pages/admin/supervision'
@@ -41,6 +42,8 @@ function App() {
             <Route path="fixed-movement/create" element={<AdminFixedMovementFormPage />} />
             <Route path="fixed-movement/edit/:id" element={<AdminFixedMovementFormPage />} />
             <Route path="fixed-movement/team-settings" element={<AdminFixedMovementTeamSettingsPage />} />
+            <Route path="fixed-movement/team-settings/create" element={<AdminFixedMovementTeamFormPage />} />
+            <Route path="fixed-movement/team-settings/edit/:id" element={<AdminFixedMovementTeamFormPage />} />
             <Route path="self-study" element={<SelfStudyPage />} />
             <Route path="supervision" element={<AdminSupervisionPage />} />
             <Route path="business-trip" element={<BusinessTripPage />} />
