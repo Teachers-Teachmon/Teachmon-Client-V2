@@ -22,6 +22,7 @@ import LandingPage from '@/pages/landing'
 function App() {
   return (
     <Routes>
+      <Route path="*" element={<ErrorPage />} />
       <Route path="/" element={<LandingPage />} />
       <Route element={<MainLayout />}>
         <Route path="/main" element={<HomePage />} />
@@ -48,7 +49,6 @@ function App() {
             <Route path="supervision" element={<AdminSupervisionPage />} />
             <Route path="business-trip" element={<BusinessTripPage />} />
         </Route>
-        <Route path="*" element={<ErrorPage />} />
       </Route>
     </Routes>
   )

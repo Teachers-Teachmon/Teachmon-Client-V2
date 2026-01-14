@@ -6,6 +6,10 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  height: 100vh;
+  min-height: 0;
+  box-sizing: border-box;
+  justify-content: stretch;
 `;
 
 export const Header = styled.div`

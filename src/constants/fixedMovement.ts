@@ -23,54 +23,17 @@ export const LOCATION_OPTIONS = [
 ];
 
 export const MOCK_FIXED_MOVEMENTS: FixedMovement[] = [
-  {
-    id: '1',
-    day: 'mon',
-    period: '7교시',
-    location: '베드실7',
-    reason: '전공동아리',
-    students: [
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-    ],
-  },
-  {
-    id: '2',
-    day: 'thu',
-    period: '8~11교시',
-    location: '베드실9',
-    reason: '전공동아리',
-    students: [
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-    ],
-  },
-  {
-    id: '3',
-    day: 'thu',
-    period: '8~11교시',
-    location: '베드실7',
-    reason: '전공동아리',
-    students: [
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-      { studentNumber: 1410, name: '윤도훈' },
-    ],
-  },
+  ...Array.from({ length: 25 }).map((_, i) => ({
+    id: `${i + 1}`,
+    day: ['mon', 'tue', 'wed', 'thu'][i % 4],
+    period: PERIOD_OPTIONS[i % PERIOD_OPTIONS.length],
+    location: LOCATION_OPTIONS[i % LOCATION_OPTIONS.length],
+    reason: `테스트 데이터 ${i + 1}`,
+    students: Array.from({ length: (i % 7) + 1 }).map((_, j) => ({
+      studentNumber: 1400 + j,
+      name: `학생${j + 1}`,
+    })),
+  })),
 ];
 
 export const MOCK_TEAMS: Team[] = [

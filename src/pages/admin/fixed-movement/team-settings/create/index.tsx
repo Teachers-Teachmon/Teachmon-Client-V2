@@ -6,6 +6,7 @@ import { MOCK_TEAMS } from '@/constants/fixedMovement';
 import type { Student } from '@/types/fixedMovement';
 import * as S from '../../create/style';
 
+
 export default function TeamFormPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -93,6 +94,9 @@ export default function TeamFormPage() {
                   .filter(student =>
                     `${student.studentNumber} ${student.name}`.includes(searchQuery)
                   )
+                  .filter(student =>
+                    !selectedStudents.find(s => s.studentNumber === student.studentNumber)
+                  )
                   .slice(0, 3)
                   .map((student) => (
                     <S.StudentDropdownItem
@@ -116,7 +120,7 @@ export default function TeamFormPage() {
                     <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
                   <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>
-                    ✕
+                    <img src="/icons/common/x.svg" alt="삭제" width={20} height={20} />
                   </S.RemoveButton>
                 </S.StudentCard>
               ))}
@@ -126,8 +130,8 @@ export default function TeamFormPage() {
       </S.Content>
 
       <S.ButtonRow>
-        <Button text="취소" variant="cancel" onClick={handleCancel} />
-        <Button text="완료" variant="confirm" onClick={handleSubmit} />
+        <Button text="취소" variant="cancel" width="27rem" onClick={handleCancel} />
+        <Button text="완료" variant="confirm" width="27rem" onClick={handleSubmit} />
       </S.ButtonRow>
     </S.Container>
   );

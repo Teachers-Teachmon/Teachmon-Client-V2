@@ -2,9 +2,15 @@ import styled from '@emotion/styled';
 import { colors, radius, fontSizes } from '@/styles/theme';
 
 export const TableWrapper = styled.div`
-  background: ${colors.background};
-  border-radius: ${radius.lg};
-  overflow: hidden;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  background: transparent;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  margin-top: 1.5rem;
 `;
 
 export const ActionCell = styled.div`

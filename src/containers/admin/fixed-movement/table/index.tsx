@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import { WEEKDAYS, MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
+import { MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
+import { getFixedMovementTableColumns } from '@/utils/fixedMovementTableColumns';
 import type { FixedMovement } from '@/types/fixedMovement';
 import FixedMovementDetailModal from '../detail-modal';
 import * as S from './style';
@@ -43,49 +44,7 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
       movement.students.some(s => s.name.includes(searchQuery))
   );
 
-  const columns: TableColumn<FixedMovement>[] = [
-    {
-      key: 'day',
-      header: '요일',
-      width: '100px',
-      render: (row) => WEEKDAYS[row.day as keyof typeof WEEKDAYS],
-    },
-    {
-      key: 'period',
-      header: '교시',
-      width: '120px',
-      render: (row) => row.period,
-    },
-    {
-      key: 'location',
-      header: '장소',
-      width: '150px',
-      render: (row) => row.location,
-    },
-    {
-      key: 'count',
-      header: '인원',
-      width: '80px',
-      render: (row) => `${row.students.length}명`,
-    },
-    {
-      key: 'students',
-      header: '학생',
-      width: 'auto',
-      render: (row) => (
-        <S.StudentList>
-          {row.students.slice(0, 5).map((student, idx) => (
-            <S.StudentTag key={idx}>
-              {student.studentNumber} {student.name}
-            </S.StudentTag>
-          ))}
-          {row.students.length > 4 && (
-            <S.StudentTag>...</S.StudentTag>
-          )}
-        </S.StudentList>
-      ),
-    },
-  ];
+  const columns = getFixedMovementTableColumns();
 
   const renderActions = (row: FixedMovement) => (
     <S.ActionCell>
