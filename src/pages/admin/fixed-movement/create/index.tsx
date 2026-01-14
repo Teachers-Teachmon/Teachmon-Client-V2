@@ -123,46 +123,51 @@ export default function FixedMovementFormPage() {
               <S.SectionTitle>학생</S.SectionTitle>
               <S.ToggleContent>
                 <S.SectionTitle>팀</S.SectionTitle>
-              <S.Toggle
-                $active={isTeamMode}
-                onClick={() => setIsTeamMode(!isTeamMode)}
-              >
-                <S.ToggleCircle $active={isTeamMode} />
-              </S.Toggle>
+                <S.Toggle
+                  $active={isTeamMode}
+                  onClick={() => setIsTeamMode(!isTeamMode)}
+                >
+                  <S.ToggleCircle $active={isTeamMode} />
+                </S.Toggle>
               </S.ToggleContent>
             </S.ToggleRow>
 
-            <TextInput
-              placeholder="학생을 입력해주세요"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              leftIcon={
-                <img 
-                  src="/icons/common/search.svg" 
-                  alt="search"
-                  style={{ width: '20px', height: '20px' }}
-                />
-              }
-            />
-
-            {searchQuery && (
-              <S.StudentDropdown>
-                {mockStudents
-                  .filter(student => 
-                    `${student.studentNumber} ${student.name}`.includes(searchQuery)
-                  )
-                  .slice(0, 3)
-                  .map((student) => (
-                    <S.StudentDropdownItem 
-                      key={student.studentNumber}
-                      onClick={() => handleAddStudent(student)}
-                    >
-                      {student.studentNumber} {student.name}
-                    </S.StudentDropdownItem>
-                  ))
+            <S.DropdownWrapper>
+              <TextInput
+                placeholder="학생을 입력해주세요"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                leftIcon={
+                  <img 
+                    src="/icons/common/search.svg" 
+                    alt="search"
+                    style={{ width: '20px', height: '20px' }}
+                  />
                 }
-              </S.StudentDropdown>
-            )}
+              />
+
+              {searchQuery && (
+                <S.StudentDropdown>
+                  {mockStudents
+                    .filter(student => 
+                      `${student.studentNumber} ${student.name}`.includes(searchQuery)
+                    )
+                    .filter(student => 
+                      !selectedStudents.find(s => s.studentNumber === student.studentNumber)
+                    )
+                    .slice(0, 3)
+                    .map((student) => (
+                      <S.StudentDropdownItem 
+                        key={student.studentNumber}
+                        onClick={() => handleAddStudent(student)}
+                      >
+                        {student.studentNumber} {student.name}
+                      </S.StudentDropdownItem>
+                    ))
+                  }
+                </S.StudentDropdown>
+              )}
+            </S.DropdownWrapper>
           </S.FormSection>
 
           {selectedStudents.length > 0 && (

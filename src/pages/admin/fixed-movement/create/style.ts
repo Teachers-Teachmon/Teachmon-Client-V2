@@ -65,7 +65,7 @@ export const FormSection = styled.div`
 `;
 
 export const SectionTitle = styled.h3`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 600;
   color: ${colors.text};
   margin: 0;
@@ -117,13 +117,20 @@ export const StudentGrid = styled.div`
   margin-top: 1rem;
 `;
 
+export const DropdownWrapper = styled.div`
+  position: relative;
+`;
+
 export const StudentDropdown = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
   width: 100%;
   background-color: ${colors.background};
   border-radius: ${radius.sm};
   overflow: hidden;
-  margin-top: -8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
 `;
 
 export const StudentDropdownItem = styled.div`
@@ -136,7 +143,7 @@ export const StudentDropdownItem = styled.div`
   cursor: pointer;
   font-size: ${fontSizes.Body};
   color: ${colors.text};
-  
+
   &:hover {
     background-color: ${colors.n01};
   }
@@ -159,13 +166,13 @@ export const StudentInfo = styled.div`
 `;
 
 export const StudentNumber = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 600;
   color: ${colors.text};
 `;
 
 export const StudentName = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 500;
   color: ${colors.text};
 `;
@@ -196,7 +203,7 @@ export const ButtonRow = styled.div`
   padding: 1.5rem 3rem;
   width: 100%;
   max-width: 60rem;
-  margin: 1.2rem auto 0 auto;
+  margin: 2.5rem auto 0 auto;
 
   > button {
     flex: 1;
