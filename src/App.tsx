@@ -19,6 +19,8 @@ import SupervisionPage from '@/pages/supervision'
 import AfterSchoolExtraPage from '@/pages/after-school/extra'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
+import AdminAfterSchoolPage from '@/pages/admin/after-school'
+import AdminAfterSchoolFormPage from '@/pages/admin/after-school/create'
 import BusinessTripPage from '@/pages/after-school/business-trip'
 
 function App() {
@@ -50,7 +52,10 @@ function App() {
             <Route path="fixed-movement/team-settings/edit/:id" element={<AdminFixedMovementTeamFormPage />} />
             <Route path="self-study" element={<SelfStudyPage />} />
             <Route path="supervision" element={<AdminSupervisionPage />} />
-            <Route path="business-trip" element={<BusinessTripPage />} />
+            <Route path="after-school" element={<AdminAfterSchoolPage />} />
+            <Route path="after-school/create" element={<AdminAfterSchoolFormPage />} />
+            <Route path="after-school/edit/:id" element={<AdminAfterSchoolFormPage />} />
+            <Route path="business-trip" element={<AdminBusinessTripPage />} />
         </Route>
       </Route>
     </Routes>

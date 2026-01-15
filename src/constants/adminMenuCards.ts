@@ -12,7 +12,7 @@ export const MENU_CARDS: MenuCardItem[] = [
     title: '방과후',
     description: '방과후 시간표 설정하기',
     icon: '/icons/admin/afterSchool.svg',
-    url: '/admin/main',
+    url: '/admin/after-school',
   },
   {
     id: 2,

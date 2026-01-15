@@ -39,24 +39,33 @@ export default function TableLayout<T extends { id: string }>({
                     </S.TableRow>
                 </S.TableHead>
                 <tbody>
-                    {data.map((row) => (
-                        <S.TableRow 
-                            key={row.id}
-                            onClick={() => onRowClick?.(row)}
-                            $clickable={!!onRowClick}
-                        >
-                            {columns.map((column) => (
-                                <S.TableCell key={`${row.id}-${column.key}`}>
-                                    {column.render
-                                        ? column.render(row)
-                                        : String(row[column.key as keyof T] ?? '')}
-                                </S.TableCell>
-                            ))}
-                            {renderActions && (
-                                <S.TableCell>{renderActions(row)}</S.TableCell>
-                            )}
+                    {data.length === 0 ? (
+                        <S.TableRow>
+                            <S.TableCell colSpan={columns.length + (renderActions ? 1 : 0)} style={{ textAlign: 'center', height: '300px', color: '#aaa', fontSize: '1.2rem' }}>
+                                방과후 데이터가 없습니다
+                            </S.TableCell>
                         </S.TableRow>
-                    ))}
+                    ) : (
+                        data.map((row) => (
+                            <S.TableRow 
+                                key={row.id}
+                                onClick={() => onRowClick?.(row)}
+                                $clickable={!!onRowClick}
+                                className="table-row-hover"
+                            >
+                                {columns.map((column) => (
+                                    <S.TableCell key={`${row.id}-${column.key}`}>
+                                        {column.render
+                                            ? column.render(row)
+                                            : String(row[column.key as keyof T] ?? '')}
+                                    </S.TableCell>
+                                ))}
+                                {renderActions && (
+                                    <S.TableCell>{renderActions(row)}</S.TableCell>
+                                )}
+                            </S.TableRow>
+                        ))
+                    )}
                 </tbody>
             </S.Table>
         </S.TableContainer>
