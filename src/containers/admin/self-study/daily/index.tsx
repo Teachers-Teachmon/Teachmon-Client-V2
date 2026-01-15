@@ -1,20 +1,14 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import Calendar from '@/components/ui/calendar';
-import type { CalendarRangeEvent } from '@/components/ui/calendar';
+import type { CalendarRangeEvent, CalendarEvent } from '@/components/ui/calendar';
 import Button from '@/components/ui/button';
 import { colors } from '@/styles/theme';
+import type { SelfStudySchedule, Grade } from '@/types/selfStudy';
+import { INITIAL_SELF_STUDY_SCHEDULES } from '@/constants/adminSelfStudy';
+import { generateScheduleId, getDatesInRange, getGradeColor, formatGrade, formatPeriods } from '@/utils/selfStudy';
+import SidePanel from './side-panel';
+import DetailModal from './detail-modal';
 import * as S from './style';
-
-const PERIODS = ['1교시', '2교시', '3교시', '4교시', '5교시', '6교시', '7교시', '8교시', '9교시'];
-
-const existingSelfStudySettings = [
-  { startDate: new Date(2026, 0, 10), endDate: new Date(2026, 0, 12), grade: 1 },
-  { startDate: new Date(2026, 0, 15), endDate: new Date(2026, 0, 16), grade: 2 },
-].filter(setting => {
-  const startDay = setting.startDate.getDay();
-  const endDay = setting.endDate.getDay();
-  return startDay !== 0 && startDay !== 6 && endDay !== 0 && endDay !== 6;
-});
 
 export default function DailySection() {
   const currentDate = new Date();
@@ -22,27 +16,11 @@ export default function DailySection() {
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(2);
+  const [selectedGrade, setSelectedGrade] = useState<Grade>(2);
   const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [hideExistingSettings, setHideExistingSettings] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isDropdownOpen]);
+  const [schedules, setSchedules] = useState<SelfStudySchedule[]>(INITIAL_SELF_STUDY_SCHEDULES);
+  const [selectedSchedule, setSelectedSchedule] = useState<SelfStudySchedule | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleMonthChange = (year: number, month: number) => {
     setSelectedYear(year);
@@ -56,7 +34,6 @@ export default function DailySection() {
     if (!startDate || (startDate && endDate)) {
       setStartDate(date);
       setEndDate(null);
-      setHideExistingSettings(true);
     } else {
       if (date < startDate) {
         setEndDate(startDate);
@@ -64,6 +41,14 @@ export default function DailySection() {
       } else {
         setEndDate(date);
       }
+    }
+  };
+
+  const handleEventClick = (event: CalendarEvent) => {
+    const schedule = schedules.find(s => s.id === event.id);
+    if (schedule) {
+      setSelectedSchedule(schedule);
+      setIsModalOpen(true);
     }
   };
 
@@ -76,38 +61,58 @@ export default function DailySection() {
   };
 
   const handleComplete = () => {
+    if (!startDate || !endDate || selectedPeriods.length === 0) {
+      return;
+    }
+
+    const datesInRange = getDatesInRange(startDate, endDate);
+    const newSchedules: SelfStudySchedule[] = datesInRange.map(date => ({
+      id: generateScheduleId(),
+      date: new Date(date),
+      grade: selectedGrade,
+      periods: [...selectedPeriods],
+      startDate: new Date(startDate),
+      endDate: new Date(endDate),
+    }));
+
+    setSchedules(prev => [...prev, ...newSchedules]);
     setStartDate(null);
     setEndDate(null);
     setSelectedPeriods([]);
-    setHideExistingSettings(false);
   };
 
   const handleCancelSelection = () => {
     setStartDate(null);
     setEndDate(null);
-    setHideExistingSettings(false);
+    setSelectedPeriods([]);
   };
 
-  const handleDeleteAllSettings = () => {
-    existingSelfStudySettings.length = 0;
-    console.log('All settings deleted');
+  const handleDeleteSchedule = (id: string) => {
+    setSchedules(prev => prev.filter(schedule => schedule.id !== id));
   };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedSchedule(null);
+  };
+
+  const calendarEvents: CalendarEvent[] = useMemo(() => {
+    return schedules.map(schedule => {
+      const { bgColor, textColor } = getGradeColor(schedule.grade);
+      const periodsText = formatPeriods(schedule.periods);
+      
+      return {
+        id: schedule.id,
+        date: schedule.date,
+        label: `${formatGrade(schedule.grade)} ${periodsText}`,
+        bgColor,
+        textColor,
+      };
+    });
+  }, [schedules]);
 
   const dateRangeEvents: CalendarRangeEvent[] = useMemo(() => {
     const events = [];
-
-    if (!hideExistingSettings) {
-      events.push(
-        ...existingSelfStudySettings.map((setting, index) => ({
-          id: `existing-${index}`,
-          startDate: setting.startDate,
-          endDate: setting.endDate,
-          label: `${setting.grade}학년 자습`,
-          bgColor: colors.primaryBackground,
-          textColor: colors.primary,
-        }))
-      );
-    }
 
     if (startDate) {
       if (!endDate) {
@@ -132,7 +137,7 @@ export default function DailySection() {
     }
 
     return events;
-  }, [startDate, endDate, hideExistingSettings]);
+  }, [startDate, endDate]);
 
   const showPanel = startDate && endDate;
 
@@ -144,6 +149,8 @@ export default function DailySection() {
           month={selectedMonth}
           onMonthChange={handleMonthChange}
           onDateClick={handleDateClick}
+          onEventClick={handleEventClick}
+          events={calendarEvents}
           rangeEvents={dateRangeEvents}
           showYear={true}
           showLegend={false}
@@ -160,86 +167,21 @@ export default function DailySection() {
       </S.CalendarWrapper>
 
       {showPanel && (
-        <S.SidePanel>
-          <S.PanelSection>
-            <S.SectionTitle>학년</S.SectionTitle>
-            <S.GradeTabsContainer>
-              <S.GradeTab 
-                $active={selectedGrade === 1} 
-                onClick={() => setSelectedGrade(1)}
-              >
-                1학년
-              </S.GradeTab>
-              <S.GradeTab 
-                $active={selectedGrade === 2} 
-                onClick={() => setSelectedGrade(2)}
-              >
-                2학년
-              </S.GradeTab>
-              <S.GradeTab 
-                $active={selectedGrade === 3} 
-                onClick={() => setSelectedGrade(3)}
-              >
-                3학년
-              </S.GradeTab>
-            </S.GradeTabsContainer>
-          </S.PanelSection>
-
-          <S.PanelSection>
-            <S.SectionTitle>교시 선택</S.SectionTitle>
-            <S.PeriodDropdownWrapper>
-              <S.PeriodDropdown ref={dropdownRef}>
-                <S.DropdownButton onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                  교시
-                  <img src="/icons/bottomArrow.svg" alt="arrow" />
-                </S.DropdownButton>
-                {isDropdownOpen && (
-                  <S.DropdownMenu>
-                    {PERIODS.map(period => (
-                      <S.DropdownItem 
-                        key={period}
-                        $selected={selectedPeriods.includes(period)}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handlePeriodToggle(period);
-                        }}
-                      >
-                        <S.Checkbox $checked={selectedPeriods.includes(period)}>
-                          {selectedPeriods.includes(period) && '✓'}
-                        </S.Checkbox>
-                        {period}
-                      </S.DropdownItem>
-                    ))}
-                  </S.DropdownMenu>
-                )}
-              </S.PeriodDropdown>
-              {selectedPeriods.length > 0 && (
-                <S.SelectedPeriodsWrapper>
-                  {selectedPeriods
-                    .sort((a, b) => parseInt(a) - parseInt(b))
-                    .map(period => (
-                      <S.SelectedPeriodTag key={period}>
-                        {period}
-                        <S.RemovePeriodButton onClick={() => handlePeriodToggle(period)}>
-                          ✕
-                        </S.RemovePeriodButton>
-                      </S.SelectedPeriodTag>
-                    ))}
-                </S.SelectedPeriodsWrapper>
-              )}
-            </S.PeriodDropdownWrapper>
-          </S.PanelSection>
-
-          <S.ButtonWrapper>
-            <Button 
-              text="완료" 
-              variant="confirm" 
-              width="100%" 
-              onClick={handleComplete}
-            />
-          </S.ButtonWrapper>
-        </S.SidePanel>
+        <SidePanel
+          selectedGrade={selectedGrade}
+          onGradeChange={setSelectedGrade}
+          selectedPeriods={selectedPeriods}
+          onPeriodToggle={handlePeriodToggle}
+          onComplete={handleComplete}
+        />
       )}
+
+      <DetailModal
+        isOpen={isModalOpen}
+        schedule={selectedSchedule}
+        onClose={handleCloseModal}
+        onDelete={handleDeleteSchedule}
+      />
     </S.Container>
   );
 }
