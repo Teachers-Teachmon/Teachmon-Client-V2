@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { fontSizes, radius, colors } from '@/styles/theme';
+import { fontSizes, radius } from '@/styles/theme';
 
 export const Container = styled.div`
   display: flex;
@@ -58,6 +58,10 @@ export const GradeBadge = styled.div<{ $bgColor: string; $textColor: string }>`
 export const ButtonGroup = styled.div`
   display: flex;
   gap: 1rem;
+
+  & > button {
+    width: 100% !important;
+  }
 `;
 
 export const DeleteIcon = styled.div`
