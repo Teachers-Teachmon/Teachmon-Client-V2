@@ -11,13 +11,15 @@ import AdminFixedMovementFormPage from '@/pages/admin/fixed-movement/create'
 import AdminFixedMovementTeamSettingsPage from '@/pages/admin/fixed-movement/team-settings'
 import AdminFixedMovementTeamFormPage from '@/pages/admin/fixed-movement/team-settings/create'
 import HomePage from '@/pages/home'
+import AfterSchoolPage from '@/pages/after-school'
 import SelfStudyPage from '@/pages/admin/self-study'
 import AdminSupervisionPage from '@/pages/admin/supervision'
-import BusinessTripPage from '@/pages/admin/business-trip'
+import AdminBusinessTripPage from '@/pages/admin/business-trip'
 import SupervisionPage from '@/pages/supervision'
-import AfterSchoolExtraPage from '@/pages/afterSchool/extra'
+import AfterSchoolExtraPage from '@/pages/after-school/extra'
 import ErrorPage from './pages/error'
 import LandingPage from '@/pages/landing'
+import BusinessTripPage from '@/pages/after-school/business-trip'
 
 function App() {
   return (
@@ -33,8 +35,9 @@ function App() {
           <Route path="movement" element={<Movement />} />
         </Route>
         <Route path="/after-school">
-          <Route index element={<div>방과후</div>} />
+          <Route index element={<AfterSchoolPage />} />
           <Route path="extra" element={<AfterSchoolExtraPage />} />
+          <Route path="business-trip" element={<BusinessTripPage />} />
         </Route>
         <Route path="/admin">
             <Route index element={<AdminMain />} />
