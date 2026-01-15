@@ -190,17 +190,21 @@ export const EventList = styled.div`
   flex-direction: column;
   gap: 4px;
   margin-top: auto;
+  overflow: hidden;
+  max-height: 100%;
 `
 
 export const EventTag = styled.span<{ bgColor: string; textColor: string; clickable?: boolean; isSelected?: boolean; isDisabled?: boolean }>`
   display: inline-block;
-  width: fit-content;
+  max-width: 100%;
   padding: 4px 8px;
   border-radius: ${radius.sm};
   font-family: 'Paperlogy', sans-serif;
   font-weight: 500;
   font-size: 14px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   background: ${({ bgColor }) => bgColor};
   color: ${({ textColor }) => textColor};
   cursor: ${({ clickable, isDisabled }) => (isDisabled ? 'not-allowed' : clickable ? 'pointer' : 'default')};

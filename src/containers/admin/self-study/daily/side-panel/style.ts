@@ -1,20 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
 
-export const Container = styled.div`
-  display: flex;
-  flex: 1;
-  padding: 2rem;
-  gap: 1.5rem;
-  position: relative;
-`;
-
-export const CalendarWrapper = styled.div`
-  flex: 1;
-  background: ${colors.background};
-  border-radius: ${radius.lg};
-`;
-
 export const SidePanel = styled.div`
   width: 280px;
   background: ${colors.background};
@@ -194,78 +180,3 @@ export const RemovePeriodButton = styled.button`
   }
 `;
 
-export const CancelButton = styled.button`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 100%;
-    height: 100%;
-  }
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-export const CancelButtonInCalendar = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  img {
-    width: 100%;
-    height: 100%;
-  }
-
-  &:hover {
-    opacity: 0.8;
-  }
-`;
-
-export const ExistingSettingTag = styled.div`
-  background: ${colors.primaryBackground};
-  color: ${colors.primary};
-  padding: 0.5rem 1rem;
-  border-radius: ${radius.md};
-  font-size: ${fontSizes.Small};
-  display: inline-block;
-  margin: 0.25rem;
-  cursor: pointer;
-  text-align: center;
-  transition: background 0.2s;
-
-  &:hover {
-    background: ${colors.primaryBackground};
-  }
-`;
-
-export const DeleteButton = styled.button`
-  background: transparent;
-  border: none;
-  color: ${colors.primary};
-  cursor: pointer;
-  margin-left: 8px;
-  font-size: ${fontSizes.Small};
-
-  &:hover {
-    color: ${colors.primaryBackground};
-  }
-`;

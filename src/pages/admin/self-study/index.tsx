@@ -10,7 +10,7 @@ export default function SelfStudyPage() {
 
   return (
     <S.Container>
-      <S.TabContainer>
+      <S.TabContainer $isQuarterly={activeTab === 'quarterly'}>
         <S.Tab
           $active={activeTab === 'daily'}
           onClick={() => setActiveTab('daily')}
