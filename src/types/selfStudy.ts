@@ -14,3 +14,10 @@ export interface SelfStudyScheduleGroup {
   schedules: SelfStudySchedule[];
 }
 
+export interface DetailModalProps {
+  isOpen: boolean;
+  schedule: SelfStudySchedule | null;
+  onClose: () => void;
+  onDelete: (id: string) => void;
+}
+

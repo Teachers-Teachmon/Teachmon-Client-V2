@@ -11,10 +11,10 @@ export const Container = styled.div`
   overflow: hidden;
 `;
 
-export const TabContainer = styled.div`
+export const TabContainer = styled.div<{ $isQuarterly: boolean }>`
   display: flex;
   gap: 24px;
-  margin-bottom: 24px;
+  margin-bottom: ${({ $isQuarterly }) => ($isQuarterly ? '24px' : '0')};
 `;
 
 export const Tab = styled.button<{ $active: boolean }>`

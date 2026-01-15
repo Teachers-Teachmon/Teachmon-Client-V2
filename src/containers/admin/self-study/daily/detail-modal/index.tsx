@@ -1,15 +1,9 @@
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
-import type { SelfStudySchedule } from '@/types/selfStudy';
+import type { DetailModalProps } from '@/types/selfStudy';
 import { getGradeColor, formatGrade, formatPeriods } from '@/utils/selfStudy';
 import * as S from './style';
-
-interface DetailModalProps {
-  isOpen: boolean;
-  schedule: SelfStudySchedule | null;
-  onClose: () => void;
-  onDelete: (id: string) => void;
-}
+import TrashIcon from '/icons/admin-self-study/trash.svg';
 
 const getGradeBgColor = (grade: 1 | 2 | 3 | 'all'): string => {
   return getGradeColor(grade).bgColor;
@@ -49,6 +43,9 @@ export default function DetailModal({ isOpen, schedule, onClose, onDelete }: Det
       <S.Container>
         <S.Header>
           <S.Title>자습 일정 상세</S.Title>
+          <S.DeleteIcon onClick={handleDelete}>
+            <img src={TrashIcon} alt="삭제" />
+          </S.DeleteIcon>
         </S.Header>
 
         <S.Content>
@@ -77,14 +74,8 @@ export default function DetailModal({ isOpen, schedule, onClose, onDelete }: Det
 
         <S.ButtonGroup>
           <Button
-            variant="delete"
-            text="삭제"
-            onClick={handleDelete}
-            width="100%"
-          />
-          <Button
-            variant="cancel"
-            text="닫기"
+            variant="confirm"
+            text="확인"
             onClick={onClose}
             width="100%"
           />

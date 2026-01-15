@@ -13,7 +13,6 @@ export const CalendarWrapper = styled.div`
   flex: 1;
   background: ${colors.background};
   border-radius: ${radius.lg};
-  padding: 2rem;
 `;
 
 export const SidePanel = styled.div`
