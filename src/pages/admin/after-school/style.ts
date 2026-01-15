@@ -116,14 +116,72 @@ export const TableWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
 
-  & > div,
-  & > table {
+  & > div {
     flex: 1 1 0;
     overflow-y: auto;
+    overflow-x: hidden;
     min-height: 0;
     max-height: none;
     border-radius: 18px;
     background: #fff;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  th {
+    &:nth-of-type(1) {
+      width: 120px;
+      min-width: 120px;
+    }
+    &:nth-of-type(2) {
+      width: 100px;
+      min-width: 100px;
+    }
+    &:nth-of-type(3),
+    &:nth-of-type(4) {
+      width: auto;
+      min-width: 150px;
+    }
+    &:nth-of-type(5) {
+      width: auto;
+      min-width: 0;
+    }
+    &:last-of-type {
+      width: 220px;
+      min-width: 220px;
+    }
+  }
+
+  td {
+    &:nth-of-type(1) {
+      width: 120px;
+      min-width: 120px;
+      white-space: nowrap;
+    }
+    &:nth-of-type(2) {
+      width: 100px;
+      min-width: 100px;
+      white-space: nowrap;
+    }
+    &:nth-of-type(3),
+    &:nth-of-type(4) {
+      word-wrap: break-word;
+      word-break: break-word;
+      white-space: normal;
+      min-width: 150px;
+    }
+    &:nth-of-type(5) {
+      width: auto;
+      min-width: 0;
+      overflow: hidden;
+    }
+    &:last-of-type {
+      width: 220px;
+      min-width: 220px;
+      white-space: nowrap;
+    }
   }
 `;
 
@@ -140,9 +198,9 @@ export const StudentList = styled.div`
   flex-wrap: nowrap;
   justify-content: flex-start;
   overflow: hidden;
-  max-width: 350px;
   min-width: 0;
   white-space: nowrap;
+  width: 100%;
 `;
 
 export const StudentBadge = styled.span`
@@ -164,4 +222,16 @@ export const ActionButtons = styled.div`
   display: flex;
   gap: 0.5rem;
   justify-content: center;
+`;
+
+export const NoWrapCell = styled.span`
+  white-space: nowrap;
+  display: inline-block;
+`;
+
+export const WrapCell = styled.span`
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  display: inline-block;
 `;

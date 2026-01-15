@@ -105,7 +105,7 @@ export default function AfterSchoolFormPage() {
   return (
     <S.Container>
       <S.Content>
-        <S.Title>{isEditMode ? '수정 방과후' : '추가 방과후'}</S.Title>
+        <S.Title>{isEditMode ? '방과후 수정' : '방과후 추가'}</S.Title>
 
         <S.Form>
           <S.FormSection>
@@ -157,7 +157,7 @@ export default function AfterSchoolFormPage() {
             <S.ToggleRow>
               <S.SectionTitle>학생</S.SectionTitle>
               <S.ToggleContent>
-                <S.SectionTitle>팀</S.SectionTitle>
+                <S.SectionTitle>반</S.SectionTitle>
                 <S.Toggle
                   $active={isTeamMode}
                   onClick={() => setIsTeamMode(!isTeamMode)}

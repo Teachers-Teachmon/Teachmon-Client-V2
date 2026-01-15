@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/components/ui/button';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
@@ -18,10 +18,28 @@ export default function AdminAfterSchoolPage() {
   const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
   const [classes, setClasses] = useState<AdminAfterSchoolClass[]>(MOCK_ADMIN_AFTER_SCHOOL);
   const [googleSheetUrl, setGoogleSheetUrl] = useState('');
+  const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
 
   const filteredClasses = classes.filter(
     cls => cls.grade === selectedGrade && cls.day === selectedDay
   );
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 1200) {
+        setMaxStudentsToShow(1);
+      } else if (width < 1600) {
+        setMaxStudentsToShow(2);
+      } else {
+        setMaxStudentsToShow(3);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleEdit = (classData: AdminAfterSchoolClass, e?: React.MouseEvent) => {
     if (e) {
@@ -60,8 +78,8 @@ export default function AdminAfterSchoolPage() {
   };
 
   const renderStudents = (students: string[]) => {
-    const displayStudents = students.slice(0, 3);
-    const hasMore = students.length > 3;
+    const displayStudents = students.slice(0, maxStudentsToShow);
+    const hasMore = students.length > maxStudentsToShow;
     return (
       <S.StudentList>
         {displayStudents.map((student, idx) => (
@@ -77,27 +95,38 @@ export default function AdminAfterSchoolPage() {
       key: 'teacher',
       header: '담당교사',
       width: '120px',
+      render: (row: AdminAfterSchoolClass) => (
+        <S.NoWrapCell>{row.teacher}</S.NoWrapCell>
+      ),
     },
     {
       key: 'period',
       header: '교시',
       width: '100px',
-      render: (row: AdminAfterSchoolClass) => row.period,
+      render: (row: AdminAfterSchoolClass) => (
+        <S.NoWrapCell>{row.period}</S.NoWrapCell>
+      ),
     },
     {
       key: 'location',
       header: '장소이름',
-      width: '250px',
+      width: 'auto',
+      render: (row: AdminAfterSchoolClass) => (
+        <S.WrapCell>{row.location}</S.WrapCell>
+      ),
     },
     {
       key: 'subject',
       header: '이름',
-      width: '300px',
+      width: 'auto',
+      render: (row: AdminAfterSchoolClass) => (
+        <S.WrapCell>{row.subject}</S.WrapCell>
+      ),
     },
     {
       key: 'students',
       header: '학생',
-      width: '200px',
+      width: 'auto',
       render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
     },
   ];
