@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import Button from '@/components/ui/button';
-import Dropdown from '@/components/ui/input/dropdown';
-import TextInput from '@/components/ui/input/text-input';
+import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
-import type { TableColumn } from '@/components/layout/table/types';
+import type { TableColumn } from '@/types/afterSchool';
 import * as S from './style';
 import { WEEKDAYS, MOCK_ADMIN_AFTER_SCHOOL } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
@@ -16,9 +15,7 @@ export default function AdminAfterSchoolPage() {
   const [selectedClass, setSelectedClass] = useState<AdminAfterSchoolClass | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedQuarter, setSelectedQuarter] = useState('1분기');
-  const [selectedDay, setSelectedDay] = useState(WEEKDAYS[0]);
-  const [selectedTeachers, setSelectedTeachers] = useState<Record<string, string>>({});
-  const [selectedSmiles, setSelectedSmiles] = useState<Record<string, string>>({});
+  const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
   const [classes, setClasses] = useState<AdminAfterSchoolClass[]>(MOCK_ADMIN_AFTER_SCHOOL);
   const [googleSheetUrl, setGoogleSheetUrl] = useState('');
 
@@ -26,13 +23,17 @@ export default function AdminAfterSchoolPage() {
     cls => cls.grade === selectedGrade && cls.day === selectedDay
   );
 
-  const handleEdit = (classData: AdminAfterSchoolClass, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleEdit = (classData: AdminAfterSchoolClass, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     navigate(`/admin/after-school/edit/${classData.id}`);
   };
 
-  const handleDelete = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = (id: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     setClasses(prev => prev.filter(cls => cls.id !== id));
   };
 
@@ -134,35 +135,18 @@ export default function AdminAfterSchoolPage() {
         onClose={handleCloseModal}
       />
 
+
       <S.PageContainer>
-        <S.Header>
-          <S.LeftSection>
-            <S.QuarterDropdown>
-              <Dropdown
-                items={['1분기', '2분기', '3분기', '4분기']}
-                value={selectedQuarter}
-                onChange={setSelectedQuarter}
-                placeholder="분기 선택"
-              />
-            </S.QuarterDropdown>
-
-            <S.GradeTabs>
-              <S.GradeTab $active={selectedGrade === 1} onClick={() => setSelectedGrade(1)}>1학년</S.GradeTab>
-              <S.GradeTab $active={selectedGrade === 2} onClick={() => setSelectedGrade(2)}>2학년</S.GradeTab>
-              <S.GradeTab $active={selectedGrade === 3} onClick={() => setSelectedGrade(3)}>3학년</S.GradeTab>
-            </S.GradeTabs>
-          </S.LeftSection>
-
-          <S.HeaderButtons>
-            <TextInput
-              placeholder="구글스프레드시트"
-              value={googleSheetUrl}
-              onChange={(e) => setGoogleSheetUrl(e.target.value)}
-            />
-            <S.GoogleSheetActionButton onClick={handleGoogleSheetSync}>시트 동기화</S.GoogleSheetActionButton>
-            <S.GoogleSheetActionButton onClick={handleGoogleSheetUpload}>시트 업로드</S.GoogleSheetActionButton>
-          </S.HeaderButtons>
-        </S.Header>
+        <AdminAfterSchoolHeaderContainer
+          selectedQuarter={selectedQuarter}
+          setSelectedQuarter={setSelectedQuarter}
+          selectedGrade={selectedGrade}
+          setSelectedGrade={setSelectedGrade}
+          googleSheetUrl={googleSheetUrl}
+          setGoogleSheetUrl={setGoogleSheetUrl}
+          handleGoogleSheetSync={handleGoogleSheetSync}
+          handleGoogleSheetUpload={handleGoogleSheetUpload}
+        />
 
         <S.DaySelector>
           <S.NavButton onClick={handlePrevDay}>

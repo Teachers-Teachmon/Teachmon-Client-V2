@@ -14,3 +14,10 @@ export interface AdminAfterSchoolClass {
     subject: string;
     students: string[];
 }
+
+export interface TableColumn<T> {
+  key: string;
+  header: string | React.ReactNode;
+  width?: string;
+  render?: (row: T) => React.ReactNode;
+}
