@@ -95,3 +95,14 @@ export const FloorBadge = styled.span`
   font-size: 12px;
   font-weight: 500;
 `;
+
+export const EmptyState = styled.div`
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: ${colors.n04};
+  text-align: center;
+`;

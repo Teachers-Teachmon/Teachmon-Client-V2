@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { searchStudents } from './student.api';
+import { searchStudents } from './search.api';
 
 export const studentQuery = {
   search: (query?: string) =>
