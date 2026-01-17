@@ -9,6 +9,7 @@ export default function Record() {
     const [selectedDate, setSelectedDate] = useState<string>('2024-12-12');
     const [activeTab, setActiveTab] = useState<RecordTabType>('movement');
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [selectedPeriod, setSelectedPeriod] = useState<string>('EIGHT_AND_NINE_PERIOD');
 
     return (
         <S.Container>
@@ -22,9 +23,11 @@ export default function Record() {
             />
             <RecordTable
                 activeTab={activeTab}
-                movementData={mockMovementData}
+                movementData={[]}
                 leaveData={mockLeaveData}
                 studentData={mockStudentData}
+                selectedDate={selectedDate}
+                selectedPeriod={selectedPeriod}
             />
         </S.Container>
     );

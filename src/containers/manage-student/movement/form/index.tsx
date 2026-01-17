@@ -1,27 +1,53 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import DateInput from '@/components/ui/input/date';
 import TextInput from '@/components/ui/input/text-input';
 import Dropdown from '@/components/ui/input/dropdown';
+import { PERIOD_OPTIONS, REASON_OPTIONS, type Period, type Reason } from '@/constants/movement';
+import { studentQuery } from '@/services/student/student.query';
+import { useDebounce } from '@/hooks/useDebounce';
+import type { MovementFormData } from '@/pages/manage/movement';
 import * as S from './style';
 
 interface MovementFormProps {
-    onNext: () => void;
+    onNext: (data: MovementFormData) => void;
     onCancel: () => void;
 }
 
 export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
     const [selectedDate] = useState<string>('2024-12-12');
-    const [selectedPeriod, setSelectedPeriod] = useState<string>('');
-    const [reason, setReason] = useState<string>('');
+    const [selectedPeriod, setSelectedPeriod] = useState<Period | ''>('');
+    const [reason, setReason] = useState<Reason>('MOVEMENT');
     const [studentSearch, setStudentSearch] = useState<string>('');
     const [isTeamMode, setIsTeamMode] = useState(false);
     const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
 
-    const periodOptions = ['5교시', '6교시', '7교시', '8~9교시', '10~11교시'];
-    const mockStudents = ['1401 김민수', '1402 김지훈'];
+    // 학생 검색 디바운스
+    const debouncedSearch = useDebounce(studentSearch, 300);
+
+    // 학생 검색 API
+    const { data: searchResults = [] } = useQuery(studentQuery.search(debouncedSearch));
 
     const handleRemoveStudent = (student: string) => {
         setSelectedStudents((prev) => prev.filter((s) => s !== student));
+    };
+
+    const handleNext = () => {
+        if (!selectedPeriod || selectedStudents.length === 0) {
+            return;
+        }
+
+        onNext({
+            period: selectedPeriod,
+            reason,
+            items,
+            students: selectedStudents,
+        });
+    };
+
+    // 학생 정보를 "학년반번호 이름" 형식으로 변환
+    const formatStudent = (student: typeof searchResults[0]) => {
+        return `${student.grade}${student.class}${String(student.number).padStart(2, '0')} ${student.name}`;
     };
 
     return (
@@ -42,9 +68,12 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                                 <S.DropdownWrapper>
                                     <Dropdown
                                         placeholder="시간"
-                                        items={periodOptions}
-                                        value={selectedPeriod}
-                                        onChange={setSelectedPeriod}
+                                        items={PERIOD_OPTIONS.map(p => p.label)}
+                                        value={PERIOD_OPTIONS.find(p => p.value === selectedPeriod)?.label || ''}
+                                        onChange={(label) => {
+                                            const period = PERIOD_OPTIONS.find(p => p.label === label);
+                                            if (period) setSelectedPeriod(period.value);
+                                        }}
                                         customHeight="44px"
                                         customBorderRadius="8px"
                                     />
@@ -54,12 +83,28 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
 
                         {/* 사유 */}
                         <S.FormGroup>
+                            <S.Label>사유</S.Label>
+                            <Dropdown
+                                placeholder="사유"
+                                items={REASON_OPTIONS.map(r => r.label)}
+                                value={REASON_OPTIONS.find(r => r.value === reason)?.label || ''}
+                                onChange={(label) => {
+                                    const reasonOption = REASON_OPTIONS.find(r => r.label === label);
+                                    if (reasonOption) setReason(reasonOption.value);
+                                }}
+                                customHeight="44px"
+                                customBorderRadius="8px"
+                            />
+                        </S.FormGroup>
+
+                        {/* 물품 */}
+                        <S.FormGroup>
                             <S.TextAreaWrapper>
-                                <S.Label>사유</S.Label>
+                                <S.Label>물품</S.Label>
                                 <S.TextArea 
-                                    placeholder="사유를 입력해주세요"
-                                    value={reason}
-                                    onChange={(e) => setReason(e.target.value)}
+                                    placeholder="물품을 입력해주세요"
+                                    value={items}
+                                    onChange={(e) => setItems(e.target.value)}
                                 />
                             </S.TextAreaWrapper>
                         </S.FormGroup>
@@ -87,26 +132,27 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                                     />
                                 }
                             />
-                            {/* 학생 검색 드롭다운 */}
-                        {studentSearch && mockStudents.filter(student => student.includes(studentSearch)).length > 0 && (
+                        </S.FormGroup>
+
+                        {/* 학생 검색 드롭다운 */}
+                        {studentSearch && (
                             <S.StudentDropdown>
-                                {mockStudents
-                                    .filter(student => student.includes(studentSearch))
-                                    .slice(0, 3)
-                                    .map((student, idx) => (
+                                {searchResults.slice(0, 3).map((student) => {
+                                    const formattedStudent = formatStudent(student);
+                                    return (
                                         <S.StudentDropdownItem 
-                                            key={idx}
+                                            key={student.id}
                                             onClick={() => {
-                                                if (!selectedStudents.includes(student)) {
-                                                    setSelectedStudents([...selectedStudents, student]);
+                                                if (!selectedStudents.includes(formattedStudent)) {
+                                                    setSelectedStudents([...selectedStudents, formattedStudent]);
                                                 }
                                                 setStudentSearch('');
                                             }}
                                         >
-                                            {student}
+                                            {formattedStudent}
                                         </S.StudentDropdownItem>
-                                    ))
-                                }
+                                    );
+                                })}
                             </S.StudentDropdown>
                         )}
                         </S.FormGroup>
@@ -132,7 +178,9 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
             {/* 하단 버튼 */}
             <S.ButtonWrapper>
                 <S.CancelButton onClick={onCancel}>취소</S.CancelButton>
-                <S.NextButton onClick={onNext}>다음</S.NextButton>
+                <S.NextButton onClick={handleNext}>
+                    다음
+                </S.NextButton>
             </S.ButtonWrapper>
         </S.Container>
     );

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Modal from '@/components/layout/modal';
 import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
@@ -5,6 +6,7 @@ import * as S from './style';
 interface MovementDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
+    leaveseatId: number;
     data: {
         location: string;
         teacher: string;
@@ -16,6 +18,7 @@ interface MovementDetailModalProps {
 export default function MovementDetailModal({
     isOpen,
     onClose,
+    leaveseatId,
     data,
 }: MovementDetailModalProps) {
     const { isMobile } = useDevice();
@@ -52,6 +55,10 @@ export default function MovementDetailModal({
                         </S.StudentGrid>
                     </S.StudentsSection>
                 </S.Content>
+
+                <S.ButtonWrapper>
+                    <Button text="수정" variant="confirm" onClick={handleEdit} />
+                </S.ButtonWrapper>
             </S.Container>
         </Modal>
     );

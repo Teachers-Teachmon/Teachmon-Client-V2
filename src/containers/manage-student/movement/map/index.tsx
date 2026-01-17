@@ -1,24 +1,35 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
-import TextInput from '@/components/ui/input/text-input';
 import { FLOOR_ELEMENTS_MAP, type FloorElement } from '@/constants/floorMaps';
 import { colors } from '@/styles/theme';
 import * as S from './style';
 
 interface MovementMapProps {
     onBack: () => void;
+    formData: MovementFormData;
 }
 
-export default function MovementMap({ onBack }: MovementMapProps) {
+export default function MovementMap({ onBack, formData }: MovementMapProps) {
     const navigate = useNavigate();
     const [selectedFloor, setSelectedFloor] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
 
+    const { mutate: createLeaveSeat } = useCreateLeaveSeatMutation();
+
     const handleLocationClick = (placeName: string) => {
         if (placeName && placeName !== '' && placeName !== 'X') {
-            console.log('선택된 장소:', placeName);
-            navigate('/manage');
+            createLeaveSeat(
+                {
+                    ...formData,
+                    place: placeName,
+                },
+                {
+                    onSuccess: () => {
+                        navigate('/manage');
+                    },
+                }
+            );
         }
     };
 

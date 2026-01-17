@@ -1,33 +1,53 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import Button from '@/components/ui/button';
 import TableLayout from '@/components/layout/table';
 import MovementDetailModal from '@/containers/manage-student/record/movement-detail';
-import type { RecordData, LeaveData, StudentData, RecordTableProps } from '@/types/record';
+import { movementQuery } from '@/services/movement/movement.query';
+import { useDeleteLeaveSeatMutation } from '@/services/movement/movement.mutation';
+import type { RecordData, LeaveData, StudentData } from '@/types/record';
 import type { StatusType } from '@/components/ui/status';
 import { useRecordTableColumns } from '@/hooks/useRecordTableColumns';
 import * as S from './style';
 
 export default function RecordTable({
     activeTab,
-    movementData,
     leaveData,
     studentData: initialStudentData,
+    selectedDate,
+    selectedPeriod,
 }: RecordTableProps) {
     const navigate = useNavigate();
     const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
     const [selectAll, setSelectAll] = useState(false);
     const [studentData, setStudentData] = useState<StudentData[]>(initialStudentData);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedMovement, setSelectedMovement] = useState<RecordData | null>(null);
+    const [selectedLeaveseatId, setSelectedLeaveseatId] = useState<number | null>(null);
 
-    const handleEdit = (id: string) => {
-        navigate("/manage/movement?edit=true");
-        console.log('수정:', id);
+    const { mutate: deleteLeaveSeat } = useDeleteLeaveSeatMutation();
+
+    // 이석 목록 조회
+    const { data: movementData = [] } = useQuery({
+        ...movementQuery.list({
+            day: selectedDate,
+            period: selectedPeriod as any,
+        }),
+        enabled: activeTab === 'movement' && !!selectedDate && !!selectedPeriod,
+    });
+
+    // 이석 상세 조회
+    const { data: detailData } = useQuery({
+        ...movementQuery.detail(selectedLeaveseatId!),
+        enabled: isModalOpen && !!selectedLeaveseatId,
+    });
+
+    const handleEdit = (leaveseatId: number) => {
+        navigate(`/manage/movement?edit=true&id=${leaveseatId}`);
     };
 
-    const handleDelete = (id: string) => {
-        console.log('삭제:', id);
+    const handleDelete = (leaveseatId: number) => {
+        deleteLeaveSeat(leaveseatId);
     };
 
     const handleSelectAll = (checked: boolean) => {
@@ -50,14 +70,14 @@ export default function RecordTable({
         setSelectAll(newSelected.size === studentData.length);
     };
 
-    const handleMovementRowClick = (data: RecordData) => {
-        setSelectedMovement(data);
+    const handleMovementRowClick = (leaveseatId: number) => {
+        setSelectedLeaveseatId(leaveseatId);
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setSelectedMovement(null);
+        setSelectedLeaveseatId(null);
     };
 
     const handleStatusChange = (studentId: string, period: string, status: StatusType) => {
@@ -89,13 +109,23 @@ export default function RecordTable({
         onBulkStatusChange: handleBulkStatusChange,
     });
 
+    // API 데이터를 UI 형식으로 변환
+    const formattedMovementData: RecordData[] = movementData.map((item) => ({
+        id: String(item.leaveseat_id),
+        location: item.place,
+        teacher: item.teacher,
+        students: item.students,
+        count: String(item.personnel),
+        period: item.period,
+    }));
+
     const renderMovementActions = (row: RecordData) => (
         <S.ActionButtons>
             <Button 
                 text="수정" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleEdit(row.id);
+                    handleEdit(Number(row.id));
                 }} 
                 variant="confirm" 
             />
@@ -103,7 +133,7 @@ export default function RecordTable({
                 text="삭제" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleDelete(row.id);
+                    handleDelete(Number(row.id));
                 }} 
                 variant="delete" 
             />
@@ -116,7 +146,7 @@ export default function RecordTable({
                 text="삭제" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleDelete(row.id);
+                    handleDelete(Number(row.id));
                 }} 
                 variant="delete" 
             />
@@ -128,9 +158,9 @@ export default function RecordTable({
             {activeTab === 'movement' && (
                 <TableLayout
                     columns={movementColumns}
-                    data={movementData}
+                    data={formattedMovementData}
                     renderActions={renderMovementActions}
-                    onRowClick={handleMovementRowClick}
+                    onRowClick={(row) => handleMovementRowClick(Number(row.id))}
                 />
             )}
             {activeTab === 'leave' && (
@@ -147,15 +177,16 @@ export default function RecordTable({
                     renderActions={() => <></>}
                 />
             )}
-            {selectedMovement && (
+            {detailData && (
                 <MovementDetailModal
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
+                    leaveseatId={selectedLeaveseatId!}
                     data={{
-                        location: selectedMovement.location,
-                        teacher: selectedMovement.teacher,
-                        reason: selectedMovement.reason || '',
-                        students: selectedMovement.students,
+                        location: detailData.place,
+                        teacher: detailData.teacher,
+                        reason: detailData.items,
+                        students: detailData.students,
                     }}
                 />
             )}
