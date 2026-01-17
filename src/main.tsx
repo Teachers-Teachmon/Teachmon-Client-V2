@@ -5,6 +5,8 @@ import { Global } from '@emotion/react'
 import { globalStyles } from '@/styles/globalStyle'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Loading from '@/components/ui/loading'
+import { useLoadingStore } from '@/stores/useLoadingStore'
 
 import App from './App.tsx'
 
@@ -17,10 +19,12 @@ const queryClient = new QueryClient({
   },
 })
 
-createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
-    <QueryClientProvider client={queryClient}>
-      <Global styles={globalStyles} />
+function Root() {
+  const isLoading = useLoadingStore((state) => state.isLoading);
+
+  return (
+    <>
+      {isLoading && <Loading />}
       <App />
       <ToastContainer
         position="top-right"
@@ -34,6 +38,15 @@ createRoot(document.getElementById('root')!).render(
         pauseOnHover
         theme="light"
       />
+    </>
+  );
+}
+
+createRoot(document.getElementById('root')!).render(
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <Global styles={globalStyles} />
+      <Root />
     </QueryClientProvider>
   </BrowserRouter>
 )
