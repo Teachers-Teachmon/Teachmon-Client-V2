@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { USER_ROLES } from '@/constants/admin';
-import { mockTeachers } from './data';
-import { useTeacherColumns } from '../../../../hooks/useTeacherUserManageColumns';
+import { useTeacherColumns } from '@/hooks/useTeacherUserManageColumns';
+import type { Teacher as ApiTeacher, ForbiddenDay } from '@/services/user-management/user-management.api';
+import { useUpdateTeacherMutation, useDeleteTeacherMutation } from '@/services/user-management/user-management.mutation';
 import * as S from './style';
-import * as PageS from '@/pages/admin/users/style';
 
 type UserRole = '관리자' | '일반';
 type SortOrder = 'asc' | 'desc';
@@ -20,17 +20,33 @@ export interface Teacher {
 }
 
 interface TeachersProps {
+  teachersData: ApiTeacher[];
+  forbiddenDates: ForbiddenDay[];
   searchQuery: string;
   sortOrder: SortOrder;
   onOpenForbiddenDates: (teacher: Teacher) => void;
 }
 
-export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates }: TeachersProps) {
-  const [teachers, setTeachers] = useState<Teacher[]>(mockTeachers);
+export default function Teachers({ teachersData, forbiddenDates, searchQuery, sortOrder, onOpenForbiddenDates }: TeachersProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const { mutate: updateTeacher } = useUpdateTeacherMutation();
+  const { mutate: deleteTeacher } = useDeleteTeacherMutation();
+
+  // API 데이터를 UI 형식으로 변환
+  const teachers = useMemo(() => {
+    return teachersData.map((teacher): Teacher => ({
+      id: String(teacher.teacher_id),
+      role: teacher.role === 'ADMIN' ? USER_ROLES.ADMIN : USER_ROLES.NORMAL,
+      name: teacher.name,
+      email: teacher.email,
+      supervisionCount: teacher.supervision_count,
+      forbiddenDates: forbiddenDates,
+    }));
+  }, [teachersData, forbiddenDates]);
 
   const columns = useTeacherColumns({
     editingIds,
@@ -56,20 +72,25 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
 
   const handleSave = (teacherId: string) => {
     if (!editingTeacher || editingTeacher.id !== teacherId) return;
-    setTeachers(teachers.map((t) => (t.id === editingTeacher.id ? editingTeacher : t)));
-    setEditingTeacher(null);
-    setEditingIds((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(teacherId);
-      return newSet;
+    
+    updateTeacher({
+      teacher_id: Number(teacherId),
+      role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
+      name: editingTeacher.name,
+      email: editingTeacher.email,
+    }, {
+      onSuccess: () => {
+        setEditingTeacher(null);
+        setEditingIds((prev) => {
+          const newSet = new Set(prev);
+          newSet.delete(teacherId);
+          return newSet;
+        });
+      },
     });
   };
 
   const handleCancel = (teacherId: string) => {
-    const teacher = teachers.find((t) => t.id === teacherId);
-    if (teacher && !teacher.name && !teacher.email) {
-      setTeachers(teachers.filter((t) => t.id !== teacherId));
-    }
     if (editingTeacher?.id === teacherId) {
       setEditingTeacher(null);
     }
@@ -81,26 +102,19 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
   };
 
   const handleDelete = (teacherId: string) => {
-    setTeachers(teachers.filter((t) => t.id !== teacherId));
-    setEditingIds((prev) => {
-      const newSet = new Set(prev);
-      newSet.delete(teacherId);
-      return newSet;
-    });
-    setOpenMenuId(null);
-  };
-
-  const handleAdd = () => {
-    const newTeacher: Teacher = {
-      id: String(Date.now()),
-      role: USER_ROLES.NORMAL,
-      name: '',
-      email: '',
-      supervisionCount: 0,
-    };
-    setTeachers([...teachers, newTeacher]);
-    setEditingTeacher(newTeacher);
-    setEditingIds((prev) => new Set(prev).add(newTeacher.id));
+    deleteTeacher(
+      { teacher_id: Number(teacherId) },
+      {
+        onSuccess: () => {
+          setEditingIds((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(teacherId);
+            return newSet;
+          });
+          setOpenMenuId(null);
+        },
+      }
+    );
   };
 
   const filteredTeachers = teachers
@@ -138,14 +152,8 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
   );
 
   return (
-    <>
-      <S.TableWrapper>
-        <TableLayout columns={columns} data={filteredTeachers} renderActions={renderActions} />
-      </S.TableWrapper>
-      <PageS.AddButton onClick={handleAdd}>
-        <img src="/icons/common/plusBlue.svg" alt="추가" />
-        <span>추가</span>
-      </PageS.AddButton>
-    </>
+    <S.TableWrapper>
+      <TableLayout columns={columns} data={filteredTeachers} renderActions={renderActions} />
+    </S.TableWrapper>
   );
 }

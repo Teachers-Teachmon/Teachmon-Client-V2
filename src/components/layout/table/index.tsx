@@ -42,7 +42,7 @@ export default function TableLayout<T extends { id: string }>({
                     {data.length === 0 ? (
                         <S.TableRow>
                             <S.TableCell colSpan={columns.length + (renderActions ? 1 : 0)} style={{ textAlign: 'center', height: '300px', color: '#aaa', fontSize: '1.2rem' }}>
-                                방과후 데이터가 없습니다
+                                데이터가 없습니다
                             </S.TableCell>
                         </S.TableRow>
                     ) : (

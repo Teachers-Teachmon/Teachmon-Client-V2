@@ -1,10 +1,14 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Header from '@/containers/admin/users/header';
 import Teachers from '@/containers/admin/users/teachers';
 import Students from '@/containers/admin/users/students';
 import ForbiddenDates from '@/containers/admin/users/forbidden-dates';
 import TextInput from '@/components/ui/input/text-input';
 import { TAB_TYPES } from '@/constants/admin';
+import { userManagementQuery } from '@/services/user-management/user-management.query';
+import { useSetForbiddenDatesMutation } from '@/services/user-management/user-management.mutation';
+import type { ForbiddenDay } from '@/services/user-management/user-management.api';
 import type { Teacher } from '@/containers/admin/users/teachers';
 import * as S from './style';
 
@@ -17,6 +21,12 @@ export default function AdminUsersPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
+  // API 데이터 조회
+  const { data: teachersData } = useQuery(userManagementQuery.teachers());
+  const { data: forbiddenDatesData } = useQuery(userManagementQuery.forbiddenDates());
+  const { data: studentsData } = useQuery(userManagementQuery.students());
+  const { mutate: setForbiddenDates } = useSetForbiddenDatesMutation();
+
   const handleSort = () => {
     setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
   };
@@ -26,9 +36,14 @@ export default function AdminUsersPage() {
   };
 
   const handleSaveForbiddenDates = (dates: string[]) => {
-    // TODO: API 호출하여 금지날짜 저장
-    console.log('Saving forbidden dates:', dates, 'for teacher:', selectedTeacher?.name);
-    setSelectedTeacher(null);
+    setForbiddenDates(
+      { days: dates as ForbiddenDay[] },
+      {
+        onSuccess: () => {
+          setSelectedTeacher(null);
+        },
+      }
+    );
   };
 
   const handleCancelForbiddenDates = () => {
@@ -67,18 +82,20 @@ export default function AdminUsersPage() {
 
       {activeTab === TAB_TYPES.TEACHER ? (
         <Teachers
+          teachersData={teachersData || []}
+          forbiddenDates={forbiddenDatesData || []}
           searchQuery={searchQuery}
           sortOrder={sortOrder}
           onOpenForbiddenDates={handleOpenForbiddenDates}
         />
       ) : (
-        <Students searchQuery={searchQuery} />
+        <Students studentsData={studentsData || []} searchQuery={searchQuery} />
       )}
 
-      {selectedTeacher && (
+      {selectedTeacher && forbiddenDatesData && (
         <ForbiddenDates
           teacherName={selectedTeacher.name}
-          initialDates={selectedTeacher.forbiddenDates || []}
+          initialDates={forbiddenDatesData}
           onSave={handleSaveForbiddenDates}
           onCancel={handleCancelForbiddenDates}
         />

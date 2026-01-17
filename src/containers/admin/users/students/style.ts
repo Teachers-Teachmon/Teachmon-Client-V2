@@ -8,6 +8,15 @@ export const TableWrapper = styled.div`
   overflow: hidden;
 `;
 
+export const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: ${fontSizes.H4};
+  color: ${colors.n03};
+`;
+
 export const ActionCell = styled.div`
   display: flex;
   align-items: center;

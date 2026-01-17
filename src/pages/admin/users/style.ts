@@ -93,3 +93,12 @@ export const AddButton = styled.button`
     background: ${colors.primary100};
   }
 `;
+
+export const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: ${fontSizes.H4};
+  color: ${colors.n03};
+`;
