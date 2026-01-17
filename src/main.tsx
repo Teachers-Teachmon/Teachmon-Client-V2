@@ -19,22 +19,13 @@ const queryClient = new QueryClient({
   },
 })
 
-function RootLoading() {
+function Root() {
   const isLoading = useLoadingStore((state) => state.isLoading);
 
   return (
     <>
       {isLoading && <Loading />}
-    </>
-  );
-}
-
-createRoot(document.getElementById('root')!).render(
-  <BrowserRouter>
-    <QueryClientProvider client={queryClient}>
-      <Global styles={globalStyles} />
       <App />
-      <RootLoading/>
       <ToastContainer
         position="top-right"
         autoClose={3000}
@@ -47,6 +38,15 @@ createRoot(document.getElementById('root')!).render(
         pauseOnHover
         theme="light"
       />
+    </>
+  );
+}
+
+createRoot(document.getElementById('root')!).render(
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <Global styles={globalStyles} />
+      <Root />
     </QueryClientProvider>
   </BrowserRouter>
 )
