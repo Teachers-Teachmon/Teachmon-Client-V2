@@ -21,7 +21,7 @@ export default function AdminUsersPage() {
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   // 디바운스 적용
-  const debouncedQuery = useDebounce(searchQuery, 300);
+  const debouncedQuery = useDebounce(searchQuery, 150);
 
   // API 데이터 조회
   const { data: teachersData } = useQuery(

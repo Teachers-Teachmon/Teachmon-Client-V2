@@ -37,10 +37,10 @@ export default function Students({ studentsData }: StudentsProps) {
   // API 데이터를 UI 형식으로 변환
   const students = useMemo(() => {
     const apiStudents = studentsData.map((student): Student => ({
-      id: String(student.student_id),
+      id: String(student.id),
       grade: student.grade,
-      classNum: student.class_number,
-      number: student.student_number,
+      classNum: student.class,
+      number: student.number,
       name: student.name,
     }));
     
@@ -79,8 +79,8 @@ export default function Students({ studentsData }: StudentsProps) {
       createStudent({
         name: editingStudent.name,
         grade: editingStudent.grade,
-        class_number: editingStudent.classNum,
-        student_number: editingStudent.number,
+        class: editingStudent.classNum,
+        number: editingStudent.number,
       }, {
         onSuccess: () => {
           setLocalStudents(prev => prev.filter(s => s.id !== studentId));
@@ -95,11 +95,11 @@ export default function Students({ studentsData }: StudentsProps) {
     } else {
       // 기존 학생 수정
       updateStudent({
-        student_id: Number(studentId),
+        id: Number(studentId),
         name: editingStudent.name,
         grade: editingStudent.grade,
-        class_number: editingStudent.classNum,
-        student_number: editingStudent.number,
+        class: editingStudent.classNum,
+        number: editingStudent.number,
       }, {
         onSuccess: () => {
           setEditingStudent(null);
@@ -143,7 +143,7 @@ export default function Students({ studentsData }: StudentsProps) {
     }
 
     deleteStudent(
-      { student_id: Number(studentId) },
+      { id: Number(studentId) },
       {
         onSuccess: () => {
           setEditingIds((prev) => {

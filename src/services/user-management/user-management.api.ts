@@ -10,11 +10,11 @@ export interface Teacher {
 }
 
 export interface Student {
-  student_id: number;
+  id: number;
   name: string;
   grade: number;
-  class_number: number;
-  student_number: number;
+  class: number;
+  number: number;
 }
 
 export interface UpdateTeacherRequest {
@@ -37,20 +37,20 @@ export interface SetForbiddenDateRequest {
 export interface CreateStudentRequest {
   name: string;
   grade: number;
-  class_number: number;
-  student_number: number;
+  class: number;
+  number: number;
 }
 
 export interface UpdateStudentRequest {
-  student_id: number;
+  id: number;
   name?: string;
   grade?: number;
-  class_number?: number;
-  student_number?: number;
+  class?: number;
+  number?: number;
 }
 
 export interface DeleteStudentRequest {
-  student_id: number;
+  id: number;
 }
 
 export interface MessageResponse {
@@ -86,9 +86,9 @@ export const setForbiddenDates = async (data: SetForbiddenDateRequest): Promise<
 };
 
 // Student APIs
-export const getAllStudents = async (query?: string): Promise<Student[]> => {
+export const searchStudents = async (query?: string): Promise<Student[]> => {
   const params = query ? { query } : {};
-  const response = await axiosInstance.get<Student[]>('/student/all', { params });
+  const response = await axiosInstance.get<Student[]>('/search/student', { params });
   return response.data;
 };
 

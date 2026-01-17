@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getAllTeachers, getForbiddenDates, getAllStudents } from './user-management.api';
+import { getAllTeachers, getForbiddenDates, searchStudents } from './user-management.api';
 
 export const userManagementQuery = {
   teachers: (query?: string) =>
@@ -17,6 +17,6 @@ export const userManagementQuery = {
   students: (query?: string) =>
     queryOptions({
       queryKey: ['userManagement.students', query],
-      queryFn: () => getAllStudents(query),
+      queryFn: () => searchStudents(query),
     }),
 };
