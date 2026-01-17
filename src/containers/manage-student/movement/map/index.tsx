@@ -4,21 +4,35 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import FloorSearchControls from './floor-search-controls';
 import ZoomControls from './zoom-controls';
 import MapView from './map-view';
+import { useCreateLeaveSeatMutation } from '@/services/movement/movement.mutation';
+import type { MovementFormData } from '@/pages/manage/movement';
 import * as S from './style';
 
 interface MovementMapProps {
     onBack: () => void;
+    formData: MovementFormData;
 }
 
-export default function MovementMap({ onBack }: MovementMapProps) {
+export default function MovementMap({ onBack, formData }: MovementMapProps) {
     const navigate = useNavigate();
     const [selectedFloor, setSelectedFloor] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
 
+    const { mutate: createLeaveSeat } = useCreateLeaveSeatMutation();
+
     const handleLocationClick = (placeName: string) => {
         if (placeName && placeName !== '' && placeName !== 'X') {
-            console.log('선택된 장소:', placeName);
-            navigate('/manage');
+            createLeaveSeat(
+                {
+                    ...formData,
+                    place: placeName,
+                },
+                {
+                    onSuccess: () => {
+                        navigate('/manage');
+                    },
+                }
+            );
         }
     };
 

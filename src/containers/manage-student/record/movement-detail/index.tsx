@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import Modal from '@/components/layout/modal';
+import Button from '@/components/ui/button';
 import * as S from './style';
 
 interface MovementDetailModalProps {
     isOpen: boolean;
     onClose: () => void;
+    leaveseatId: number;
     data: {
         location: string;
         teacher: string;
@@ -15,8 +18,15 @@ interface MovementDetailModalProps {
 export default function MovementDetailModal({
     isOpen,
     onClose,
+    leaveseatId,
     data,
 }: MovementDetailModalProps) {
+    const navigate = useNavigate();
+
+    const handleEdit = () => {
+        navigate(`/manage/movement?edit=true&id=${leaveseatId}`);
+    };
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <S.Container>
@@ -49,6 +59,10 @@ export default function MovementDetailModal({
                         </S.StudentGrid>
                     </S.StudentsSection>
                 </S.Content>
+
+                <S.ButtonWrapper>
+                    <Button text="수정" variant="confirm" onClick={handleEdit} />
+                </S.ButtonWrapper>
             </S.Container>
         </Modal>
     );

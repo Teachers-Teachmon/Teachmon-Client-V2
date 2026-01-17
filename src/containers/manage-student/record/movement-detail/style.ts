@@ -101,3 +101,10 @@ export const StudentInfo = styled.div`
     line-height: 20px;
     white-space: pre-line;
 `;
+
+export const ButtonWrapper = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+    gap: 12px;
+`;

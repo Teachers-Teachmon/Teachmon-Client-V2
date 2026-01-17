@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import RecordHeader from '@/containers/manage-student/record/record-header';
 import RecordTable from '@/containers/manage-student/record/record-table';
-import { mockMovementData, mockLeaveData, mockStudentData } from './data';
+import { mockLeaveData, mockStudentData } from './data';
 import * as S from './style';
 
 export default function Record() {
     const [selectedDate, setSelectedDate] = useState<string>('2024-12-12');
     const [activeTab, setActiveTab] = useState<'movement' | 'leave' | 'student'>('movement');
     const [searchQuery, setSearchQuery] = useState<string>('');
+    const [selectedPeriod, setSelectedPeriod] = useState<string>('EIGHT_AND_NINE_PERIOD');
 
     return (
         <S.Container>
@@ -21,9 +22,11 @@ export default function Record() {
             />
             <RecordTable
                 activeTab={activeTab}
-                movementData={mockMovementData}
+                movementData={[]}
                 leaveData={mockLeaveData}
                 studentData={mockStudentData}
+                selectedDate={selectedDate}
+                selectedPeriod={selectedPeriod}
             />
         </S.Container>
     );
