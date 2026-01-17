@@ -1,6 +1,7 @@
 export type ExchangeStatus = 'PENDING' | 'REJECTED' | 'ACCEPTED';
 
 export type SupervisionType = 'self_study' | 'leave_seat';
+export type SupervisionTodayType = 'NONE' | 'SELF_STUDY' | 'LEAVE_SEAT' | 'ALL';
 
 export interface Teacher {
   id: number;
@@ -22,10 +23,18 @@ export interface ExchangeRequest {
 }
 
 export type PeriodType =
+  | 'ONE_PERIOD'
+  | 'TWO_PERIOD'
+  | 'THREE_PERIOD'
+  | 'FOUR_PERIOD'
+  | 'FIVE_PERIOD'
+  | 'SIX_PERIOD'
   | 'SEVEN_PERIOD'
   | 'EIGHT_PERIOD'
   | 'NINE_PERIOD'
-  | 'TEN_PERIOD';
+  | 'TEN_PERIOD'
+  | 'EIGHT_AND_NINE_PERIOD'
+  | 'TEN_AND_ELEVEN_PERIOD';
 
 export interface ExitStudent {
   exit_id: number;
@@ -45,4 +54,3 @@ export interface ExchangeDetailContentProps {
   onReasonChange?: (value: string) => void;
   onSubmit?: () => void;
 }
-
