@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import DateInput from '@/components/ui/input/date';
 import TextInput from '@/components/ui/input/text-input';
 import Dropdown from '@/components/ui/input/dropdown';
-import { PERIOD_OPTIONS, REASON_OPTIONS, type Period, type Reason } from '@/constants/movement';
+import { PERIOD_OPTIONS, type Period } from '@/constants/movement';
 import { studentQuery } from '@/services/student/student.query';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { MovementFormData } from '@/pages/manage/movement';
@@ -15,10 +15,9 @@ interface MovementFormProps {
 }
 
 export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
-    const [selectedDate] = useState<string>('2024-12-12');
+    const [selectedDate, setSelectedDate] = useState<string>('2024-12-12');
     const [selectedPeriod, setSelectedPeriod] = useState<Period | ''>('');
-    const [reason, setReason] = useState<Reason>('MOVEMENT');
-    const [items, setItems] = useState<string>('');
+    const [reason, setReason] = useState<string>('');
     const [studentSearch, setStudentSearch] = useState<string>('');
     const [isTeamMode, setIsTeamMode] = useState(false);
     const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
@@ -40,8 +39,8 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
 
         onNext({
             period: selectedPeriod,
-            reason,
-            items,
+            reason: 'MOVEMENT', // 기본값으로 MOVEMENT 사용
+            items: reason, // 사유를 items 필드에 저장
             students: selectedStudents,
         });
     };
@@ -65,6 +64,7 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                                 <DateInput
                                     label="날짜"
                                     value={selectedDate}
+                                    onChange={setSelectedDate}
                                 />
                                 <S.DropdownWrapper>
                                     <Dropdown
@@ -84,28 +84,12 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
 
                         {/* 사유 */}
                         <S.FormGroup>
-                            <S.Label>사유</S.Label>
-                            <Dropdown
-                                placeholder="사유"
-                                items={REASON_OPTIONS.map(r => r.label)}
-                                value={REASON_OPTIONS.find(r => r.value === reason)?.label || ''}
-                                onChange={(label) => {
-                                    const reasonOption = REASON_OPTIONS.find(r => r.label === label);
-                                    if (reasonOption) setReason(reasonOption.value);
-                                }}
-                                customHeight="44px"
-                                customBorderRadius="8px"
-                            />
-                        </S.FormGroup>
-
-                        {/* 물품 */}
-                        <S.FormGroup>
                             <S.TextAreaWrapper>
-                                <S.Label>물품</S.Label>
+                                <S.Label>사유</S.Label>
                                 <S.TextArea 
-                                    placeholder="물품을 입력해주세요"
-                                    value={items}
-                                    onChange={(e) => setItems(e.target.value)}
+                                    placeholder="사유를 입력해주세요"
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
                                 />
                             </S.TextAreaWrapper>
                         </S.FormGroup>
@@ -178,9 +162,7 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
             {/* 하단 버튼 */}
             <S.ButtonWrapper>
                 <S.CancelButton onClick={onCancel}>취소</S.CancelButton>
-                <S.NextButton onClick={handleNext}>
-                    다음
-                </S.NextButton>
+                <S.NextButton onClick={handleNext}>다음</S.NextButton>
             </S.ButtonWrapper>
         </S.Container>
     );
