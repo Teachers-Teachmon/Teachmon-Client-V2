@@ -7,9 +7,8 @@ import * as S from './style';
 interface DatePeriodSelectorProps {
     isOpen: boolean;
     onClose: () => void;
-    currentDate: string;
     currentPeriod: string;
-    onConfirm: (date: string, period: string) => void;
+    onConfirm: (period: string) => void;
 }
 
 const PERIODS = [
@@ -27,44 +26,21 @@ const PERIODS = [
 export default function DatePeriodSelector({
     isOpen,
     onClose,
-    currentDate,
     currentPeriod,
     onConfirm,
 }: DatePeriodSelectorProps) {
-    const [selectedDate, setSelectedDate] = useState(currentDate);
     const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
     const { isMobile } = useDevice();
 
     const handleConfirm = () => {
-        onConfirm(selectedDate, selectedPeriod);
+        onConfirm(selectedPeriod);
         onClose();
-    };
-
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const date = new Date(e.target.value);
-        const days = ['일', '월', '화', '수', '목', '금', '토'];
-        const formatted = `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
-        setSelectedDate(formatted);
-    };
-
-    const handleDateInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
-        e.currentTarget.showPicker();
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} padding={isMobile ? "24px 20px" : "60px"}>
             <S.Container>
-                <S.Title>날짜 및 교시 선택</S.Title>
-                
-                <S.Section>
-                    <S.Label>날짜</S.Label>
-                    <S.DateInput 
-                        type="date" 
-                        onChange={handleDateChange}
-                        onClick={handleDateInputClick}
-                    />
-                    <S.SelectedText>{selectedDate}</S.SelectedText>
-                </S.Section>
+                <S.Title>교시 선택</S.Title>
 
                 <S.Section>
                     <S.Label>교시</S.Label>

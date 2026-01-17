@@ -4,7 +4,8 @@ import DateInput from '@/components/ui/input/date';
 import TextInput from '@/components/ui/input/text-input';
 import Dropdown from '@/components/ui/input/dropdown';
 import { PERIOD_OPTIONS, type Period } from '@/constants/movement';
-import { studentQuery } from '@/services/student/student.query';
+import { studentQuery } from '@/services/search/search.query';
+import { teamQuery } from '@/services/team/team.query';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { MovementFormData } from '@/pages/manage/movement';
 import * as S from './style';
@@ -25,8 +26,20 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
     // 학생 검색 디바운스
     const debouncedSearch = useDebounce(studentSearch, 300);
 
-    // 학생 검색 API
-    const { data: searchResults = [] } = useQuery(studentQuery.search(debouncedSearch));
+    // 학생 검색 API (팀 모드가 아닐 때)
+    const { data: studentResults = [] } = useQuery({
+        ...studentQuery.search(debouncedSearch),
+        enabled: !isTeamMode,
+    });
+
+    // 팀 검색 API (팀 모드일 때)
+    const { data: teamResults = [] } = useQuery({
+        ...teamQuery.search(debouncedSearch),
+        enabled: isTeamMode,
+    });
+
+    // 검색 결과 (학생 또는 팀)
+    const searchResults = isTeamMode ? teamResults : studentResults;
 
     const handleRemoveStudent = (student: string) => {
         setSelectedStudents((prev) => prev.filter((s) => s !== student));
@@ -46,7 +59,7 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
     };
 
     // 학생 정보를 "학년반번호 이름" 형식으로 변환
-    const formatStudent = (student: typeof searchResults[0]) => {
+    const formatStudent = (student: typeof studentResults[0]) => {
         return `${student.grade}${student.class}${String(student.number).padStart(2, '0')} ${student.name}`;
     };
 
@@ -94,19 +107,22 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                             </S.TextAreaWrapper>
                         </S.FormGroup>
 
-                        {/* 학생 */}
+                        {/* 학생/팀 */}
                         <S.FormGroup>
                             <S.StudentHeader>
-                                <S.Label>학생</S.Label>
+                                <S.Label>{isTeamMode ? '팀' : '학생'}</S.Label>
                                 <S.TeamToggle>
                                     <span>팀</span>
-                                    <S.Switch $isOn={isTeamMode} onClick={() => setIsTeamMode(!isTeamMode)}>
+                                    <S.Switch $isOn={isTeamMode} onClick={() => {
+                                        setIsTeamMode(!isTeamMode);
+                                        setStudentSearch('');
+                                    }}>
                                         <S.SwitchKnob $isOn={isTeamMode} />
                                     </S.Switch>
                                 </S.TeamToggle>
                             </S.StudentHeader>
                             <TextInput
-                                placeholder="학생을 입력해주세요"
+                                placeholder={isTeamMode ? '팀을 입력해주세요' : '학생을 입력해주세요'}
                                 value={studentSearch}
                                 onChange={(e) => setStudentSearch(e.target.value)}
                                 leftIcon={
@@ -119,22 +135,24 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                             />
                         </S.FormGroup>
 
-                        {/* 학생 검색 드롭다운 */}
-                        {studentSearch && (
+                        {/* 검색 드롭다운 */}
+                        {studentSearch && searchResults.length > 0 && (
                             <S.StudentDropdown>
-                                {searchResults.slice(0, 3).map((student) => {
-                                    const formattedStudent = formatStudent(student);
+                                {searchResults.slice(0, 3).map((result: any) => {
+                                    const displayText = isTeamMode 
+                                        ? result.name 
+                                        : formatStudent(result);
                                     return (
                                         <S.StudentDropdownItem 
-                                            key={student.id}
+                                            key={result.id}
                                             onClick={() => {
-                                                if (!selectedStudents.includes(formattedStudent)) {
-                                                    setSelectedStudents([...selectedStudents, formattedStudent]);
+                                                if (!selectedStudents.includes(displayText)) {
+                                                    setSelectedStudents([...selectedStudents, displayText]);
                                                 }
                                                 setStudentSearch('');
                                             }}
                                         >
-                                            {formattedStudent}
+                                            {displayText}
                                         </S.StudentDropdownItem>
                                     );
                                 })}
@@ -144,9 +162,9 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                     </S.FormContent>
                 </S.FormSection>
 
-                {/* 선택된 학생 목록 */}
+                {/* 선택된 학생/팀 목록 */}
                 <S.SelectedStudentsSection>
-                    <S.SelectedTitle>학생</S.SelectedTitle>
+                    <S.SelectedTitle>{isTeamMode ? '팀' : '학생'}</S.SelectedTitle>
                     <S.SelectedStudentsGrid>
                         {selectedStudents.map((student, idx) => (
                             <S.SelectedStudentCard 

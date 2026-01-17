@@ -120,37 +120,13 @@ export const FloorBadge = styled.span`
   font-weight: 500;
 `;
 
-export const HamburgerButton = styled.button<{ $isMapEnabled?: boolean }>`
-  display: none;
-
-  ${mq.mobile} {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 8px 12px;
-    width: 40px;
-    height: 40px;
-    background: ${colors.background};
-    border: 1px solid ${colors.n02};
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    padding: 0;
-    z-index: 10;
-    position: relative;
-    box-shadow: ${({ $isMapEnabled }) => $isMapEnabled ? '0 4px 12px 0 rgba(0, 0, 0, 0.08)' : 'none'};
-
-    &:hover {
-      background-color: ${colors.primary100};
-    }
-
-    &:active {
-      background-color: ${colors.primary200};
-    }
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
-  }
+export const EmptyState = styled.div`
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+  font-size: 18px;
+  color: ${colors.n04};
+  text-align: center;
 `;

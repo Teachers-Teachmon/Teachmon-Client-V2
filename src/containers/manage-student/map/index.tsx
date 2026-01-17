@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import LocationDetail from '../modal/location-detail';
 import useLocationStore from '@/stores/useLocationStore';
+import { manageQuery } from '@/services/manage/manage.query';
 import { colors } from '@/styles/theme';
 import { FLOOR_ELEMENTS_MAP, type FloorElement } from '@/constants/floorMaps';
 import * as S from './style';
@@ -13,48 +15,47 @@ interface MapProps {
 
 export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
     const [isModal, setIsModal] = useState(false);
-    const [selectedPlace, setSelectedPlace] = useState<string>('');
+    const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
     const setPlace = useLocationStore((state: any) => state.setPlace);
     
-    // 임시 데이터 - 실제로는 API에서 가져와야 함
-    const data: { [key: string]: { status: string; studentName: string; studentNumber: number } } = {
-        "1-1": { status: "자습", studentName: "김철수", studentNumber: 10101 },
-        "1-2": { status: "이석", studentName: "이영희", studentNumber: 10102 },
-        "1-3": { status: "자습", studentName: "박민수", studentNumber: 10103 },
-        "과학실": { status: "이석", studentName: "최지연", studentNumber: 10201 },
-        "프로그래밍실2": { status: "자습", studentName: "정수현", studentNumber: 10202 },
-        "인공지능모델링실2": { status: "자습", studentName: "강동훈", studentNumber: 10203 },
-        "운동장": { status: "이석", studentName: "윤서아", studentNumber: 10301 },
-        "음악실": { status: "자습", studentName: "한지민", studentNumber: 10302 },
-        "2-1": { status: "자습", studentName: "김민준", studentNumber: 20101 },
-        "2-2": { status: "이석", studentName: "박서연", studentNumber: 20102 },
-        "3-1": { status: "자습", studentName: "이도현", studentNumber: 30101 },
-        "4-1": { status: "이석", studentName: "최유진", studentNumber: 40101 },
+    // 층별 장소 상태 조회
+    const { data: placesData = [] } = useQuery({
+        ...manageQuery.placesByFloor({ floor: selectedFloor }),
+        retry: false,
+    });
+
+    // 선택된 장소의 학생 목록 조회
+    const { data: placeSchedule } = useQuery({
+        ...manageQuery.placeSchedule(selectedPlaceId!),
+        enabled: !!selectedPlaceId && isModal,
+        retry: false,
+    });
+
+    // 장소 이름으로 place_id 찾기
+    const getPlaceIdByName = (placeName: string) => {
+        const place = placesData.find((p: any) => p.place_name === placeName);
+        return place?.place_id;
     };
 
     const handlePlaceClick = (placeName: string) => {
-        setSelectedPlace(placeName);
-        setIsModal(true);
-        setPlace(placeName);
+        const placeId = getPlaceIdByName(placeName);
+        if (placeId) {
+            setSelectedPlaceId(placeId);
+            setIsModal(true);
+            setPlace(placeName);
+        }
     };
 
     const handleModalClose = () => {
         setIsModal(false);
-        setSelectedPlace('');
+        setSelectedPlaceId(null);
     };
 
-    // 임시 학생 데이터 - 실제로는 API에서 가져와야 함
-    const getStudentsForPlace = (_placeName: string) => {
-        const mockStudents = [
-            { studentNumber: 1401, studentName: '김동욱' },
-            { studentNumber: 1402, studentName: '김민수' },
-            { studentNumber: 1403, studentName: '김지훈' },
-            { studentNumber: 1404, studentName: '김서연' },
-            { studentNumber: 1405, studentName: '김태희' },
-            { studentNumber: 1406, studentName: '김현우' },
-        ];
-        return mockStudents;
-    };
+    // 장소별 상태 데이터를 맵으로 변환
+    const placeStatusMap: { [key: string]: any } = {};
+    placesData.forEach((place: any) => {
+        placeStatusMap[place.place_name] = place;
+    });
 
     const elements = FLOOR_ELEMENTS_MAP[selectedFloor] || [];
 
@@ -72,8 +73,8 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
                                 <img src="/icons/student/zoom-in.svg" alt="zoom in" style={{ width: '30px', height: '30px' }} />
                             </S.ZoomButton>
                             <S.ZoomButton onClick={() => resetTransform()}>
-                                           <img src="/icons/student/mdi_reload.svg" alt="zoom out" style={{ width: '20px', height: '20px' }} />
-                                       </S.ZoomButton>
+                                <img src="/icons/student/mdi_reload.svg" alt="zoom out" style={{ width: '20px', height: '20px' }} />
+                            </S.ZoomButton>
                             <S.ZoomButton onClick={() => zoomOut()}>
                                 <img src="/icons/student/zoom-out.svg" alt="zoom out" style={{ width: '30px', height: '30px' }} />
                             </S.ZoomButton>
@@ -91,13 +92,13 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
                             <S.MapContent>
                                 <S.MapWrapper>
                                     {elements.map((el: FloorElement) => {
-                                        const status = data && data[el.name];
+                                        const placeData = placeStatusMap[el.name];
                                         const isHighlighted = highlightedPlace === el.name && el.name !== '' && el.name !== 'X';
                                         
                                         return (
                                             <S.Element
                                                 onClick={() => {
-                                                    if (status && el.name && el.name !== '' && el.name !== 'X') {
+                                                    if (placeData && el.name && el.name !== '' && el.name !== 'X') {
                                                         handlePlaceClick(el.name);
                                                     }
                                                 }}
@@ -109,13 +110,13 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
                                                 $background={
                                                     isHighlighted
                                                         ? colors.primary200
-                                                        : status && status.status === '이석'
+                                                        : placeData?.status === 'LEAVE_SEAT'
                                                         ? '#CCBCFF'
-                                                        : status && status.status === '자습'
+                                                        : placeData?.status === 'SELF_STUDY'
                                                         ? '#72FAAA'
                                                         : '#DDDDDD'
                                                 }
-                                                $cursor={status ? true : false}
+                                                $cursor={!!placeData}
                                             >
                                                 {el.name}
                                             </S.Element>
@@ -129,8 +130,11 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
             </TransformWrapper>
             <LocationDetail
                 isOpen={isModal}
-                locationName={selectedPlace}
-                students={getStudentsForPlace(selectedPlace)}
+                locationName={placeSchedule?.place_name || ''}
+                students={placeSchedule?.students.map((s: any) => ({
+                    studentNumber: s.number,
+                    studentName: s.name,
+                })) || []}
                 onClose={handleModalClose}
             />
         </S.Container>

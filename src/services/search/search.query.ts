@@ -1,10 +1,11 @@
 import { queryOptions } from '@tanstack/react-query';
 import { searchStudents } from './search.api';
 
-export const searchQuery = {
-  students: (query?: string) =>
+export const studentQuery = {
+  search: (query?: string) =>
     queryOptions({
-      queryKey: ['search.students', query],
+      queryKey: ['student.search', query],
       queryFn: () => searchStudents(query),
+      enabled: !!query && query.length > 0,
     }),
 };
