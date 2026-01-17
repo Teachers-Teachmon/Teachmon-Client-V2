@@ -58,8 +58,9 @@ export interface MessageResponse {
 }
 
 // Teacher APIs
-export const getAllTeachers = async (): Promise<Teacher[]> => {
-  const response = await axiosInstance.get<Teacher[]>('/teacher/all');
+export const getAllTeachers = async (query?: string): Promise<Teacher[]> => {
+  const params = query ? { query } : {};
+  const response = await axiosInstance.get<Teacher[]>('/teacher', { params });
   return response.data;
 };
 
@@ -85,8 +86,9 @@ export const setForbiddenDates = async (data: SetForbiddenDateRequest): Promise<
 };
 
 // Student APIs
-export const getAllStudents = async (): Promise<Student[]> => {
-  const response = await axiosInstance.get<Student[]>('/student/all');
+export const getAllStudents = async (query?: string): Promise<Student[]> => {
+  const params = query ? { query } : {};
+  const response = await axiosInstance.get<Student[]>('/student/all', { params });
   return response.data;
 };
 

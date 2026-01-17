@@ -21,10 +21,9 @@ export interface Student {
 
 interface StudentsProps {
   studentsData: ApiStudent[];
-  searchQuery: string;
 }
 
-export default function Students({ studentsData, searchQuery }: StudentsProps) {
+export default function Students({ studentsData }: StudentsProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
@@ -171,10 +170,6 @@ export default function Students({ studentsData, searchQuery }: StudentsProps) {
     setEditingIds((prev) => new Set(prev).add(newStudent.id));
   };
 
-  const filteredStudents = students.filter(
-    (student) => student.name.includes(searchQuery) || String(student.grade).includes(searchQuery)
-  );
-
   const renderActions = (row: Student) => (
     <S.ActionCell>
       {editingIds.has(row.id) ? (
@@ -203,7 +198,7 @@ export default function Students({ studentsData, searchQuery }: StudentsProps) {
   return (
     <>
       <S.TableWrapper>
-        <TableLayout columns={columns} data={filteredStudents} renderActions={renderActions} />
+        <TableLayout columns={columns} data={students} renderActions={renderActions} />
       </S.TableWrapper>
       <PageS.AddButton onClick={handleAdd}>
         <img src="/icons/common/plusBlue.svg" alt="추가" />

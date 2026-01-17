@@ -21,11 +21,10 @@ export interface Teacher {
 interface TeachersProps {
   teachersData: ApiTeacher[];
   forbiddenDates: ForbiddenDay[];
-  searchQuery: string;
   onOpenForbiddenDates: (teacher: Teacher) => void;
 }
 
-export default function Teachers({ teachersData, forbiddenDates, searchQuery, onOpenForbiddenDates }: TeachersProps) {
+export default function Teachers({ teachersData, forbiddenDates, onOpenForbiddenDates }: TeachersProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
@@ -115,9 +114,6 @@ export default function Teachers({ teachersData, forbiddenDates, searchQuery, on
     );
   };
 
-  const filteredTeachers = teachers
-    .filter((teacher) => teacher.name.includes(searchQuery) || teacher.email.includes(searchQuery));
-
   const renderActions = (row: Teacher) => (
     <S.ActionCell>
       {editingIds.has(row.id) ? (
@@ -146,7 +142,7 @@ export default function Teachers({ teachersData, forbiddenDates, searchQuery, on
 
   return (
     <S.TableWrapper>
-      <TableLayout columns={columns} data={filteredTeachers} renderActions={renderActions} />
+      <TableLayout columns={columns} data={teachers} renderActions={renderActions} />
     </S.TableWrapper>
   );
 }

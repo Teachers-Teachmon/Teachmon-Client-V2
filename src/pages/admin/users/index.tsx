@@ -8,6 +8,7 @@ import TextInput from '@/components/ui/input/text-input';
 import { TAB_TYPES } from '@/constants/admin';
 import { userManagementQuery } from '@/services/user-management/user-management.query';
 import { useSetForbiddenDatesMutation } from '@/services/user-management/user-management.mutation';
+import { useDebounce } from '@/hooks/useDebounce';
 import type { ForbiddenDay } from '@/services/user-management/user-management.api';
 import type { Teacher } from '@/containers/admin/users/teachers';
 import * as S from './style';
@@ -19,10 +20,17 @@ export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
+  // 디바운스 적용
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
   // API 데이터 조회
-  const { data: teachersData } = useQuery(userManagementQuery.teachers());
+  const { data: teachersData } = useQuery(
+    userManagementQuery.teachers(activeTab === TAB_TYPES.TEACHER ? debouncedQuery : undefined)
+  );
   const { data: forbiddenDatesData } = useQuery(userManagementQuery.forbiddenDates());
-  const { data: studentsData } = useQuery(userManagementQuery.students());
+  const { data: studentsData } = useQuery(
+    userManagementQuery.students(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : undefined)
+  );
   const { mutate: setForbiddenDates } = useSetForbiddenDatesMutation();
 
   const handleOpenForbiddenDates = (teacher: Teacher) => {
@@ -69,11 +77,10 @@ export default function AdminUsersPage() {
         <Teachers
           teachersData={teachersData || []}
           forbiddenDates={forbiddenDatesData || []}
-          searchQuery={searchQuery}
           onOpenForbiddenDates={handleOpenForbiddenDates}
         />
       ) : (
-        <Students studentsData={studentsData || []} searchQuery={searchQuery} />
+        <Students studentsData={studentsData || []} />
       )}
 
       {selectedTeacher && forbiddenDatesData && (
