@@ -8,7 +8,6 @@ import { useUpdateTeacherMutation, useDeleteTeacherMutation } from '@/services/u
 import * as S from './style';
 
 type UserRole = '관리자' | '일반';
-type SortOrder = 'asc' | 'desc';
 
 export interface Teacher {
   id: string;
@@ -23,11 +22,10 @@ interface TeachersProps {
   teachersData: ApiTeacher[];
   forbiddenDates: ForbiddenDay[];
   searchQuery: string;
-  sortOrder: SortOrder;
   onOpenForbiddenDates: (teacher: Teacher) => void;
 }
 
-export default function Teachers({ teachersData, forbiddenDates, searchQuery, sortOrder, onOpenForbiddenDates }: TeachersProps) {
+export default function Teachers({ teachersData, forbiddenDates, searchQuery, onOpenForbiddenDates }: TeachersProps) {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
@@ -118,12 +116,7 @@ export default function Teachers({ teachersData, forbiddenDates, searchQuery, so
   };
 
   const filteredTeachers = teachers
-    .filter((teacher) => teacher.name.includes(searchQuery) || teacher.email.includes(searchQuery))
-    .sort((a, b) => {
-      if (sortOrder === 'asc') return a.supervisionCount - b.supervisionCount;
-      if (sortOrder === 'desc') return b.supervisionCount - a.supervisionCount;
-      return 0;
-    });
+    .filter((teacher) => teacher.name.includes(searchQuery) || teacher.email.includes(searchQuery));
 
   const renderActions = (row: Teacher) => (
     <S.ActionCell>

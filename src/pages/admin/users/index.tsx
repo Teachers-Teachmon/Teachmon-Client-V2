@@ -13,12 +13,10 @@ import type { Teacher } from '@/containers/admin/users/teachers';
 import * as S from './style';
 
 type TabType = '선생님' | '학생';
-type SortOrder = 'asc' | 'desc';
 
 export default function AdminUsersPage() {
   const [activeTab, setActiveTab] = useState<TabType>(TAB_TYPES.TEACHER);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
 
   // API 데이터 조회
@@ -26,10 +24,6 @@ export default function AdminUsersPage() {
   const { data: forbiddenDatesData } = useQuery(userManagementQuery.forbiddenDates());
   const { data: studentsData } = useQuery(userManagementQuery.students());
   const { mutate: setForbiddenDates } = useSetForbiddenDatesMutation();
-
-  const handleSort = () => {
-    setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc');
-  };
 
   const handleOpenForbiddenDates = (teacher: Teacher) => {
     setSelectedTeacher(teacher);
@@ -69,15 +63,6 @@ export default function AdminUsersPage() {
             customFontSize="18px"
           />
         </S.SearchInputWrapper>
-        {activeTab === TAB_TYPES.TEACHER && (
-          <S.SortButton onClick={handleSort}>
-            자습감독 횟수
-            <S.SortArrows>
-              <S.ArrowUp $active={sortOrder === 'asc'}>▲</S.ArrowUp>
-              <S.ArrowDown $active={sortOrder === 'desc'}>▼</S.ArrowDown>
-            </S.SortArrows>
-          </S.SortButton>
-        )}
       </S.FilterSection>
 
       {activeTab === TAB_TYPES.TEACHER ? (
@@ -85,7 +70,6 @@ export default function AdminUsersPage() {
           teachersData={teachersData || []}
           forbiddenDates={forbiddenDatesData || []}
           searchQuery={searchQuery}
-          sortOrder={sortOrder}
           onOpenForbiddenDates={handleOpenForbiddenDates}
         />
       ) : (
