@@ -1,4 +1,6 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import Modal from '@/components/layout/modal';
+import { authQuery } from '@/services/auth/auth.query';
 import * as S from './style';
 
 interface LoginModalProps {
@@ -7,8 +9,10 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+  const { data } = useSuspenseQuery(authQuery.loginUrl());
+
   const handleGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/oauth2/login/google`;
+    window.location.href = data.url;
   };
 
   return (
