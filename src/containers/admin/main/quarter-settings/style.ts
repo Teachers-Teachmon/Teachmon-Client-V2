@@ -137,3 +137,16 @@ export const QuarterDates = styled.div`
     color: #000000;
   }
 `;
+
+export const EmptyMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #9ca4ba;
+  padding: 40px 20px;
+`;

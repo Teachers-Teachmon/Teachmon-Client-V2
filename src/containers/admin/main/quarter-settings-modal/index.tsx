@@ -24,7 +24,17 @@ export default function QuarterSettingsModal({
 
     const handleConfirm = () => {
         if (selectedQuarter && startDate && endDate) {
-            onConfirm(selectedQuarter, startDate, endDate);
+            // 날짜를 YYYY-MM-DD 형식으로 변환
+            const formatDate = (dateStr: string) => {
+                const date = new Date(dateStr);
+                return date.toISOString().split('T')[0];
+            };
+            
+            onConfirm(
+                selectedQuarter, 
+                formatDate(startDate), 
+                formatDate(endDate)
+            );
             handleClose();
         }
     };
