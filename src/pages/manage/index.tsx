@@ -8,7 +8,7 @@ import FloorSelector from '@/containers/manage-student/floor-selector';
 import Map from '@/containers/manage-student/map';
 import TextInput from '@/components/ui/input/text-input';
 import { manageQuery } from '@/services/manage/manage.query';
-import { placeQuery } from '@/services/place/place.query';
+import { placeQuery } from '@/services/search/search.query';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { Period } from '@/services/manage/manage.api';
 import { CLASSES } from '@/constants/manage';

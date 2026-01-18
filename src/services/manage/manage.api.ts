@@ -63,6 +63,12 @@ export const getAllFloorsStatus = async (params?: GetAllFloorsStatusParams): Pro
   return response.data;
 };
 
+// 모든 층 상태 조회 (각 층에 몇 곳의 교실이 있는지)
+export const getAllFloorsStatus = async (): Promise<number[]> => {
+  const response = await axiosInstance.get<number[]>('/student-schedule/place');
+  return response.data;
+};
+
 // 이탈 학생 조회 (일간)
 export const getDailyEvasion = async (day: string): Promise<EvasionRecord[]> => {
   const response = await axiosInstance.get<EvasionRecord[]>('/exit/history', { params: { day } });
