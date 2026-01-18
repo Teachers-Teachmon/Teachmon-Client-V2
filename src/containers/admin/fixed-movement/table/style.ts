@@ -17,6 +17,7 @@ export const ActionCell = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  width: 400px;
   gap: 0.5rem;
 `;
 
