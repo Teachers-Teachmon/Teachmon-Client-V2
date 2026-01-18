@@ -52,9 +52,27 @@ export const FloorTab = styled.button<{ $isSelected: boolean }>`
   color: ${(props) => props.$isSelected ? colors.primary : colors.primaryGray};
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
 
   &:hover {
     border-color: ${colors.primary};
     color: ${colors.primary};
   }
+`;
+
+export const Badge = styled.div`
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background: #FF4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Paperlogy', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFFFFF;
 `;

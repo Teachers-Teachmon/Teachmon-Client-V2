@@ -3,6 +3,7 @@ import {
   getStudentSchedule,
   getPlaceSchedule,
   getPlacesByFloor,
+  getAllFloorsStatus,
   getDailyEvasion,
   getScheduleHistory,
   type GetStudentScheduleParams,
@@ -26,6 +27,12 @@ export const manageQuery = {
     queryOptions({
       queryKey: ['manage.placesByFloor', params],
       queryFn: () => getPlacesByFloor(params),
+    }),
+
+  allFloorsStatus: () =>
+    queryOptions({
+      queryKey: ['manage.allFloorsStatus'],
+      queryFn: () => getAllFloorsStatus(),
     }),
 
   dailyEvasion: (date: string) =>
