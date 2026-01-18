@@ -17,6 +17,12 @@ export interface Student {
   number: number;
 }
 
+export interface CreateTeacherRequest {
+  role: 'ADMIN' | 'TEACHER';
+  name: string;
+  email: string;
+}
+
 export interface UpdateTeacherRequest {
   teacher_id: number;
   role?: 'ADMIN' | 'TEACHER';
@@ -61,6 +67,11 @@ export interface MessageResponse {
 export const getAllTeachers = async (query?: string): Promise<Teacher[]> => {
   const params = query ? { query } : {};
   const response = await axiosInstance.get<Teacher[]>('/teacher', { params });
+  return response.data;
+};
+
+export const createTeacher = async (data: CreateTeacherRequest): Promise<MessageResponse> => {
+  const response = await axiosInstance.post<MessageResponse>('/teacher', data);
   return response.data;
 };
 

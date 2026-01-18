@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import {
+  createTeacher,
   updateTeacher,
   deleteTeacher,
   setForbiddenDates,
@@ -10,6 +11,22 @@ import {
 } from './user-management.api';
 
 // Teacher Mutations
+export const useCreateTeacherMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createTeacher,
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['userManagement.teachers'] });
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      console.error('선생님 추가 실패:', error);
+      toast.error('선생님 추가에 실패했습니다.');
+    },
+  });
+};
+
 export const useUpdateTeacherMutation = () => {
   const queryClient = useQueryClient();
 

@@ -4,8 +4,13 @@ import Button from '@/components/ui/button';
 import { USER_ROLES } from '@/constants/admin';
 import { useTeacherColumns } from '@/hooks/useTeacherUserManageColumns';
 import type { Teacher as ApiTeacher, ForbiddenDay } from '@/services/user-management/user-management.api';
-import { useUpdateTeacherMutation, useDeleteTeacherMutation } from '@/services/user-management/user-management.mutation';
+import { 
+  useCreateTeacherMutation,
+  useUpdateTeacherMutation, 
+  useDeleteTeacherMutation 
+} from '@/services/user-management/user-management.mutation';
 import * as S from './style';
+import * as PageS from '@/pages/admin/users/style';
 
 type UserRole = '관리자' | '일반';
 
@@ -28,14 +33,16 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
+  const [localTeachers, setLocalTeachers] = useState<Teacher[]>([]);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  const { mutate: createTeacher } = useCreateTeacherMutation();
   const { mutate: updateTeacher } = useUpdateTeacherMutation();
   const { mutate: deleteTeacher } = useDeleteTeacherMutation();
 
   // API 데이터를 UI 형식으로 변환
   const teachers = useMemo(() => {
-    return teachersData.map((teacher): Teacher => ({
+    const apiTeachers = teachersData.map((teacher): Teacher => ({
       id: String(teacher.teacher_id),
       role: teacher.role === 'ADMIN' ? USER_ROLES.ADMIN : USER_ROLES.NORMAL,
       name: teacher.name,
@@ -43,7 +50,11 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
       supervisionCount: teacher.supervision_count,
       forbiddenDates: forbiddenDates,
     }));
-  }, [teachersData, forbiddenDates]);
+    
+    // 로컬에서 추가된 선생님들과 병합
+    const newTeachers = localTeachers.filter(t => t.id.startsWith('new-'));
+    return [...apiTeachers, ...newTeachers];
+  }, [teachersData, forbiddenDates, localTeachers]);
 
   const columns = useTeacherColumns({
     editingIds,
@@ -70,24 +81,49 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   const handleSave = (teacherId: string) => {
     if (!editingTeacher || editingTeacher.id !== teacherId) return;
     
-    updateTeacher({
-      teacher_id: Number(teacherId),
-      role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
-      name: editingTeacher.name,
-      email: editingTeacher.email,
-    }, {
-      onSuccess: () => {
-        setEditingTeacher(null);
-        setEditingIds((prev) => {
-          const newSet = new Set(prev);
-          newSet.delete(teacherId);
-          return newSet;
-        });
-      },
-    });
+    // 새로 추가된 선생님인 경우
+    if (teacherId.startsWith('new-')) {
+      createTeacher({
+        role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
+        name: editingTeacher.name,
+        email: editingTeacher.email,
+      }, {
+        onSuccess: () => {
+          setLocalTeachers(prev => prev.filter(t => t.id !== teacherId));
+          setEditingTeacher(null);
+          setEditingIds((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(teacherId);
+            return newSet;
+          });
+        },
+      });
+    } else {
+      // 기존 선생님 수정
+      updateTeacher({
+        teacher_id: Number(teacherId),
+        role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
+        name: editingTeacher.name,
+        email: editingTeacher.email,
+      }, {
+        onSuccess: () => {
+          setEditingTeacher(null);
+          setEditingIds((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(teacherId);
+            return newSet;
+          });
+        },
+      });
+    }
   };
 
   const handleCancel = (teacherId: string) => {
+    // 새로 추가된 선생님이고 아직 저장 안 된 경우 삭제
+    if (teacherId.startsWith('new-')) {
+      setLocalTeachers(prev => prev.filter(t => t.id !== teacherId));
+    }
+    
     if (editingTeacher?.id === teacherId) {
       setEditingTeacher(null);
     }
@@ -99,6 +135,18 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   };
 
   const handleDelete = (teacherId: string) => {
+    // 새로 추가된 선생님인 경우 로컬에서만 삭제
+    if (teacherId.startsWith('new-')) {
+      setLocalTeachers(prev => prev.filter(t => t.id !== teacherId));
+      setEditingIds((prev) => {
+        const newSet = new Set(prev);
+        newSet.delete(teacherId);
+        return newSet;
+      });
+      setOpenMenuId(null);
+      return;
+    }
+
     deleteTeacher(
       { teacher_id: Number(teacherId) },
       {
@@ -112,6 +160,19 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
         },
       }
     );
+  };
+
+  const handleAdd = () => {
+    const newTeacher: Teacher = {
+      id: `new-${Date.now()}`,
+      role: USER_ROLES.NORMAL,
+      name: '',
+      email: '',
+      supervisionCount: 0,
+    };
+    setLocalTeachers(prev => [...prev, newTeacher]);
+    setEditingTeacher(newTeacher);
+    setEditingIds((prev) => new Set(prev).add(newTeacher.id));
   };
 
   const renderActions = (row: Teacher) => (
@@ -141,8 +202,14 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   );
 
   return (
-    <S.TableWrapper>
-      <TableLayout columns={columns} data={teachers} renderActions={renderActions} />
-    </S.TableWrapper>
+    <>
+      <S.TableWrapper>
+        <TableLayout columns={columns} data={teachers} renderActions={renderActions} />
+      </S.TableWrapper>
+      <PageS.AddButton onClick={handleAdd}>
+        <img src="/icons/common/plusBlue.svg" alt="추가" />
+        <span>추가</span>
+      </PageS.AddButton>
+    </>
   );
 }
