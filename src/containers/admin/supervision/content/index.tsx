@@ -4,10 +4,10 @@ import Dropdown from '@/components/ui/input/dropdown';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import type { CalendarEvent, DayInfo } from '@/types/calendar';
 import type { SupervisionCount } from '@/types/admin';
-import { SAMPLE_COUNTS, SAMPLE_EVENTS, SAMPLE_TEACHERS } from '@/containers/admin/supervision/data';
 import { SUPERVISION_LABEL_TO_TYPE, SUPERVISION_TYPE_LABELS, SUPERVISION_TYPE_STYLES, type SupervisionType } from '@/constants/adminSupervision';
+import { convertToCalendarEvents } from '@/utils/supervision';
+import { useAdminSupervisionQuery, useSupervisionRankQuery } from '@/services/admin/supervision/adminSupervision.query';
 import {
-  filterCounts,
   filterTeachers,
   getAvailableTypeLabels,
   getAvailableTypesForDate,
@@ -41,20 +41,38 @@ export default function AdminSupervisionContent({ viewMode, onViewModeChange }: 
   const [isClosing, setIsClosing] = useState(false);
   const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
 
-  const [events, setEvents] = useState<CalendarEvent[]>(SAMPLE_EVENTS);
+  const { data: supervisionDays } = useAdminSupervisionQuery(month, '');
+  const { data: supervisionRanks } = useSupervisionRankQuery(searchQuery, sortOrder);
+  const [events, setEvents] = useState<CalendarEvent[]>([]);
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
+
+  const baseEvents = useMemo(
+    () => convertToCalendarEvents(supervisionDays ?? []),
+    [supervisionDays]
+  );
 
   const selectedEvent = selectedEventId ? events.find((event) => event.id === selectedEventId) ?? null : null;
   const selectedEventType = selectedEvent ? getEventType(selectedEvent) : null;
   const availableTypeLabels = getAvailableTypeLabels(events, selectedDate, selectedEventId);
 
+  const teacherOptions = useMemo(() => {
+    const names = new Set(baseEvents.map((event) => event.label));
+    return Array.from(names);
+  }, [baseEvents]);
+
   const filteredTeacherOptions = useMemo(() => {
-    return filterTeachers(SAMPLE_TEACHERS, teacherSearchQuery);
-  }, [teacherSearchQuery]);
+    return filterTeachers(teacherOptions, teacherSearchQuery);
+  }, [teacherOptions, teacherSearchQuery]);
 
   const filteredCounts = useMemo<SupervisionCount[]>(() => {
-    return filterCounts(SAMPLE_COUNTS, searchQuery, sortOrder);
-  }, [searchQuery, sortOrder]);
+    return (supervisionRanks ?? []).map((item) => ({
+      rank: item.rank,
+      name: item.name,
+      selfStudy: item.self_study_supervision_count,
+      leaveSeat: item.leave_seat_supervision_count,
+      total: item.total_supervision_count,
+    }));
+  }, [supervisionRanks]);
 
   const handleMonthChange = (newYear: number, newMonth: number) => {
     setYear(newYear);
@@ -183,6 +201,11 @@ export default function AdminSupervisionContent({ viewMode, onViewModeChange }: 
       setIsClosing(false);
     }
   }, [viewMode]);
+
+  useEffect(() => {
+    if (viewMode === 'edit') return;
+    setEvents(baseEvents);
+  }, [baseEvents, viewMode]);
 
   return (
     <S.ContentWrapper>
