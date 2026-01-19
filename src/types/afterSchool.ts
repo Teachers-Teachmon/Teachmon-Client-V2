@@ -4,6 +4,12 @@ export interface AffordableReinforcement {
     end_period: number;
 }
 
+export interface PlaceSearchResult {
+    id: number;
+    name: string;
+    floor: number;
+}
+
 export interface AdminAfterSchoolClass {
     id: string;
     grade: 1 | 2 | 3;
