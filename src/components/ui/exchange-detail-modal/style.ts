@@ -7,11 +7,11 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 auto;
 
   ${mq.mobile} {
     width: 100%;
-    max-width: 24rem;
+    align-items: stretch;
+    padding: 0.5rem;
   }
 `;
 
@@ -22,8 +22,9 @@ export const Title = styled.h2`
   margin-bottom: 1.5rem;
 
   ${mq.mobile} {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
+    text-align: center;
   }
 `;
 
@@ -37,9 +38,8 @@ export const CardsContainer = styled.div`
   margin-bottom: 1.5rem;
 
   ${mq.mobile} {
-    width: 100%;
-    flex-direction: column;
-    gap: 0.8rem;
+    flex-direction: row;
+    gap: 0.6rem;
     margin-bottom: 1rem;
   }
 `;
@@ -52,8 +52,8 @@ export const Card = styled.div`
   background: white;
 
   ${mq.mobile} {
-    width: 100%;
-    padding: 1.1rem 1.2rem;
+    width: calc(50% - 0.3rem);
+    padding: 1rem 1.1rem;
   }
 `;
 
@@ -64,7 +64,7 @@ export const CardTitle = styled.h3`
   margin-bottom: 0.6rem;
 
   ${mq.mobile} {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 `;
 
@@ -83,11 +83,20 @@ export const InfoRow = styled.div`
 export const InfoIcon = styled.img`
   width: 1.2rem;
   height: 1.2rem;
+
+  ${mq.mobile} {
+    width: 1rem;
+    height: 1rem;
+  }
 `;
 
 export const InfoText = styled.span`
   font-size: 1rem;
   color: #969696;
+
+  ${mq.mobile} {
+    font-size: 0.9rem;
+  }
 
   ${mq.mobile} {
     font-size: 0.9rem;
@@ -105,6 +114,11 @@ export const ReasonSection = styled.div`
     width: 100%;
     margin-bottom: 1rem;
   }
+
+  ${mq.mobile} {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const ReasonLabel = styled.label`
@@ -113,7 +127,7 @@ export const ReasonLabel = styled.label`
   color: ${colors.n04};
 
   ${mq.mobile} {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 `;
 
@@ -128,12 +142,20 @@ export const ReasonBox = styled.div`
   ${mq.mobile} {
     height: 8.5rem;
   }
+
+  ${mq.mobile} {
+    height: 8.5rem;
+  }
 `;
 
 export const ReasonText = styled.p`
   font-size: 1rem;
   color: #969696;
   font-weight: 300;
+
+  ${mq.mobile} {
+    font-size: 0.9rem;
+  }
 
   ${mq.mobile} {
     font-size: 0.9rem;
@@ -158,6 +180,10 @@ export const ReasonInput = styled.textarea`
   ${mq.mobile} {
     font-size: 0.9rem;
   }
+
+  ${mq.mobile} {
+    font-size: 0.9rem;
+  }
 `;
 
 export const ButtonContainer = styled.div`
@@ -167,7 +193,7 @@ export const ButtonContainer = styled.div`
 
   ${mq.mobile} {
     width: 100%;
-    gap: 0.6rem;
     flex-direction: row;
+    gap: 0.6rem;
   }
 `;
