@@ -1,5 +1,6 @@
 import { colors } from '@/styles/theme';
 import styled from '@emotion/styled';
+import { mq } from '@/styles/media';
 
 export const AbsentStudentSection = styled.div`
   width: 100%;
@@ -11,6 +12,11 @@ export const AbsentStudentSection = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
+  ${mq.mobile} {
+    height: 200px;
+    flex: none;
+  }
 `;
 
 export const SectionHeader = styled.div`
@@ -19,6 +25,11 @@ export const SectionHeader = styled.div`
   align-items: center;
   padding: 20px 28px 0 28px;
   margin-bottom: 14px;
+
+  ${mq.mobile} {
+    padding: 16px 16px 0 16px;
+    margin-bottom: 12px;
+  }
 `;
 
 export const SectionTitle = styled.h2`
@@ -28,6 +39,11 @@ export const SectionTitle = styled.h2`
   line-height: 26px;
   color: #000000;
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: 18px;
+    line-height: 22px;
+  }
 `;
 
 export const AbsentStudentGrid = styled.div`
@@ -37,6 +53,12 @@ export const AbsentStudentGrid = styled.div`
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+
+  ${mq.mobile} {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    min-height: 0;
+  }
 `;
 
 export const AbsentStudentRow = styled.div`
@@ -51,6 +73,11 @@ export const AbsentStudentRow = styled.div`
   border-right: 1px solid #f2f3f6;
   
   &:nth-of-type(2n) {
+    border-right: none;
+  }
+
+  ${mq.mobile} {
+    padding: 12px 16px;
     border-right: none;
   }
 `;

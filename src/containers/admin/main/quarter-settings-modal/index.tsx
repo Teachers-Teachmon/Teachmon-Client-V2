@@ -2,7 +2,7 @@ import Modal from '@/components/layout/modal';
 import Dropdown from '@/components/ui/input/dropdown';
 import DateInput from '@/components/ui/input/date';
 import Button from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as S from './style';
 
 interface QuarterSettingsModalProps {
@@ -21,6 +21,18 @@ export default function QuarterSettingsModal({
     const [selectedQuarter, setSelectedQuarter] = useState<string>('');
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth <= 430);
+        };
+        
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const handleConfirm = () => {
         if (selectedQuarter && startDate && endDate) {
@@ -37,7 +49,7 @@ export default function QuarterSettingsModal({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={handleClose} padding="40px 77px">
+        <Modal isOpen={isOpen} onClose={handleClose} padding={isMobile ? '1.5rem' : '2.75rem'}>
             <S.ModalContent>
                 <S.Title>분기설정</S.Title>
 
