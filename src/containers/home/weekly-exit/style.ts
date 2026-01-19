@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const SectionCard = styled.div`
   flex: 1;
@@ -8,12 +9,20 @@ export const SectionCard = styled.div`
   gap: 12px;
   min-width: 0;
   min-height: 0;
+
+  ${mq.mobile} {
+    gap: 8px;
+  }
 `;
 
 export const SectionTitle = styled.h3`
   font-size: clamp(20px, 2vw, 32px);
   color: ${colors.n04};
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 20px;
+  }
 `;
 
 export const SectionContent = styled.div`
@@ -24,6 +33,10 @@ export const SectionContent = styled.div`
   padding: 15px;
   display: flex;
   flex-direction: column;
+
+  ${mq.mobile} {
+    padding: 12px;
+  }
 `;
 
 export const EmptyMessage = styled.div`
@@ -41,11 +54,19 @@ export const DepartureGrid = styled.div`
   gap: 16px;
   flex: 1;
   overflow-y: auto;
+
+  ${mq.mobile} {
+    gap: 12px;
+  }
 `;
 
 export const DepartureRow = styled.div`
   display: flex;
   gap: 16px;
+
+  ${mq.mobile} {
+    flex-direction: column;
+  }
 `;
 
 export const DepartureItem = styled.div`
@@ -58,6 +79,12 @@ export const DepartureItem = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
+
+  ${mq.mobile} {
+    max-width: none;
+    min-height: 72px;
+    padding: 10px 12px;
+  }
 `;
 
 export const DepartureDate = styled.span`

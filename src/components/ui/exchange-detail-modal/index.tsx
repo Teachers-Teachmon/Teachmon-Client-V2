@@ -63,7 +63,7 @@ export default function ExchangeDetailModal({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} padding="52px 0">
+        <Modal isOpen={isOpen} onClose={onClose} padding="52px 20px">
             <S.Container>
                 <S.Title>
                     {titleInfo.text}
