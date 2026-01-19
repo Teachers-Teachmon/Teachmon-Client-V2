@@ -5,9 +5,20 @@ import ConfirmModal from '@/components/layout/modal/confirm';
 import Modal from '@/components/layout/modal';
 import type { CalendarEvent } from '@/types/calendar';
 import type { AfterSchoolTeacher } from '@/types/admin';
-import { SAMPLE_MAKEUP_SCHEDULES } from '@/containers/admin/business-trip/data';
+import type { PlaceSearchItem } from '@/services/admin/afterSchool/adminAfterSchool.api';
 import { formatDateString } from '@/utils/admin';
 import { AllCompleteContent, MakeupSelectionContent, TripCompleteContent, TripConfirmMessage } from '@/containers/admin/business-trip/modal-content';
+import { transformBusinessTripToCalendarEvents, transformMakeupToCalendarEvents } from '@/utils/admin';
+import {
+  useAdminAfterSchoolSearchQuery,
+  useAdminPlaceSearchQuery,
+  useBusinessTripAffordableQuery,
+  useReinforcementAffordableQuery,
+} from '@/services/admin/afterSchool/adminAfterSchool.query';
+import {
+  useRequestBusinessTripMutation,
+  useRequestReinforcementMutation,
+} from '@/services/admin/afterSchool/adminAfterSchool.mutation';
 
 export default function BusinessTripPage() {
   type Step = 'select' | 'confirm-trip' | 'ask-makeup' | 'trip-complete' | 'select-makeup' | 'makeup-modal' | 'all-complete';
@@ -17,11 +28,20 @@ export default function BusinessTripPage() {
   const [month, setMonth] = useState(currentDate.getMonth() + 1);
   const [step, setStep] = useState<Step>('select');
   const [selectedTeacher, setSelectedTeacher] = useState<AfterSchoolTeacher | undefined>(undefined);
+  const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
   const [selectedTripDate, setSelectedTripDate] = useState<Date | null>(null);
   const [selectedMakeupDate, setSelectedMakeupDate] = useState<Date | null>(null);
   const [availableMakeupPeriods, setAvailableMakeupPeriods] = useState<string[]>([]);
   const [selectedMakeupPeriods, setSelectedMakeupPeriods] = useState<string[]>([]);
-  const [selectedLocation, setSelectedLocation] = useState<string>('');
+  const [selectedPlace, setSelectedPlace] = useState<PlaceSearchItem | null>(null);
+  const [placeSearchQuery, setPlaceSearchQuery] = useState('');
+
+  const { data: afterSchoolOptions } = useAdminAfterSchoolSearchQuery(teacherSearchQuery);
+  const { data: tripAffordable } = useBusinessTripAffordableQuery(month, selectedTeacher?.id);
+  const { data: makeupAffordable } = useReinforcementAffordableQuery(month, selectedTeacher?.id);
+  const { data: placeOptions } = useAdminPlaceSearchQuery(placeSearchQuery);
+  const { mutate: requestBusinessTrip } = useRequestBusinessTripMutation();
+  const { mutate: requestReinforcement } = useRequestReinforcementMutation();
 
   const mode = useMemo(() => {
     if (step === 'select-makeup' || step === 'makeup-modal' || step === 'all-complete') return 'select-makeup';
@@ -35,6 +55,10 @@ export default function BusinessTripPage() {
 
   const handleTeacherSelect = (teacher: AfterSchoolTeacher) => {
     setSelectedTeacher(teacher);
+    setSelectedTripDate(null);
+    setSelectedMakeupDate(null);
+    setSelectedMakeupPeriods([]);
+    setSelectedPlace(null);
   };
 
   const handleTripEventClick = (event: CalendarEvent) => {
@@ -43,7 +67,16 @@ export default function BusinessTripPage() {
   };
 
   const handleConfirmTrip = () => {
-    setStep('ask-makeup');
+    if (!selectedTeacher || !selectedTripDate) return;
+    requestBusinessTrip(
+      {
+        day: formatDateString(selectedTripDate),
+        afterschool_id: selectedTeacher.id,
+      },
+      {
+        onSuccess: () => setStep('ask-makeup'),
+      }
+    );
   };
 
   const handleProceedToMakeup = () => {
@@ -56,18 +89,21 @@ export default function BusinessTripPage() {
 
   const handleMakeupDateClick = (date: Date) => {
     const dateString = formatDateString(date);
-    const availableData = SAMPLE_MAKEUP_SCHEDULES.filter(item => item.day === dateString);
+    const availableData = (makeupAffordable ?? []).filter(item => item.day === dateString);
 
     if (availableData.length === 0) return;
 
     const periods: string[] = [];
     availableData.forEach(item => {
-      if (item.startPeriod === 8 && item.endPeriod === 9) periods.push('8~9');
-      if (item.startPeriod === 10 && item.endPeriod === 11) periods.push('10~11');
+      if (item.start_period === 8 && item.end_period === 9) periods.push('8~9');
+      if (item.start_period === 10 && item.end_period === 11) periods.push('10~11');
     });
 
     setAvailableMakeupPeriods(periods);
     setSelectedMakeupDate(date);
+    setSelectedMakeupPeriods([]);
+    setSelectedPlace(null);
+    setPlaceSearchQuery('');
     setStep('makeup-modal');
   };
 
@@ -80,10 +116,23 @@ export default function BusinessTripPage() {
   };
 
   const handleMakeupComplete = () => {
-    if (selectedMakeupPeriods.length === 0 || !selectedLocation) {
+    if (!selectedTeacher || !selectedMakeupDate || selectedMakeupPeriods.length === 0 || !selectedPlace) {
       alert('보강 시간과 장소를 선택해주세요.');
       return;
     }
+
+    const day = formatDateString(selectedMakeupDate);
+    selectedMakeupPeriods.forEach((period) => {
+      const isFirst = period === '8~9';
+      requestReinforcement({
+        day,
+        afterschool_id: selectedTeacher.id,
+        change_start_period: isFirst ? 8 : 10,
+        change_end_period: isFirst ? 9 : 11,
+        change_place_id: selectedPlace.id,
+      });
+    });
+
     setStep('all-complete');
   };
 
@@ -92,7 +141,7 @@ export default function BusinessTripPage() {
       tripDate: selectedTripDate,
       makeupDate: selectedMakeupDate,
       makeupPeriods: selectedMakeupPeriods,
-      location: selectedLocation,
+      location: selectedPlace,
     });
     resetState();
   };
@@ -103,8 +152,29 @@ export default function BusinessTripPage() {
     setSelectedMakeupDate(null);
     setAvailableMakeupPeriods([]);
     setSelectedMakeupPeriods([]);
-    setSelectedLocation('');
+    setSelectedPlace(null);
+    setPlaceSearchQuery('');
   };
+
+  const tripEvents = useMemo<CalendarEvent[]>(() => {
+    if (!tripAffordable) return [];
+    const mapped = tripAffordable.map((item) => ({
+      day: item.day,
+      startPeriod: item.start_period,
+      endPeriod: item.end_period,
+    }));
+    return transformBusinessTripToCalendarEvents(mapped);
+  }, [tripAffordable]);
+
+  const makeupEvents = useMemo<CalendarEvent[]>(() => {
+    if (!makeupAffordable) return [];
+    const mapped = makeupAffordable.map((item) => ({
+      day: item.day,
+      startPeriod: item.start_period,
+      endPeriod: item.end_period,
+    }));
+    return transformMakeupToCalendarEvents(mapped);
+  }, [makeupAffordable]);
 
   return (
     <S.Container>
@@ -113,9 +183,14 @@ export default function BusinessTripPage() {
         month={month}
         onMonthChange={handleMonthChange}
         selectedTeacher={selectedTeacher}
+        teacherOptions={afterSchoolOptions ?? []}
+        teacherSearchQuery={teacherSearchQuery}
+        onTeacherSearchChange={setTeacherSearchQuery}
         onTeacherSelect={handleTeacherSelect}
         onTripEventClick={handleTripEventClick}
         onMakeupDateClick={handleMakeupDateClick}
+        tripEvents={tripEvents}
+        makeupEvents={makeupEvents}
         mode={mode}
       />
 
@@ -148,9 +223,12 @@ export default function BusinessTripPage() {
           selectedMakeupDate={selectedMakeupDate}
           availableMakeupPeriods={availableMakeupPeriods}
           selectedMakeupPeriods={selectedMakeupPeriods}
-          selectedLocation={selectedLocation}
+          selectedPlace={selectedPlace}
+          placeItems={placeOptions ?? []}
+          placeQuery={placeSearchQuery}
+          onPlaceQueryChange={setPlaceSearchQuery}
+          onPlaceChange={setSelectedPlace}
           onTogglePeriod={handleTogglePeriod}
-          onLocationChange={setSelectedLocation}
           onCancel={() => setStep('select-makeup')}
           onConfirm={handleMakeupComplete}
         />
