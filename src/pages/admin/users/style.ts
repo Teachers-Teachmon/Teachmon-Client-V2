@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -31,36 +32,6 @@ export const SearchIcon = styled.img`
   height: 24px;
   z-index: 1;
 `;
-
-export const SortButton = styled.button`
-  font-family: 'Paperlogy', sans-serif;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 0;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-size: ${fontSizes.Body};
-  font-weight: 600;
-  color: ${colors.primary};
-`;
-
-export const SortArrows = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-export const ArrowUp = styled.span<{ $active?: boolean }>`
-  font-size: 16px;
-  color: ${({ $active }) => ($active ? colors.primary : colors.primaryGray)};
-`;
-
-export const ArrowDown = styled.span<{ $active?: boolean }>`
-  font-size: 16px;
-  color: ${({ $active }) => ($active ? colors.primary : colors.primaryGray)};
-`;
-
 export const AddButton = styled.button`
   position: absolute;
   bottom: 80px;
@@ -87,6 +58,10 @@ export const AddButton = styled.button`
     font-size: ${fontSizes.H4};
     font-weight: 600;
     color: ${colors.primary};
+  }
+
+  ${mq.mobile}{
+    bottom: 100px;
   }
 
   &:hover {
