@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { mq } from '@/styles/media';
+import { colors, fontSizes } from '@/styles/theme';
 
 export const MenuCardGrid = styled.div`
   flex: 1;
@@ -21,7 +22,7 @@ export const MenuCardGrid = styled.div`
   }
 `;
 export const MenuCard = styled.div`
-  background-color: #fbfcff;
+  background-color: ${colors.primaryBackground};
   border-radius: 16px;
   padding: 24px;
   display: flex;
@@ -55,8 +56,8 @@ export const MenuCardIcon = styled.div`
     padding-top: 0;
     justify-content: center;
     img {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
     }
   }
 `;
@@ -86,11 +87,11 @@ export const MenuCardTitle = styled.h3`
   font-weight: 600;
   font-size: 20px;
   line-height: 24px;
-  color: #2e6ff2;
+  color: ${colors.primary};
   margin: 0;
 
   ${mq.mobile} {
-    font-size: 12px;
+    font-size: ${fontSizes.Body};
     line-height: 15px;
     text-align: center;
   }
@@ -98,14 +99,13 @@ export const MenuCardTitle = styled.h3`
 export const MenuCardDescription = styled.p`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: ${fontSizes.Small};
   line-height: 17px;
   color: rgba(93, 93, 93, 0.75);
   margin: 0;
 
   ${mq.mobile} {
-    font-size: 9px;
-    line-height: 11px;
+    font-size: ${fontSizes.Caption};
     text-align: center;
   }
 `;

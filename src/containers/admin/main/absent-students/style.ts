@@ -1,12 +1,12 @@
-import { colors } from '@/styles/theme';
+import { colors, fontSizes } from '@/styles/theme';
 import styled from '@emotion/styled';
 import { mq } from '@/styles/media';
 
 export const AbsentStudentSection = styled.div`
   width: 100%;
   flex: 1;
-  background-color: #ffffff;
-  border: 1px solid #f2f3f6;
+  background-color: ${colors.background};
+  border: 1px solid ${colors.n02};
   border-radius: 16px;
   min-height: 0;
   overflow: hidden;
@@ -37,7 +37,7 @@ export const SectionTitle = styled.h2`
   font-weight: 600;
   font-size: 22px;
   line-height: 26px;
-  color: #000000;
+  color: ${colors.text};
   margin: 0;
 
   ${mq.mobile} {
@@ -68,9 +68,9 @@ export const AbsentStudentRow = styled.div`
   padding: 14px 28px;
   justify-content: space-between;
   width: 100%;
-  border-bottom: 1px solid #f2f3f6;
+  border-bottom: 1px solid ${colors.n02};
   box-sizing: border-box;
-  border-right: 1px solid #f2f3f6;
+  border-right: 1px solid ${colors.n02};
   
   &:nth-of-type(2n) {
     border-right: none;
@@ -92,16 +92,16 @@ export const StudentInfo = styled.div`
 export const StudentDate = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: ${fontSizes.Body};
   line-height: 20px;
-  color: #000000;
+  color: ${colors.text};
   min-width: 75px;
 `;
 
 export const StudentName = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
-  font-size: 14px;
+  font-size: ${fontSizes.Small};
   line-height: 20px;
   color: ${colors.primaryGray};
   flex: 1;

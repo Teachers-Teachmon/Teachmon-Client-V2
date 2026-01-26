@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { mq } from '@/styles/media';
+import { colors, fontSizes } from '@/styles/theme';
 
 export const SupervisorSection = styled.div`
   width: 480px;
   flex-shrink: 0;
-  background-color: #ffffff;
-  border: 1px solid #f2f3f6;
+  background-color: ${colors.background};
+  border: 1px solid ${colors.n02};
   border-radius: 16px;
   width:100%;
   padding: 0;
@@ -36,7 +37,7 @@ export const SectionTitle = styled.h2`
   font-weight: 600;
   font-size: 22px;
   line-height: 26px;
-  color: #000000;
+  color: ${colors.text};
   margin: 0;
 
   ${mq.mobile} {
@@ -60,8 +61,8 @@ export const TopThreeContainer = styled.div`
 `;
 export const TopRankCard = styled.div<{ $isFirst?: boolean }>`
   width: 100%;
-  background-color: #fbfcff;
-  border: 1px solid #f2f3f6;
+  background-color: ${colors.primaryBackground};
+  border: 1px solid ${colors.n02};
   border-radius: 8px;
   padding: 0 0 12px 0;
   display: flex;
@@ -109,11 +110,11 @@ export const TeacherName = styled.span`
   font-weight: 600;
   font-size: 18px;
   line-height: 22px;
-  color: #000000;
+  color: ${colors.text};
   margin-top: 10px;
 
   ${mq.mobile} {
-    font-size: 14px;
+    font-size: ${fontSizes.Small};
     line-height: 18px;
     margin-top: 8px;
   }
@@ -121,13 +122,13 @@ export const TeacherName = styled.span`
 export const TeacherCount = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
-  font-size: 14px;
+  font-size: ${fontSizes.Small};
   line-height: 17px;
-  color: #9ca4ba;
+  color: ${colors.primaryGray};
   margin-top: 6px;
 
   ${mq.mobile} {
-    font-size: 12px;
+    font-size: ${fontSizes.Caption};
     line-height: 15px;
     margin-top: 4px;
   }
@@ -149,7 +150,7 @@ export const RankingRow = styled.div`
   display: flex;
   align-items: center;
   padding: 14px 20px;
-  border-bottom: 1px solid #f2f3f6;
+  border-bottom: 1px solid ${colors.n02};
 
   ${mq.mobile} {
     padding: 12px 16px;
@@ -158,13 +159,13 @@ export const RankingRow = styled.div`
 export const RankNumber = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: ${fontSizes.Body};
   line-height: 20px;
-  color: #000000;
+  color: ${colors.text};
   min-width: 45px;
 
   ${mq.mobile} {
-    font-size: 14px;
+    font-size: ${fontSizes.Small};
     line-height: 18px;
     min-width: 40px;
   }
@@ -174,11 +175,11 @@ export const RankName = styled.span`
   font-weight: 400;
   font-size: 15px;
   line-height: 18px;
-  color: #000000;
+  color: ${colors.text};
   flex: 1;
 
   ${mq.mobile} {
-    font-size: 14px;
+    font-size: ${fontSizes.Small};
     line-height: 17px;
   }
 `;
@@ -187,10 +188,10 @@ export const RankCount = styled.span`
   font-weight: 400;
   font-size: 15px;
   line-height: 18px;
-  color: #000000;
+  color: ${colors.text};
 
   ${mq.mobile} {
-    font-size: 14px;
+    font-size: ${fontSizes.Small};
     line-height: 17px;
   }
 `;
@@ -201,18 +202,18 @@ export const ShowMoreButton = styled.button`
     display: block;
     width: 100%;
     padding: 12px;
-    background-color: #fbfcff;
+    background-color: ${colors.primaryBackground};
     border: none;
-    border-top: 1px solid #f2f3f6;
+    border-top: 1px solid ${colors.n02};
     font-family: 'Paperlogy', sans-serif;
     font-weight: 600;
-    font-size: 14px;
-    color: #2e6ff2;
+    font-size: ${fontSizes.Small};
+    color: ${colors.primary};
     cursor: pointer;
     transition: background-color 0.2s;
 
     &:hover {
-      background-color: #f5f8ff;
+      background-color: ${colors.primary100};
     }
   }
 `;
