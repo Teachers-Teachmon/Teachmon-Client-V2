@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as S from './style';
 
 export interface SupervisorRankingItem {
@@ -12,6 +13,8 @@ interface SupervisorRankingProps {
 }
 
 export default function SupervisorRanking({ ranking }: SupervisorRankingProps) {
+  const [showAll, setShowAll] = useState(false);
+
   return (
     <S.SupervisorSection>
       <S.SectionHeader>
@@ -29,7 +32,7 @@ export default function SupervisorRanking({ ranking }: SupervisorRankingProps) {
           </S.TopRankCard>
         ))}
       </S.TopThreeContainer>
-      <S.RankingList>
+      <S.RankingList $showAll={showAll}>
         {ranking.slice(3).map((item) => (
           <S.RankingRow key={item.rank}>
             <S.RankNumber>{item.rank}위</S.RankNumber>
@@ -38,6 +41,11 @@ export default function SupervisorRanking({ ranking }: SupervisorRankingProps) {
           </S.RankingRow>
         ))}
       </S.RankingList>
+      {ranking.length > 3 && (
+        <S.ShowMoreButton onClick={() => setShowAll(!showAll)}>
+          {showAll ? '접기' : '더보기'}
+        </S.ShowMoreButton>
+      )}
     </S.SupervisorSection>
   );
 }

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { colors, fontSizes } from '@/styles/theme';
 
 export const ModalContent = styled.div`
   display: flex;
@@ -12,7 +13,7 @@ export const Title = styled.h2`
   font-weight: 500;
   font-size: 36px;
   line-height: normal;
-  color: #000000;
+  color: ${colors.text};
   text-align: center;
   margin: 0;
 `;
@@ -34,7 +35,7 @@ export const DateRow = styled.div`
 export const DateSeparator = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 500;
-  font-size: 16px;
+  font-size: ${fontSizes.Body};
   color: #999999;
 `;
 
