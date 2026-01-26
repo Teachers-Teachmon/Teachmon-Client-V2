@@ -141,9 +141,10 @@ export const RankingList = styled.div<{ $showAll?: boolean }>`
   min-height: 0;
 
   ${mq.mobile} {
-    display: ${({ $showAll }) => ($showAll ? 'flex' : 'none')};
     max-height: ${({ $showAll }) => ($showAll ? '150px' : '0')};
-    overflow-y: auto;
+    overflow: hidden;
+    opacity: ${({ $showAll }) => ($showAll ? '1' : '0')};
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
   }
 `;
 export const RankingRow = styled.div`
