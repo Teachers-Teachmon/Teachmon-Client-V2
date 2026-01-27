@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { mockStudents } from './data';
-import { useStudentColumns } from '../../../../hooks/useStudentUserManageColumns';
+import { useStudentColumns } from '@/hooks/useStudentUserManageColumns';
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
 

@@ -1,8 +1,14 @@
 import styled from '@emotion/styled';
-import { colors } from '@/styles/theme';
+import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Content = styled.div`
   width: 805px;
+
+  ${mq.mobile} {
+    width: 100%;
+    max-width: 340px;
+  }
 `;
 
 export const Title = styled.h2`
@@ -11,6 +17,11 @@ export const Title = styled.h2`
   text-align: center;
   margin: 0 0 40px 0;
   color: ${colors.text};
+
+  ${mq.mobile} {
+    font-size: 20px;
+    margin: 0 0 24px 0;
+  }
 `;
 
 export const DaysGrid = styled.div`
@@ -18,6 +29,12 @@ export const DaysGrid = styled.div`
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
   margin-bottom: 40px;
+
+  ${mq.mobile} {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
 `;
 
 export const DayItem = styled.div<{ $selected: boolean }>`
@@ -34,12 +51,21 @@ export const DayItem = styled.div<{ $selected: boolean }>`
   &:hover {
     border-color: ${colors.primary};
   }
+
+  ${mq.mobile} {
+    padding: 16px 20px;
+    gap: 8px;
+  }
 `;
 
 export const DayLabel = styled.span<{ $selected: boolean }>`
   font-size: 24px;
   font-weight: 500;
   color: ${({ $selected }) => ($selected ? colors.primary : colors.primaryGray)};
+
+  ${mq.mobile} {
+    font-size: 18px;
+  }
 `;
 
 export const ButtonGroup = styled.div`
@@ -49,5 +75,14 @@ export const ButtonGroup = styled.div`
   button {
     flex: 1;
     height: 45px;
+  }
+
+  ${mq.mobile} {
+    gap: 10px;
+
+    button {
+      height: 40px;
+      font-size: ${fontSizes.Small};
+    }
   }
 `;

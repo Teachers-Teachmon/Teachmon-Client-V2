@@ -1,11 +1,16 @@
 import styled from '@emotion/styled';
-import { colors, fontSizes, radius } from '@/styles/theme';
+import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const TableWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+  ${mq.mobile}{
+    padding-bottom: 60px;
+  }
 `;
 
 export const ActionCell = styled.div`
@@ -41,7 +46,7 @@ export const DropdownMenu = styled.div`
   border: 1px solid #cccccc;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 1000;
   min-width: 122px;
 `;
 
