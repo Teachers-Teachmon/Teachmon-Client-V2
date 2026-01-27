@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -46,13 +47,21 @@ export const PeriodText = styled.span`
 `;
 
 export const DropdownIcon = styled.div`
-  width: 20px;
+  width: 16px;
   height: 12px;
   background: transparent;
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-top: 12px solid ${colors.primaryGray};
   cursor: pointer;
+
+  ${mq.mobile} {
+    width: 12px;
+    height: 9px;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 9px solid ${colors.primaryGray};
+  }
 `;
 
 export const GradeTabs = styled.div`

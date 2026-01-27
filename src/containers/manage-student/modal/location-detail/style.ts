@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const ModalContainer = styled.div`
   display: flex;
@@ -8,6 +9,13 @@ export const ModalContainer = styled.div`
   width: 685px;
   max-height: 80vh;
   overflow: visible;
+
+  ${mq.mobile} {
+    width: 100%;
+    max-width: 340px;
+    gap: 24px;
+    max-height: 70vh;
+  }
 `;
 
 export const Header = styled.div`
@@ -23,6 +31,11 @@ export const Title = styled.h2`
   color: #101828;
   line-height: 28px;
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: 24px;
+    line-height: 28px;
+  }
 `;
 
 export const CloseButton = styled.button`
@@ -39,17 +52,33 @@ export const CloseButton = styled.button`
   &:hover {
     opacity: 0.7;
   }
+
+  ${mq.mobile} {
+    width: 32px;
+    height: 32px;
+  }
 `;
 
 export const CloseIcon = styled.img`
   width: 24px;
   height: 24px;
+
+  ${mq.mobile} {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 export const InfoSection = styled.div`
   display: flex;
   align-items: center;
   gap: 29px;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
 `;
 
 export const StudentCount = styled.span`
@@ -58,6 +87,11 @@ export const StudentCount = styled.span`
   font-weight: 600;
   color: ${colors.primary};
   line-height: 28px;
+
+  ${mq.mobile} {
+    font-size: 18px;
+    line-height: 22px;
+  }
 `;
 
 export const HintText = styled.span`
@@ -66,6 +100,11 @@ export const HintText = styled.span`
   font-weight: 500;
   color: ${colors.subcolor};
   line-height: 18px;
+
+  ${mq.mobile} {
+    font-size: 13px;
+    line-height: 16px;
+  }
 `;
 
 export const StudentsGrid = styled.div`
@@ -94,6 +133,16 @@ export const StudentsGrid = styled.div`
       background: ${colors.n04};
     }
   }
+
+  ${mq.mobile} {
+    grid-template-columns: repeat(3, 1fr);
+    max-height: 300px;
+    padding-right: 6px;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+  }
 `;
 
 export const StudentCard = styled.div<{ $status?: string }>`
@@ -118,6 +167,11 @@ export const StudentCard = styled.div<{ $status?: string }>`
     border-color: ${colors.primary};
     opacity: 0.9;
   }
+
+  ${mq.mobile} {
+    height: 70px;
+    border-radius: 6px;
+  }
 `;
 
 export const StudentInfo = styled.div`
@@ -128,6 +182,12 @@ export const StudentInfo = styled.div`
   line-height: 1.4;
   text-align: center;
   padding: 8px;
+
+  ${mq.mobile} {
+    font-size: 14px;
+    line-height: 1.3;
+    padding: 6px;
+  }
 `;
 
 export const StatusButtons = styled.div`
@@ -136,6 +196,11 @@ export const StatusButtons = styled.div`
   width: 100%;
   height: 100%;
   padding: 8px;
+
+  ${mq.mobile} {
+    gap: 6px;
+    padding: 6px;
+  }
 `;
 
 export const StatusButton = styled.button`
@@ -158,5 +223,10 @@ export const StatusButton = styled.button`
 
   &:active {
     transform: scale(0.98);
+  }
+
+  ${mq.mobile} {
+    font-size: 14px;
+    border-radius: 4px;
   }
 `;

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { colors, radius } from '@/styles/theme';
+import { colors } from '@/styles/theme';
 import { mq } from '@/styles/media';
 
 export const Container = styled.div`
@@ -10,6 +10,10 @@ export const Container = styled.div`
   height: 100%;
   display: flex;
   justify-content: flex-start;
+
+  ${mq.mobile} {
+    position: relative;
+  }
 `;
 
 export const ZoomControls = styled.div`
@@ -20,6 +24,12 @@ export const ZoomControls = styled.div`
   align-items: center;
   z-index: 10;
   gap: 10px;
+
+  ${mq.mobile} {
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
 `;
 
 export const ZoomButton = styled.button`
@@ -45,6 +55,11 @@ export const ZoomButton = styled.button`
   &:active {
     transform: scale(0.95);
   }
+
+  ${mq.mobile} {
+    width: 36px;
+    height: 36px;
+  }
 `;
 
 export const MapContent = styled.div`
@@ -56,6 +71,10 @@ export const MapContent = styled.div`
   justify-content: center;
   align-items: center;
   position: relative;
+
+  ${mq.mobile} {
+    padding: 20px 4%;
+  }
 `;
 
 export const FloorLabel = styled.h3`
@@ -72,6 +91,9 @@ export const MapWrapper = styled.div`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  ${mq.mobile}{
+    top: 65%;
+  }
 `;
 export const Element = styled.div<{ $top: number; $left: number; $width: number; $height: number; $background: string; $cursor?: boolean }>`
     display: flex;

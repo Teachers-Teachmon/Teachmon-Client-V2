@@ -1,4 +1,5 @@
 import Modal from '@/components/layout/modal';
+import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
 
 interface MovementDetailModalProps {
@@ -17,8 +18,10 @@ export default function MovementDetailModal({
     onClose,
     data,
 }: MovementDetailModalProps) {
+    const { isMobile } = useDevice();
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} padding={isMobile ? "32px 20px" : "60px"}>
             <S.Container>
                 <S.Header>
                     <S.Title>{data.location}</S.Title>

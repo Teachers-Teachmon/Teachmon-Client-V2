@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
+import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
 
 interface DatePeriodSelectorProps {
@@ -32,6 +33,7 @@ export default function DatePeriodSelector({
 }: DatePeriodSelectorProps) {
     const [selectedDate, setSelectedDate] = useState(currentDate);
     const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
+    const { isMobile } = useDevice();
 
     const handleConfirm = () => {
         onConfirm(selectedDate, selectedPeriod);
@@ -50,7 +52,7 @@ export default function DatePeriodSelector({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} padding={isMobile ? "24px 20px" : "60px"}>
             <S.Container>
                 <S.Title>날짜 및 교시 선택</S.Title>
                 
