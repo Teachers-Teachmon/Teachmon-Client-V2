@@ -67,7 +67,7 @@ export default function Manage() {
                 
                 {isMobile ? (
                     <>
-                        <S.HamburgerButton onClick={() => setIsSidebarOpen(true)}>
+                        <S.HamburgerButton $isMapEnabled={isMapEnabled} onClick={() => setIsSidebarOpen(true)}>
                             <img src="/icons/common/hamburger.svg" alt="메뉴" />
                         </S.HamburgerButton>
                         <MobileHeaderRight

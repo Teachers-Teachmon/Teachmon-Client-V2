@@ -15,7 +15,6 @@ export const Container = styled.div`
 
   ${mq.mobile} {
     padding: 16px;
-    padding-top: 16px;
     grid-template-rows: auto 1fr;
     gap: 16px;
   }
@@ -115,7 +114,7 @@ export const FloorBadge = styled.span`
   font-weight: 500;
 `;
 
-export const HamburgerButton = styled.button`
+export const HamburgerButton = styled.button<{ $isMapEnabled?: boolean }>`
   display: none;
 
   ${mq.mobile} {
@@ -133,6 +132,7 @@ export const HamburgerButton = styled.button`
     padding: 0;
     z-index: 10;
     position: relative;
+    box-shadow: ${({ $isMapEnabled }) => $isMapEnabled ? '0 4px 12px 0 rgba(0, 0, 0, 0.08)' : 'none'};
 
     &:hover {
       background-color: ${colors.primary100};

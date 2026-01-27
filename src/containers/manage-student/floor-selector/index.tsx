@@ -1,3 +1,4 @@
+import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
 
 interface FloorSelectorProps {
@@ -7,10 +8,13 @@ interface FloorSelectorProps {
 
 export default function FloorSelector({ selectedFloor, onFloorChange }: FloorSelectorProps) {
     const floors = [1, 2, 3, 4];
+    const { isMobile } = useDevice();
 
     return (
         <S.Container>
-            <S.HintText>스크롤로 확대, 축소할 수 있어요</S.HintText>
+            <S.HintText>
+                {isMobile ? '확대, 축소할 수 있어요' : '스크롤로 확대, 축소할 수 있어요'}
+            </S.HintText>
             <S.FloorTabs>
                 {floors.map((floor) => (
                     <S.FloorTab

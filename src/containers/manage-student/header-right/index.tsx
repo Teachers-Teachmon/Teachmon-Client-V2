@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LegendPopup from '../question-popup';
+import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
 
 interface HeaderRightProps {
@@ -11,6 +12,14 @@ interface HeaderRightProps {
 export default function HeaderRight({ isMapEnabled, onMapToggle }: HeaderRightProps) {
     const [isLegendOpen, setIsLegendOpen] = useState(false);
     const navigate = useNavigate();
+    const { isMobile } = useDevice();
+
+    const getMapIcon = () => {
+        if (isMobile) {
+            return isMapEnabled ? "/icons/student/frame.svg" : "/icons/student/map.svg";
+        }
+        return "/icons/student/map.svg";
+    };
 
     return (
         <S.Container $isEnabled={isMapEnabled}>
@@ -27,7 +36,7 @@ export default function HeaderRight({ isMapEnabled, onMapToggle }: HeaderRightPr
             <S.MapSection>
                 <S.MapGroup onClick={onMapToggle}>
                     <S.MapIcon 
-                        src={isMapEnabled ? "/icons/student/frame.svg" : "/icons/student/map.svg"} 
+                        src={getMapIcon()} 
                         alt="map" 
                     />
                     <S.MapText>지도</S.MapText>

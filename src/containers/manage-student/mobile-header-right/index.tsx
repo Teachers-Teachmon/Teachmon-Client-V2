@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import HeaderRight from '@/containers/manage-student/header-right';
 import TextInput from '@/components/ui/input/text-input';
 import * as S from './style';
@@ -30,7 +31,7 @@ export default function MobileHeaderRight({
     onClose();
   };
 
-  return (
+  return createPortal(
     <>
       <S.Overlay onClick={onClose} />
       <S.Container>
@@ -65,6 +66,7 @@ export default function MobileHeaderRight({
           onMapToggle={handleMapToggle}
         />
       </S.Container>
-    </>
+    </>,
+    document.body
   );
 }
