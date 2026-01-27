@@ -100,6 +100,7 @@ export const MobileCardContainer = styled.div`
         gap: 12px;
         overflow-y: auto;
         flex: 1;
+        padding-bottom: 80px;
     }
 `;
 
@@ -132,6 +133,7 @@ export const MobileCardRow = styled.div`
     gap: 12px;
     padding: 8px 0;
     border-bottom: 1px solid #f5f5f5;
+    min-height: 40px;
     
     &:last-of-type {
         border-bottom: none;
