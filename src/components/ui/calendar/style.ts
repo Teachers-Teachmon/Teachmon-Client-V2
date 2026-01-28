@@ -41,7 +41,7 @@ export const HeaderRow = styled.div`
 
   ${mq.mobile} {
     flex-direction: column;
-    align-items: center;
+    // align-items: center;
     gap: 8px;
   }
 `
@@ -54,6 +54,8 @@ export const MonthNavigation = styled.div`
 
   ${mq.mobile} {
     gap: 16px;
+    width: 100%;
+    justify-content: center;
   }
 `
 
@@ -178,8 +180,6 @@ export const MobilePopoverPointer = styled.span<{ placement: 'top' | 'bottom' }>
     width: 0.9rem;
     height: 0.9rem;
     background: ${colors.n01};
-    border-right: ${({ placement }) => (placement === 'top' ? 'none' : '1px solid #E8E8E8')};
-    border-bottom: ${({ placement }) => (placement === 'top' ? 'none' : '1px solid #E8E8E8')};
     transform: translateX(-50%) rotate(45deg);
   }
 `
