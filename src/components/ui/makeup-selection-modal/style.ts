@@ -1,11 +1,31 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
+
+export const ModalContent = styled.div`
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  ${mq.mobile} {
+    max-width: 100%;
+    gap: 16px;
+  }
+`;
 
 export const Title = styled.h2`
   font-size: ${fontSizes.H3};
   font-weight: 600;
   text-align: center;
   margin-bottom: 8px;
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.H4};
+  }
 `;
 
 export const DateText = styled.p`
@@ -13,12 +33,21 @@ export const DateText = styled.p`
   text-align: center;
   color: ${colors.n04};
   margin-bottom: 20px;
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.Body};
+    margin-bottom: 12px;
+  }
 `;
 
 export const SelectionContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  ${mq.mobile} {
+    gap: 10px;
+  }
 `;
 
 export const SelectionBox = styled.div<{ isSelected: boolean; isDisabled: boolean }>`
@@ -39,11 +68,19 @@ export const SelectionBox = styled.div<{ isSelected: boolean; isDisabled: boolea
   &:hover {
     border-color: ${({ isDisabled }) => (isDisabled ? colors.n02 : colors.primary)};
   }
+
+  ${mq.mobile} {
+    padding: 14px;
+  }
 `;
 
 export const SelectionText = styled.span`
   font-size: ${fontSizes.Body};
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 14px;
+  }
 `;
 
 export const Label = styled.label`
@@ -55,10 +92,19 @@ export const Label = styled.label`
 
 export const DropdownContainer = styled.div`
   margin-top: 10px;
+
+  ${mq.mobile} {
+    margin-top: 4px;
+  }
 `;
 
 export const ButtonContainer = styled.div`
   display: flex;
   gap: 12px;
   margin-top: 20px;
+
+  ${mq.mobile} {
+    margin-top: 12px;
+    flex-direction: row;
+  }
 `;
