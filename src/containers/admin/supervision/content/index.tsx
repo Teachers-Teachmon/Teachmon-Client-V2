@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import Calendar from '@/components/ui/calendar';
 import Dropdown from '@/components/ui/input/dropdown';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
+import TextInput from '@/components/ui/input/text-input';
 import type { CalendarEvent, DayInfo } from '@/types/calendar';
 import type { SupervisionCount } from '@/types/admin';
 import { SAMPLE_COUNTS, SAMPLE_EVENTS, SAMPLE_TEACHERS } from '@/containers/admin/supervision/data';
@@ -43,6 +44,7 @@ export default function AdminSupervisionContent({ viewMode, onViewModeChange }: 
 
   const [events, setEvents] = useState<CalendarEvent[]>(SAMPLE_EVENTS);
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   const selectedEvent = selectedEventId ? events.find((event) => event.id === selectedEventId) ?? null : null;
   const selectedEventType = selectedEvent ? getEventType(selectedEvent) : null;
@@ -184,6 +186,43 @@ export default function AdminSupervisionContent({ viewMode, onViewModeChange }: 
     }
   }, [viewMode]);
 
+  useEffect(() => {
+    if (viewMode !== 'count') return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [viewMode]);
+
+  useEffect(() => {
+    if (viewMode !== 'edit') return;
+    if (!editAnchor) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClearSelection();
+      }
+    };
+
+    const handlePointerDown = (event: MouseEvent | TouchEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      if (editorRef.current && editorRef.current.contains(target)) return;
+      handleClearSelection();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('touchstart', handlePointerDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('touchstart', handlePointerDown);
+    };
+  }, [viewMode, editAnchor]);
+
   return (
     <S.ContentWrapper>
       {viewMode === 'count' && (
@@ -194,12 +233,16 @@ export default function AdminSupervisionContent({ viewMode, onViewModeChange }: 
             </S.CloseButton>
           </S.SidePanelHeader>
           <S.SearchContainer>
-            <S.SearchInput
+          <S.SearchInputWrapper>
+            <TextInput
               type="text"
               placeholder="선생님을 입력해주세요"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              customHeight="40px"
+              customPadding="0 12px"
             />
+          </S.SearchInputWrapper>
             <S.SortButtons>
               <S.SortButton $active={sortOrder === 'desc'} onClick={() => setSortOrder('desc')}>
                 오름차순
@@ -238,11 +281,12 @@ export default function AdminSupervisionContent({ viewMode, onViewModeChange }: 
           events={events}
           showYear={true}
           showLegend={false}
+          showMobilePopover={viewMode !== 'edit'}
           onEventClick={viewMode === 'edit' ? handleEventClick : undefined}
           onDateClick={viewMode === 'edit' ? handleDateClick : undefined}
         />
         {viewMode === 'edit' && editAnchor && (
-          <S.FloatingEditor $top={editAnchor.top} $left={editAnchor.left}>
+          <S.FloatingEditor ref={editorRef} $top={editAnchor.top} $left={editAnchor.left}>
             <SearchDropdown
               placeholder="이름을 입력해주세요"
               searchPlaceholder="선생님 검색"
