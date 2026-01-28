@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { mq } from '@/styles/media';
 
 export const Header = styled.div`
   display: flex;
@@ -6,12 +7,30 @@ export const Header = styled.div`
   align-items: center;
   gap: 12px;
   margin-bottom: 20px;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    & > button {
+      width: 100%;
+    }
+  }
 `;
 
 export const LeftGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
+
+  ${mq.mobile} {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
 `;
 
 export const ToggleWrapper = styled.label`
@@ -20,6 +39,10 @@ export const ToggleWrapper = styled.label`
   gap: 8px;
   cursor: pointer;
   position: relative;
+
+  ${mq.mobile} {
+    align-self: flex-end;
+  }
 `;
 
 export const ToggleInput = styled.input`
@@ -54,6 +77,10 @@ export const ToggleTrack = styled.span<{ $checked: boolean }>`
 export const ToggleLabel = styled.span`
   font-size: 14px;
   color: #333333;
+
+  ${mq.mobile} {
+    font-size: 13px;
+  }
 `;
 
 export const SearchContainer = styled.div`
@@ -61,6 +88,10 @@ export const SearchContainer = styled.div`
   align-items: center;
   gap: 10px;
   width: 320px;
+
+  ${mq.mobile} {
+    width: 100%;
+  }
 `;
 
 export const SearchIcon = styled.img`
