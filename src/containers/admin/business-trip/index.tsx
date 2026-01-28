@@ -51,6 +51,7 @@ export default function BusinessTripSection({
             events={makeupEvents}
             showYear={true}
             showLegend={false}
+            showMobilePopover={false}
             onDateClick={onMakeupDateClick}
           />
         </S.CalendarWrapper>
@@ -80,6 +81,7 @@ export default function BusinessTripSection({
           events={tripEvents}
           showYear={true}
           showLegend={false}
+          showMobilePopover={false}
           onEventClick={onTripEventClick}
         />
       </S.CalendarWrapper>
