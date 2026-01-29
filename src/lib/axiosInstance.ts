@@ -1,5 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { reissueToken } from '@/services/auth/auth.api';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useUserStore } from '@/stores/useUserStore';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
@@ -14,7 +16,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('accessToken');
+        const token = useAuthStore.getState().accessToken;
         if (token && config.headers) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -40,8 +42,8 @@ axiosInstance.interceptors.response.use(
                 // 토큰 재발급 요청
                 const { access_token } = await reissueToken();
                 
-                // 새 토큰 저장
-                localStorage.setItem('accessToken', access_token);
+                // 새 토큰을 메모리에 저장
+                useAuthStore.getState().setAccessToken(access_token);
 
                 // 원래 요청에 새 토큰 적용
                 if (originalRequest.headers) {
@@ -52,7 +54,8 @@ axiosInstance.interceptors.response.use(
                 return axiosInstance(originalRequest);
             } catch (reissueError) {
                 // 토큰 재발급 실패 시 로그아웃 처리
-                localStorage.removeItem('accessToken');
+                useAuthStore.getState().clearAuth();
+                useUserStore.getState().clearUser();
                 window.location.href = '/';
                 return Promise.reject(reissueError);
             }

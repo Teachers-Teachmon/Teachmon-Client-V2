@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import FullPageLayout, {
   moveToSection,
+  type FullPageSection,
 } from '@/components/layout/fullpage';
-import type { FullPageSection } from '@/components/layout/fullpage';
 import styled from '@emotion/styled';
 import LandingHeader from '@/containers/landing/header';
 import MainLanding from '@/containers/landing/main';
@@ -12,28 +13,20 @@ import SkillLanding from '@/containers/landing/skill';
 import ExplainLanding from '@/containers/landing/explain';
 import FooterLanding from '@/containers/landing/footer';
 import LoginModal from '@/containers/login';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const accessToken = useAuthStore((state) => state.accessToken);
 
-  // 인증 체크 로직
+  // 인증 체크 로직 - 이미 로그인되어 있으면 메인으로 리다이렉트
   useEffect(() => {
-    const checkAuth = async () => {
-      // 여기에 인증 로직 추가
-      // const res = await Check();
-      // if (res.data === "Authentication Success") {
-      //   window.location.href = '/main';
-      // }
-      
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    };
-
-    checkAuth();
-  }, []);
+    if (accessToken) {
+      navigate('/main');
+    }
+  }, [accessToken, navigate]);
 
   // 섹션 정의
   const sections: FullPageSection[] = [
@@ -104,7 +97,7 @@ const LandingPage: React.FC = () => {
       
       {/* FullPage 레이아웃 */}
       <FullPageLayout
-      hasHeader={true}
+        hasHeader={true}
         sections={sections}
         onSectionChange={handleSectionChange}
       />
