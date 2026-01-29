@@ -6,7 +6,9 @@ export type StudentState =
   | 'AFTER_SCHOOL'
   | 'SELF_STUDY'
   | 'EARLY_LEAVE'
-  | 'EVASION';
+  | 'EVASION'
+  | 'AWAY'
+  | 'EXIT';
 
 export type Period = 
   | 'ONE_PERIOD'
@@ -32,9 +34,8 @@ export interface GetStudentScheduleParams {
 }
 
 export interface UpdateStudentScheduleRequest {
-  student_id: number;
+  schedule_id: number;
   state: StudentState;
-  period: Period;
 }
 
 export interface PlaceSchedule {
@@ -78,21 +79,10 @@ export const getStudentSchedule = async (params: GetStudentScheduleParams): Prom
 };
 
 // 학생 스케줄 변경 (조퇴, 이탈로 처리)
+// 학생 스케줄 변경 (조퇴, 이탈로 처리)
 export const updateStudentSchedule = async (data: UpdateStudentScheduleRequest): Promise<MessageResponse> => {
   const { schedule_id, state } = data;
-  const response = await axiosInstance.patch<MessageResponse>(`/student-schedule/${schedule_id}`, { state }, { skipLoading: true });
-  return response.data;
-};
-
-// 학생 스케줄 변경 취소 (조퇴, 이탈로 처리)
-export const cancelStudentSchedule = async (scheduleId: string, state: StudentState): Promise<MessageResponse> => {
-  console.log('cancelStudentSchedule API call:', {
-    scheduleId,
-    state,
-    scheduleIdType: typeof scheduleId,
-    url: `/student-schedule/${scheduleId}`
-  });
-  const response = await axiosInstance.delete<MessageResponse>(`/student-schedule/${scheduleId}`, { data: { state }, skipLoading: true });
+  const response = await axiosInstance.patch<MessageResponse>(`/student-schedule/${schedule_id}`, { state });
   return response.data;
 };
 
