@@ -52,8 +52,11 @@ export default function Sidebar() {
         <S.MobileSheet>
           <S.MobilePopoverPointer />
           <S.MobileSheetHeader>
-            <S.ProfileAvatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=teacher" alt="프로필" />
-            <S.MobileProfileName>{userName}</S.MobileProfileName>
+            <S.ProfileAvatar 
+              src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
+              alt="프로필" 
+            />
+            <S.MobileProfileName>{user?.name || '선생님'}</S.MobileProfileName>
           </S.MobileSheetHeader>
           <S.MobileLogoutButton onClick={handleLogout}>로그아웃</S.MobileLogoutButton>
         </S.MobileSheet>
@@ -89,20 +92,24 @@ export default function Sidebar() {
 
         <S.MobileActions>
           <S.MobileProfileButton onClick={handleProfileToggle} aria-label="프로필 메뉴">
-            <S.ProfileAvatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=teacher" alt="프로필" />
+            <S.ProfileAvatar 
+              src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
+              alt="프로필" 
+            />
           </S.MobileProfileButton>
         </S.MobileActions>
 
-      <S.FooterSection collapsed={isCollapsed}>
-        <S.ProfileAvatar 
-          src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
-          alt="프로필" 
-        />
-        <S.ProfileInfo collapsed={isCollapsed}>
-          <S.ProfileName>{user?.name || '선생님'}</S.ProfileName>
-          <S.LogoutButton onClick={handleLogout}>로그아웃</S.LogoutButton>
-        </S.ProfileInfo>
-      </S.FooterSection>
-    </S.SidebarContainer>
+        <S.FooterSection collapsed={isCollapsed}>
+          <S.ProfileAvatar 
+            src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
+            alt="프로필" 
+          />
+          <S.ProfileInfo collapsed={isCollapsed}>
+            <S.ProfileName>{user?.name || '선생님'}</S.ProfileName>
+            <S.LogoutButton onClick={handleLogout}>로그아웃</S.LogoutButton>
+          </S.ProfileInfo>
+        </S.FooterSection>
+      </S.SidebarContainer>
+    </>
   )
 }
