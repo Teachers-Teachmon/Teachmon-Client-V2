@@ -1,21 +1,73 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type {
-  StudentState,
-  Period,
-  ClassSchedule,
-  GetStudentScheduleParams,
-  UpdateStudentScheduleRequest,
-  PlaceSchedule,
-  GetPlacesByFloorParams,
-  PlaceStatus,
-  EvasionRecord,
-  MessageResponse,
-  FloorStatus,
-  GetAllFloorsStatusParams,
-  GetScheduleHistoryParams,
-  ScheduleHistoryRecord,
-    ExitHistoryResponse,
-} from '@/types/manage';
+
+// Enums
+export type StudentState = 
+  | 'LEAVE_SEAT'
+  | 'AFTER_SCHOOL'
+  | 'SELF_STUDY'
+  | 'EARLY_LEAVE'
+  | 'EVASION';
+
+export type Period = 
+  | 'ONE_PERIOD'
+  | 'TWO_PERIOD'
+  | 'THREE_PERIOD'
+  | 'FOUR_PERIOD'
+  | 'FIVE_PERIOD'
+  | 'SIX_PERIOD'
+  | 'SEVEN_PERIOD'
+  | 'EIGHT_AND_NINE_PERIOD'
+  | 'TEN_AND_ELEVEN_PERIOD';
+
+// Types
+export interface StudentSchedule {
+  number: number;
+  name: string;
+  state: StudentState;
+}
+
+export interface GetStudentScheduleParams {
+  grade: number;
+  period: Period;
+}
+
+export interface UpdateStudentScheduleRequest {
+  student_id: number;
+  state: StudentState;
+  period: Period;
+}
+
+export interface PlaceSchedule {
+  place_id: number;
+  place_name: string;
+  students: StudentSchedule[];
+}
+
+export interface GetPlacesByFloorParams {
+  floor: number;
+}
+
+export interface EvasionRecord {
+  leaveseat_id: number;
+  student_number: number;
+  student_name: string;
+  reason: string;
+  date: string;
+}
+
+export interface MessageResponse {
+  message: string;
+}
+
+export interface FloorStatus {
+  floor: number;
+  count: number;
+}
+
+export interface GetAllFloorsStatusParams {
+  day?: string; // 예시: 2026-01-01
+  period?: Period;
+}
 
 // APIs
 
@@ -63,9 +115,10 @@ export const getAllFloorsStatus = async (params?: GetAllFloorsStatusParams): Pro
   return response.data;
 };
 
-// 모든 층 상태 조회 (각 층에 몇 곳의 교실이 있는지)
-export const getAllFloorsStatus = async (): Promise<number[]> => {
-  const response = await axiosInstance.get<number[]>('/student-schedule/place');
+
+// 모든 층 상태 조회 (각 층에 이석/자습 상태의 교실이 몇 곳인지)
+export const getAllFloorsStatus = async (params?: GetAllFloorsStatusParams): Promise<FloorStatus[]> => {
+  const response = await axiosInstance.get<FloorStatus[]>('/student-schedule/place', { params });
   return response.data;
 };
 
