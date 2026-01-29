@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -24,6 +25,8 @@ export const Title = styled.h2`
     font-size: ${fontSizes.H4};
   }
 `;
+
+
 
 export const GradeTabs = styled.div`
   display: flex;
@@ -67,11 +70,20 @@ export const Container = styled.div`
     background: ${colors.n02};
     border-radius: 3px;
   }
+
+  ${mq.mobile} {
+    max-height: 35vh;
+    overflow-y: auto;
+  }
 `;
 
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+
+  ${mq.mobile} {
+    table-layout: auto;
+  }
 `;
 
 export const TableRow = styled.tr`

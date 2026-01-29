@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -65,6 +66,12 @@ export const Container = styled.div`
   &::-webkit-scrollbar-thumb {
     background: ${colors.n02};
     border-radius: 3px;
+  }
+
+  ${mq.mobile} {
+    max-height: 40vh;
+    padding: 1rem;
+    overflow-y: auto;
   }
 `;
 
@@ -168,6 +175,10 @@ export const ClassList = styled.div`
   gap: 1rem;
   
   @media (max-width: 1400px) {
+    grid-template-columns: 1fr;
+  }
+
+  ${mq.mobile} {
     grid-template-columns: 1fr;
   }
 `;

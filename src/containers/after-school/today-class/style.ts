@@ -1,11 +1,18 @@
 import styled from '@emotion/styled';
 import { fontSizes, colors, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  ${mq.mobile} {
+    max-height: 30vh;
+    overflow-y: auto;
+  }
 `;
+
 
 export const Title = styled.h2`
   font-size: ${fontSizes.H3};
