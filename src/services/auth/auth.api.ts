@@ -2,7 +2,7 @@ import axiosInstance from '@/lib/axiosInstance';
 
 export interface UserInfo {
   name: string;
-  profileImage: string;
+  profile: string;
 }
 
 interface AuthCodeResponse {
