@@ -65,8 +65,11 @@ axiosInstance.interceptors.response.use(
                 return Promise.reject(reissueError);
             }
         }
+        
+        if (!error.config?.skipLoading) {
+            useLoadingStore.getState().stopLoading();
+        }
 
-        // TODO: 인증/인가 구현시 한번에 구현예정
         return Promise.reject(error);
     }
 );
