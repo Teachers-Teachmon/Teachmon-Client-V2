@@ -9,6 +9,7 @@ import Loading from '@/components/ui/loading'
 import { useLoadingStore } from '@/stores/useLoadingStore'
 
 import App from './App.tsx'
+import AuthProvider from '@/components/ui/providers/index.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {

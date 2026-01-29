@@ -1,24 +1,35 @@
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { sendAuthCode, logout } from './auth.api';
+import { sendAuthCode, logout, getCurrentUser } from './auth.api';
 import { useUserStore } from '@/stores/useUserStore';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 export const useAuthCodeMutation = () => {
   const navigate = useNavigate();
   const setUser = useUserStore((state) => state.setUser);
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
   return useMutation({
     mutationFn: sendAuthCode,
-    onSuccess: ({ access_token, user }) => {
-      // 토큰 저장
-      localStorage.setItem('accessToken', access_token);
+    onSuccess: async ({ access_token }) => {
+      console.log('Access token received:', access_token);
       
-      // 유저 정보 저장 (Zustand store에 저장하면 자동으로 localStorage에도 저장됨)
-      setUser(user);
+      // 토큰을 메모리에 저장
+      setAccessToken(access_token);
       
-      toast.success('로그인 성공!');
-      navigate('/main');
+      try {
+        // 유저 정보를 별도로 조회
+        const user = await getCurrentUser();
+        setUser(user);
+        
+        toast.success('로그인 성공!');
+        navigate('/main');
+      } catch (error) {
+        console.error('유저 정보 조회 실패:', error);
+        toast.error('유저 정보를 불러오는데 실패했습니다.');
+        navigate('/');
+      }
     },
     onError: (error) => {
       console.error('OAuth 인증 실패:', error);
@@ -31,6 +42,7 @@ export const useAuthCodeMutation = () => {
 export const useLogoutMutation = () => {
   const navigate = useNavigate();
   const clearUser = useUserStore((state) => state.clearUser);
+  const clearAuth = useAuthStore((state) => state.clearAuth);
 
   return useMutation({
     mutationFn: logout,
@@ -45,9 +57,8 @@ export const useLogoutMutation = () => {
     },
     onSettled: () => {
       // 토큰 삭제
-      localStorage.removeItem('accessToken');
-      
-      // 유저 정보 삭제 (Zustand store에서 삭제하면 자동으로 localStorage에서도 삭제됨)
+      clearAuth();
+      // 유저 정보 삭제
       clearUser();
     },
   });

@@ -1,27 +1,21 @@
 import axiosInstance from '@/lib/axiosInstance';
 
 export interface UserInfo {
-  id: string;
   name: string;
   profileImage: string;
 }
 
 interface AuthCodeResponse {
   access_token: string;
-  user: UserInfo;
 }
 
 interface ReissueTokenResponse {
   access_token: string;
 }
 
-interface LoginUrlResponse {
-  url: string;
-}
-
-export const getLoginUrl = async (): Promise<LoginUrlResponse> => {
-  const response = await axiosInstance.get<LoginUrlResponse>('/auth/login');
-  return response.data;
+export const getLoginUrl = async (): Promise<string> => {
+  // Implement login URL logic if needed
+  return '';
 };
 
 export const sendAuthCode = async (code: string): Promise<AuthCodeResponse> => {
@@ -36,4 +30,9 @@ export const reissueToken = async (): Promise<ReissueTokenResponse> => {
 
 export const logout = async (): Promise<void> => {
   await axiosInstance.post('/auth/logout');
+};
+
+export const getCurrentUser = async (): Promise<UserInfo> => {
+  const response = await axiosInstance.get<UserInfo>('/user/me');
+  return response.data;
 };
