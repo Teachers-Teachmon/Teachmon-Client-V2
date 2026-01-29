@@ -89,11 +89,10 @@ export const ScheduleContainer = styled.div`
 
   ${mq.mobile} {
     flex-direction: column;
-    overflow-x: hidden;
-    overflow-y: auto;
+    flex: none;
+    overflow: visible;
     gap: 12px;
     padding-bottom: max(env(safe-area-inset-bottom), 80px);
-    -webkit-overflow-scrolling: touch;
   }
 `;
 
@@ -123,6 +122,9 @@ export const DayColumn = styled.div`
   ${mq.mobile} {
     min-width: 100%;
     min-height: 320px;
+    flex: none;
+    height: auto;
+    overflow: visible;
   }
 `;
 
@@ -151,6 +153,7 @@ export const PeriodSection = styled.div`
   ${mq.mobile} {
     padding: 12px;
     min-height: 140px;
+    flex: none;
   }
 `;
 
@@ -216,6 +219,13 @@ export const PeriodList = styled.div`
 
   &::-webkit-scrollbar-thumb:hover {
     background: ${colors.n03};
+  }
+
+  ${mq.mobile} {
+    overflow-y: visible;
+    flex: none;
+    padding-right: 0;
+    overscroll-behavior: auto;
   }
 `;
 
