@@ -3,16 +3,20 @@ import { colors, fontSizes, radius } from '@/styles/theme';
 import { mq } from '@/styles/media';
 
 export const ModalContent = styled.div`
-  width: 100%;
-  max-width: 500px;
+  width: 20rem;
+  max-width: 90vw;
+  max-height: 70vh;
   display: flex;
   flex-direction: column;
   gap: 24px;
   box-sizing: border-box;
   overflow-x: hidden;
+  overflow-y: auto;
 
   ${mq.mobile} {
+    width: 100%;
     max-width: 100%;
+    max-height: 80vh;
     gap: 16px;
   }
 `;
