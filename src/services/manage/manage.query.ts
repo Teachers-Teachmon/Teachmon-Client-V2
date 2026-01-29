@@ -8,6 +8,7 @@ import {
   getScheduleHistory,
   type GetStudentScheduleParams,
   type GetPlacesByFloorParams,
+  type GetAllFloorsStatusParams,
 } from './manage.api';
 
 export const manageQuery = {
@@ -29,10 +30,10 @@ export const manageQuery = {
       queryFn: () => getPlacesByFloor(params),
     }),
 
-  allFloorsStatus: () =>
+  allFloorsStatus: (params?: GetAllFloorsStatusParams) =>
     queryOptions({
-      queryKey: ['manage.allFloorsStatus'],
-      queryFn: () => getAllFloorsStatus(),
+      queryKey: ['manage.allFloorsStatus', params],
+      queryFn: () => getAllFloorsStatus(params),
     }),
 
   dailyEvasion: (date: string) =>

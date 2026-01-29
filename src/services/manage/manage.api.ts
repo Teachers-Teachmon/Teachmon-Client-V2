@@ -9,6 +9,12 @@ export type StudentState =
   | 'EVASION';
 
 export type Period = 
+  | 'ONE_PERIOD'
+  | 'TWO_PERIOD'
+  | 'THREE_PERIOD'
+  | 'FOUR_PERIOD'
+  | 'FIVE_PERIOD'
+  | 'SIX_PERIOD'
   | 'SEVEN_PERIOD'
   | 'EIGHT_AND_NINE_PERIOD'
   | 'TEN_AND_ELEVEN_PERIOD';
@@ -53,6 +59,16 @@ export interface MessageResponse {
   message: string;
 }
 
+export interface FloorStatus {
+  floor: number;
+  count: number;
+}
+
+export interface GetAllFloorsStatusParams {
+  day?: string; // 예시: 2026-01-01
+  period?: Period;
+}
+
 // APIs
 
 // 학년별 학생 전체 스케줄 조회
@@ -79,9 +95,10 @@ export const getPlacesByFloor = async (params: GetPlacesByFloorParams): Promise<
   return response.data;
 };
 
-// 모든 층 상태 조회 (각 층에 몇 곳의 교실이 있는지)
-export const getAllFloorsStatus = async (): Promise<number[]> => {
-  const response = await axiosInstance.get<number[]>('/student-schedule/place');
+
+// 모든 층 상태 조회 (각 층에 이석/자습 상태의 교실이 몇 곳인지)
+export const getAllFloorsStatus = async (params?: GetAllFloorsStatusParams): Promise<FloorStatus[]> => {
+  const response = await axiosInstance.get<FloorStatus[]>('/student-schedule/place', { params });
   return response.data;
 };
 
