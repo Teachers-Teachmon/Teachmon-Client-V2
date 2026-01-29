@@ -67,7 +67,7 @@ export default function Sidebar() {
 
       <S.FooterSection collapsed={isCollapsed}>
         <S.ProfileAvatar 
-          src={user?.profileImage || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
+          src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
           alt="프로필" 
         />
         <S.ProfileInfo collapsed={isCollapsed}>
