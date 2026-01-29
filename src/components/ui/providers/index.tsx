@@ -30,11 +30,8 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         const user = await getCurrentUser();
         console.log('User info received:', user);
         setUser(user);
-      } catch (error) {
-        // 리프레시 토큰이 없거나 만료된 경우, 또는 유저 정보 조회 실패 시
+      } catch (error: any) {
         console.log('Authentication failed:', error);
-        clearAuth();
-        clearUser();
       } finally {
         setIsInitialized(true);
       }
