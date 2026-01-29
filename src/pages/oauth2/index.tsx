@@ -17,7 +17,11 @@ export default function Oauth() {
       // 에러가 있는 경우
       const error = params.get('error');
       if (error) {
-        toast.error('로그인에 실패했습니다.');
+        if (error === 'UnsupportedAccountException') {
+          toast.error('해당 구글 계정은 로그인할 수 없습니다.');
+        } else {
+          toast.error('로그인에 실패했습니다.');
+        }
         navigate('/');
         return;
       }
