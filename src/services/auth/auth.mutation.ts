@@ -47,19 +47,22 @@ export const useLogoutMutation = () => {
   return useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      // 로그아웃 API 성공 후 토큰과 유저 정보 삭제
+      clearAuth();
+      clearUser();
+      
       navigate('/');
       toast.success('로그아웃되었습니다.');
     },
     onError: (error) => {
       console.error('로그아웃 실패:', error);
+      
+      // 에러가 발생해도 로컬 상태는 정리
+      clearAuth();
+      clearUser();
+      
       navigate('/');
       toast.error('로그아웃 중 오류가 발생했습니다.');
-    },
-    onSettled: () => {
-      // 토큰 삭제
-      clearAuth();
-      // 유저 정보 삭제
-      clearUser();
     },
   });
 };
