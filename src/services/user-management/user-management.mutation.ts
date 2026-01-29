@@ -64,7 +64,8 @@ export const useSetForbiddenDatesMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: setForbiddenDates,
+    mutationFn: ({ teacherId, data }: { teacherId: number; data: { weekdays: string[] } }) =>
+      setForbiddenDates(teacherId, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.forbiddenDates'] });
       toast.success(data.message);

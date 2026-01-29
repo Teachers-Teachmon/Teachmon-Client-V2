@@ -36,8 +36,12 @@ export interface DeleteTeacherRequest {
 
 export type ForbiddenDay = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
 
+export interface ForbiddenDatesResponse {
+  weekdays: ForbiddenDay[];
+}
+
 export interface SetForbiddenDateRequest {
-  days: ForbiddenDay[];
+  weekdays: ForbiddenDay[];
 }
 
 export interface CreateStudentRequest {
@@ -86,13 +90,16 @@ export const deleteTeacher = async (data: DeleteTeacherRequest): Promise<Message
 };
 
 // Forbidden Date APIs
-export const getForbiddenDates = async (): Promise<ForbiddenDay[]> => {
-  const response = await axiosInstance.get<ForbiddenDay[]>('/forbidden-date');
+export const getForbiddenDates = async (teacherId: number): Promise<ForbiddenDatesResponse> => {
+  const response = await axiosInstance.get<ForbiddenDatesResponse>(`/teacher/${teacherId}/ban`);
   return response.data;
 };
 
-export const setForbiddenDates = async (data: SetForbiddenDateRequest): Promise<MessageResponse> => {
-  const response = await axiosInstance.post<MessageResponse>('/forbidden-date', data);
+export const setForbiddenDates = async (
+  teacherId: number,
+  data: SetForbiddenDateRequest
+): Promise<MessageResponse> => {
+  const response = await axiosInstance.post<MessageResponse>(`/teacher/${teacherId}/ban`, data);
   return response.data;
 };
 

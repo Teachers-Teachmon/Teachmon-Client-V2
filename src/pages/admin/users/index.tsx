@@ -27,7 +27,10 @@ export default function AdminUsersPage() {
   const { data: teachersData } = useQuery(
     userManagementQuery.teachers(activeTab === TAB_TYPES.TEACHER ? debouncedQuery : undefined)
   );
-  const { data: forbiddenDatesData } = useQuery(userManagementQuery.forbiddenDates());
+  const { data: forbiddenDatesData } = useQuery({
+    ...userManagementQuery.forbiddenDates(selectedTeacher ? Number(selectedTeacher.id) : 0),
+    enabled: !!selectedTeacher,
+  });
   const { data: studentsData } = useQuery(
     userManagementQuery.students(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : undefined)
   );
@@ -38,8 +41,13 @@ export default function AdminUsersPage() {
   };
 
   const handleSaveForbiddenDates = (dates: string[]) => {
+    if (!selectedTeacher) return;
+    
     setForbiddenDates(
-      { days: dates as ForbiddenDay[] },
+      {
+        teacherId: Number(selectedTeacher.id),
+        data: { weekdays: dates as ForbiddenDay[] },
+      },
       {
         onSuccess: () => {
           setSelectedTeacher(null);
@@ -76,7 +84,7 @@ export default function AdminUsersPage() {
       {activeTab === TAB_TYPES.TEACHER ? (
         <Teachers
           teachersData={teachersData || []}
-          forbiddenDates={forbiddenDatesData || []}
+          forbiddenDates={[]}
           onOpenForbiddenDates={handleOpenForbiddenDates}
         />
       ) : (
@@ -86,7 +94,7 @@ export default function AdminUsersPage() {
       {selectedTeacher && forbiddenDatesData && (
         <ForbiddenDates
           teacherName={selectedTeacher.name}
-          initialDates={forbiddenDatesData}
+          initialDates={forbiddenDatesData.weekdays}
           onSave={handleSaveForbiddenDates}
           onCancel={handleCancelForbiddenDates}
         />
