@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
+import { useDevice } from '@/hooks/useDevice';
 import type { ExchangeRequest } from '@/types/home';
 import { formatDateFull, formatSupervisionType } from '@/utils/format';
 import * as S from './style';
@@ -25,6 +26,7 @@ export default function ExchangeDetailModal({
     onSubmit,
 }: ExchangeDetailModalProps) {
     const [reason, setReason] = useState('');
+    const { isMobile } = useDevice();
 
     useEffect(() => {
         if (isOpen && exchange) {
@@ -62,8 +64,10 @@ export default function ExchangeDetailModal({
         }
     };
 
+    const modalPadding = isMobile ? '32px 24px' : '52px 24px';
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose} padding="32px 24px">
+        <Modal isOpen={isOpen} onClose={onClose} padding={modalPadding}>
             <S.Container>
                 <S.Title>
                     {titleInfo.text}
