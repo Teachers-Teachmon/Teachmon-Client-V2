@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { setAuthToken, clearAuthToken } from '@/lib/axiosInstance';
 
 interface AuthState {
   accessToken: string | null;
@@ -11,7 +12,15 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
   isInitialized: false,
-  setAccessToken: (token) => set({ accessToken: token }),
-  clearAuth: () => set({ accessToken: null }),
+  setAccessToken: (token) => {
+    set({ accessToken: token });
+    // axios 인스턴스의 기본 헤더 업데이트
+    setAuthToken(token);
+  },
+  clearAuth: () => {
+    set({ accessToken: null });
+    // axios 인스턴스의 Authorization 헤더 제거
+    clearAuthToken();
+  },
   setInitialized: (initialized) => set({ isInitialized: initialized }),
 }));
