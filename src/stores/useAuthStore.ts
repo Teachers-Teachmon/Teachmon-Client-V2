@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { setAuthToken, clearAuthToken } from '@/lib/axiosInstance';
+import { setAuthToken, clearAuthToken } from '@/lib/authToken';
 
 interface AuthState {
   accessToken: string | null;
@@ -13,11 +13,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
   isInitialized: false,
   setAccessToken: (token) => {
+    console.log('useAuthStore.setAccessToken called with:', token ? 'token exists' : 'null');
     set({ accessToken: token });
     // axios 인스턴스의 기본 헤더 업데이트
     setAuthToken(token);
   },
   clearAuth: () => {
+    console.log('useAuthStore.clearAuth called');
     set({ accessToken: null });
     // axios 인스턴스의 Authorization 헤더 제거
     clearAuthToken();

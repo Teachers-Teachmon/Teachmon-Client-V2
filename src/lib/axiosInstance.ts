@@ -15,24 +15,7 @@ const axiosInstance = axios.create({
     withCredentials: true,
 });
 
-// axios 인스턴스의 Authorization 헤더를 설정하는 함수
-export const setAuthToken = (token: string | null) => {
-    if (token) {
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-        console.log('Authorization header set');
-    } else {
-        delete axiosInstance.defaults.headers.common['Authorization'];
-        console.log('Authorization header cleared');
-    }
-};
-
-// axios 인스턴스의 Authorization 헤더를 제거하는 함수
-export const clearAuthToken = () => {
-    delete axiosInstance.defaults.headers.common['Authorization'];
-    console.log('Authorization header cleared');
-};
-
-// Request 인터셉터는 이제 필요 없음 (기본 헤더가 스토어에서 자동 설정됨)
+// Request 인터셉터 - 디버깅용
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         if (!config.skipLoading) {
