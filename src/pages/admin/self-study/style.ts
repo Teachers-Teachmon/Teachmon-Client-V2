@@ -14,7 +14,8 @@ export const Container = styled.div`
   ${mq.mobile} {
     height: 100dvh;
     padding: 12px;
-    overflow: hidden;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
   }
 `;
 
