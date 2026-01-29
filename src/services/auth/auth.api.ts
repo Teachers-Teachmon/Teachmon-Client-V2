@@ -13,11 +13,6 @@ interface ReissueTokenResponse {
   access_token: string;
 }
 
-export const getLoginUrl = async (): Promise<string> => {
-  // Implement login URL logic if needed
-  return '';
-};
-
 export const sendAuthCode = async (code: string): Promise<AuthCodeResponse> => {
   const response = await axiosInstance.post<AuthCodeResponse>('/auth/code', { code });
   return response.data;
@@ -33,6 +28,6 @@ export const logout = async (): Promise<void> => {
 };
 
 export const getCurrentUser = async (): Promise<UserInfo> => {
-  const response = await axiosInstance.get<UserInfo>('/user/me');
+  const response = await axiosInstance.get<UserInfo>('/teacher/me');
   return response.data;
 };
