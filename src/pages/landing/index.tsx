@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import FullPageLayout, {
   moveToSection,
   type FullPageSection,
@@ -13,20 +12,10 @@ import SkillLanding from '@/containers/landing/skill';
 import ExplainLanding from '@/containers/landing/explain';
 import FooterLanding from '@/containers/landing/footer';
 import LoginModal from '@/containers/login';
-import { useAuthStore } from '@/stores/useAuthStore';
 
 const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const accessToken = useAuthStore((state) => state.accessToken);
-
-  // 인증 체크 로직 - 이미 로그인되어 있으면 메인으로 리다이렉트
-  useEffect(() => {
-    if (accessToken) {
-      navigate('/main');
-    }
-  }, [accessToken, navigate]);
 
   // 섹션 정의
   const sections: FullPageSection[] = [
