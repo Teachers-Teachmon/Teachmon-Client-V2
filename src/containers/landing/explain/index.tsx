@@ -35,6 +35,7 @@ const ExplainLanding: React.FC = () => {
   return (
     <S.ExplainContainer>
       <S.ContentWrapper>
+        <S.MobileTitle>사용설명 영상</S.MobileTitle>
         <S.VideoWrapper>
             {/* 이건 나중에 설명영상을 바꿔야함 */}
           <S.VideoIframe

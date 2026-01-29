@@ -5,6 +5,8 @@ import { Global } from '@emotion/react'
 import { globalStyles } from '@/styles/globalStyle'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import Loading from '@/components/ui/loading'
+import { useLoadingStore } from '@/stores/useLoadingStore'
 
 import App from './App.tsx'
 import AuthProvider from '@/components/ui/providers/index.tsx'
@@ -17,26 +19,35 @@ const queryClient = new QueryClient({
     },
   },
 })
+function Root() {
+  const isLoading = useLoadingStore((state) => state.isLoading);
+
+  return (
+    <AuthProvider>
+      {isLoading && <Loading />}
+      <App />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </AuthProvider>
+  );
+}
+
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <Global styles={globalStyles} />
-        <App />
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </AuthProvider>
+      <Global styles={globalStyles} />
+      <Root />
     </QueryClientProvider>
   </BrowserRouter>
 )

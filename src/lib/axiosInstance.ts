@@ -2,6 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { reissueToken } from '@/services/auth/auth.api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useUserStore } from '@/stores/useUserStore';
+import { useLoadingStore } from '@/stores/useLoadingStore';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
@@ -21,12 +22,16 @@ axiosInstance.interceptors.request.use(
         return config;
     },
     (error: AxiosError) => {
+        useLoadingStore.getState().stopLoading();
         return Promise.reject(error);
     }
 );
 
 axiosInstance.interceptors.response.use(
     (response) => {
+        if (!response.config.skipLoading) {
+            useLoadingStore.getState().stopLoading();
+        }
         return response;
     },
     async (error: AxiosError) => {
@@ -52,8 +57,11 @@ axiosInstance.interceptors.response.use(
                 window.location.href = '/';
                 return Promise.reject(reissueError);
             }
+        if (!error.config?.skipLoading) {
+            useLoadingStore.getState().stopLoading();
         }
 
+        // TODO: 인증/인가 구현시 한번에 구현예정
         return Promise.reject(error);
     }
 );
