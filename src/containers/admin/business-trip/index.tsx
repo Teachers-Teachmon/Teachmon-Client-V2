@@ -53,6 +53,7 @@ export default function BusinessTripSection({
             showLegend={false}
             showMobilePopover={false}
             onDateClick={onMakeupDateClick}
+            onEventClick={(event) => onMakeupDateClick(event.date)}
           />
         </S.CalendarWrapper>
       </S.Container>
