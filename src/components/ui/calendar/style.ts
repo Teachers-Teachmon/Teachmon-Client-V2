@@ -41,7 +41,6 @@ export const HeaderRow = styled.div`
 
   ${mq.mobile} {
     flex-direction: column;
-    // align-items: center;
     gap: 8px;
   }
 `
