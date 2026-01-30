@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -7,12 +8,22 @@ export const Container = styled.div`
   padding: 2rem;
   gap: 1.5rem;
   position: relative;
+
+  ${mq.mobile} {
+    padding: 2rem 0rem;
+    flex-direction: column;
+  }
 `;
 
 export const CalendarWrapper = styled.div`
   flex: 1;
   background: ${colors.background};
   border-radius: ${radius.lg};
+
+  ${mq.mobile} {
+    flex: none;
+    width: 100%;
+  }
 `;
 
 export const SidePanel = styled.div`
@@ -28,6 +39,15 @@ export const SidePanel = styled.div`
   margin-top: 20px;
 
   animation: slideIn 0.3s ease-out;
+
+  ${mq.mobile} {
+    width: 100%;
+    margin-top: 1rem;
+    align-self: stretch;
+    padding: 1rem;
+    gap: 1rem;
+    min-height: 0;
+  }
 
   @keyframes slideIn {
     from {
@@ -45,6 +65,10 @@ export const PanelSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+
+  ${mq.mobile} {
+    gap: 0.5rem;
+  }
 `;
 
 export const SectionTitle = styled.h3`
@@ -52,6 +76,10 @@ export const SectionTitle = styled.h3`
   font-weight: 600;
   color: ${colors.text};
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.Small};
+  }
 `;
 
 export const GradeTabsContainer = styled.div`
@@ -73,6 +101,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
 
   &:hover {
     background: ${props => props.$active ? colors.primary100 : colors.n02};
+  }
+
+  ${mq.mobile} {
+    padding: 0.5rem 0.75rem;
+    font-size: ${fontSizes.Small};
   }
 `;
 
@@ -107,6 +140,16 @@ export const DropdownButton = styled.button`
     width: 14px;
     height: 14px;
   }
+
+  ${mq.mobile} {
+    padding: 0.6rem 0.8rem;
+    font-size: ${fontSizes.Small};
+    
+    img {
+      width: 12px;
+      height: 12px;
+    }
+  }
 `;
 
 export const DropdownMenu = styled.div`
@@ -121,6 +164,10 @@ export const DropdownMenu = styled.div`
   overflow-y: auto;
   z-index: 10;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  ${mq.mobile} {
+    max-height: 150px;
+  }
 `;
 
 export const DropdownItem = styled.div<{ $selected: boolean }>`
@@ -137,6 +184,12 @@ export const DropdownItem = styled.div<{ $selected: boolean }>`
   &:hover {
     background: ${props => props.$selected ? colors.primary100 : colors.n02};
   }
+
+  ${mq.mobile} {
+    padding: 0.6rem 0.8rem;
+    font-size: 12px;
+    gap: 0.4rem;
+  }
 `;
 
 export const Checkbox = styled.div<{ $checked: boolean }>`
@@ -151,10 +204,20 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
   justify-content: center;
   font-size: 12px;
   flex-shrink: 0;
+
+  ${mq.mobile} {
+    width: 14px;
+    height: 14px;
+    font-size: 10px;
+  }
 `;
 
 export const ButtonWrapper = styled.div`
   margin-top: auto;
+
+  ${mq.mobile} {
+    margin-top: 1rem;
+  }
 `;
 
 export const SelectedPeriodsWrapper = styled.div`
@@ -162,6 +225,12 @@ export const SelectedPeriodsWrapper = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   margin-top: 1rem;
+
+  ${mq.mobile} {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
 `;
 
 export const SelectedPeriodTag = styled.div`
@@ -174,6 +243,12 @@ export const SelectedPeriodTag = styled.div`
   color: ${colors.primary};
   font-size: 12px;
   font-weight: 500;
+
+  ${mq.mobile} {
+    padding: 0.4rem 0.6rem;
+    font-size: 11px;
+    gap: 0.3rem;
+  }
 `;
 
 export const RemovePeriodButton = styled.button`
@@ -267,5 +342,18 @@ export const DeleteButton = styled.button`
 
   &:hover {
     color: ${colors.primaryBackground};
+  }
+`;
+
+export const CancelButtonWrapper = styled.div`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+
+  ${mq.mobile} {
+    margin-left: 3rem;
+    position: absolute;
+    top: -0.2rem;
+    right: 0rem;
   }
 `;

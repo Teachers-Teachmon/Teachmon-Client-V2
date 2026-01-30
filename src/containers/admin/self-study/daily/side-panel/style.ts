@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const SidePanel = styled.div`
   width: 280px;
@@ -25,6 +26,13 @@ export const SidePanel = styled.div`
       transform: translateX(0);
     }
   }
+
+  ${mq.mobile} {
+    width: 100%;
+    max-height: 23vh;
+    margin-top: -1rem;
+    flex-direction: row;
+  }
 `;
 
 export const PanelSection = styled.div`
@@ -38,6 +46,10 @@ export const SectionTitle = styled.h3`
   font-weight: 600;
   color: ${colors.text};
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: 15px;
+  }
 `;
 
 export const GradeTabsContainer = styled.div`
@@ -59,6 +71,17 @@ export const GradeTab = styled.button<{ $active: boolean }>`
 
   &:hover {
     background: ${props => props.$active ? colors.primary100 : colors.n02};
+  }
+
+  ${mq.mobile} {
+    padding: 0.3rem 0.7rem;
+    font-size: 15px;
+    border-radius: 6px;
+    margin-left: 0.5rem;
+
+    ${mq.mobile} {
+
+    }
   }
 `;
 
@@ -107,6 +130,11 @@ export const DropdownMenu = styled.div`
   overflow-y: auto;
   z-index: 10;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  ${mq.mobile} {
+    width: 27vw;
+    max-height: 10vh;
+  }
 `;
 
 export const DropdownItem = styled.div<{ $selected: boolean }>`
@@ -148,6 +176,13 @@ export const SelectedPeriodsWrapper = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   margin-top: 1rem;
+
+  ${mq.mobile} {
+    grid-template-columns: repeat(1, 1fr);
+    gap: 0.2rem;
+    overflow-y: auto;
+    max-height: 10vh;
+  }
 `;
 
 export const SelectedPeriodTag = styled.div`
@@ -160,6 +195,10 @@ export const SelectedPeriodTag = styled.div`
   color: ${colors.primary};
   font-size: 12px;
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 10px;
+  }
 `;
 
 export const RemovePeriodButton = styled.button`

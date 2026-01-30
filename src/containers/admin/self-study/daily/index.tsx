@@ -156,13 +156,13 @@ export default function DailySection() {
           showLegend={false}
         />
         {startDate && (
-          <div style={{ position: 'absolute', top: '0px', right: '30px' }}>
+          <S.CancelButtonWrapper>
             <Button
               text="취소하기"
               variant="confirm"
               onClick={handleCancelSelection}
             />
-          </div>
+          </S.CancelButtonWrapper>
         )}
       </S.CalendarWrapper>
 
