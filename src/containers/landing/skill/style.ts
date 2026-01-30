@@ -84,8 +84,8 @@ export const TabsContainer = styled.div`
   padding-bottom: 12px;
 
   ${mq.mobile} {
-    gap: 16px;
-    overflow-x: auto;
+    border-bottom: none;
+    gap: 0;
     padding-bottom: 10px;
   }
 `;
@@ -160,8 +160,16 @@ export const TabletImage = styled.img<{ position: 'left' | 'right'; activeTab: n
   }};
   width: 40%;
   transition: all 0.3s ease;
-
-  ${mq.mobile} {
-    display: none;
+  ${mq.mobile}{
+    width: 70%;
+    ${props => (props.position === 'left' ? 'left: 4px;' : 'right: 4px;')}
+  top: ${props => {
+    const isEven = props.activeTab % 2 === 0;
+    if (isEven) {
+      return props.position === 'left' ? '60%' : '10%';
+    } else {
+      return props.position === 'left' ? '10%' : '60%';
+    }
+  }};
   }
 `;

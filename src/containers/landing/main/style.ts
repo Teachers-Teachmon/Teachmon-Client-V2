@@ -3,12 +3,14 @@ import { mq } from '@/styles/media';
 
 export const MainContainer = styled.div`
   width: 100%;
-    height: calc(100vh - 80px);
   position: relative;
   display: flex;
   align-items: center;
   flex-direction: column;
   overflow: hidden;
+  ${mq.mobile}{
+    gap: 20px;
+  }
 `;
 
 export const HeroSection = styled.div`
@@ -27,8 +29,10 @@ export const HeroSection = styled.div`
   background-position: center;
 
   ${mq.mobile} {
-    height: 50%;
-    padding: 60px 20px 0 20px;
+    width: 90%;
+    height: auto;
+    padding: 40px 20px 30px 20px;
+    border-radius: 0 0 8px 8px;
   }
 `;
 
@@ -43,6 +47,12 @@ export const BackgroundOverlay = styled.div`
   background-position: center;
   background-repeat: no-repeat;
   z-index: 0;
+  ${mq.mobile}{
+    top: 20%;
+    width:100%;
+    height: 50%;
+    background-size: cover;
+  }
 `;
 export const HeroContent = styled.div`
   position: relative;
@@ -57,13 +67,14 @@ export const HeroContent = styled.div`
 
   ${mq.mobile} {
     max-width: 100%;
+    gap: 16px;
   }
 `;
 
 export const Subtitle = styled.p`
   font-size: clamp(14px, 2.5vw, 31.5px);
   ${mq.mobile} {
-    font-size: clamp(14px, 5vw, 20px);
+    font-size: clamp(12px, 5vw, 16px);
   }
 `;
 
@@ -73,7 +84,7 @@ export const Title = styled.h1`
   line-height: 60px;  
 
   ${mq.mobile} {
-    font-size: clamp(14px, 8vw, 32px);
+    font-size: clamp(12px, 8vw, 28px);
     line-height: 40px;
   }
 `;
@@ -85,8 +96,8 @@ export const Description = styled.p`
   max-width: 509px;
 
   ${mq.mobile} {
-    font-size: 14px;
-    line-height: 24px;
+    font-size: 13px;
+    line-height: 20px;
   }
 `;
 
@@ -96,9 +107,7 @@ export const ButtonGroup = styled.div`
   align-items: center;
 
   ${mq.mobile} {
-    flex-direction: column;
     gap: 20px;
-    align-items: flex-start;
   }
 `;
 
@@ -115,13 +124,18 @@ export const ActionButton = styled.button`
   &:hover {
     opacity: 0.8;
   }
+  & > img{
+    ${mq.mobile}{
+      width: 100px;
+      height: 50px;
+    }
+  }
 `;
 
 export const ButtonIcon = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
   font-size: clamp(14px, 1.5vw, 18px);
   line-height: 21px;
@@ -166,11 +180,12 @@ export const CardsSection = styled.div`
   position: relative;
 
   ${mq.mobile} {
-    height: 50%;
-    padding: 20px;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    overflow-y: auto;
+    width: 90%;
+    padding: 0;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    height: 30%;
+    align-items: start;
   }
 `;
 
@@ -197,8 +212,10 @@ export const Card = styled.div`
   }
 
   ${mq.mobile} {
-    aspect-ratio: 1.75;
-    padding: 20px;
+    aspect-ratio: 0;
+    width: 100%;
+    height: 150px;
+    padding: 16px;
   }
 `;
 
@@ -214,9 +231,9 @@ export const CardIcon = styled.div`
   }
 
   ${mq.mobile} {
-    width: 28px;
-    height: 28px;
-    margin-bottom: 10px;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 8px;
   }
 `;
 
@@ -236,9 +253,9 @@ export const CardTitle = styled.h3`
   margin-bottom: 10px;
 
   ${mq.mobile} {
-    font-size: clamp(14px, 5vw, 18px);
-    line-height: 1.4;
-    margin-bottom: 8px;
+    font-size: 15px;
+    line-height: 1.3;
+    margin-bottom: 6px;
   }
 `;
 
@@ -251,7 +268,7 @@ export const CardDescription = styled.p`
   color: #7f7f7f;
 
   ${mq.mobile} {
-    font-size: 13px;
+    font-size: 11px;
     line-height: 1.4;
   }
 `;
@@ -266,5 +283,12 @@ export const CardArrow = styled.div`
   img {
     width: 20px;
     height: 20px;
+  }
+
+  ${mq.mobile} {
+    img {
+      width: 16px;
+      height: 16px;
+    }
   }
 `;

@@ -8,6 +8,9 @@ export const RoleContainer = styled.div`
   position: relative;
   display: flex;
   overflow: hidden;
+  ${mq.mobile}{
+    height: calc(100vh - 65px);
+  }
 `;
 
 export const BackgroundOverlay = styled.div`
@@ -129,6 +132,7 @@ export const ScreenshotImage = styled.img`
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 
   ${mq.mobile} {
+    display: none;
     border-radius: 8px;
   }
 `;
@@ -175,8 +179,8 @@ export const NavigationDots = styled.div`
   gap: 12px;
   z-index: 10;
 
-  ${mq.mobile} {
-    bottom: 40px;
+  ${mq.mobile}{
+    bottom: 15%;
     gap: 8px;
   }
 `;
