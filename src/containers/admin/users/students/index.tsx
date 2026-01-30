@@ -1,8 +1,9 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { useStudentColumns } from '@/hooks/useStudentUserManageColumns';
-import type { Student as ApiStudent } from '@/services/user-management/user-management.api';
+import { useDropdownMenu } from '@/hooks/useDropdownMenu';
+import type { Student as ApiStudent } from '@/services/search/search.api';
 import { 
   useCreateStudentMutation, 
   useUpdateStudentMutation, 
@@ -24,11 +25,10 @@ interface StudentsProps {
 }
 
 export default function Students({ studentsData }: StudentsProps) {
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const { openMenuId, setOpenMenuId, menuRef } = useDropdownMenu();
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localStudents, setLocalStudents] = useState<Student[]>([]);
-  const menuRef = useRef<HTMLDivElement>(null);
 
   const { mutate: createStudent } = useCreateStudentMutation();
   const { mutate: updateStudent } = useUpdateStudentMutation();
@@ -54,16 +54,6 @@ export default function Students({ studentsData }: StudentsProps) {
     editingStudent,
     onEditingStudentChange: setEditingStudent,
   });
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setOpenMenuId(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleEdit = (student: Student) => {
     setEditingStudent({ ...student });
@@ -171,21 +161,32 @@ export default function Students({ studentsData }: StudentsProps) {
   };
 
   const renderActions = (row: Student) => (
-    <S.ActionCell>
+    <S.ActionCell onClick={(e) => e.stopPropagation()}>
       {editingIds.has(row.id) ? (
         <S.EditButtonGroup>
           <Button text="취소" variant="cancel" onClick={() => handleCancel(row.id)} />
           <Button text="저장" variant="confirm" onClick={() => handleSave(row.id)} />
         </S.EditButtonGroup>
       ) : (
-        <div ref={openMenuId === row.id ? menuRef : null}>
-          <S.KebabButton onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}>
+        <div ref={openMenuId === row.id ? menuRef : null} style={{ position: 'relative' }}>
+          <S.KebabButton 
+            onClick={() => {setOpenMenuId(openMenuId === row.id ? null : row.id);}}
+          >
             <img src="/icons/common/kebabMenu.svg" alt="메뉴" />
           </S.KebabButton>
           {openMenuId === row.id && (
-            <S.DropdownMenu>
-              <S.DropdownItem onClick={() => handleEdit(row)}>수정</S.DropdownItem>
-              <S.DropdownItem $danger onClick={() => handleDelete(row.id)}>
+            <S.DropdownMenu data-dropdown-menu>
+              <S.DropdownItem 
+                data-dropdown-item
+                onClick={() => {handleEdit(row);}}
+              >
+                수정
+              </S.DropdownItem>
+              <S.DropdownItem 
+                data-dropdown-item
+                $danger 
+                onClick={() => { handleDelete(row.id);}}
+              >
                 삭제
               </S.DropdownItem>
             </S.DropdownMenu>

@@ -36,14 +36,6 @@ export interface DeleteTeacherRequest {
 
 export type ForbiddenDay = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
 
-export interface ForbiddenDatesResponse {
-  weekdays: ForbiddenDay[];
-}
-
-export interface SetForbiddenDateRequest {
-  weekdays: ForbiddenDay[];
-}
-
 export interface CreateStudentRequest {
   name: string;
   grade: number;
@@ -68,9 +60,10 @@ export interface MessageResponse {
 }
 
 // Teacher APIs
-export const getAllTeachers = async (query?: string): Promise<Teacher[]> => {
-  const params = query ? { query } : {};
-  const response = await axiosInstance.get<Teacher[]>('/teacher', { params });
+export const getAllTeachers = async (query: string = ""): Promise<Teacher[]> => {
+  const response = await axiosInstance.get<Teacher[]>('/teacher', { 
+    params: { query }
+  });
   return response.data;
 };
 
@@ -80,7 +73,7 @@ export const createTeacher = async (data: CreateTeacherRequest): Promise<Message
 };
 
 export const updateTeacher = async (data: UpdateTeacherRequest): Promise<MessageResponse> => {
-  const response = await axiosInstance.patch<MessageResponse>('/teacher', data);
+  const response = await axiosInstance.patch<MessageResponse>(`/teacher/${data.teacher_id}`, data);
   return response.data;
 };
 
@@ -90,26 +83,20 @@ export const deleteTeacher = async (data: DeleteTeacherRequest): Promise<Message
 };
 
 // Forbidden Date APIs
-export const getForbiddenDates = async (teacherId: number): Promise<ForbiddenDatesResponse> => {
-  const response = await axiosInstance.get<ForbiddenDatesResponse>(`/teacher/${teacherId}/ban`);
+export const getForbiddenDates = async (teacherId: number): Promise<ForbiddenDay[]> => {
+  const response = await axiosInstance.get<ForbiddenDay[]>(`/teacher/${teacherId}/ban`);
   return response.data;
 };
 
 export const setForbiddenDates = async (
   teacherId: number,
-  data: SetForbiddenDateRequest
+  weekdays: ForbiddenDay[]
 ): Promise<MessageResponse> => {
-  const response = await axiosInstance.post<MessageResponse>(`/teacher/${teacherId}/ban`, data);
+  const response = await axiosInstance.post<MessageResponse>(`/teacher/${teacherId}/ban`, weekdays);
   return response.data;
 };
 
 // Student APIs
-export const searchStudents = async (query?: string): Promise<Student[]> => {
-  const params = query ? { query } : {};
-  const response = await axiosInstance.get<Student[]>('/search/student', { params });
-  return response.data;
-};
-
 export const createStudent = async (data: CreateStudentRequest): Promise<MessageResponse> => {
   const response = await axiosInstance.post<MessageResponse>('/student', data);
   return response.data;

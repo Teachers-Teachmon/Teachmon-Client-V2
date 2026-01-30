@@ -8,6 +8,7 @@ import {
   createStudent,
   updateStudent,
   deleteStudent,
+  type ForbiddenDay,
 } from './user-management.api';
 
 // Teacher Mutations
@@ -64,8 +65,8 @@ export const useSetForbiddenDatesMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ teacherId, data }: { teacherId: number; data: { weekdays: string[] } }) =>
-      setForbiddenDates(teacherId, data),
+    mutationFn: ({ teacherId, weekdays }: { teacherId: number; weekdays: ForbiddenDay[] }) =>
+      setForbiddenDates(teacherId, weekdays),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.forbiddenDates'] });
       toast.success(data.message);
