@@ -8,6 +8,11 @@ export const Wrapper = styled.div`
   gap: 1.5rem;
   flex: 1;
   height: 100%;
+
+  ${mq.mobile} {
+    height: 45vh;
+    gap: 0.5rem;
+  }
 `;
 
 export const TitleSection = styled.div`
@@ -23,6 +28,10 @@ export const Title = styled.h2`
   
   @media (max-width: 1400px) {
     font-size: ${fontSizes.H4};
+  }
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.Body};
   }
 `;
 
@@ -44,6 +53,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
   @media (max-width: 1024px) {
     padding: 0.5rem 1.5rem;
     font-size: ${fontSizes.Body};
+  }
+
+  ${mq.mobile} {
+    padding: 0.25rem 0.75rem;
+    font-size: ${fontSizes.Small};
   }
 `;
 
@@ -69,7 +83,8 @@ export const Container = styled.div`
   }
 
   ${mq.mobile} {
-    max-height: 40vh;
+    height: 40vh;
+    max-height: 31vh;
     padding: 1rem;
     overflow-y: auto;
   }
@@ -80,7 +95,12 @@ export const DayNavigation = styled.div`
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom:0.9rem;
+
+  ${mq.mobile} {
+    gap: 0.5rem;
+    margin-bottom: 0rem;
+  }
 `;
 
 export const DayNavButton = styled.button`
@@ -101,6 +121,13 @@ export const DayNavButton = styled.button`
   &:hover img {
     filter: brightness(0) saturate(100%) invert(44%) sepia(85%) saturate(1200%) hue-rotate(200deg) brightness(95%) contrast(95%);
   }
+
+  ${mq.mobile} {
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
 `;
 
 export const DayText = styled.span`
@@ -109,18 +136,24 @@ export const DayText = styled.span`
   color: ${colors.primary};
   min-width: 140px;
   text-align: center;
+  
+  ${mq.mobile} {
+    min-width: 100px;
+    font-size: ${fontSizes.Body};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 export const TimeSlotList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
 `;
 
 export const TimeSlotSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 `;
 
 export const TimeHeader = styled.div`
@@ -136,6 +169,13 @@ export const TimeText = styled.span`
   color: ${colors.text};
   white-space: nowrap;
   flex-shrink: 0;
+
+  ${mq.mobile} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+  }
 `;
 
 export const ArrowButtons = styled.div`
@@ -179,7 +219,9 @@ export const ClassList = styled.div`
   }
 
   ${mq.mobile} {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(120px, auto);  
+    gap: 0.5rem;
   }
 `;
 
@@ -194,6 +236,12 @@ export const ClassCard = styled.div`
   gap: 0.75rem;
   overflow: hidden;
   min-width: 0;
+
+  ${mq.mobile} {
+    min-height: 70px;
+    padding: 0.5rem;
+    gap: 0.25rem;
+  }
 `;
 
 export const ClassSubject = styled.h4`
@@ -201,8 +249,14 @@ export const ClassSubject = styled.h4`
   font-weight: 600;
   color: ${colors.text};
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+
+  ${mq.mobile} {
+    font-size: 14px;
+  }
 `;
 
 export const ClassInfo = styled.p`

@@ -8,6 +8,11 @@ export const Wrapper = styled.div`
   gap: 1.5rem;
   min-height: 0;
   flex: 1;
+
+  ${mq.mobile} {
+    height: 20vh;
+    gap: 0.5rem;
+  }
 `;
 
 export const TitleSection = styled.div`
@@ -47,6 +52,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
     padding: 0.5rem 1.5rem;
     font-size: ${fontSizes.Body};
   }
+
+  ${mq.mobile} {
+    padding: 0.25rem 0.75rem;
+    font-size: ${fontSizes.Small};
+  }
 `;
 
 export const Container = styled.div`
@@ -72,7 +82,9 @@ export const Container = styled.div`
   }
 
   ${mq.mobile} {
-    max-height: 35vh;
+    padding: 0.5rem;
+    height: 25vh;
+    min-height: 0;
     overflow-y: auto;
   }
 `;
@@ -82,7 +94,7 @@ export const Table = styled.table`
   border-collapse: collapse;
 
   ${mq.mobile} {
-    table-layout: auto;
+    table-layout: fixed;
   }
 `;
 
@@ -92,12 +104,16 @@ export const TableRow = styled.tr`
   &:last-child {
     border-bottom: none;
   }
+
+  ${mq.mobile} {
+    border-bottom-width: 0.5px;
+  }
 `;
 
 export const TableCell = styled.td`
   padding: 1.25rem 0.75rem;
   vertical-align: middle;
-  
+
   &:first-of-type {
     padding-left: 2rem;
   }
@@ -121,12 +137,48 @@ export const TableCell = styled.td`
       padding-right: 1rem;
     }
   }
+
+  ${mq.mobile} {
+    padding: 0.4rem 0.15rem;
+
+    &:first-of-type {
+    padding-left: 1rem;
+    width: 8%;
+  }
+  
+  &:nth-of-type(2) {
+    width: 15%;
+  }
+  
+  &:nth-of-type(3) {
+    width: 27%;
+  }
+  
+  &:nth-of-type(4) {
+    width: 15%;
+  }
+  
+  &:last-child {
+    position: relative;
+    padding-right: 0.5rem;
+    text-align: right;
+    width: 5%;
+    overflow: visible;
+  }
+  }
 `;
 
 export const DayText = styled.span`
   font-size: ${fontSizes.H4};
   font-weight: 400;
   color: ${colors.text};
+
+  ${mq.mobile} {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 export const TimeTag = styled.span`
@@ -137,18 +189,45 @@ export const TimeTag = styled.span`
   font-size: ${fontSizes.Body};
   font-weight: 400;
   white-space: nowrap;
+
+  ${mq.mobile} {
+    font-size: 12px;
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    justify-content: center;
+  }
 `;
 
 export const ClassText = styled.span`
   font-size: ${fontSizes.H4};
   font-weight: 400;
   color: ${colors.text};
+
+  ${mq.mobile} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    margin-left: 0.3rem;
+  }
 `;
 
 export const ProgramText = styled.span`
   font-size: ${fontSizes.H4};
   color: ${colors.text};
   font-weight: 400;
+
+  ${mq.mobile} {
+    font-size: 12px;
+    overflow: hidden;
+    margin-top: 0.4rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    max-width: 60px;
+  }
 `;
 
 export const MenuButton = styled.button`
@@ -163,6 +242,15 @@ export const MenuButton = styled.button`
   img {
     width: 20px;
     height: 20px;
+  }
+
+  ${mq.mobile} {
+    padding: 0.1rem 0.2rem;
+
+    img {
+      width: 10px;
+      height: 10px;
+    }
   }
 `;
 
@@ -183,6 +271,18 @@ export const MenuDropdown = styled.div<{ $openUp?: boolean }>`
   z-index: 1000;
   overflow: hidden;
   min-width: 80px;
+
+  ${mq.mobile} {
+    min-width: 3rem;
+
+    ${({ $openUp }) => $openUp ? `
+    bottom: 100%;
+    margin-bottom: -1rem;
+  ` : `
+    top: 100%;
+    margin-top: -0.7rem;
+  `}
+  }
 `;
 
 export const MenuItem = styled.button`
@@ -199,6 +299,11 @@ export const MenuItem = styled.button`
   
   &:hover {
     color: ${colors.primary};
+  }
+
+  ${mq.mobile} {
+    padding: 0.5rem;
+    font-size: ${fontSizes.Caption};
   }
 `;
 

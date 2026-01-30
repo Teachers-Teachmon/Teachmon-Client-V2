@@ -135,11 +135,13 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
         title="종료"
         message={
           <div style={{ fontSize: '1.125rem', lineHeight: '1.6', textAlign: 'center' }}>
-            정말로{' '}
-            <span style={{ color: colors.primary, fontWeight: 600, fontSize: '1.25rem' }}>
-              {selectedClassForTerminate?.subject}
-            </span>
-            {' '}방과후를<br />종료하시겠습니까?
+            <div style={{ fontSize: '14px', lineHeight: '1.4', textAlign: 'center' }}>
+              정말로{' '}
+              <span style={{ color: colors.primary, fontWeight: 600, fontSize: '16px' }}>
+                {selectedClassForTerminate?.subject}
+              </span>
+              {' '}방과후를<br />종료하시겠습니까?
+            </div>
           </div>
         }
         cancelText="취소"

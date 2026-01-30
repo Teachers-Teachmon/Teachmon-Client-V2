@@ -1,10 +1,9 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Calendar from '@/components/ui/calendar';
-import type { CalendarEvent, CalendarRangeEvent } from '@/components/ui/calendar';
+import type { CalendarEvent } from '@/components/ui/calendar';
 import Button from '@/components/ui/button';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import { colors } from '@/styles/theme';
 import * as S from './style';
 
 export default function BusinessTripPage() {
@@ -88,7 +87,7 @@ export default function BusinessTripPage() {
   return (
     <S.PageContainer>
       <S.Header>
-        <S.Title>"{classData?.subject || '스프링 수업'}" 방과후 출장 날짜를 선택해주세요.</S.Title>
+        <S.Title>"{classData?.subject || ''}" 방과후 출장 날짜를 선택해주세요.</S.Title>
         <Button text="돌아가기" variant="confirm" width="120px" onClick={handleGoBack} />
       </S.Header>
       

@@ -10,6 +10,8 @@ export const PageContainer = styled.div`
     padding: 1rem;
     height: 100vh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 `;
 
@@ -40,8 +42,9 @@ export const LeftColumn = styled.div`
 
   ${mq.mobile} {
     gap: 1rem;
-    height: auto;
-    overflow: visible;
+    height: 100%;
+    overflow: hidden;
+    flex: 1;
   }
 `;
 
@@ -53,8 +56,9 @@ export const RightColumn = styled.div`
   overflow: hidden;
 
   ${mq.mobile} {
-    height: auto;
-    overflow: visible;
+    height: 100%;
+    overflow: hidden;
+    flex: 1;
   }
 `;
 
