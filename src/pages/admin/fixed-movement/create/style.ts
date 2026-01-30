@@ -1,11 +1,16 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100vh;
   background-color: ${colors.background};
+
+  ${mq.mobile} {
+    height: 90vh;
+  }
 `;
 
 export const Content = styled.div`
@@ -14,6 +19,11 @@ export const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  ${mq.mobile} {
+    padding: 2rem;
+    overflow-y: auto;
+  }
 `;
 
 export const Title = styled.h1`
@@ -23,6 +33,10 @@ export const Title = styled.h1`
   margin: 0 0 2rem 0;
   width: 100%;
   max-width: 800px;
+
+  ${mq.mobile} {
+    font-size: 20px;
+  }
 `;
 
 export const Form = styled.div`
@@ -207,5 +221,9 @@ export const ButtonRow = styled.div`
   > button {
     flex: 1;
     max-width: 500px;
+
+    ${mq.mobile} {
+      margin-top: -2rem;
+    }
   }
 `;
