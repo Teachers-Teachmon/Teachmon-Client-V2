@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const TableContainer = styled.div`
     flex: 1;
@@ -11,6 +12,10 @@ export const TableContainer = styled.div`
     flex-direction: column;
     max-height: 100%;
     overflow-y: auto;
+    
+    ${mq.mobile} {
+        display: none;
+    }
 `;
 
 export const Table = styled.table`
@@ -83,4 +88,82 @@ export const TableCell = styled.td`
         text-align: right;
         padding-right: 40px;
     }
+`;
+
+// 모바일 카드 스타일
+export const MobileCardContainer = styled.div`
+    display: none;
+    
+    ${mq.mobile} {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+        flex: 1;
+    }
+`;
+
+export const MobileCard = styled.div<{ $clickable?: boolean }>`
+    background: ${colors.background};
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    ${({ $clickable }) =>
+        $clickable &&
+        `
+        cursor: pointer;
+        transition: all 0.2s;
+
+        &:active {
+            background-color: #f9f9f9;
+            transform: scale(0.98);
+        }
+    `}
+`;
+
+export const MobileCardRow = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f5;
+    
+    &:last-of-type {
+        border-bottom: none;
+    }
+`;
+
+export const MobileCardLabel = styled.span`
+    font-size: 13px;
+    font-weight: 500;
+    color: ${colors.primaryGray};
+    flex-shrink: 0;
+    min-width: 80px;
+`;
+
+export const MobileCardValue = styled.span`
+    font-size: 14px;
+    font-weight: 500;
+    color: ${colors.text};
+    text-align: right;
+    word-break: break-word;
+`;
+
+export const MobileCardActions = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 8px;
+`;
+
+export const EmptyMessage = styled.div`
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+    font-size: 16px;
 `;
