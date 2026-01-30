@@ -29,9 +29,15 @@ export default function TableLayout<T extends { id: string }>({
                 <S.Table>
                     <S.TableHead>
                         <S.TableRow>
-                            <S.TableCell colSpan={columns.length + (renderActions ? 1 : 0)} style={{ textAlign: 'center', height: '300px', color: '#aaa', fontSize: '1.2rem' }}>
-                                데이터가 없습니다
-                            </S.TableCell>
+                            {columns.map((column) => (
+                                <S.TableHeader
+                                    key={column.key}
+                                    style={{ width: column.width }}
+                                >
+                                    {column.header}
+                                </S.TableHeader>
+                            ))}
+                            {renderActions && <S.TableHeader>{actionsHeader}</S.TableHeader>}
                         </S.TableRow>
                     </S.TableHead>
                     <tbody>
