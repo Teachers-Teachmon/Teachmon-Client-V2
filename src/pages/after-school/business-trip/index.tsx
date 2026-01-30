@@ -104,6 +104,7 @@ export default function BusinessTripPage() {
         />
       </S.CalendarWrapper>
 
+      
       <ConfirmModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -114,7 +115,7 @@ export default function BusinessTripPage() {
             <S.ModalHighlight>
               {selectedDate?.getFullYear()}년 {(selectedDate?.getMonth() || 0) + 1}월 {selectedDate?.getDate()}일 {classData?.subject || '스프링 수업'}
             </S.ModalHighlight>
-            을<br />출장 처리 하시겠습니까?
+            을 출장 처리 하시겠습니까?
           </S.ModalMessage>
         }
         cancelText="취소"

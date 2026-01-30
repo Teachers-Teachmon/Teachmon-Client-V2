@@ -80,12 +80,21 @@ export const ModalMessage = styled.div`
   text-align: center;
   color: #666;
   min-width: 180px;
+
+  ${mq.mobile} {
+    font-size: 14px;
+    min-width: 100px;
+  }
 `;
 
 export const ModalHighlight = styled.span`
   color: ${colors.primary};
   font-weight: 600;
   font-size: 1.25rem;
+
+  ${mq.mobile} {
+    font-size: 16px;
+  }
 `;
 
 export const StyledButton = styled.div`
