@@ -15,10 +15,10 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
     const [reason, setReason] = useState<string>('');
     const [studentSearch, setStudentSearch] = useState<string>('');
     const [isTeamMode, setIsTeamMode] = useState(false);
-    const [selectedStudents, setSelectedStudents] = useState<string[]>(['1401 김동욱']);
+    const [selectedStudents, setSelectedStudents] = useState<string[]>([]);
 
     const periodOptions = ['5교시', '6교시', '7교시', '8~9교시', '10~11교시'];
-    const mockStudents = ['1401 공덕현', '1402 김민수', '1403 박서준', '1404 이지은', '1405 최유진'];
+    const mockStudents = ['1401 김민수', '1402 김지훈'];
 
     const handleRemoveStudent = (student: string) => {
         setSelectedStudents((prev) => prev.filter((s) => s !== student));
@@ -87,10 +87,8 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                                     />
                                 }
                             />
-                        </S.FormGroup>
-
-                        {/* 학생 검색 드롭다운 */}
-                        {studentSearch && (
+                            {/* 학생 검색 드롭다운 */}
+                        {studentSearch && mockStudents.filter(student => student.includes(studentSearch)).length > 0 && (
                             <S.StudentDropdown>
                                 {mockStudents
                                     .filter(student => student.includes(studentSearch))
@@ -111,6 +109,7 @@ export default function MovementForm({ onNext, onCancel }: MovementFormProps) {
                                 }
                             </S.StudentDropdown>
                         )}
+                        </S.FormGroup>
                     </S.FormContent>
                 </S.FormSection>
 

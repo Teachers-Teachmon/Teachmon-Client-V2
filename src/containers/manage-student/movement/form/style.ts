@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
 import { mq } from '@/styles/media';
+import { dropdownSlideDown } from '@/styles/animations';
 
 export const Container = styled.div`
     width: 100%;
@@ -39,7 +40,7 @@ export const FormSection = styled.div`
     border: 1px solid ${colors.primary200};
     border-radius: ${radius.md};
     padding: 32px 44px;
-    height: fit-content;
+    height: 100%;
 
     ${mq.mobile} {
         height: max-content;
@@ -188,11 +189,14 @@ export const StudentDropdown = styled.div`
     right: 0;
     width: 100%;
     background-color: ${colors.background};
+    border: 1px solid ${colors.primary200};
     border-radius: ${radius.sm};
     overflow: hidden;
     margin-top: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     z-index: 10;
+    
+    animation: ${dropdownSlideDown} 0.2s ease-out;
 `;
 
 export const StudentDropdownItem = styled.div`
@@ -210,8 +214,16 @@ export const StudentDropdownItem = styled.div`
     letter-spacing: 0.36px;
     color: ${colors.text};
     
+    transition: all 0.15s ease;
+    
     &:hover {
-        background-color: ${colors.n03};
+        background-color: ${colors.primary100};
+        color: ${colors.primary};
+        padding-left: 28px;
+    }
+    
+    &:active {
+        background-color: ${colors.primary200};
     }
 `;
 
@@ -223,7 +235,7 @@ export const SelectedStudentsSection = styled.div`
     padding: 32px 17px;
     display: flex;
     flex-direction: column;
-    height: fit-content;
+    height: 100%;
 
     ${mq.mobile} {
         height: max-content;

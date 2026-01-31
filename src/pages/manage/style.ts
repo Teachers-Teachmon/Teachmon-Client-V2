@@ -42,6 +42,7 @@ export const RightSection = styled.div`
 
 export const ClassGrid = styled.div`
   display: grid;
+  overflow-y: scroll;
   width: 100%;
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;

@@ -60,7 +60,7 @@ export const TableHeader = styled.th`
     color: ${colors.primaryGray};
     height: 56px;
 
-    &:first-child {
+    &:first-of-type {
         padding-left: 40px;
     }
 
@@ -80,7 +80,7 @@ export const TableCell = styled.td`
     text-overflow: ellipsis;
     overflow: hidden;
 
-    &:first-child {
+    &:first-of-type {
         padding-left: 40px;
     }
 

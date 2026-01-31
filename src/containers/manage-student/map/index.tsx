@@ -47,11 +47,11 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
     const getStudentsForPlace = (_placeName: string) => {
         const mockStudents = [
             { studentNumber: 1401, studentName: '김동욱' },
-            { studentNumber: 1402, studentName: '김동욱' },
-            { studentNumber: 1403, studentName: '김동욱' },
-            { studentNumber: 1404, studentName: '김동욱' },
-            { studentNumber: 1405, studentName: '김동욱' },
-            { studentNumber: 1401, studentName: '김동욱' },
+            { studentNumber: 1402, studentName: '김민수' },
+            { studentNumber: 1403, studentName: '김지훈' },
+            { studentNumber: 1404, studentName: '김서연' },
+            { studentNumber: 1405, studentName: '김태희' },
+            { studentNumber: 1406, studentName: '김현우' },
         ];
         return mockStudents;
     };

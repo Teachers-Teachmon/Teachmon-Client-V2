@@ -71,3 +71,14 @@ export const fadeInBounce = keyframes`
     transform: translateY(0);
   }
 `;
+
+export const dropdownSlideDown = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
