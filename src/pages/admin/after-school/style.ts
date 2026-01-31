@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const PageContainer = styled.div`
   padding: 3rem;
@@ -8,6 +9,11 @@ export const PageContainer = styled.div`
   flex-direction: column;
   box-sizing: border-box;
   overflow: hidden;
+
+  ${mq.mobile} {
+    padding: 2rem;
+    gap: 0rem;
+  }
 `;
 
 export const Header = styled.div`
@@ -15,12 +21,21 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 export const LeftSection = styled.div`
   display: flex;
   gap: 2rem;
   align-items: center;
+
+  ${mq.mobile} {
+    gap: 1.5rem;
+  }
 `;
 
 export const QuarterDropdown = styled.div`
@@ -31,6 +46,10 @@ export const HeaderButtons = styled.div`
   display: flex;
   gap: 1rem;
   align-items: center;
+
+  ${mq.mobile} {
+    gap: 0.3rem;
+  }
 `;
 
 export const GoogleSheetActionButton = styled.button`
@@ -44,6 +63,11 @@ export const GoogleSheetActionButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
+
+  ${mq.mobile} {
+    font-size: 12px;
+    padding: 1rem 1rem;
+  }
 `;
 
 export const DaySelector = styled.div`
@@ -52,6 +76,11 @@ export const DaySelector = styled.div`
   align-items: center;
   gap: 1rem;
   margin-bottom: 2rem;
+
+  ${mq.mobile} {
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const DayText = styled.div<{ $active: boolean }>`
@@ -61,6 +90,11 @@ export const DayText = styled.div<{ $active: boolean }>`
   cursor: ${({ $active }) => ($active ? 'default' : 'pointer')};
   transition: color 0.2s;
   padding: 0.5rem 1rem;
+
+  ${mq.mobile} {
+    font-size: ${({ $active }) => ($active ? '1.3rem' : '1rem')};
+    white-space: nowrap;
+  }
 `;
 
 export const NavButton = styled.button`
@@ -91,6 +125,12 @@ export const GradeTab = styled.button<{ $active: boolean }>`
   font-weight: ${({ $active }) => ($active ? 600 : 400)};
   cursor: pointer;
   transition: all 0.2s;
+
+  ${mq.mobile} {
+    font-size: 12px;
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+  }
 `;
 
 export const ContentWrapper = styled.div`
@@ -183,6 +223,10 @@ export const TableWrapper = styled.div`
       white-space: nowrap;
     }
   }
+
+  ${mq.mobile} {
+    max-height: 55vh;
+  }
 `;
 
 export const AddButtonWrapper = styled.div`
@@ -190,6 +234,10 @@ export const AddButtonWrapper = styled.div`
   justify-content: center;
   padding: 0 0 2.5rem 0;
   flex-shrink: 0;
+
+  ${mq.mobile} {
+    margin-top: -1rem;
+  }
 `;
 
 export const StudentList = styled.div`
