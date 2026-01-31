@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import * as S from './style';
 
 interface DateInputProps {
@@ -17,6 +17,7 @@ export default function DateInput({
   helperText 
 }: DateInputProps) {
   const [isFocused, setIsFocused] = useState(false);
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
 
   const formatDate = (isoDate: string) => {
     if (!isoDate) return '';
@@ -45,12 +46,23 @@ export default function DateInput({
           value={displayValue}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          onClick={(e) =>
-            (e.currentTarget.nextSibling as HTMLInputElement)?.showPicker()
-          }
+          onClick={() => {
+            const hiddenInput = hiddenInputRef.current;
+            if (!hiddenInput) return;
+            if (hiddenInput.showPicker) {
+              hiddenInput.showPicker();
+              return;
+            }
+            hiddenInput.click();
+          }}
         />
 
-        <S.HiddenDateInput type="date" value={value} onChange={handleDateChange} />
+        <S.HiddenDateInput
+          ref={hiddenInputRef}
+          type="date"
+          value={value}
+          onChange={handleDateChange}
+        />
       </S.InputWrapper>
       {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
       {!error && helperText && <S.HelperText>{helperText}</S.HelperText>}
