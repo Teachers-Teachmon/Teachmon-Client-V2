@@ -60,8 +60,20 @@ export const AddButton = styled.button`
     color: ${colors.primary};
   }
 
-  ${mq.mobile}{
+  ${mq.mobile} {
     bottom: 100px;
+    width: 200px;
+    height: 44px;
+    gap: 8px;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+
+    span {
+      font-size: ${fontSizes.Body};
+    }
   }
 
   &:hover {
