@@ -7,11 +7,11 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0 auto;
 
   ${mq.mobile} {
     width: 100%;
-    align-items: stretch;
-    padding: 0.5rem;
+    max-width: 24rem;
   }
 `;
 
@@ -22,9 +22,8 @@ export const Title = styled.h2`
   margin-bottom: 1.5rem;
 
   ${mq.mobile} {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     margin-bottom: 1rem;
-    text-align: center;
   }
 `;
 
@@ -38,8 +37,9 @@ export const CardsContainer = styled.div`
   margin-bottom: 1.5rem;
 
   ${mq.mobile} {
-    flex-direction: row;
-    gap: 0.6rem;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.8rem;
     margin-bottom: 1rem;
   }
 `;
@@ -52,8 +52,8 @@ export const Card = styled.div`
   background: white;
 
   ${mq.mobile} {
-    width: calc(50% - 0.3rem);
-    padding: 1rem 1.1rem;
+    width: 100%;
+    padding: 1.1rem 1.2rem;
   }
 `;
 
@@ -64,7 +64,7 @@ export const CardTitle = styled.h3`
   margin-bottom: 0.6rem;
 
   ${mq.mobile} {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
 `;
 
@@ -118,7 +118,7 @@ export const ReasonLabel = styled.label`
   color: ${colors.n04};
 
   ${mq.mobile} {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
 `;
 
@@ -172,7 +172,7 @@ export const ButtonContainer = styled.div`
 
   ${mq.mobile} {
     width: 100%;
-    flex-direction: row;
     gap: 0.6rem;
+    flex-direction: row;
   }
 `;
