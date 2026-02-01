@@ -83,6 +83,11 @@ export const InfoRow = styled.div`
 export const InfoIcon = styled.img`
   width: 1.2rem;
   height: 1.2rem;
+
+  ${mq.mobile} {
+    width: 1rem;
+    height: 1rem;
+  }
 `;
 
 export const InfoText = styled.span`
