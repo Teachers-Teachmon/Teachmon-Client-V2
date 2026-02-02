@@ -14,6 +14,7 @@ export const Container = styled.div`
   border: 1px solid #E8EFFF;
   border-radius: ${radius.md};
   padding: 32px 24px;
+  overflow: visible;
   ${mq.mobile}{
     padding: 24px 12px;
   }
@@ -37,6 +38,7 @@ export const StudentsGrid = styled.div`
   gap: 0;
   width: 100%;
   height: 70%;
+  overflow: visible;
 
   ${mq.mobile}{
     height: 80%;
@@ -95,8 +97,9 @@ export const StatusPopupContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 1000;
   width: max-content;
+  min-width: 80px;
 `;
 
 export const StatusBadgeWrapper = styled.div`

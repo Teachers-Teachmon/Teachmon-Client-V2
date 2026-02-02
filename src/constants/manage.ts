@@ -96,11 +96,19 @@ export const ALL_PLACES = [
 // 학생 수
 export const STUDENT_COUNT = 16;
 
+// 목업 학생 이름 리스트
+const STUDENT_NAMES = [
+    '김민수', '이서연', '박지훈', '최유진',
+    '정수현', '강동훈', '윤서아', '한지민',
+    '임태양', '송하늘', '오바다', '신별',
+    '장구름', '권달', '문하늘', '배산'
+];
+
 // 목업 학생 데이터 생성 함수
 export const generateMockStudents = (count: number = STUDENT_COUNT) => {
     return Array.from({ length: count }, (_, i) => ({
         id: i + 1,
-        number: 1,
-        name: '김동욱'
+        number: i + 1,
+        name: STUDENT_NAMES[i % STUDENT_NAMES.length]
     }));
 };

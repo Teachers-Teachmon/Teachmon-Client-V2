@@ -19,6 +19,7 @@ export default function Manage() {
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [highlightedPlace, setHighlightedPlace] = useState<string>('');
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
     const { isMobile } = useDevice();
 
     const handleDatePeriodChange = (date: string, period: string) => {
@@ -26,8 +27,6 @@ export default function Manage() {
         setSelectedPeriod(period);
     };
 
-    // 나중에 백엔드 연동 시 ALL_PLACES는 삭제될 수 있습니다.
-    // 검색 결과 필터링
     const searchResults = searchQuery.trim() 
         ? ALL_PLACES.filter(place => 
             place.name && 
@@ -37,19 +36,18 @@ export default function Manage() {
           )
         : [];
 
-    // 검색 결과 선택 핸들러
     const handleSelectPlace = (place: { name: string; floor: number }) => {
         setSelectedFloor(place.floor);
         setHighlightedPlace(place.name);
-        setSearchQuery(''); // 검색어 초기화
+        setSearchQuery('');
     };
 
-    // 8x2 학생 배치
     const students = generateMockStudents();
 
     return (
         <S.Container>
             <S.Header isMapEnabled={isMapEnabled}>
+                {/* 왼쪽: 층 선택 or 날짜/학년 선택 */}
                 {isMapEnabled ? (
                     <FloorSelector
                         selectedFloor={selectedFloor}
@@ -65,11 +63,16 @@ export default function Manage() {
                     />
                 )}
                 
+                {/* 오른쪽: 모바일 햄버거 메뉴 or 데스크톱 헤더 */}
                 {isMobile ? (
                     <>
-                        <S.HamburgerButton $isMapEnabled={isMapEnabled} onClick={() => setIsSidebarOpen(true)}>
+                        <S.HamburgerButton 
+                            $isMapEnabled={isMapEnabled} 
+                            onClick={() => setIsSidebarOpen(true)}
+                        >
                             <img src="/icons/common/hamburger.svg" alt="메뉴" />
                         </S.HamburgerButton>
+                        
                         <MobileHeaderRight
                             isOpen={isSidebarOpen}
                             onClose={() => setIsSidebarOpen(false)}
@@ -87,6 +90,8 @@ export default function Manage() {
                             isMapEnabled={isMapEnabled}
                             onMapToggle={() => setIsMapEnabled(!isMapEnabled)}
                         />
+                        
+                        {/* 지도 모드일 때만 검색창 표시 */}
                         {isMapEnabled && (
                             <S.SearchContainer>
                                 <S.SearchInputWrapper>
@@ -96,6 +101,8 @@ export default function Manage() {
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </S.SearchInputWrapper>
+                                
+                                {/* 검색 결과 드롭다운 */}
                                 {searchResults.length > 0 && (
                                     <S.SearchResults>
                                         {searchResults.map((place, index) => (
@@ -115,15 +122,24 @@ export default function Manage() {
                 )}
             </S.Header>
 
+            {/* 메인 컨텐츠: 지도 or 학급 그리드 */}
             {isMapEnabled ? (
-                <Map selectedFloor={selectedFloor} highlightedPlace={highlightedPlace} />
+                <Map 
+                    selectedFloor={selectedFloor} 
+                    highlightedPlace={highlightedPlace} 
+                />
             ) : (
                 <S.ClassGrid>
                     {CLASSES.map((classNum) => (
                         <ClassCard
                             key={classNum}
                             classNum={classNum}
-                            students={students}
+                            students={students.map(student => ({
+                                ...student,
+                                id: classNum * 1000 + student.id
+                            }))}
+                            selectedStudentId={selectedStudentId}
+                            onStudentSelect={setSelectedStudentId}
                         />
                     ))}
                 </S.ClassGrid>

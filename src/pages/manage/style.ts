@@ -12,9 +12,10 @@ export const Container = styled.div`
   display: grid;
   grid-template-rows: 0.8fr 6fr;
   gap: 20px;
+  overflow-y: auto;
 
   ${mq.mobile} {
-    padding: 16px;
+    padding: 0;
     grid-template-rows: auto 1fr;
     gap: 16px;
   }
@@ -26,7 +27,9 @@ export const Header = styled.div<{ isMapEnabled?: boolean }>`
   align-items: ${({ isMapEnabled }) => isMapEnabled ? 'flex-start' : 'center'};
   position: relative;
   z-index: 1;
+  
   ${mq.mobile}{
+    padding: 16px;
     align-items: flex-start;
   }
 `;
@@ -42,10 +45,12 @@ export const RightSection = styled.div`
 
 export const ClassGrid = styled.div`
   display: grid;
-  overflow-y: scroll;
   width: 100%;
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
+  overflow: visible;
+  padding-top: 60px;
+  margin-top: -60px;
 
   ${mq.mobile} {
     grid-template-columns: 1fr;
