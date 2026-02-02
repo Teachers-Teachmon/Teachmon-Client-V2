@@ -16,7 +16,6 @@ export const useAuthInit = () => {
         setInitialized(true);
       } catch (error) {
         // 리프레시 토큰이 없거나 만료된 경우 로그아웃 처리
-        console.log('No valid refresh token, user needs to login');
         clearAuth();
         clearUser();
         setInitialized(true);
