@@ -10,6 +10,9 @@ export const Container = styled.div`
   height: 100%;
   box-sizing: border-box;
   position: relative;
+  ${mq.mobile}{
+    padding: 30px;
+  }
 `;
 
 export const FilterSection = styled.div`
