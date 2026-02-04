@@ -28,9 +28,9 @@ export const Title = styled.h2`
 export const ClassList = styled.div`
   display: flex;
   gap: 1rem;
+  flex: 1;
 
   ${mq.mobile} {
-    overflow-x: auto;
     padding-bottom: 0.5rem;
     gap: 0.5rem;
   }
@@ -44,6 +44,7 @@ export const EmptyState = styled.div`
   color: ${colors.n03};
   font-size: ${fontSizes.Body};
   text-align: center;
+  flex: 1;
 `;
 
 export const Card = styled.div`

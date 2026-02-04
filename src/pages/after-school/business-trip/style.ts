@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
-import { mq } from '@/styles/media';
 
 export const PageContainer = styled.div`
   padding: 2rem 3rem;
@@ -8,9 +7,6 @@ export const PageContainer = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
-  ${mq.mobile} {
-    padding: 2rem 1.3rem;
-  }
 `;
 
 export const Header = styled.div`
@@ -18,20 +14,12 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 3rem;
-
-  ${mq.mobile} {
-    gap: 0.5rem;
-  }
 `;
 
 export const Title = styled.h1`
   font-size: ${fontSizes.H2};
   font-weight: 600;
   color: ${colors.text};
-
-  ${mq.mobile} {
-    font-size: 16px;
-  }
 `;
 
 export const CalendarWrapper = styled.div`
@@ -68,10 +56,6 @@ export const CalendarWrapper = styled.div`
   @media (max-width: 1024px) {
     padding: 1rem;
   }
-
-  ${mq.mobile} {
-    padding: 0.5rem;
-  }
 `;
 
 export const ModalMessage = styled.div`
@@ -80,21 +64,12 @@ export const ModalMessage = styled.div`
   text-align: center;
   color: #666;
   min-width: 180px;
-
-  ${mq.mobile} {
-    font-size: 14px;
-    min-width: 100px;
-  }
 `;
 
 export const ModalHighlight = styled.span`
   color: ${colors.primary};
   font-weight: 600;
   font-size: 1.25rem;
-
-  ${mq.mobile} {
-    font-size: 16px;
-  }
 `;
 
 export const StyledButton = styled.div`

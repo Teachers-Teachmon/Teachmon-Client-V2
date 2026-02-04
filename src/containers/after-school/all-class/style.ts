@@ -67,26 +67,15 @@ export const Container = styled.div`
   border-radius: ${radius.lg};
   padding: 1.5rem;
   flex: 1;
-  overflow-y: auto;
   overflow-x: hidden;
   min-width: 0;
-  
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${colors.n02};
-    border-radius: 3px;
-  }
+  display: flex;
+  flex-direction: column;
 
   ${mq.mobile} {
     height: 40vh;
     max-height: 31vh;
     padding: 1rem;
-    overflow-y: auto;
   }
 `;
 
@@ -149,6 +138,19 @@ export const DayText = styled.span`
 export const TimeSlotList = styled.div`
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  flex: 1;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.n02};
+    border-radius: 3px;
+  }
 `;
 
 export const TimeSlotSection = styled.div`
@@ -283,5 +285,5 @@ export const EmptyState = styled.div`
   color: ${colors.n03};
   font-size: ${fontSizes.Body};
   text-align: center;
-  min-height: 300px;
+  height: 100%;
 `;

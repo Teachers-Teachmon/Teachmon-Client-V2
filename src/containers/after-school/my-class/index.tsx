@@ -16,7 +16,6 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
   const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<AfterSchoolClass | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
-  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
   const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
   const filteredClasses = classes.filter(cls => cls.grade === selectedGrade);
@@ -39,11 +38,6 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
     if (menuOpenId === id) {
       setMenuOpenId(null);
     } else {
-      const button = menuButtonRefs.current[id];
-      if (button) {
-        const rect = button.getBoundingClientRect();
-        setMenuPosition({ top: rect.bottom + 4, left: rect.right - 55 });
-      }
       setMenuOpenId(id);
     }
   };
@@ -80,32 +74,20 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
 
       <S.Container>
         {filteredClasses.length > 0 ? (
-          <S.Table>
-            <tbody>
-              {filteredClasses.map((cls, index) => (
-                <S.TableRow key={cls.id}>
-                  <S.TableCell>
-                    <S.DayText>{cls.day}</S.DayText>
-                  </S.TableCell>
-                  <S.TableCell>
-                    <S.TimeTag>{cls.time}</S.TimeTag>
-                  </S.TableCell>
-                  <S.TableCell>
-                    <S.ClassText>{cls.subject}</S.ClassText>
-                  </S.TableCell>
-                  <S.TableCell>
-                    <S.ProgramText>{cls.program}</S.ProgramText>
-                  </S.TableCell>
-                  <S.TableCell>
-                    <S.MenuButton 
-                      ref={(el) => { menuButtonRefs.current[cls.id] = el; }}
+          <>
+            {/* 모바일용 카드 리스트 */}
+            <S.MobileCardList>
+              {filteredClasses.map((cls) => (
+                <S.MobileCard key={cls.id}>
+                  <S.MobileCardTop>
+                    <S.MobileTimeTag>{cls.time}</S.MobileTimeTag>
+                    <S.MobileMenuButton
                       onClick={(e) => handleMenuToggle(e, cls.id)}
                     >
                       <img src="/icons/common/expand.svg" alt="메뉴" />
-                    </S.MenuButton>
+                    </S.MobileMenuButton>
                     {menuOpenId === cls.id && (
                       <S.MenuDropdown 
-                        $openUp={index >= filteredClasses.length - 2}
                         onClick={(e) => e.stopPropagation()}
                       >
                         {MENU_OPTIONS.map((option) => (
@@ -118,11 +100,58 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
                         ))}
                       </S.MenuDropdown>
                     )}
-                  </S.TableCell>
-                </S.TableRow>
+                  </S.MobileCardTop>
+                  <S.MobileCardSubject>{cls.subject}</S.MobileCardSubject>
+                  <S.MobileCardInfo>{cls.day} · {cls.program}</S.MobileCardInfo>
+                </S.MobileCard>
               ))}
-            </tbody>
-          </S.Table>
+            </S.MobileCardList>
+
+            {/* 데스크톱용 테이블 */}
+            <S.Table>
+              <tbody>
+                {filteredClasses.map((cls, index) => (
+                  <S.TableRow key={cls.id}>
+                    <S.TableCell>
+                      <S.DayText>{cls.day}</S.DayText>
+                    </S.TableCell>
+                    <S.TableCell>
+                      <S.TimeTag>{cls.time}</S.TimeTag>
+                    </S.TableCell>
+                    <S.TableCell>
+                      <S.ClassText>{cls.subject}</S.ClassText>
+                    </S.TableCell>
+                    <S.TableCell>
+                      <S.ProgramText>{cls.program}</S.ProgramText>
+                    </S.TableCell>
+                    <S.TableCell>
+                      <S.MenuButton 
+                        ref={(el) => { menuButtonRefs.current[cls.id] = el; }}
+                        onClick={(e) => handleMenuToggle(e, cls.id)}
+                      >
+                        <img src="/icons/common/expand.svg" alt="메뉴" />
+                      </S.MenuButton>
+                      {menuOpenId === cls.id && (
+                        <S.MenuDropdown 
+                          $openUp={index >= filteredClasses.length - 2}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {MENU_OPTIONS.map((option) => (
+                            <S.MenuItem 
+                              key={option}
+                              onClick={(e) => handleMenuItemClick(e, option, cls)}
+                            >
+                              {option}
+                            </S.MenuItem>
+                          ))}
+                        </S.MenuDropdown>
+                      )}
+                    </S.TableCell>
+                  </S.TableRow>
+                ))}
+              </tbody>
+            </S.Table>
+          </>
         ) : (
           <S.EmptyState>나의 방과후가 없습니다</S.EmptyState>
         )}
