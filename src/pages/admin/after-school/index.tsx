@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Button from '@/components/ui/button';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
+import ConfirmModal from '@/components/layout/modal/confirm';
 import type { TableColumn } from '@/types/afterSchool';
 import * as S from './style';
 import { WEEKDAYS, MOCK_ADMIN_AFTER_SCHOOL } from '@/constants/admin';
@@ -14,6 +15,8 @@ export default function AdminAfterSchoolPage() {
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [selectedClass, setSelectedClass] = useState<AdminAfterSchoolClass | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [selectedQuarter, setSelectedQuarter] = useState('1분기');
   const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
   const [classes, setClasses] = useState<AdminAfterSchoolClass[]>(MOCK_ADMIN_AFTER_SCHOOL);
@@ -41,6 +44,20 @@ export default function AdminAfterSchoolPage() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    if (isDeleteModalOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [isDeleteModalOpen]);
+
   const handleEdit = (classData: AdminAfterSchoolClass, e?: React.MouseEvent) => {
     if (e) {
       e.stopPropagation();
@@ -52,7 +69,16 @@ export default function AdminAfterSchoolPage() {
     if (e) {
       e.stopPropagation();
     }
-    setClasses(prev => prev.filter(cls => cls.id !== id));
+    setDeleteTargetId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteTargetId) {
+      setClasses(prev => prev.filter(cls => cls.id !== deleteTargetId));
+    }
+    setIsDeleteModalOpen(false);
+    setDeleteTargetId(null);
   };
 
   const handleAdd = () => {
@@ -164,8 +190,17 @@ export default function AdminAfterSchoolPage() {
         onClose={handleCloseModal}
       />
 
+      <ConfirmModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        title="삭제"
+        message="정말로 이 방과후를 삭제하시겠습니까?"
+        cancelText="취소"
+        confirmText="삭제"
+      />
 
-      <S.PageContainer>
+      <S.PageContainer style={{ overflow: isDeleteModalOpen ? 'hidden' : undefined }}>
         <AdminAfterSchoolHeaderContainer
           selectedQuarter={selectedQuarter}
           setSelectedQuarter={setSelectedQuarter}

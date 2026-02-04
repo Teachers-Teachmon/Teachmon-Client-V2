@@ -21,7 +21,7 @@ export const Content = styled.div`
   align-items: center;
 
   ${mq.mobile} {
-    padding: 2rem;
+    padding: 2rem 2rem 0 2rem;
   }
 `;
 
@@ -73,7 +73,10 @@ export const Form = styled.div`
 
   ${mq.mobile} {
     gap: 1rem;
-    height: 100%;
+    flex: none;
+    min-height: auto;
+    max-height: none;
+    height: calc(100vh - 240px);
   }
 `;
 

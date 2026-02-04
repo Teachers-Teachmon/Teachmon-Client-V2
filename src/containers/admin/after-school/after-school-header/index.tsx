@@ -1,4 +1,3 @@
-import React from 'react';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import * as S from '@/pages/admin/after-school/style';

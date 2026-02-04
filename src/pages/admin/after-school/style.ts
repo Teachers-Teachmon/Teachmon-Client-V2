@@ -12,7 +12,9 @@ export const PageContainer = styled.div`
 
   ${mq.mobile} {
     padding: 2rem;
+    padding-bottom: 4rem;
     gap: 0rem;
+    overflow-y: auto;
   }
 `;
 
@@ -25,6 +27,7 @@ export const Header = styled.div`
   ${mq.mobile} {
     flex-direction: column;
     gap: 1rem;
+    width: 100%;
   }
 `;
 
@@ -34,7 +37,9 @@ export const LeftSection = styled.div`
   align-items: center;
 
   ${mq.mobile} {
-    gap: 1.5rem;
+    width: 100%;
+    justify-content: space-between;
+    gap: 1rem;
   }
 `;
 
@@ -48,7 +53,9 @@ export const HeaderButtons = styled.div`
   align-items: center;
 
   ${mq.mobile} {
-    gap: 0.3rem;
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 `;
 
@@ -127,7 +134,7 @@ export const GradeTab = styled.button<{ $active: boolean }>`
   transition: all 0.2s;
 
   ${mq.mobile} {
-    font-size: 12px;
+    font-size: 14px;
     white-space: nowrap;
     padding: 0.5rem 1rem;
   }
