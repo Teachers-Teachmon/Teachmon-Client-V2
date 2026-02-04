@@ -19,12 +19,11 @@ const queryClient = new QueryClient({
     },
   },
 })
-
 function Root() {
   const isLoading = useLoadingStore((state) => state.isLoading);
 
   return (
-    <>
+    <AuthProvider>
       {isLoading && <Loading />}
       <App />
       <ToastContainer
@@ -39,9 +38,10 @@ function Root() {
         pauseOnHover
         theme="light"
       />
-    </>
+    </AuthProvider>
   );
 }
+
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>

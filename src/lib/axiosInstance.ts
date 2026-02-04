@@ -1,4 +1,7 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { reissueToken } from '@/services/auth/auth.api';
+import { useAuthStore } from '@/stores/useAuthStore';
+import { useUserStore } from '@/stores/useUserStore';
 import { useLoadingStore } from '@/stores/useLoadingStore';
 import { reissueToken } from '@/services/auth/auth.api';
 import { useAuthStore } from '@/stores/useAuthStore';
@@ -18,14 +21,7 @@ const axiosInstance = axios.create({
 // Request 인터셉터 - 디버깅용
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        if (!config.skipLoading) {
-            useLoadingStore.getState().startLoading();
-        }
-
-        const token = localStorage.getItem('accessToken');
-        if (token && config.headers) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+        console.log('Request interceptor - Authorization header:', config.headers?.Authorization ? 'set' : 'not set');
         return config;
     },
     (error: AxiosError) => {
