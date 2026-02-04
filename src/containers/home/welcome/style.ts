@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const WelcomeCard = styled.div<{ bgImage: string }>`
   flex: 2;
@@ -27,6 +28,11 @@ export const WelcomeCard = styled.div<{ bgImage: string }>`
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
   }
+
+  ${mq.mobile} {
+    padding: 20px;
+    min-height: 200px;
+  }
 `;
 
 export const WelcomeContent = styled.div`
@@ -42,6 +48,10 @@ export const WelcomeTitle = styled.h1`
   font-size: clamp(24px, 3vw, 48px);
   color: ${colors.n01};
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 22px;
+  }
 `;
 
 export const WelcomeBottom = styled.div`
@@ -50,16 +60,30 @@ export const WelcomeBottom = styled.div`
   align-items: flex-end;
   flex-wrap: wrap;
   gap: 16px;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 `;
 
 export const WelcomeMessage = styled.p`
   font-size: clamp(18px, 2vw, 32px);
   color: ${colors.n01};
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 16px;
+  }
 `;
 
 export const SupervisionCount = styled.p`
   font-size: clamp(14px, 1.5vw, 24px);
   color: ${colors.n01};
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 13px;
+  }
 `;

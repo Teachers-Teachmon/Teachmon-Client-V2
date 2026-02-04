@@ -3,12 +3,11 @@ import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { USER_ROLES } from '@/constants/admin';
 import { mockTeachers } from './data';
-import { useTeacherColumns } from '../../../../hooks/useTeacherUserManageColumns';
+import { useTeacherColumns } from '@/hooks/useTeacherUserManageColumns';
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
 
 type UserRole = '관리자' | '일반';
-type SortOrder = 'asc' | 'desc';
 
 export interface Teacher {
   id: string;
@@ -21,11 +20,10 @@ export interface Teacher {
 
 interface TeachersProps {
   searchQuery: string;
-  sortOrder: SortOrder;
   onOpenForbiddenDates: (teacher: Teacher) => void;
 }
 
-export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates }: TeachersProps) {
+export default function Teachers({ searchQuery, onOpenForbiddenDates }: TeachersProps) {
   const [teachers, setTeachers] = useState<Teacher[]>(mockTeachers);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
@@ -44,14 +42,22 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
         setOpenMenuId(null);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleEdit = (teacher: Teacher) => {
     setEditingTeacher({ ...teacher });
     setEditingIds((prev) => new Set(prev).add(teacher.id));
     setOpenMenuId(null);
+  };
+
+  const handleKebabClick = (rowId: string) => {
+    setOpenMenuId(openMenuId === rowId ? null : rowId);
+  };
+
+  const handleForbiddenDatesClick = (row: Teacher) => {
+    onOpenForbiddenDates(row);
   };
 
   const handleSave = (teacherId: string) => {
@@ -104,15 +110,10 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
   };
 
   const filteredTeachers = teachers
-    .filter((teacher) => teacher.name.includes(searchQuery) || teacher.email.includes(searchQuery))
-    .sort((a, b) => {
-      if (sortOrder === 'asc') return a.supervisionCount - b.supervisionCount;
-      if (sortOrder === 'desc') return b.supervisionCount - a.supervisionCount;
-      return 0;
-    });
+    .filter((teacher) => teacher.name.includes(searchQuery) || teacher.email.includes(searchQuery));
 
   const renderActions = (row: Teacher) => (
-    <S.ActionCell>
+    <S.ActionCell onClick={(e) => e.stopPropagation()}>
       {editingIds.has(row.id) ? (
         <S.EditButtonGroup>
           <Button text="취소" variant="cancel" onClick={() => handleCancel(row.id)} />
@@ -120,12 +121,12 @@ export default function Teachers({ searchQuery, sortOrder, onOpenForbiddenDates 
         </S.EditButtonGroup>
       ) : (
         <div ref={openMenuId === row.id ? menuRef : null}>
-          <S.KebabButton onClick={() => setOpenMenuId(openMenuId === row.id ? null : row.id)}>
+          <S.KebabButton onClick={() => handleKebabClick(row.id)}>
             <img src="/icons/common/kebabMenu.svg" alt="메뉴" />
           </S.KebabButton>
           {openMenuId === row.id && (
             <S.DropdownMenu>
-              <S.DropdownItem onClick={() => onOpenForbiddenDates(row)}>금지날짜</S.DropdownItem>
+              <S.DropdownItem onClick={() => handleForbiddenDatesClick(row)}>금지날짜</S.DropdownItem>
               <S.DropdownItem onClick={() => handleEdit(row)}>수정</S.DropdownItem>
               <S.DropdownItem $danger onClick={() => handleDelete(row.id)}>
                 삭제

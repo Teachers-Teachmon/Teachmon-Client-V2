@@ -101,6 +101,7 @@ export default function BusinessTripPage() {
           onEventClick={handleEventClick}
           showYear={false}
           showLegend={false}
+          showMobilePopover={false}
         />
       </S.CalendarWrapper>
 

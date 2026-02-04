@@ -7,9 +7,9 @@ interface LoginModalProps {
 }
 
 export default function LoginModal({ isOpen, onClose }: LoginModalProps) {
+
   const handleGoogleLogin = () => {
-    // 구글 로그인 로직 추가
-    console.log('Google 로그인');
+    window.location.href = import.meta.env.VITE_API_BASE_URL + "oauth2/login/google"
   };
 
   return (

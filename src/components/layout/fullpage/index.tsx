@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import fullpage from 'fullpage.js';
 import 'fullpage.js/dist/fullpage.css';
 import { FullPageWrapper } from './style';
-import type { FullPageLayoutProps } from '@/types/fullpage';
+import type { FullPageLayoutProps, FullPageSection } from '@/types/fullpage';
 
 // fullpage_api 전역 선언
 declare const fullpage_api: any;
@@ -85,6 +85,7 @@ const FullPageLayout: React.FC<FullPageLayoutProps> = ({
 };
 
 export default FullPageLayout;
+export type { FullPageSection };
 
 // 헬퍼 함수: 섹션으로 이동
 export const moveToSection = (anchor: string | number) => {
