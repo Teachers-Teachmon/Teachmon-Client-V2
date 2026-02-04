@@ -44,20 +44,6 @@ export default function AdminAfterSchoolPage() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (isDeleteModalOpen) {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    };
-  }, [isDeleteModalOpen]);
-
   const handleEdit = (classData: AdminAfterSchoolClass, e?: React.MouseEvent) => {
     if (e) {
       e.stopPropagation();
