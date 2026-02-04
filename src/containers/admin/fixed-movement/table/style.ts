@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, radius, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const TableWrapper = styled.div`
   flex: 1;
@@ -23,9 +24,13 @@ export const ActionCell = styled.div`
 
 export const StudentList = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   align-items: center;
+
+  ${mq.mobile} {
+    flex-wrap: wrap;
+  }
 `;
 
 export const StudentTag = styled.span`

@@ -51,25 +51,6 @@ export const Form = styled.div`
   padding: 2rem;
   border-radius: ${radius.lg};
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto;
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: ${colors.n01};
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${colors.n03};
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: ${colors.primaryGray};
-  }
 `;
 
 export const FormSection = styled.div`
@@ -129,6 +110,26 @@ export const StudentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   margin-top: 1rem;
+
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ${colors.n01};
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.n03};
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${colors.primaryGray};
+  }
 `;
 
 export const DropdownWrapper = styled.div`

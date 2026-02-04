@@ -4,6 +4,7 @@ import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   padding: 3rem;
+  padding-bottom: 5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -14,6 +15,7 @@ export const Container = styled.div`
 
   ${mq.mobile} {
     padding: 2rem;
+    padding-bottom: 6rem;
     gap: 0rem;
   }
 `;
