@@ -2,7 +2,8 @@ import Modal from '@/components/layout/modal';
 import Dropdown from '@/components/ui/input/dropdown';
 import DateInput from '@/components/ui/input/date';
 import Button from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
 
 interface QuarterSettingsModalProps {
@@ -21,18 +22,7 @@ export default function QuarterSettingsModal({
     const [selectedQuarter, setSelectedQuarter] = useState<string>('');
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
-    const [isMobile, setIsMobile] = useState(false);
-
-    useEffect(() => {
-        const checkMobile = () => {
-            setIsMobile(window.innerWidth <= 430);
-        };
-        
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        
-        return () => window.removeEventListener('resize', checkMobile);
-    }, []);
+    const { isMobile } = useDevice();
 
     const handleConfirm = () => {
         if (selectedQuarter && startDate && endDate) {
