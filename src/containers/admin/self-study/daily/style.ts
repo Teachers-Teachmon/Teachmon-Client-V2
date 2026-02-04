@@ -10,8 +10,9 @@ export const Container = styled.div`
   position: relative;
 
   ${mq.mobile} {
-    padding: 2rem 0rem;
+    padding: 1rem 0rem;
     flex-direction: column;
+    gap: 0.5rem;
   }
 `;
 
@@ -38,25 +39,25 @@ export const SidePanel = styled.div`
   align-self: flex-start;
   margin-top: 20px;
 
-  animation: slideIn 0.3s ease-out;
+  animation: slideUp 0.3s ease-out;
 
   ${mq.mobile} {
     width: 100%;
-    margin-top: 1rem;
+    margin-top: 0;
     align-self: stretch;
-    padding: 1rem;
-    gap: 1rem;
+    padding: 0.75rem;
+    gap: 0.75rem;
     min-height: 0;
   }
 
-  @keyframes slideIn {
+  @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateX(20px);
+      transform: translateY(15px);
     }
     to {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateY(0);
     }
   }
 `;
@@ -346,14 +347,11 @@ export const DeleteButton = styled.button`
 `;
 
 export const CancelButtonWrapper = styled.div`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
 
   ${mq.mobile} {
-    margin-left: 3rem;
-    position: absolute;
-    top: -0.2rem;
-    right: 0rem;
+    margin-bottom: 0.25rem;
   }
 `;
