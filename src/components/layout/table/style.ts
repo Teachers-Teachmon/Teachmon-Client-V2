@@ -59,7 +59,7 @@ export const TableHeader = styled.th`
     color: ${colors.primaryGray};
     height: 56px;
 
-    & :first-child {
+    &:first-of-type {
         padding-left: 40px;
     }
 
@@ -131,6 +131,7 @@ export const MobileCardRow = styled.div`
     gap: 12px;
     padding: 8px 0;
     border-bottom: 1px solid #f5f5f5;
+    min-height: 40px;
     
     &:last-of-type {
         border-bottom: none;
