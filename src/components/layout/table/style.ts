@@ -6,7 +6,6 @@ export const TableContainer = styled.div`
     flex: 1;
     border: 1px solid #eaecf0;
     border-radius: 16px;
-    overflow: hidden;
     background-color: ${colors.background};
     display: flex;
     flex-direction: column;
@@ -64,7 +63,7 @@ export const TableHeader = styled.th`
         padding-left: 40px;
     }
 
-    &:last-child {
+    & :last-child {
         padding-right: 40px;
     }
 `;
@@ -78,7 +77,6 @@ export const TableCell = styled.td`
     min-height: 72px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
 
     &:first-of-type {
         padding-left: 40px;
