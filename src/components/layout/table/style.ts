@@ -21,6 +21,7 @@ export const TableContainer = styled.div`
 export const Table = styled.table`
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 `;
 
 export const TableHead = styled.thead`
@@ -79,6 +80,7 @@ export const TableCell = styled.td`
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    max-width: 0;
 
     &:first-child {
         padding-left: 40px;
@@ -87,6 +89,11 @@ export const TableCell = styled.td`
     &:last-child {
         text-align: right;
         padding-right: 40px;
+        max-width: none;
+        width: auto;
+        white-space: nowrap;
+        overflow: visible;
+        flex-shrink: 0;
     }
 `;
 
