@@ -26,3 +26,21 @@ export interface StudentData {
     period89?: StatusType;
     period1011?: StatusType;
 }
+
+export type RecordTabType = 'movement' | 'leave' | 'student';
+
+export interface RecordHeaderProps {
+    selectedDate: string;
+    onDateChange: (date: string) => void;
+    activeTab: RecordTabType;
+    onTabChange: (tab: RecordTabType) => void;
+    searchQuery: string;
+    onSearchChange: (query: string) => void;
+}
+
+export interface RecordTableProps {
+    activeTab: RecordTabType;
+    movementData: RecordData[];
+    leaveData: LeaveData[];
+    studentData: StudentData[];
+}

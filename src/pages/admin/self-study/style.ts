@@ -19,7 +19,13 @@ export const Container = styled.div`
 export const TabContainer = styled.div<{ $isQuarterly: boolean }>`
   display: flex;
   gap: 24px;
-  margin-bottom: ${({ $isQuarterly }) => ($isQuarterly ? '24px' : '0')};
+  margin-bottom: 0;
+  flex: 1;
+
+  ${mq.mobile} {
+    gap: 16px;
+    margin-bottom: 0;
+  }
 `;
 
 export const Tab = styled.button<{ $active: boolean }>`
@@ -33,8 +39,31 @@ export const Tab = styled.button<{ $active: boolean }>`
   cursor: pointer;
   transition: all 0.2s ease;
 
+  ${mq.mobile} {
+    font-size: ${fontSizes.Body};
+  }
+
   &:hover {
     color: ${({ $active }) => ($active ? colors.primary : colors.text)};
+  }
+`;
+
+export const ActionGroup = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+
+  ${mq.mobile} {
+    width: auto;
+
+    & > button {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+    }
+
+    & > button span {
+      font-size: 14px;
+    }
   }
 `;
 

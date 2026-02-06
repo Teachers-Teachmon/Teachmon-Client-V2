@@ -18,6 +18,7 @@ export default function Calendar({
   onRangeSelect,
   showYear = true,
   showLegend = true,
+  showMobilePopover = true,
   selectable = false,
   exchangeMode = false,
   currentTeacherId,
@@ -87,10 +88,12 @@ export default function Calendar({
   }
 
   const handleEventClick = (event: CalendarEvent, rect: DOMRect) => {
-    const dayEvents = getEventsForDate(event.date)
-    const dayRangeEvents = getRangeEventsForDate(event.date)
-    setSelectedDay({ date: event.date, isCurrentMonth: true, events: dayEvents, rangeEvents: dayRangeEvents })
-    updatePopoverPosition(rect)
+    if (showMobilePopover) {
+      const dayEvents = getEventsForDate(event.date)
+      const dayRangeEvents = getRangeEventsForDate(event.date)
+      setSelectedDay({ date: event.date, isCurrentMonth: true, events: dayEvents, rangeEvents: dayRangeEvents })
+      updatePopoverPosition(rect)
+    }
     if (exchangeMode) {
       if (event.teacherId === currentTeacherId) {
         onMyEventSelect?.(event)
@@ -163,8 +166,10 @@ export default function Calendar({
                     if (!selectable) {
                       onDateClick?.(date, dayInfo, (e.currentTarget as HTMLElement).getBoundingClientRect())
                     }
-                    setSelectedDay(dayInfo)
-                    updatePopoverPosition((e.currentTarget as HTMLElement).getBoundingClientRect())
+                    if (showMobilePopover) {
+                      setSelectedDay(dayInfo)
+                      updatePopoverPosition((e.currentTarget as HTMLElement).getBoundingClientRect())
+                    }
                   }}
                 >
                   <S.DayNumber dayType={dayType} isCurrentMonth={isCurrentMonth}>{date.getDate()}</S.DayNumber>
@@ -216,7 +221,7 @@ export default function Calendar({
           </S.DaysGrid>
         </S.DaysGridWrapper>
       </S.CalendarGrid>
-      {selectedDay && popoverPosition && (
+      {showMobilePopover && selectedDay && popoverPosition && (
         <S.MobilePopover
           ref={popoverRef}
           style={{ top: popoverPosition.top, left: popoverPosition.left, width: popoverPosition.width }}
