@@ -10,9 +10,11 @@ export const Container = styled.div`
   position: relative;
 
   ${mq.mobile} {
-    padding: 1rem 0rem;
+    padding: 0.1rem 0;
     flex-direction: column;
     gap: 0.5rem;
+    overflow: visible;
+    flex: none;
   }
 `;
 
@@ -24,6 +26,7 @@ export const CalendarWrapper = styled.div`
   ${mq.mobile} {
     flex: none;
     width: 100%;
+    min-height: auto;
   }
 `;
 
