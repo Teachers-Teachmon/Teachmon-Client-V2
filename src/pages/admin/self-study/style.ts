@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -9,6 +10,10 @@ export const Container = styled.div`
   padding: 48px;
   box-sizing: border-box;
   overflow: hidden;
+
+  ${mq.mobile} {
+    overflow: hidden;
+  }
 `;
 
 export const TabContainer = styled.div<{ $isQuarterly: boolean }>`

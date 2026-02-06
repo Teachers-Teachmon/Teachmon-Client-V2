@@ -29,9 +29,14 @@ export const SidePanel = styled.div`
 
   ${mq.mobile} {
     width: 100%;
-    max-height: 23vh;
-    margin-top: -1rem;
+    max-height: none;
+    margin-top: 0;
     flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+    position: relative;
+    z-index: -10;
   }
 `;
 
@@ -39,6 +44,12 @@ export const PanelSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+
+  ${mq.mobile} {
+    flex: 1;
+    min-width: 0;
+    gap: 0.5rem;
+  }
 `;
 
 export const SectionTitle = styled.h3`
@@ -56,6 +67,12 @@ export const GradeTabsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  ${mq.mobile} {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
 `;
 
 export const GradeTab = styled.button<{ $active: boolean }>`
@@ -74,14 +91,9 @@ export const GradeTab = styled.button<{ $active: boolean }>`
   }
 
   ${mq.mobile} {
-    padding: 0.3rem 0.7rem;
-    font-size: 15px;
+    padding: 0.4rem 0.6rem;
+    font-size: 13px;
     border-radius: 6px;
-    margin-left: 0.5rem;
-
-    ${mq.mobile} {
-
-    }
   }
 `;
 
@@ -128,12 +140,15 @@ export const DropdownMenu = styled.div`
   border-radius: ${radius.md};
   max-height: 200px;
   overflow-y: auto;
-  z-index: 10;
+  z-index: 20;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
   ${mq.mobile} {
-    width: 27vw;
-    max-height: 10vh;
+    width: auto;
+    min-width: 100%;
+    max-height: 150px;
+    bottom: calc(100% + 0.5rem);
+    top: auto;
   }
 `;
 
@@ -169,6 +184,11 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
 
 export const ButtonWrapper = styled.div`
   margin-top: auto;
+
+  ${mq.mobile} {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
 `;
 
 export const SelectedPeriodsWrapper = styled.div`
@@ -178,10 +198,10 @@ export const SelectedPeriodsWrapper = styled.div`
   margin-top: 1rem;
 
   ${mq.mobile} {
-    grid-template-columns: repeat(1, 1fr);
-    gap: 0.2rem;
-    overflow-y: auto;
-    max-height: 10vh;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+    max-height: none;
   }
 `;
 
