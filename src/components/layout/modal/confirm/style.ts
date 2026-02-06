@@ -5,17 +5,6 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  min-width: 300px;
-  width: 100%;
-  max-width: 420px;
-  box-sizing: border-box;
-  overflow-x: hidden;
-
-  ${mq.mobile} {
-    min-width: 0;
-    max-width: 92vw;
-    gap: 1rem;
-  }
 `
 
 export const Title = styled.h2`
