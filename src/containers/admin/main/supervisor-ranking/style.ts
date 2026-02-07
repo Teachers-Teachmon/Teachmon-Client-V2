@@ -75,14 +75,6 @@ export const TeacherImage = styled.div`
   justify-content: center;
 `;
 
-export const RankText = styled.span`
-  font-family: 'Paperlogy', sans-serif;
-  font-weight: 700;
-  font-size: 24px;
-  line-height: 29px;
-  color: #2e6ff2;
-`;
-
 export const TeacherName = styled.span<{ $isEmpty?: boolean }>`
   font-family: 'Paperlogy', sans-serif;
   font-weight: ${({ $isEmpty }) => ($isEmpty ? 400 : 600)};
