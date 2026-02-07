@@ -53,13 +53,11 @@ export const TopRankCard = styled.div<{ $isFirst?: boolean }>`
 `;
 
 export const RankBadge = styled.div`
-  position: absolute;
-  top: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 36px;
-  height: 38px;
-  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   img {
     width: 100%;
     height: 100%;
@@ -85,12 +83,12 @@ export const RankText = styled.span`
   color: #2e6ff2;
 `;
 
-export const TeacherName = styled.span`
+export const TeacherName = styled.span<{ $isEmpty?: boolean }>`
   font-family: 'Paperlogy', sans-serif;
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${({ $isEmpty }) => ($isEmpty ? 400 : 600)};
+  font-size: ${({ $isEmpty }) => ($isEmpty ? '14px' : '18px')};
   line-height: 22px;
-  color: #000000;
+  color: ${({ $isEmpty }) => ($isEmpty ? '#9ca4ba' : '#000000')};
   margin-top: 10px;
 `;
 

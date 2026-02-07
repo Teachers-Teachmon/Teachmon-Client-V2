@@ -25,27 +25,41 @@ export default function SupervisorRanking({ ranking, isError }: SupervisorRankin
       ) : (
         <>
           <S.TopThreeContainer>
-            {[ranking[1], ranking[0], ranking[2]].filter(Boolean).map((item) => (
-              <S.TopRankCard key={item.rank} $isFirst={item.rank === 1}>
-                <S.RankBadge>
-                  {item.image && <img src={item.image} alt={`${item.rank}위`} />}
-                </S.RankBadge>
-                <S.TeacherImage>
-                  <S.RankText>{item.rank}등</S.RankText>
-                </S.TeacherImage>
-                <S.TeacherName>{item.name}</S.TeacherName>
-                <S.TeacherCount>{item.count}회</S.TeacherCount>
-              </S.TopRankCard>
-            ))}
+            {[1, 0, 2].map((index) => {
+              const item = ranking[index];
+              const rank = index + 1;
+              console.log('Rendering rank:', rank, 'with item:', item);
+              return (
+                <S.TopRankCard key={rank} $isFirst={rank === 1}>
+                  <S.TeacherImage>
+                    <S.RankBadge>
+                      <img src={item?.image || `/icons/admin/rank-${rank}.svg`} alt={`${rank}위`} />
+                    </S.RankBadge>
+                  </S.TeacherImage>
+                  {item ? (
+                    <>
+                      <S.TeacherName>{item.name}</S.TeacherName>
+                      <S.TeacherCount>{item.count}회</S.TeacherCount>
+                    </>
+                  ) : (
+                    <S.TeacherName $isEmpty>데이터 없음</S.TeacherName>
+                  )}
+                </S.TopRankCard>
+              );
+            })}
           </S.TopThreeContainer>
           <S.RankingList>
-            {ranking.slice(3).map((item) => (
-              <S.RankingRow key={item.rank}>
-                <S.RankNumber>{item.rank}위</S.RankNumber>
-                <S.RankName>{item.name}</S.RankName>
-                <S.RankCount>{item.count}회</S.RankCount>
-              </S.RankingRow>
-            ))}
+            {ranking.length > 3 ? (
+              ranking.slice(3).map((item) => (
+                <S.RankingRow key={item.rank}>
+                  <S.RankNumber>{item.rank}위</S.RankNumber>
+                  <S.RankName>{item.name}</S.RankName>
+                  <S.RankCount>{item.count}회</S.RankCount>
+                </S.RankingRow>
+              ))
+            ) : (
+              <S.EmptyMessage>하위 순위 데이터가 없습니다</S.EmptyMessage>
+            )}
           </S.RankingList>
         </>
       )}

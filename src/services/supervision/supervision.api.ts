@@ -9,6 +9,6 @@ export interface SupervisionRankResponse {
 }
 
 export const getSupervisionRank = async () => {
-  const { data } = await axiosInstance.get<SupervisionRankResponse[]>('/rank/supervision');
+  const { data } = await axiosInstance.get<SupervisionRankResponse[]>('/supervision/rank');
   return data;
 };
