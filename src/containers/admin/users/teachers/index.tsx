@@ -17,6 +17,7 @@ type UserRole = '관리자' | '일반';
 
 export interface Teacher {
   id: string;
+  teacher_id?: string; // API에서 받은 원본 ID (문자열로 처리)
   role: UserRole;
   name: string;
   email: string;
@@ -43,7 +44,8 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   // API 데이터를 UI 형식으로 변환
   const teachers = useMemo(() => {
     const apiTeachers = teachersData.map((teacher): Teacher => ({
-      id: String(teacher.teacher_id),
+      id: teacher.teacher_id, // 이미 문자열
+      teacher_id: teacher.teacher_id, // 원본 ID 보존
       role: teacher.role === 'ADMIN' ? USER_ROLES.ADMIN : USER_ROLES.NORMAL,
       name: teacher.name,
       email: teacher.email,
@@ -91,7 +93,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
     } else {
       // 기존 선생님 수정
       updateTeacher({
-        teacher_id: Number(teacherId),
+        teacher_id: editingTeacher.teacher_id!, // 원본 ID 사용
         role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
         name: editingTeacher.name,
         email: editingTeacher.email,
@@ -137,8 +139,12 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
       return;
     }
 
+    // 원본 teacher_id 찾기
+    const teacher = teachers.find(t => t.id === teacherId);
+    if (!teacher?.teacher_id) return;
+
     deleteTeacher(
-      { teacher_id: Number(teacherId) },
+      { teacher_id: teacher.teacher_id }, // 원본 ID 사용
       {
         onSuccess: () => {
           setEditingIds((prev) => {

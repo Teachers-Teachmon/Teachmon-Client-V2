@@ -2,7 +2,7 @@ import axiosInstance from '@/lib/axiosInstance';
 
 // Types
 export interface Teacher {
-  teacher_id: number;
+  teacher_id: string; // json-bigint로 큰 숫자를 문자열로 처리
   role: 'ADMIN' | 'TEACHER';
   name: string;
   email: string;
@@ -24,14 +24,14 @@ export interface CreateTeacherRequest {
 }
 
 export interface UpdateTeacherRequest {
-  teacher_id: number;
+  teacher_id: string;
   role?: 'ADMIN' | 'TEACHER';
   name?: string;
   email?: string;
 }
 
 export interface DeleteTeacherRequest {
-  teacher_id: number;
+  teacher_id: string;
 }
 
 export type ForbiddenDay = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
@@ -78,18 +78,18 @@ export const updateTeacher = async (data: UpdateTeacherRequest): Promise<Message
 };
 
 export const deleteTeacher = async (data: DeleteTeacherRequest): Promise<MessageResponse> => {
-  const response = await axiosInstance.delete<MessageResponse>('/teacher', { data });
+  const response = await axiosInstance.delete<MessageResponse>(`/teacher/${data.teacher_id}`);
   return response.data;
 };
 
 // Forbidden Date APIs
-export const getForbiddenDates = async (teacherId: number): Promise<ForbiddenDay[]> => {
+export const getForbiddenDates = async (teacherId: string): Promise<ForbiddenDay[]> => {
   const response = await axiosInstance.get<ForbiddenDay[]>(`/teacher/${teacherId}/ban`);
   return response.data;
 };
 
 export const setForbiddenDates = async (
-  teacherId: number,
+  teacherId: string,
   weekdays: ForbiddenDay[]
 ): Promise<MessageResponse> => {
   const response = await axiosInstance.post<MessageResponse>(`/teacher/${teacherId}/ban`, weekdays);
