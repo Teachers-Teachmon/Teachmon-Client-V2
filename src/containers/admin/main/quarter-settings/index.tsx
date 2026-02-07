@@ -6,6 +6,8 @@ export interface QuarterSettingItem {
   quarter: number;
   startDate: string;
   endDate: string;
+  rawStartDate?: string; // YYYY-MM-DD 형식
+  rawEndDate?: string; // YYYY-MM-DD 형식
 }
 
 interface QuarterSettingsProps {
@@ -39,20 +41,29 @@ export default function QuarterSettings({ quarters, onCreateBranch, isError }: Q
             <img src="/icons/admin/rewrite.svg" alt="edit" />
           </S.EditButton>
         </S.QuarterHeader>
-        {isError || quarters.length === 0 ? (
-          <S.EmptyMessage>데이터가 없습니다</S.EmptyMessage>
+        {isError ? (
+          <S.EmptyMessage>분기 데이터를 불러올 수 없습니다</S.EmptyMessage>
         ) : (
           <S.QuarterList>
-            {quarters.map((quarter) => (
-              <S.QuarterRow key={quarter.quarter}>
-                <S.QuarterName>{quarter.quarter}분기</S.QuarterName>
-                <S.QuarterDates>
-                  <span>{quarter.startDate}</span>
-                  <span className="to">to</span>
-                  <span>{quarter.endDate}</span>
-                </S.QuarterDates>
-              </S.QuarterRow>
-            ))}
+            {[1, 2, 3, 4].map((quarterNum) => {
+              const quarterData = quarters.find((q) => q.quarter === quarterNum);
+              return (
+                <S.QuarterRow key={quarterNum}>
+                  <S.QuarterName>{quarterNum}분기</S.QuarterName>
+                  <S.QuarterDates>
+                    {quarterData ? (
+                      <>
+                        <span>{quarterData.startDate}</span>
+                        <span className="to">to</span>
+                        <span>{quarterData.endDate}</span>
+                      </>
+                    ) : (
+                      <span>X</span>
+                    )}
+                  </S.QuarterDates>
+                </S.QuarterRow>
+              );
+            })}
           </S.QuarterList>
         )}
       </S.QuarterSection>
@@ -61,6 +72,11 @@ export default function QuarterSettings({ quarters, onCreateBranch, isError }: Q
         isOpen={isModalOpen}
         onClose={handleModalClose}
         onConfirm={handleConfirm}
+        existingQuarters={quarters.map(q => ({
+          quarter: q.quarter,
+          startDate: q.rawStartDate || q.startDate,
+          endDate: q.rawEndDate || q.endDate
+        }))}
       />
     </>
   );

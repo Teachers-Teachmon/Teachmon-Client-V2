@@ -38,6 +38,16 @@ export const DateSeparator = styled.span`
   color: #999999;
 `;
 
+export const ErrorMessage = styled.div`
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #ff4d4f;
+  text-align: center;
+  width: 100%;
+`;
+
 export const ButtonRow = styled.div`
   display: flex;
   gap: 23px;
