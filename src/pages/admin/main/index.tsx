@@ -10,6 +10,7 @@ import { manageQuery } from '@/services/manage/manage.query';
 import { useDeleteExitHistoryMutation } from '@/services/manage/manage.mutation';
 import { branchQuery } from '@/services/branch/branch.query';
 import { useCreateBranchMutation } from '@/services/branch/branch.mutation';
+import { toast } from 'react-toastify';
 
 export default function AdminMain() {
     const { data: supervisionData, isError: isSupervisionError } = useQuery(supervisionQuery.rank());
@@ -20,7 +21,15 @@ export default function AdminMain() {
     const createBranchMutation = useCreateBranchMutation();
 
     const handleDelete = (id: number) => {
-        deleteExitHistoryMutation.mutate(id);
+        deleteExitHistoryMutation.mutate(id, {
+            onSuccess: () => {
+                toast.success('이탈 기록이 삭제되었습니다.');
+            },
+            onError: (error) => {
+                console.error('삭제 실패:', error);
+                toast.error('삭제에 실패했습니다. 다시 시도해주세요.');
+            }
+        });
     };
 
     const handleCreateBranch = (quarter: number, startDate: string, endDate: string) => {
@@ -28,17 +37,25 @@ export default function AdminMain() {
             number: quarter,
             start_day: startDate,
             end_day: endDate,
+        }, {
+            onSuccess: () => {
+                toast.success('분기가 설정되었습니다.');
+            },
+            onError: (error) => {
+                console.error('분기 설정 실패:', error);
+                toast.error('분기 설정에 실패했습니다. 다시 시도해주세요.');
+            }
         });
     };
 
     // 감독 순위 데이터 변환
-    const supervisorRanking = supervisionData?.map((item, index) => ({
+    const supervisorRanking = supervisionData?.map((item) => ({
         rank: item.rank,
         name: item.name,
         count: item.total_supervision_count,
-        image: index === 0 ? '/icons/admin/first.svg' : 
-               index === 1 ? '/icons/admin/second.svg' : 
-               index === 2 ? '/icons/admin/third.svg' : undefined,
+        image: item.rank === 1 ? '/icons/admin/rank-1.svg' : 
+               item.rank === 2 ? '/icons/admin/rank-2.svg' : 
+               item.rank === 3 ? '/icons/admin/rank-3.svg' : undefined,
     })) || [];
 
     // 이탈 학생 데이터 변환
@@ -53,6 +70,8 @@ export default function AdminMain() {
         quarter: item.number,
         startDate: new Date(item.start_day).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }),
         endDate: new Date(item.end_day).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }),
+        rawStartDate: item.start_day,
+        rawEndDate: item.end_day,
     })) || [];
 
     return (
