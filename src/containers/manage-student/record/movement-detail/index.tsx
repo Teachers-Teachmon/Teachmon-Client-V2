@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
+import { useDevice } from '@/hooks/useDevice';
+
 import * as S from './style';
 
 interface MovementDetailModalProps {
@@ -26,9 +28,10 @@ export default function MovementDetailModal({
     const handleEdit = () => {
         navigate(`/manage/movement?edit=true&id=${leaveseatId}`);
     };
+    const { isMobile } = useDevice();
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} padding={isMobile ? "32px 20px" : "60px"}>
             <S.Container>
                 <S.Header>
                     <S.Title>{data.location}</S.Title>

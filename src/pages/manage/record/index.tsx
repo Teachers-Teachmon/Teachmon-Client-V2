@@ -3,12 +3,12 @@ import { useQuery } from '@tanstack/react-query';
 import RecordHeader from '@/containers/manage-student/record/record-header';
 import RecordTable from '@/containers/manage-student/record/record-table';
 import { manageQuery } from '@/services/manage/manage.query';
-import { mockLeaveData, mockStudentData } from './data';
+import type { RecordTabType } from '@/types/record';
 import * as S from './style';
 
 export default function Record() {
     const [selectedDate, setSelectedDate] = useState<string>('2024-12-12');
-    const [activeTab, setActiveTab] = useState<'movement' | 'leave' | 'student'>('movement');
+    const [activeTab, setActiveTab] = useState<RecordTabType>('movement');
     const [searchQuery, setSearchQuery] = useState<string>('');
     const [selectedPeriod, setSelectedPeriod] = useState<string>('EIGHT_AND_NINE_PERIOD');
 

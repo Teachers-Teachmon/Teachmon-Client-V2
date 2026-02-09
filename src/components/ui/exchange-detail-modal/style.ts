@@ -1,11 +1,18 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   width: 43.8rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0 auto;
+
+  ${mq.mobile} {
+    width: 100%;
+    max-width: 24rem;
+  }
 `;
 
 export const Title = styled.h2`
@@ -13,6 +20,11 @@ export const Title = styled.h2`
   font-weight: 500;
   color: ${colors.n04};
   margin-bottom: 1.5rem;
+
+  ${mq.mobile} {
+    font-size: 1.6rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const StatusText = styled.span<{ status: 'rejected' | 'accepted' }>`
@@ -23,6 +35,13 @@ export const CardsContainer = styled.div`
   display: flex;
   gap: 3.8rem;
   margin-bottom: 1.5rem;
+
+  ${mq.mobile} {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const Card = styled.div`
@@ -31,6 +50,11 @@ export const Card = styled.div`
   border: 0.33px solid #969696;
   border-radius: 0.3rem;
   background: white;
+
+  ${mq.mobile} {
+    width: 100%;
+    padding: 1.1rem 1.2rem;
+  }
 `;
 
 export const CardTitle = styled.h3`
@@ -38,6 +62,10 @@ export const CardTitle = styled.h3`
   font-weight: 600;
   color: ${colors.n04};
   margin-bottom: 0.6rem;
+
+  ${mq.mobile} {
+    font-size: 1.2rem;
+  }
 `;
 
 export const CardInfo = styled.div`
@@ -55,11 +83,20 @@ export const InfoRow = styled.div`
 export const InfoIcon = styled.img`
   width: 1.2rem;
   height: 1.2rem;
+
+  ${mq.mobile} {
+    width: 1rem;
+    height: 1rem;
+  }
 `;
 
 export const InfoText = styled.span`
   font-size: 1rem;
   color: #969696;
+
+  ${mq.mobile} {
+    font-size: 0.9rem;
+  }
 `;
 
 export const ReasonSection = styled.div`
@@ -68,12 +105,21 @@ export const ReasonSection = styled.div`
   flex-direction: column;
   gap: 0.3rem;
   margin-bottom: 1.5rem;
+
+  ${mq.mobile} {
+    width: 100%;
+    margin-bottom: 1rem;
+  }
 `;
 
 export const ReasonLabel = styled.label`
   font-size: 1.3rem;
   font-weight: 500;
   color: ${colors.n04};
+
+  ${mq.mobile} {
+    font-size: 1.1rem;
+  }
 `;
 
 export const ReasonBox = styled.div`
@@ -83,12 +129,20 @@ export const ReasonBox = styled.div`
   border: 0.5px solid #969696;
   border-radius: 0.3rem;
   background: white;
+
+  ${mq.mobile} {
+    height: 8.5rem;
+  }
 `;
 
 export const ReasonText = styled.p`
   font-size: 1rem;
   color: #969696;
   font-weight: 300;
+
+  ${mq.mobile} {
+    font-size: 0.9rem;
+  }
 `;
 
 export const ReasonInput = styled.textarea`
@@ -105,10 +159,20 @@ export const ReasonInput = styled.textarea`
   &::placeholder {
     color: #969696;
   }
+
+  ${mq.mobile} {
+    font-size: 0.9rem;
+  }
 `;
 
 export const ButtonContainer = styled.div`
   width: 82%;
   display: flex;
   gap: 0.9rem;
+
+  ${mq.mobile} {
+    width: 100%;
+    gap: 0.6rem;
+    flex-direction: row;
+  }
 `;

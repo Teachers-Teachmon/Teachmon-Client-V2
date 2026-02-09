@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { mq } from '@/styles/media';
 
 interface FullPageWrapperProps {
   hasHeader?: boolean;
@@ -8,6 +9,10 @@ export const FullPageWrapper = styled.div<FullPageWrapperProps>`
   width: 100%;
   ${props => props.hasHeader ? `
     height: calc(100vh - 80px);
+    
+    ${mq.mobile} {
+      height: calc(100vh - 60px);
+    }
     ` : `
       height: 100vh;
     `}
@@ -16,6 +21,10 @@ export const FullPageWrapper = styled.div<FullPageWrapperProps>`
       transition: background-color 0.5s ease;
       ${props => props.hasHeader && `
         margin-top: 80px;
+        
+        ${mq.mobile} {
+          margin-top: 60px;
+        }
       `}
     }
       .fp-table{

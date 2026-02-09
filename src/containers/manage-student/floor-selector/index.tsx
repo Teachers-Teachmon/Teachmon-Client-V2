@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { manageQuery } from '@/services/manage/manage.query';
 import { getCurrentPeriod, getTodayDate } from '@/utils/period';
+import { useDevice } from '@/hooks/useDevice';
+
 import * as S from './style';
 
 interface FloorSelectorProps {
@@ -10,6 +12,7 @@ interface FloorSelectorProps {
 
 export default function FloorSelector({ selectedFloor, onFloorChange }: FloorSelectorProps) {
     const floors = [1, 2, 3, 4];
+    const { isMobile } = useDevice();
 
     // 현재 날짜와 교시 가져오기
     const currentPeriod = getCurrentPeriod();
@@ -24,7 +27,9 @@ export default function FloorSelector({ selectedFloor, onFloorChange }: FloorSel
 
     return (
         <S.Container>
-            <S.HintText>스크롤로 확대, 축소할 수 있어요</S.HintText>
+            <S.HintText>
+                {isMobile ? '확대, 축소할 수 있어요' : '스크롤로 확대, 축소할 수 있어요'}
+            </S.HintText>
             <S.FloorTabs>
                 {floors.map((floor) => {
                     const floorData = floorsStatus.find((f) => f.floor === floor);

@@ -9,6 +9,9 @@ export const FooterContainer = styled.footer`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  ${mq.mobile}{
+    height: max-content;
+  }
 `;
 
 export const IntroSection = styled.div`
@@ -31,10 +34,6 @@ export const IntroTitle = styled.h2`
   color: #000000;
   margin: 0;
   line-height: 1.2;
-
-  ${mq.mobile} {
-    font-size: clamp(18px, 5vw, 24px);
-  }
 `;
 
 export const ImagesGrid = styled.div`
@@ -46,6 +45,9 @@ export const ImagesGrid = styled.div`
   ${mq.mobile} {
     grid-template-columns: 1fr;
     gap: 12px;
+    & :nth-last-child(1){
+      display: none;
+    }
   }
 `;
 

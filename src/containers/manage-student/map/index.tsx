@@ -57,6 +57,7 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
         placeStatusMap[place.place_name] = place;
     });
 
+
     const elements = FLOOR_ELEMENTS_MAP[selectedFloor] || [];
 
     return (

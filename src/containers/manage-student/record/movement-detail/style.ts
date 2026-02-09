@@ -1,9 +1,14 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
     max-height: 90vh;
     overflow-y: auto;
+
+    ${mq.mobile} {
+        max-height: 70vh;
+    }
 `;
 
 export const Header = styled.div`
@@ -11,6 +16,10 @@ export const Header = styled.div`
     justify-content: space-between;
     align-items: center;
     margin-bottom: 36px;
+
+    ${mq.mobile} {
+        margin-bottom: 24px;
+    }
 `;
 
 export const Title = styled.h2`
@@ -18,6 +27,11 @@ export const Title = styled.h2`
     font-weight: 600;
     color: ${colors.text};
     line-height: 28px;
+
+    ${mq.mobile} {
+        font-size: 24px;
+        line-height: 28px;
+    }
 `;
 
 export const CloseButton = styled.button`
@@ -35,18 +49,31 @@ export const CloseButton = styled.button`
         width: 100%;
         height: 100%;
     }
+
+    ${mq.mobile} {
+        width: 32px;
+        height: 32px;
+    }
 `;
 
 export const Content = styled.div`
     display: flex;
     flex-direction: column;
     gap: 25px;
+
+    ${mq.mobile} {
+        gap: 20px;
+    }
 `;
 
 export const InfoSection = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    ${mq.mobile} {
+        gap: 8px;
+    }
 `;
 
 export const InfoLabel = styled.div`
@@ -54,6 +81,11 @@ export const InfoLabel = styled.div`
     font-weight: 600;
     color: ${colors.primary};
     line-height: 28.27px;
+
+    ${mq.mobile} {
+        font-size: 16px;
+        line-height: 22px;
+    }
 `;
 
 export const InfoValue = styled.div`
@@ -61,12 +93,21 @@ export const InfoValue = styled.div`
     font-weight: 400;
     color: ${colors.text};
     line-height: 28.27px;
+
+    ${mq.mobile} {
+        font-size: 16px;
+        line-height: 22px;
+    }
 `;
 
 export const StudentsSection = styled.div`
     display: flex;
     flex-direction: column;
     gap: 10px;
+
+    ${mq.mobile} {
+        gap: 8px;
+    }
 `;
 
 export const StudentsTitle = styled.div`
@@ -74,6 +115,11 @@ export const StudentsTitle = styled.div`
     font-weight: 600;
     color: ${colors.primary};
     line-height: 28.27px;
+
+    ${mq.mobile} {
+        font-size: 16px;
+        line-height: 22px;
+    }
 `;
 
 export const StudentGrid = styled.div`
@@ -81,6 +127,10 @@ export const StudentGrid = styled.div`
     grid-template-columns: repeat(4, 1fr);
     gap: 0;
     background-color: ${colors.background};
+
+    ${mq.mobile} {
+        grid-template-columns: repeat(3, 1fr);
+    }
 `;
 
 export const StudentCard = styled.div`
@@ -91,6 +141,11 @@ export const StudentCard = styled.div`
     border: 1px solid #f5f5f5;
     background-color: ${colors.background};
     min-height: 81px;
+
+    ${mq.mobile} {
+        padding: 14px;
+        min-height: 70px;
+    }
 `;
 
 export const StudentInfo = styled.div`
@@ -100,6 +155,12 @@ export const StudentInfo = styled.div`
     text-align: center;
     line-height: 20px;
     white-space: pre-line;
+    word-break: keep-all;
+
+    ${mq.mobile} {
+        font-size: 14px;
+        line-height: 18px;
+    }
 `;
 
 export const ButtonWrapper = styled.div`
