@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
 
 /**
- * 드롭다운 메뉴 상태 관리 훅
+ * 액션 메뉴 상태 관리 훅
  * - 메뉴 열기/닫기 상태 관리
  * - 외부 클릭 시 메뉴 자동 닫기
  */
-export function useDropdownMenu() {
+export function useActionMenu() {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 

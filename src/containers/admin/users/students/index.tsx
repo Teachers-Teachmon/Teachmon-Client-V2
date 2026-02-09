@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { useStudentColumns } from '@/hooks/useStudentUserManageColumns';
-import { useDropdownMenu } from '@/hooks/useDropdownMenu';
+import { useActionMenu } from '@/hooks/useActionMenu';
 import type { Student as ApiStudent } from '@/services/search/search.api';
 import { 
   useCreateStudentMutation, 
@@ -26,7 +26,7 @@ interface StudentsProps {
 }
 
 export default function Students({ studentsData, isLoading = false }: StudentsProps) {
-  const { openMenuId, setOpenMenuId, menuRef } = useDropdownMenu();
+  const { openMenuId, setOpenMenuId, menuRef } = useActionMenu();
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localStudents, setLocalStudents] = useState<Student[]>([]);

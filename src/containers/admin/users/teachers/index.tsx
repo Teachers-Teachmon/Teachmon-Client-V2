@@ -3,7 +3,7 @@ import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { USER_ROLES } from '@/constants/admin';
 import { useTeacherColumns } from '@/hooks/useTeacherUserManageColumns';
-import { useDropdownMenu } from '@/hooks/useDropdownMenu';
+import { useActionMenu } from '@/hooks/useActionMenu';
 import type { Teacher as ApiTeacher, ForbiddenDay } from '@/services/user-management/user-management.api';
 import { 
   useCreateTeacherMutation,
@@ -33,7 +33,7 @@ interface TeachersProps {
 }
 
 export default function Teachers({ teachersData, forbiddenDates, onOpenForbiddenDates, isLoading = false }: TeachersProps) {
-  const { openMenuId, setOpenMenuId, menuRef } = useDropdownMenu();
+  const { openMenuId, setOpenMenuId, menuRef } = useActionMenu();
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localTeachers, setLocalTeachers] = useState<Teacher[]>([]);
