@@ -11,7 +11,8 @@ export interface Student {
 
 // Student Search API
 export const searchStudents = async (query?: string): Promise<Student[]> => {
-  const params = query ? { query } : {};
-  const response = await axiosInstance.get<Student[]>('/search/student', { params });
+  const response = await axiosInstance.get<Student[]>('/student/search', { 
+    params: { query: query ?? '' } 
+  });
   return response.data;
 };
