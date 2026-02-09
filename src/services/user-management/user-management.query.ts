@@ -8,7 +8,7 @@ export const userManagementQuery = {
       queryFn: () => getAllTeachers(query),
     }),
   
-  forbiddenDates: (teacherId: number) =>
+  forbiddenDates: (teacherId: string) =>
     queryOptions({
       queryKey: ['userManagement.forbiddenDates', teacherId],
       queryFn: () => getForbiddenDates(teacherId),

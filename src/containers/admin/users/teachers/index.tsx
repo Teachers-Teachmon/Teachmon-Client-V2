@@ -29,9 +29,10 @@ interface TeachersProps {
   teachersData: ApiTeacher[];
   forbiddenDates: ForbiddenDay[];
   onOpenForbiddenDates: (teacher: Teacher) => void;
+  isLoading?: boolean;
 }
 
-export default function Teachers({ teachersData, forbiddenDates, onOpenForbiddenDates }: TeachersProps) {
+export default function Teachers({ teachersData, forbiddenDates, onOpenForbiddenDates, isLoading = false }: TeachersProps) {
   const { openMenuId, setOpenMenuId, menuRef } = useDropdownMenu();
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
@@ -96,7 +97,6 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
         teacher_id: editingTeacher.teacher_id!, // 원본 ID 사용
         role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
         name: editingTeacher.name,
-        email: editingTeacher.email,
       }, {
         onSuccess: () => {
           setEditingTeacher(null);
@@ -229,7 +229,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   return (
     <>
       <S.TableWrapper>
-        <TableLayout columns={columns} data={teachers} renderActions={renderActions} />
+        <TableLayout columns={columns} data={teachers} renderActions={renderActions} isLoading={isLoading} />
       </S.TableWrapper>
       <PageS.AddButton onClick={handleAdd}>
         <img src="/icons/common/plusBlue.svg" alt="추가" />

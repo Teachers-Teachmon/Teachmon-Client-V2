@@ -25,14 +25,14 @@ export default function AdminUsersPage() {
   const debouncedQuery = useDebounce(searchQuery, 150);
 
   // API 데이터 조회
-  const { data: teachersData } = useQuery(
+  const { data: teachersData, isLoading: isTeachersLoading } = useQuery(
     userManagementQuery.teachers(activeTab === TAB_TYPES.TEACHER ? debouncedQuery : undefined)
   );
   const { data: forbiddenDatesData } = useQuery({
-    ...userManagementQuery.forbiddenDates(selectedTeacher ? Number(selectedTeacher.id) : 0),
+    ...userManagementQuery.forbiddenDates(selectedTeacher?.id || ''),
     enabled: !!selectedTeacher,
   });
-  const { data: studentsData } = useQuery(
+  const { data: studentsData, isLoading: isStudentsLoading } = useQuery(
     studentSearchQuery.students(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : undefined)
   );
   const { mutate: setForbiddenDates } = useSetForbiddenDatesMutation();
@@ -46,7 +46,7 @@ export default function AdminUsersPage() {
     
     setForbiddenDates(
       {
-        teacherId: Number(selectedTeacher.id),
+        teacherId: selectedTeacher.id,
         weekdays: dates as ForbiddenDay[],
       },
       {
@@ -87,9 +87,10 @@ export default function AdminUsersPage() {
           teachersData={teachersData || []}
           forbiddenDates={[]}
           onOpenForbiddenDates={handleOpenForbiddenDates}
+          isLoading={isTeachersLoading}
         />
       ) : (
-        <Students studentsData={studentsData || []} />
+        <Students studentsData={studentsData || []} isLoading={isStudentsLoading} />
       )}
 
       {selectedTeacher && (
