@@ -43,4 +43,6 @@ export interface RecordTableProps {
     movementData: RecordData[];
     leaveData: LeaveData[];
     studentData: StudentData[];
+    selectedDate: string;
+    selectedPeriod: string;
 }
