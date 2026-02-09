@@ -17,12 +17,11 @@ export const useCreateTeacherMutation = () => {
 
   return useMutation({
     mutationFn: createTeacher,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.teachers'] });
-      toast.success(data.message);
+      toast.success('선생님이 추가되었습니다.');
     },
-    onError: (error) => {
-      console.error('선생님 추가 실패:', error);
+    onError: () => {
       toast.error('선생님 추가에 실패했습니다.');
     },
   });
@@ -33,12 +32,11 @@ export const useUpdateTeacherMutation = () => {
 
   return useMutation({
     mutationFn: updateTeacher,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.teachers'] });
-      toast.success(data.message);
+      toast.success('선생님 정보가 수정되었습니다.');
     },
-    onError: (error) => {
-      console.error('선생님 정보 수정 실패:', error);
+    onError: () => {
       toast.error('선생님 정보 수정에 실패했습니다.');
     },
   });
@@ -49,12 +47,11 @@ export const useDeleteTeacherMutation = () => {
 
   return useMutation({
     mutationFn: deleteTeacher,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.teachers'] });
-      toast.success(data.message);
+      toast.success('선생님이 삭제되었습니다.');
     },
-    onError: (error) => {
-      console.error('선생님 삭제 실패:', error);
+    onError: () => {
       toast.error('선생님 삭제에 실패했습니다.');
     },
   });
@@ -67,12 +64,11 @@ export const useSetForbiddenDatesMutation = () => {
   return useMutation({
     mutationFn: ({ teacherId, weekdays }: { teacherId: string; weekdays: ForbiddenDay[] }) =>
       setForbiddenDates(teacherId, weekdays),
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.forbiddenDates'] });
-      toast.success(data.message);
+      toast.success('금지날짜가 설정되었습니다.');
     },
-    onError: (error) => {
-      console.error('금지날짜 설정 실패:', error);
+    onError: () => {
       toast.error('금지날짜 설정에 실패했습니다.');
     },
   });
@@ -84,13 +80,12 @@ export const useCreateStudentMutation = () => {
 
   return useMutation({
     mutationFn: createStudent,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.students'] });
       queryClient.invalidateQueries({ queryKey: ['search.students'] });
-      toast.success(data.message);
+      toast.success('학생이 추가되었습니다.');
     },
-    onError: (error) => {
-      console.error('학생 추가 실패:', error);
+    onError: () => {
       toast.error('학생 추가에 실패했습니다.');
     },
   });
@@ -101,13 +96,12 @@ export const useUpdateStudentMutation = () => {
 
   return useMutation({
     mutationFn: updateStudent,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.students'] });
       queryClient.invalidateQueries({ queryKey: ['search.students'] });
-      toast.success(data.message);
+      toast.success('학생 정보가 수정되었습니다.');
     },
-    onError: (error) => {
-      console.error('학생 정보 수정 실패:', error);
+    onError: () => {
       toast.error('학생 정보 수정에 실패했습니다.');
     },
   });
@@ -118,13 +112,12 @@ export const useDeleteStudentMutation = () => {
 
   return useMutation({
     mutationFn: deleteStudent,
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.students'] });
       queryClient.invalidateQueries({ queryKey: ['search.students'] });
-      toast.success(data.message);
+      toast.success('학생이 삭제되었습니다.');
     },
-    onError: (error) => {
-      console.error('학생 삭제 실패:', error);
+    onError: () => {
       toast.error('학생 삭제에 실패했습니다.');
     },
   });
