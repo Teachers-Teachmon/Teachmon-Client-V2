@@ -86,6 +86,7 @@ export const useCreateStudentMutation = () => {
     mutationFn: createStudent,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.students'] });
+      queryClient.invalidateQueries({ queryKey: ['search.students'] });
       toast.success(data.message);
     },
     onError: (error) => {
@@ -102,6 +103,7 @@ export const useUpdateStudentMutation = () => {
     mutationFn: updateStudent,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.students'] });
+      queryClient.invalidateQueries({ queryKey: ['search.students'] });
       toast.success(data.message);
     },
     onError: (error) => {
@@ -118,6 +120,7 @@ export const useDeleteStudentMutation = () => {
     mutationFn: deleteStudent,
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['userManagement.students'] });
+      queryClient.invalidateQueries({ queryKey: ['search.students'] });
       toast.success(data.message);
     },
     onError: (error) => {

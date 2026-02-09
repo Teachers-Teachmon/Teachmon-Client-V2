@@ -73,3 +73,12 @@ export const EmptyState = styled.div`
   font-size: ${fontSizes.H4};
   color: ${colors.n03};
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: ${fontSizes.H4};
+  color: ${colors.n03};
+`;

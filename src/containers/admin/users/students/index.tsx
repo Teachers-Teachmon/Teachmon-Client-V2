@@ -14,17 +14,18 @@ import * as PageS from '@/pages/admin/users/style';
 
 export interface Student {
   id: string;
-  grade: number;
-  classNum: number;
-  number: number;
+  grade: number | '';
+  classNum: number | '';
+  number: number | '';
   name: string;
 }
 
 interface StudentsProps {
   studentsData: ApiStudent[];
+  isLoading?: boolean;
 }
 
-export default function Students({ studentsData }: StudentsProps) {
+export default function Students({ studentsData, isLoading = false }: StudentsProps) {
   const { openMenuId, setOpenMenuId, menuRef } = useDropdownMenu();
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
@@ -37,9 +38,9 @@ export default function Students({ studentsData }: StudentsProps) {
   // API 데이터를 UI 형식으로 변환
   const students = useMemo(() => {
     const apiStudents = studentsData.map((student): Student => ({
-      id: String(student.id),
+      id: String(student.id), // number와 string 모두 처리
       grade: student.grade,
-      classNum: student.class,
+      classNum: student.classNumber,
       number: student.number,
       name: student.name,
     }));
@@ -68,9 +69,9 @@ export default function Students({ studentsData }: StudentsProps) {
     if (studentId.startsWith('new-')) {
       createStudent({
         name: editingStudent.name,
-        grade: editingStudent.grade,
-        class: editingStudent.classNum,
-        number: editingStudent.number,
+        grade: Number(editingStudent.grade) || 1,
+        classNumber: Number(editingStudent.classNum) || 1,
+        number: Number(editingStudent.number) || 1,
       }, {
         onSuccess: () => {
           setLocalStudents(prev => prev.filter(s => s.id !== studentId));
@@ -85,11 +86,11 @@ export default function Students({ studentsData }: StudentsProps) {
     } else {
       // 기존 학생 수정
       updateStudent({
-        id: Number(studentId),
+        id: studentId,
         name: editingStudent.name,
-        grade: editingStudent.grade,
-        class: editingStudent.classNum,
-        number: editingStudent.number,
+        grade: Number(editingStudent.grade) || 1,
+        classNumber: Number(editingStudent.classNum) || 1,
+        number: Number(editingStudent.number) || 1,
       }, {
         onSuccess: () => {
           setEditingStudent(null);
@@ -133,7 +134,7 @@ export default function Students({ studentsData }: StudentsProps) {
     }
 
     deleteStudent(
-      { id: Number(studentId) },
+      { id: studentId },
       {
         onSuccess: () => {
           setEditingIds((prev) => {
@@ -150,9 +151,9 @@ export default function Students({ studentsData }: StudentsProps) {
   const handleAdd = () => {
     const newStudent: Student = {
       id: `new-${Date.now()}`,
-      grade: 1,
-      classNum: 1,
-      number: 1,
+      grade: '',
+      classNum: '',
+      number: '',
       name: '',
     };
     setLocalStudents(prev => [...prev, newStudent]);
@@ -199,7 +200,7 @@ export default function Students({ studentsData }: StudentsProps) {
   return (
     <>
       <S.TableWrapper>
-        <TableLayout columns={columns} data={students} renderActions={renderActions} />
+        <TableLayout columns={columns} data={students} renderActions={renderActions} isLoading={isLoading} />
       </S.TableWrapper>
       <PageS.AddButton onClick={handleAdd}>
         <img src="/icons/common/plusBlue.svg" alt="추가" />

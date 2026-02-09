@@ -10,10 +10,10 @@ export interface Teacher {
 }
 
 export interface Student {
-  id: number;
+  id: number | string; // json-bigint로 큰 숫자는 문자열, 작은 숫자는 number로 처리됨
   name: string;
   grade: number;
-  class: number;
+  classNumber: number;
   number: number;
 }
 
@@ -27,7 +27,6 @@ export interface UpdateTeacherRequest {
   teacher_id: string;
   role?: 'ADMIN' | 'TEACHER';
   name?: string;
-  email?: string;
 }
 
 export interface DeleteTeacherRequest {
@@ -39,20 +38,20 @@ export type ForbiddenDay = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN'
 export interface CreateStudentRequest {
   name: string;
   grade: number;
-  class: number;
+  classNumber: number;
   number: number;
 }
 
 export interface UpdateStudentRequest {
-  id: number;
+  id: string;
   name?: string;
   grade?: number;
-  class?: number;
+  classNumber?: number;
   number?: number;
 }
 
 export interface DeleteStudentRequest {
-  id: number;
+  id: string;
 }
 
 export interface MessageResponse {
@@ -73,7 +72,8 @@ export const createTeacher = async (data: CreateTeacherRequest): Promise<Message
 };
 
 export const updateTeacher = async (data: UpdateTeacherRequest): Promise<MessageResponse> => {
-  const response = await axiosInstance.patch<MessageResponse>(`/teacher/${data.teacher_id}`, data);
+  const { teacher_id, ...updateData } = data;
+  const response = await axiosInstance.patch<MessageResponse>(`/teacher/${teacher_id}`, updateData);
   return response.data;
 };
 
@@ -98,16 +98,24 @@ export const setForbiddenDates = async (
 
 // Student APIs
 export const createStudent = async (data: CreateStudentRequest): Promise<MessageResponse> => {
-  const response = await axiosInstance.post<MessageResponse>('/student', data);
+  const { classNumber, ...rest } = data;
+  const response = await axiosInstance.post<MessageResponse>('/student', {
+    ...rest,
+    class: classNumber
+  });
   return response.data;
 };
 
 export const updateStudent = async (data: UpdateStudentRequest): Promise<MessageResponse> => {
-  const response = await axiosInstance.patch<MessageResponse>('/student', data);
+  const { id, classNumber, ...rest } = data;
+  const response = await axiosInstance.patch<MessageResponse>(`/student/${id}`, {
+    ...rest,
+    class: classNumber
+  });
   return response.data;
 };
 
 export const deleteStudent = async (data: DeleteStudentRequest): Promise<MessageResponse> => {
-  const response = await axiosInstance.delete<MessageResponse>('/student', { data });
+  const response = await axiosInstance.delete<MessageResponse>(`/student/${data.id}`);
   return response.data;
 };
