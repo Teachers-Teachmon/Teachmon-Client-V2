@@ -80,7 +80,7 @@ export const CloseIcon = styled.span`
 
 export const Content = styled.div`
   flex: 1;
-  padding: 0rem 2rem 2rem 2rem;
+  padding: 0rem 2rem 2rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
