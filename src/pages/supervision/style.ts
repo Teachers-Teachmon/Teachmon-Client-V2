@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   width: 100%;
@@ -7,6 +8,11 @@ export const Container = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+
+  ${mq.mobile} {
+    padding: 12px;
+    gap: 8px;
+  }
 `;
 
 export const CalendarWrapper = styled.div`
@@ -15,4 +21,10 @@ export const CalendarWrapper = styled.div`
   border-radius: 12px;
   padding: 20px;
   overflow: hidden;
+
+  ${mq.mobile} {
+    padding: 12px;
+    border-radius: 10px;
+    overflow: visible;
+  }
 `;
