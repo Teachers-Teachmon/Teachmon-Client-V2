@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -7,6 +8,11 @@ export const Wrapper = styled.div`
   gap: 1.5rem;
   min-height: 0;
   flex: 1;
+
+  ${mq.mobile} {
+    height: 20vh;
+    gap: 0.5rem;
+  }
 `;
 
 export const TitleSection = styled.div`
@@ -24,6 +30,8 @@ export const Title = styled.h2`
     font-size: ${fontSizes.H4};
   }
 `;
+
+
 
 export const GradeTabs = styled.div`
   display: flex;
@@ -44,6 +52,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
     padding: 0.5rem 1.5rem;
     font-size: ${fontSizes.Body};
   }
+
+  ${mq.mobile} {
+    padding: 0.25rem 0.75rem;
+    font-size: ${fontSizes.Small};
+  }
 `;
 
 export const Container = styled.div`
@@ -52,10 +65,24 @@ export const Container = styled.div`
   border-radius: ${radius.lg};
   padding: 1rem 0;
   overflow-x: hidden;
-  overflow-y: auto;
   min-width: 0;
   flex: 1;
   position: relative;
+  display: flex;
+  flex-direction: column;
+
+  ${mq.mobile} {
+    padding: 0.5rem;
+    height: 25vh;
+    min-height: 0;
+  }
+`;
+
+export const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-y: auto;
   
   &::-webkit-scrollbar {
     width: 6px;
@@ -67,11 +94,15 @@ export const Container = styled.div`
     background: ${colors.n02};
     border-radius: 3px;
   }
-`;
 
-export const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
+  tbody {
+    display: table;
+    width: 100%;
+  }
+
+  ${mq.mobile} {
+    display: none;
+  }
 `;
 
 export const TableRow = styled.tr`
@@ -80,12 +111,16 @@ export const TableRow = styled.tr`
   &:last-child {
     border-bottom: none;
   }
+
+  ${mq.mobile} {
+    border-bottom-width: 0.5px;
+  }
 `;
 
 export const TableCell = styled.td`
   padding: 1.25rem 0.75rem;
   vertical-align: middle;
-  
+
   &:first-of-type {
     padding-left: 2rem;
   }
@@ -109,12 +144,48 @@ export const TableCell = styled.td`
       padding-right: 1rem;
     }
   }
+
+  ${mq.mobile} {
+    padding: 0.4rem 0.15rem;
+
+    &:first-of-type {
+    padding-left: 1rem;
+    width: 8%;
+  }
+  
+  &:nth-of-type(2) {
+    width: 15%;
+  }
+  
+  &:nth-of-type(3) {
+    width: 27%;
+  }
+  
+  &:nth-of-type(4) {
+    width: 15%;
+  }
+  
+  &:last-child {
+    position: relative;
+    padding-right: 0.5rem;
+    text-align: right;
+    width: 5%;
+    overflow: visible;
+  }
+  }
 `;
 
 export const DayText = styled.span`
   font-size: ${fontSizes.H4};
   font-weight: 400;
   color: ${colors.text};
+
+  ${mq.mobile} {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 export const TimeTag = styled.span`
@@ -125,18 +196,45 @@ export const TimeTag = styled.span`
   font-size: ${fontSizes.Body};
   font-weight: 400;
   white-space: nowrap;
+
+  ${mq.mobile} {
+    font-size: 12px;
+    padding: 0.25rem 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    justify-content: center;
+  }
 `;
 
 export const ClassText = styled.span`
   font-size: ${fontSizes.H4};
   font-weight: 400;
   color: ${colors.text};
+
+  ${mq.mobile} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    margin-left: 0.3rem;
+  }
 `;
 
 export const ProgramText = styled.span`
   font-size: ${fontSizes.H4};
   color: ${colors.text};
   font-weight: 400;
+
+  ${mq.mobile} {
+    font-size: 12px;
+    overflow: hidden;
+    margin-top: 0.4rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    max-width: 60px;
+  }
 `;
 
 export const MenuButton = styled.button`
@@ -151,6 +249,15 @@ export const MenuButton = styled.button`
   img {
     width: 20px;
     height: 20px;
+  }
+
+  ${mq.mobile} {
+    padding: 0.1rem 0.2rem;
+
+    img {
+      width: 10px;
+      height: 10px;
+    }
   }
 `;
 
@@ -171,6 +278,18 @@ export const MenuDropdown = styled.div<{ $openUp?: boolean }>`
   z-index: 1000;
   overflow: hidden;
   min-width: 80px;
+
+  ${mq.mobile} {
+    min-width: 3rem;
+
+    ${({ $openUp }) => $openUp ? `
+    bottom: 100%;
+    margin-bottom: -1rem;
+  ` : `
+    top: 100%;
+    margin-top: -0.7rem;
+  `}
+  }
 `;
 
 export const MenuItem = styled.button`
@@ -188,6 +307,11 @@ export const MenuItem = styled.button`
   &:hover {
     color: ${colors.primary};
   }
+
+  ${mq.mobile} {
+    padding: 0.5rem;
+    font-size: ${fontSizes.Caption};
+  }
 `;
 
 export const EmptyState = styled.div`
@@ -198,5 +322,89 @@ export const EmptyState = styled.div`
   color: ${colors.n03};
   font-size: ${fontSizes.Body};
   text-align: center;
-  min-height: 200px;
+  height: 100%;
+`;
+
+// 모바일용 카드 스타일
+export const MobileCardList = styled.div`
+  display: none;
+  
+  ${mq.mobile} {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    flex: 1;
+    
+    &::-webkit-scrollbar {
+      height: 4px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${colors.n02};
+      border-radius: 2px;
+    }
+  }
+`;
+
+export const MobileCard = styled.div`
+  background: ${colors.background};
+  border: 1px solid ${colors.n02};
+  border-radius: ${radius.md};
+  padding: 0.75rem;
+  min-width: 140px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+`;
+
+export const MobileCardTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const MobileTimeTag = styled.span`
+  background: ${colors.primary100};
+  color: ${colors.primary};
+  padding: 0.25rem 0.5rem;
+  border-radius: ${radius.sm};
+  font-size: 11px;
+  font-weight: 500;
+`;
+
+export const MobileMenuButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  img {
+    width: 12px;
+    height: 12px;
+  }
+`;
+
+export const MobileCardSubject = styled.h4`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${colors.text};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const MobileCardInfo = styled.p`
+  font-size: 11px;
+  color: ${colors.n03};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;

@@ -21,7 +21,22 @@ export const ContentWrapper = styled.div`
   align-items: center;
 
   ${mq.mobile} {
-    gap: 24px;
+    flex-direction: column;
+    gap: 20px;
+  }
+`;
+
+export const MobileTitle = styled.h2`
+  display: none;
+  
+  ${mq.mobile} {
+    display: block;
+    font-family: 'Paperlogy', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+    text-align: center;
   }
 `;
 

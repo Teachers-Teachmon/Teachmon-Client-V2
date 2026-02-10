@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const QuickLinkCard = styled.div`
   position: relative;
@@ -18,6 +19,13 @@ export const QuickLinkCard = styled.div`
 
   &:hover {
     transform: scale(1.02);
+  }
+
+  ${mq.mobile} {
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+    height: auto;
   }
 `;
 
@@ -39,12 +47,20 @@ export const QuickLinkTitle = styled.h2`
   color: ${colors.n01};
   font-weight: 500;
   white-space: nowrap;
+
+  ${mq.mobile} {
+    font-size: 20px;
+  }
 `;
 
 export const QuickLinkDescription = styled.p`
   font-size: clamp(12px, 1.2vw, 18px);
   color: ${colors.n01};
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 13px;
+  }
 `;
 
 export const ArrowButton = styled.div`
@@ -59,6 +75,11 @@ export const ArrowButton = styled.div`
     width: 100%;
     height: 100%;
   }
+
+  ${mq.mobile} {
+    width: 28px;
+    height: 28px;
+  }
 `;
 
 export const PencilIcon = styled.div`
@@ -70,5 +91,9 @@ export const PencilIcon = styled.div`
     width: clamp(120px, 14vw, 180px);
     height: clamp(120px, 14vw, 180px);
     object-fit: contain;
+  }
+
+  ${mq.mobile} {
+    display: none;
   }
 `;

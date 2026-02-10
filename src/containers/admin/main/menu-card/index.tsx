@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import * as S from './style';
+import { useDevice } from '@/hooks/useDevice';
 
 import type { MenuCardItem } from '@/constants/adminMenuCards';
 
@@ -10,9 +11,12 @@ type MenuCardProps = {
 
 export default function MenuCard({ items }: MenuCardProps) {
   const navigate = useNavigate();
+  const { isMobile } = useDevice();
+
   const handleClick = (url: string) => {
     navigate(url);
   };
+
   return (
     <S.MenuCardGrid>
       {items.map((card) => (
@@ -22,8 +26,12 @@ export default function MenuCard({ items }: MenuCardProps) {
           </S.MenuCardIcon>
           <S.MenuCardBottom>
             <S.MenuCardContent>
-              <S.MenuCardTitle>{card.title}</S.MenuCardTitle>
-              <S.MenuCardDescription>{card.description}</S.MenuCardDescription>
+              <S.MenuCardTitle>
+                {isMobile && card.mobileTitle ? card.mobileTitle : card.title}
+              </S.MenuCardTitle>
+              <S.MenuCardDescription>
+                {isMobile && card.mobileDescription ? card.mobileDescription : card.description}
+              </S.MenuCardDescription>
             </S.MenuCardContent>
             <S.MenuCardArrow>
               <img src="/icons/admin/goOut.svg" alt="go" />

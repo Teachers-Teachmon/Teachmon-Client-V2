@@ -1,13 +1,20 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
+import { dropdownSlideDown } from '@/styles/animations';
 
 export const Container = styled.div`
     width: 100%;
     height: 100%;
     background-color: ${colors.primaryBackground};
-    padding: 40px 160px;
+    padding: 40px clamp(16px, 10vw, 160px);
     display: flex;
     flex-direction: column;
+
+    ${mq.mobile} {
+        padding: 20px 16px;
+        overflow-y: scroll;
+    }
 `;
 
 export const ContentWrapper = styled.div`
@@ -17,15 +24,28 @@ export const ContentWrapper = styled.div`
     gap: 20px;
     flex: 1;
     margin-bottom: 20px;
+    align-items: start;
+
+    ${mq.mobile} {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+        flex: none;
+    }
 `;
 
 export const FormSection = styled.div`
     width: 100%;
-    flex: 1;
     background-color: ${colors.background};
     border: 1px solid ${colors.primary200};
     border-radius: ${radius.md};
     padding: 32px 44px;
+    height: 100%;
+
+    ${mq.mobile} {
+        height: max-content;
+        padding: 20px 16px;
+    }
 `;
 
 export const FormTitle = styled.h1`
@@ -35,18 +55,32 @@ export const FormTitle = styled.h1`
     line-height: 28px;
     color: ${colors.text};
     margin: 0 0 24px 0;
+
+    ${mq.mobile} {
+        font-size: 22px;
+        margin: 0 0 20px 0;
+    }
 `;
 
 export const FormContent = styled.div`
     display: flex;
     flex-direction: column;
     gap: 20px;
+
+    ${mq.mobile} {
+        gap: 16px;
+    }
 `;
 
 export const FormGroup = styled.div`
     display: flex;
     flex-direction: column;
     gap: 12px;
+    position: relative;
+
+    ${mq.mobile} {
+        gap: 10px;
+    }
 `;
 
 export const Label = styled.label`
@@ -56,11 +90,20 @@ export const Label = styled.label`
     line-height: 18px;
     letter-spacing: 0.6px;
     color: ${colors.text};
+
+    ${mq.mobile} {
+        font-size: ${fontSizes.Body};
+    }
 `;
 
 export const InputRow = styled.div`
     display: flex;
     gap: 19px;
+
+    ${mq.mobile} {
+        flex-direction: column;
+        gap: 12px;
+    }
 `;
 
 export const DropdownWrapper = styled.div`
@@ -140,12 +183,20 @@ export const SwitchKnob = styled.div<{ $isOn: boolean }>`
 `;
 
 export const StudentDropdown = styled.div`
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     width: 100%;
     background-color: ${colors.background};
+    border: 1px solid ${colors.primary200};
     border-radius: ${radius.sm};
     overflow: hidden;
-    margin-top: -8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 4px;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    z-index: 10;
+    
+    animation: ${dropdownSlideDown} 0.2s ease-out;
 `;
 
 export const StudentDropdownItem = styled.div`
@@ -163,8 +214,16 @@ export const StudentDropdownItem = styled.div`
     letter-spacing: 0.36px;
     color: ${colors.text};
     
+    transition: all 0.15s ease;
+    
     &:hover {
-        background-color: ${colors.n03};
+        background-color: ${colors.primary100};
+        color: ${colors.primary};
+        padding-left: 28px;
+    }
+    
+    &:active {
+        background-color: ${colors.primary200};
     }
 `;
 
@@ -176,6 +235,12 @@ export const SelectedStudentsSection = styled.div`
     padding: 32px 17px;
     display: flex;
     flex-direction: column;
+    height: 100%;
+
+    ${mq.mobile} {
+        height: max-content;
+        padding: 20px 16px;
+    }
 `;
 
 export const SelectedTitle = styled.h2`
@@ -185,6 +250,11 @@ export const SelectedTitle = styled.h2`
     line-height: 28px;
     color: ${colors.text};
     margin: 0 0 16px 0;
+
+    ${mq.mobile} {
+        font-size: 22px;
+        margin: 0 0 12px 0;
+    }
 `;
 
 export const SelectedStudentsGrid = styled.div`
@@ -219,6 +289,10 @@ export const StudentName = styled.span`
 export const ButtonWrapper = styled.div`
     display: flex;
     gap: 20px;
+
+    ${mq.mobile} {
+        gap: 12px;
+    }
 `;
 
 export const CancelButton = styled.button`
@@ -237,6 +311,11 @@ export const CancelButton = styled.button`
     &:hover {
         background-color: #e8e8e8;
     }
+
+    ${mq.mobile} {
+        height: 42px;
+        font-size: 16px;
+    }
 `;
 
 export const NextButton = styled.button`
@@ -254,5 +333,10 @@ export const NextButton = styled.button`
     
     &:hover {
         background-color: #2558c9;
+    }
+
+    ${mq.mobile} {
+        height: 42px;
+        font-size: 16px;
     }
 `;

@@ -9,6 +9,7 @@ import Loading from '@/components/ui/loading'
 import { useLoadingStore } from '@/stores/useLoadingStore'
 
 import App from './App.tsx'
+import AuthProvider from '@/components/ui/providers/index.tsx'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,12 +19,11 @@ const queryClient = new QueryClient({
     },
   },
 })
-
 function Root() {
   const isLoading = useLoadingStore((state) => state.isLoading);
 
   return (
-    <>
+    <AuthProvider>
       {isLoading && <Loading />}
       <App />
       <ToastContainer
@@ -38,9 +38,10 @@ function Root() {
         pauseOnHover
         theme="light"
       />
-    </>
+    </AuthProvider>
   );
 }
+
 
 createRoot(document.getElementById('root')!).render(
   <BrowserRouter>

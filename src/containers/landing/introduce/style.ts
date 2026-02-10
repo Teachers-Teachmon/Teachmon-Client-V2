@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { colors, fontSizes, radius } from '@/styles/theme';
+import { colors, fontSizes } from '@/styles/theme';
 import { mq } from '@/styles/media';
 
 export const IntroduceContainer = styled.div`
@@ -10,23 +10,26 @@ export const IntroduceContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 80px 140px;
+  padding: 0 140px;
   position: relative;
   overflow: hidden;
 
   ${mq.mobile} {
-    padding: 60px 20px;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 10px 0;
+    height: calc(100vh - 60px);
   }
 `;
 
 export const ContentWrapper = styled.div`
   width: 100%;
-  max-width: 1440px;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
 
   ${mq.mobile} {
+    order: 2;
     justify-content: center;
   }
 `;
@@ -40,6 +43,8 @@ export const TextSection = styled.div`
 
   ${mq.mobile} {
     max-width: 100%;
+    gap: 16px;
+    padding: 0 20px;
   }
 `;
 
@@ -107,6 +112,10 @@ export const Description = styled.p`
   ${mq.mobile} {
     font-size: ${fontSizes.Body};
     line-height: 1.6;
+    
+    br {
+      display: none;
+    }
   }
 `;
 
@@ -120,13 +129,24 @@ export const ImageSection = styled.div`
   justify-content: flex-end;
   pointer-events: none;
 
+  ${mq.mobile} {
+    position: relative;
+    order: 1;
+    width: 100%;
+    height: 50%;
+    right: auto;
+    top: auto;
+    justify-content: center;
+  }
+  
   img {
     height: 100%;
     width: 80%;
     object-fit: contain;
-
+    
     ${mq.mobile} {
-      display: none;
+      width: 100%;
+      height: 100%;
     }
   }
 `;
