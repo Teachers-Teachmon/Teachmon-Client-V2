@@ -6,7 +6,6 @@ export const TableContainer = styled.div`
     flex: 1;
     border: 1px solid #eaecf0;
     border-radius: 16px;
-    overflow: hidden;
     background-color: ${colors.background};
     display: flex;
     flex-direction: column;
@@ -61,11 +60,11 @@ export const TableHeader = styled.th`
     color: ${colors.primaryGray};
     height: 56px;
 
-    &:first-child {
+    &:first-of-type {
         padding-left: 40px;
     }
 
-    &:last-child {
+    & :last-child {
         padding-right: 40px;
     }
 `;
@@ -80,9 +79,8 @@ export const TableCell = styled.td`
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
-    max-width: 0;
 
-    &:first-child {
+    &:first-of-type {
         padding-left: 40px;
     }
 
@@ -107,6 +105,7 @@ export const MobileCardContainer = styled.div`
         gap: 12px;
         overflow-y: auto;
         flex: 1;
+        padding-bottom: 80px;
     }
 `;
 
@@ -139,6 +138,7 @@ export const MobileCardRow = styled.div`
     gap: 12px;
     padding: 8px 0;
     border-bottom: 1px solid #f5f5f5;
+    min-height: 40px;
     
     &:last-of-type {
         border-bottom: none;

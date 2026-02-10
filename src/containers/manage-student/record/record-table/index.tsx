@@ -3,17 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@/components/ui/button';
 import TableLayout from '@/components/layout/table';
 import MovementDetailModal from '@/containers/manage-student/record/movement-detail';
-import type { RecordData, LeaveData, StudentData } from '@/types/record';
+import type { RecordData, LeaveData, StudentData, RecordTableProps } from '@/types/record';
 import type { StatusType } from '@/components/ui/status';
 import { useRecordTableColumns } from '@/hooks/useRecordTableColumns';
 import * as S from './style';
-
-interface RecordTableProps {
-    activeTab: 'movement' | 'leave' | 'student';
-    movementData: RecordData[];
-    leaveData: LeaveData[];
-    studentData: StudentData[];
-}
 
 export default function RecordTable({
     activeTab,

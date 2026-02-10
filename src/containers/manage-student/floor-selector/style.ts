@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -22,6 +23,12 @@ export const HintText = styled.div`
   padding: 8px 16px;
   border-radius: 20px;
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.08);
+  ${mq.mobile}{
+    top: auto;
+    bottom: -40px;
+    height: min-content;
+    width: max-content;
+  }
 `;
 
 export const Title = styled.h2`
@@ -56,5 +63,8 @@ export const FloorTab = styled.button<{ $isSelected: boolean }>`
   &:hover {
     border-color: ${colors.primary};
     color: ${colors.primary};
+  }
+  ${mq.mobile}{
+    width: 60px;
   }
 `;
