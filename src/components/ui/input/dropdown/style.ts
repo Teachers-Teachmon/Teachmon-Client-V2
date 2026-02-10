@@ -123,7 +123,7 @@ export const DropdownItem = styled.li<{ $selected?: boolean }>`
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   color: ${colors.text};
   background-color: ${props => props.$selected ? colors.primary100 : 'transparent'};
-  text-align: center;
+  text-align: left;
   
   &:hover {
     background-color: ${props => props.$selected ? colors.primary200 : colors.primaryBackground};
