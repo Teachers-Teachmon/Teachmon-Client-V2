@@ -20,10 +20,10 @@ export const useTodaySupervisionQuery = () =>
         queryFn: fetchTodaySupervision,
     });
 
-export const useMySupervisionDaysQuery = () =>
+export const useMySupervisionDaysQuery = (month: number) =>
     useQuery({
-        queryKey: homeQueryKeys.mySupervisionDays(),
-        queryFn: fetchMySupervisionDays,
+        queryKey: [...homeQueryKeys.mySupervisionDays(), month],
+        queryFn: () => fetchMySupervisionDays(month),
     });
 
 export const useExchangeRequestsQuery = () =>

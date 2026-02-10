@@ -10,8 +10,10 @@ export const fetchTodaySupervision = async (): Promise<TodaySupervisionResponse>
     return data;
 };
 
-export const fetchMySupervisionDays = async (): Promise<string[]> => {
-    const { data } = await axiosInstance.get('/supervision/me');
+export const fetchMySupervisionDays = async (month: number): Promise<string[]> => {
+    const { data } = await axiosInstance.get('/supervision/me', {
+        params: { month },
+    });
     return data;
 };
 
@@ -35,6 +37,6 @@ export const rejectExchangeRequest = async (exchangeRequestId: number) => {
 };
 
 export const fetchWeeklyExitStudents = async (): Promise<ExitStudent[]> => {
-    const { data } = await axiosInstance.get('/supervision/exit/weekly');
+    const { data } = await axiosInstance.get('/exit/history/week');
     return data;
 };

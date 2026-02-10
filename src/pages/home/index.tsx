@@ -25,9 +25,10 @@ export default function HomePage() {
     const [selectedExchange, setSelectedExchange] = useState<ExchangeRequest | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const queryClient = useQueryClient();
+    const month = new Date().getMonth() + 1;
 
     const { data: todaySupervision } = useTodaySupervisionQuery();
-    const { data: mySupervisionDays } = useMySupervisionDaysQuery();
+    const { data: mySupervisionDays } = useMySupervisionDaysQuery(month);
     const { data: exchangeRequests } = useExchangeRequestsQuery();
     const { data: weeklyExitStudents } = useWeeklyExitStudentsQuery();
     const { mutate: acceptExchange } = useAcceptExchangeRequestMutation();
