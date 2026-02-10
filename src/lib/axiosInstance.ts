@@ -1,10 +1,13 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import JSONbig from 'json-bigint';
 import { reissueToken } from '@/services/auth/auth.api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLoadingStore } from '@/stores/useLoadingStore';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
+const JSONbigNative = JSONbig({ useNativeBigInt: false, storeAsString: true });
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
@@ -13,6 +16,16 @@ const axiosInstance = axios.create({
         'Content-Type': 'application/json',
     },
     withCredentials: true,
+    transformResponse: [(data) => {
+        if (typeof data === 'string') {
+            try {
+                return JSONbigNative.parse(data);
+            } catch {
+                return data;
+            }
+        }
+        return data;
+    }],
 });
 
 // Request 인터셉터 - 디버깅용
