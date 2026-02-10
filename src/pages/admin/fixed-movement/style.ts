@@ -1,8 +1,10 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   padding: 3rem;
+  padding-bottom: 5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -10,12 +12,23 @@ export const Container = styled.div`
   min-height: 0;
   box-sizing: border-box;
   justify-content: stretch;
+
+  ${mq.mobile} {
+    padding: 2rem;
+    padding-bottom: 6rem;
+    gap: 0rem;
+  }
 `;
 
 export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    gap: 1rem;
+  }
 `;
 
 export const Title = styled.h1`
@@ -23,12 +36,22 @@ export const Title = styled.h1`
   font-weight: 700;
   color: ${colors.text};
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: 20px;
+    white-space: nowrap;
+    margin-right: 16rem;
+  }
 `;
 
 export const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 0.75rem;
+
+  ${mq.mobile} {
+    gap: 0.5rem;
+  }
 `;
 
 export const HeaderButton = styled.button`
