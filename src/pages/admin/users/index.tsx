@@ -87,6 +87,7 @@ export default function AdminUsersPage() {
         <Teachers
           teachersData={teachersData || []}
           forbiddenDates={[]}
+          searchQuery={searchQuery}
           onOpenForbiddenDates={handleOpenForbiddenDates}
           isLoading={isTeachersLoading}
         />

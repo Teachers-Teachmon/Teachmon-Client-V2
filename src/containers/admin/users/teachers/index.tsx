@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { USER_ROLES } from '@/constants/admin';
+
 import { useTeacherColumns } from '@/hooks/useTeacherUserManageColumns';
 import { useActionMenu } from '@/hooks/useActionMenu';
 import type { Teacher as ApiTeacher, ForbiddenDay } from '@/services/user-management/user-management.api';
@@ -10,6 +11,7 @@ import {
   useUpdateTeacherMutation, 
   useDeleteTeacherMutation 
 } from '@/services/user-management/user-management.mutation';
+
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
 
@@ -28,11 +30,13 @@ export interface Teacher {
 interface TeachersProps {
   teachersData: ApiTeacher[];
   forbiddenDates: ForbiddenDay[];
+  searchQuery: string;
   onOpenForbiddenDates: (teacher: Teacher) => void;
   isLoading?: boolean;
 }
 
-export default function Teachers({ teachersData, forbiddenDates, onOpenForbiddenDates, isLoading = false }: TeachersProps) {
+
+export default function Teachers({ searchQuery, teachersData, forbiddenDates, onOpenForbiddenDates, isLoading = false }: TeachersProps) {
   const { openMenuId, setOpenMenuId, menuRef } = useActionMenu();
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
@@ -65,10 +69,28 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
     onEditingTeacherChange: setEditingTeacher,
   });
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   const handleEdit = (teacher: Teacher) => {
     setEditingTeacher({ ...teacher });
     setEditingIds((prev) => new Set(prev).add(teacher.id));
     setOpenMenuId(null);
+  };
+
+  const handleKebabClick = (rowId: string) => {
+    setOpenMenuId(openMenuId === rowId ? null : rowId);
+  };
+
+  const handleForbiddenDatesClick = (row: Teacher) => {
+    onOpenForbiddenDates(row);
   };
 
   const handleSave = (teacherId: string) => {

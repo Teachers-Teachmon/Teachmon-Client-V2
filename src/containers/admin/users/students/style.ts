@@ -1,11 +1,16 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const TableWrapper = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
+    ${mq.mobile}{
+      padding-bottom: 60px;
+    }
 `;
 
 export const EmptyState = styled.div`

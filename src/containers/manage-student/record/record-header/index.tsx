@@ -2,16 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import DateInput from '@/components/ui/input/date';
 import TextInput from '@/components/ui/input/text-input';
 import Button from '@/components/ui/button';
+import type { RecordHeaderProps } from '@/types/record';
 import * as S from './style';
-
-interface RecordHeaderProps {
-    selectedDate: string;
-    onDateChange: (date: string) => void;
-    activeTab: 'movement' | 'leave' | 'student';
-    onTabChange: (tab: 'movement' | 'leave' | 'student') => void;
-    searchQuery: string;
-    onSearchChange: (query: string) => void;
-}
 
 export default function RecordHeader({
     selectedDate,

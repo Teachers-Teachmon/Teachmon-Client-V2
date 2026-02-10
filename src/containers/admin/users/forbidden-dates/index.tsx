@@ -2,8 +2,11 @@ import { useState, useMemo, useEffect } from 'react';
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
 import Checkbox from '@/components/ui/input/checkbox';
+
 import { WEEKDAYS, DAY_MAP, REVERSE_DAY_MAP } from '@/constants/admin';
 import type { ForbiddenDay } from '@/services/user-management/user-management.api';
+import { useDevice } from '@/hooks/useDevice';
+
 import * as S from './style';
 
 interface ForbiddenDatesProps {
@@ -30,6 +33,8 @@ export default function ForbiddenDates({
   useEffect(() => {
     setSelectedDays(initialKoreanDates);
   }, [initialKoreanDates]);
+    
+  const { isMobile } = useDevice();
 
   const handleToggleDay = (day: string) => {
     setSelectedDays((prev) =>
@@ -44,7 +49,7 @@ export default function ForbiddenDates({
   };
 
   return (
-    <Modal isOpen={true} onClose={onCancel} padding="60px 81px">
+    <Modal isOpen={true} onClose={onCancel} padding={isMobile ? "32px 40px" : "60px 80px"}>
       <S.Content>
         <S.Title>{teacherName} 선생님 금지날짜</S.Title>
 

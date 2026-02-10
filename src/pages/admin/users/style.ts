@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -9,6 +10,9 @@ export const Container = styled.div`
   height: 100%;
   box-sizing: border-box;
   position: relative;
+  ${mq.mobile}{
+    padding: 30px;
+  }
 `;
 
 export const FilterSection = styled.div`
@@ -58,6 +62,22 @@ export const AddButton = styled.button`
     font-size: ${fontSizes.H4};
     font-weight: 600;
     color: ${colors.primary};
+  }
+
+  ${mq.mobile} {
+    bottom: 100px;
+    width: 200px;
+    height: 44px;
+    gap: 8px;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+
+    span {
+      font-size: ${fontSizes.Body};
+    }
   }
 
   &:hover {

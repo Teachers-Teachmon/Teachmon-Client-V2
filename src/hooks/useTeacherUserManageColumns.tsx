@@ -49,17 +49,19 @@ export function useTeacherColumns({
       width: '150px',
       render: (row) =>
         editingIds.has(row.id) ? (
-          <TextInput
-            value={editingTeacher?.id === row.id ? editingTeacher.name : row.name}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const updatedTeacher = editingTeacher?.id === row.id
-                ? { ...editingTeacher, name: e.target.value }
-                : { ...row, name: e.target.value };
-              onEditingTeacherChange(updatedTeacher);
-            }}
-            customPadding="0 14px"
-            customFontSize="16px"
-          />
+          <div style={{ width: '100%', maxWidth: '150px' }}>
+            <TextInput
+              value={editingTeacher?.id === row.id ? editingTeacher.name : row.name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const updatedTeacher = editingTeacher?.id === row.id
+                  ? { ...editingTeacher, name: e.target.value }
+                  : { ...row, name: e.target.value };
+                onEditingTeacherChange(updatedTeacher);
+              }}
+              customPadding="0 14px"
+              customFontSize="16px"
+            />
+          </div>
         ) : (
           row.name
         ),
@@ -70,7 +72,7 @@ export function useTeacherColumns({
       width: '320px',
       render: (row) =>
         editingIds.has(row.id) && row.id.startsWith('new-') ? (
-          <div style={{ width: '250px' }}>
+          <div style={{ width: '100%', maxWidth: '250px' }}>
             <TextInput
               value={editingTeacher?.id === row.id ? editingTeacher.email : row.email}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
