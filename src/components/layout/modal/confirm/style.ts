@@ -1,10 +1,10 @@
 import styled from "@emotion/styled";
+import { mq } from "@/styles/media";
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  min-width: 300px;
 `
 
 export const Title = styled.h2`
