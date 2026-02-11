@@ -1,6 +1,7 @@
 import axiosInstance from '@/lib/axiosInstance';
 
 export interface UserInfo {
+  id: number;
   name: string;
   profile: string;
 }
