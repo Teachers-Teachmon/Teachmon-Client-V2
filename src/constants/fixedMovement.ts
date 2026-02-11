@@ -39,6 +39,14 @@ export const PERIOD_LABEL: Record<Period, string> = {
   TEN_AND_ELEVEN_PERIOD: '10~11교시',
 } as const;
 
+export const WEEKDAY_LABEL_TO_API: Record<string, Weekday> = Object.fromEntries(
+  Object.entries(WEEKDAY_LABEL).map(([key, value]) => [value, key as Weekday]),
+) as Record<string, Weekday>;
+
+export const PERIOD_LABEL_TO_API: Record<string, Period> = Object.fromEntries(
+  Object.entries(PERIOD_LABEL).map(([key, value]) => [value, key as Period]),
+) as Record<string, Period>;
+
 export const PERIOD_OPTIONS = [
   '7교시',
   '8~9교시',

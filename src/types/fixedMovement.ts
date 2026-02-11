@@ -43,3 +43,38 @@ export interface FixedMovementResponse {
   personnel: number;
   students: FixedMovementStudentResponse[];
 }
+
+// === 고정 이석 작성 요청/응답 ===
+
+export interface CreateFixedMovementRequest {
+  week_day: Weekday;
+  period: Period;
+  place_id: number;
+  cause: string;
+  students: number[];
+}
+
+export interface CreateFixedMovementResponse {
+  message: string;
+}
+
+// === 검색 API 응답 ===
+
+export interface StudentSearchResponse {
+  id: number;
+  grade: number;
+  class: number;
+  number: number;
+  name: string;
+}
+
+export interface PlaceSearchResponse {
+  id: number;
+  name: string;
+  floor: number;
+}
+
+export interface TeamSearchResponse {
+  id: number;
+  name: string;
+}
