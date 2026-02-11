@@ -62,6 +62,18 @@ export interface CreateFixedMovementResponse {
   message: string;
 }
 
+export interface UpdateFixedMovementRequest {
+  week_day: Weekday;
+  period: Period;
+  place: number;
+  cause: string;
+  students: number[];
+}
+
+export interface UpdateFixedMovementResponse {
+  message: string;
+}
+
 // === 검색 API 응답 ===
 
 export interface StudentSearchResponse {

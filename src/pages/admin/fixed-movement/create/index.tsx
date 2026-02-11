@@ -5,8 +5,9 @@ import { toast } from 'react-toastify';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import Button from '@/components/ui/button';
-import { WEEKDAYS, PERIOD_OPTIONS, MOCK_FIXED_MOVEMENTS, WEEKDAY_LABEL_TO_API, PERIOD_LABEL_TO_API } from '@/constants/fixedMovement';
-import { useCreateFixedMovementMutation } from '@/services/fixed-movement/fixedMovement.mutation';
+import { WEEKDAYS, PERIOD_OPTIONS, WEEKDAY_LABEL_TO_API, PERIOD_LABEL_TO_API, WEEKDAY_LABEL, PERIOD_LABEL } from '@/constants/fixedMovement';
+import { useCreateFixedMovementMutation, useUpdateFixedMovementMutation } from '@/services/fixed-movement/fixedMovement.mutation';
+import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
 import { searchQuery } from '@/services/search/search.query';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { Student, PlaceSearchResponse } from '@/types/fixedMovement';
@@ -18,6 +19,9 @@ export default function FixedMovementFormPage() {
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
   const createMutation = useCreateFixedMovementMutation();
+  const updateMutation = useUpdateFixedMovementMutation();
+
+  const { data: detailData } = useQuery(fixedMovementQuery.detail(id));
   
   const [dayOfWeek, setDayOfWeek] = useState<string>('');
   const [period, setPeriod] = useState<string>('');
@@ -41,16 +45,29 @@ export default function FixedMovementFormPage() {
   const dayOptions = Object.values(WEEKDAYS);
 
   useEffect(() => {
-    if (isEditMode) {
-      const movement = MOCK_FIXED_MOVEMENTS.find(m => m.id === id);
-      if (movement) {
-        setDayOfWeek(WEEKDAYS[movement.day as keyof typeof WEEKDAYS]);
-        setPeriod(movement.period);
-        setLocation(movement.location);
-        setSelectedStudents(movement.students);
+    if (isEditMode && detailData) {
+      const weekday = detailData.weekday ?? detailData.week_day;
+      if (weekday) {
+        setDayOfWeek(WEEKDAY_LABEL[weekday] ?? '');
       }
+      setPeriod(PERIOD_LABEL[detailData.period] ?? '');
+
+      const placeName = typeof detailData.place === 'string' ? detailData.place : detailData.place.name;
+      const placeId = typeof detailData.place === 'object' ? detailData.place.id : null;
+      setLocation(placeName);
+      if (placeId) {
+        setSelectedPlace({ id: placeId, name: placeName, floor: 0 });
+      }
+
+      setReason(detailData.cause ?? '');
+      setSelectedStudents(
+        detailData.students.map((s) => ({
+          studentNumber: s.id ?? s.number,
+          name: s.name,
+        })),
+      );
     }
-  }, [id, isEditMode]);
+  }, [isEditMode, detailData]);
 
   const handleAddStudent = (student: Student) => {
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
@@ -92,13 +109,26 @@ export default function FixedMovementFormPage() {
       return;
     }
 
-    createMutation.mutate({
-      week_day: weekDay,
-      period: periodEnum,
-      place_id: selectedPlace.id,
-      cause: reason,
-      students: selectedStudents.map((s) => s.studentNumber),
-    });
+    if (isEditMode && id) {
+      updateMutation.mutate({
+        id,
+        data: {
+          week_day: weekDay,
+          period: periodEnum,
+          place: selectedPlace.id,
+          cause: reason,
+          students: selectedStudents.map((s) => s.studentNumber),
+        },
+      });
+    } else {
+      createMutation.mutate({
+        week_day: weekDay,
+        period: periodEnum,
+        place_id: selectedPlace.id,
+        cause: reason,
+        students: selectedStudents.map((s) => s.studentNumber),
+      });
+    }
   };
 
   return (

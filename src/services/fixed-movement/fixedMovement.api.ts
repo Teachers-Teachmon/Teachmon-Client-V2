@@ -3,6 +3,8 @@ import type {
   FixedMovementResponse,
   CreateFixedMovementRequest,
   CreateFixedMovementResponse,
+  UpdateFixedMovementRequest,
+  UpdateFixedMovementResponse,
 } from '@/types/fixedMovement';
 
 export const getFixedMovements = async (): Promise<FixedMovementResponse[]> => {
@@ -19,5 +21,16 @@ export const createFixedMovement = async (
   data: CreateFixedMovementRequest,
 ): Promise<CreateFixedMovementResponse> => {
   const response = await axiosInstance.post<CreateFixedMovementResponse>('/leaveseat/static', data);
+  return response.data;
+};
+
+export const updateFixedMovement = async (
+  id: string,
+  data: UpdateFixedMovementRequest,
+): Promise<UpdateFixedMovementResponse> => {
+  const response = await axiosInstance.patch<UpdateFixedMovementResponse>(
+    `/leaveseat/static/${id}`,
+    data,
+  );
   return response.data;
 };
