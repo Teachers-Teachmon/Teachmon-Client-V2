@@ -1,11 +1,16 @@
 import styled from '@emotion/styled';
 import { fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   padding: 1rem 0;
+
+  ${mq.mobile} {
+    padding: 0rem;
+  }
 `;
 
 export const DateGroup = styled.div`
