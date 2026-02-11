@@ -12,7 +12,24 @@ export const Container = styled.div`
   overflow: hidden;
 
   ${mq.mobile} {
-    overflow: hidden;
+    height: 100dvh;
+    padding: 12px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+`;
+
+export const HeaderRow = styled.div<{ $isQuarterly: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: ${({ $isQuarterly }) => ($isQuarterly ? '24px' : '0')};
+
+  ${mq.mobile} {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: ${({ $isQuarterly }) => ($isQuarterly ? '16px' : '0')};
   }
 `;
 
