@@ -18,26 +18,29 @@ export default function AdminSupervisionCreateModal({ isOpen, onClose }: AdminSu
 
   const createAutoScheduleMutation = useCreateAutoScheduleMutation();
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     if (!startDate || !endDate) {
       toast.error('시작일과 종료일을 모두 입력해주세요.');
       return;
     }
 
-    try {
-      await createAutoScheduleMutation.mutateAsync({
+    createAutoScheduleMutation.mutate(
+      {
         start_day: startDate,
         end_day: endDate,
-      });
-
-      toast.success('자습감독 일정이 생성되었습니다.');
-      setStartDate('');
-      setEndDate('');
-      onClose();
-    } catch (error) {
-      console.error('자습감독 일정 생성 실패:', error);
-      toast.error(getApiErrorMessage(error, '일정 생성에 실패했습니다.'));
-    }
+      },
+      {
+        onSuccess: () => {
+          toast.success('자습감독 일정이 생성되었습니다.');
+          setStartDate('');
+          setEndDate('');
+          onClose();
+        },
+        onError: (error) => {
+          toast.error(getApiErrorMessage(error, '일정 생성에 실패했습니다.'));
+        },
+      }
+    );
   };
 
   return (
