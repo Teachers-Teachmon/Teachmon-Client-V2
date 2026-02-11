@@ -22,12 +22,14 @@ import LandingPage from '@/pages/landing'
 import AdminAfterSchoolPage from '@/pages/admin/after-school'
 import AdminAfterSchoolFormPage from '@/pages/admin/after-school/create'
 import BusinessTripPage from '@/pages/after-school/business-trip'
+import Oauth from '@/pages/oauth2'
 
 function App() {
   return (
     <Routes>
       <Route path="*" element={<ErrorPage />} />
       <Route path="/" element={<LandingPage />} />
+      <Route path="/oauth2/callback" element={<Oauth />} />
       <Route element={<MainLayout />}>
         <Route path="/main" element={<HomePage />} />
         <Route path="/supervision" element={<SupervisionPage />} />

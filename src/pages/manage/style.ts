@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors } from '../../styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   width: 100%;
@@ -11,6 +12,13 @@ export const Container = styled.div`
   display: grid;
   grid-template-rows: 0.8fr 6fr;
   gap: 20px;
+  overflow-y: auto;
+
+  ${mq.mobile} {
+    padding: 0;
+    grid-template-rows: auto 1fr;
+    gap: 16px;
+  }
 `;
 
 export const Header = styled.div<{ isMapEnabled?: boolean }>`
@@ -19,7 +27,11 @@ export const Header = styled.div<{ isMapEnabled?: boolean }>`
   align-items: ${({ isMapEnabled }) => isMapEnabled ? 'flex-start' : 'center'};
   position: relative;
   z-index: 1;
-  pointer-events: none;
+  
+  ${mq.mobile}{
+    padding: 16px;
+    align-items: flex-start;
+  }
 `;
 
 export const RightSection = styled.div`
@@ -29,7 +41,6 @@ export const RightSection = styled.div`
   align-items: flex-end;
   position: relative;
   z-index: 1;
-  pointer-events: auto;
 `;
 
 export const ClassGrid = styled.div`
@@ -37,6 +48,15 @@ export const ClassGrid = styled.div`
   width: 100%;
   grid-template-columns: repeat(2, 1fr);
   gap: 15px;
+  overflow: visible;
+  padding-top: 60px;
+  margin-top: -60px;
+
+  ${mq.mobile} {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding-bottom: 100px;
+  }
 `;
 
 export const SearchContainer = styled.div`
@@ -46,6 +66,10 @@ export const SearchContainer = styled.div`
   z-index: 100;
   border-radius: 8px;
   overflow: hidden;
+
+  ${mq.mobile} {
+    width: 100%;
+  }
 `;
 
 export const SearchInputWrapper = styled.div`
@@ -94,4 +118,39 @@ export const FloorBadge = styled.span`
   border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
+`;
+
+export const HamburgerButton = styled.button<{ $isMapEnabled?: boolean }>`
+  display: none;
+
+  ${mq.mobile} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 8px 12px;
+    width: 40px;
+    height: 40px;
+    background: ${colors.background};
+    border: 1px solid ${colors.n02};
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    padding: 0;
+    z-index: 10;
+    position: relative;
+    box-shadow: ${({ $isMapEnabled }) => $isMapEnabled ? '0 4px 12px 0 rgba(0, 0, 0, 0.08)' : 'none'};
+
+    &:hover {
+      background-color: ${colors.primary100};
+    }
+
+    &:active {
+      background-color: ${colors.primary200};
+    }
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
 `;

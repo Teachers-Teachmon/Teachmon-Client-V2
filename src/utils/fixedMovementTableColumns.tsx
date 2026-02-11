@@ -1,6 +1,6 @@
 import { WEEKDAYS } from '@/constants/fixedMovement';
 import type { FixedMovement } from '@/types/fixedMovement';
-import * as S from '@/containers/admin/fixed-movement/table/style';
+import StudentListWithOverflow from '@/containers/admin/fixed-movement/table/studentList';
 
 export function getFixedMovementTableColumns(): import('@/components/layout/table').TableColumn<FixedMovement>[] {
   return [
@@ -31,18 +31,9 @@ export function getFixedMovementTableColumns(): import('@/components/layout/tabl
     {
       key: 'students',
       header: '학생',
-      width: 'auto',
+      width: '1fr',
       render: (row) => (
-        <S.StudentList>
-          {row.students.slice(0, 5).map((student, idx) => (
-            <S.StudentTag key={idx}>
-              {student.studentNumber} {student.name}
-            </S.StudentTag>
-          ))}
-          {row.students.length > 4 && (
-            <S.StudentTag>...</S.StudentTag>
-          )}
-        </S.StudentList>
+        <StudentListWithOverflow students={row.students} maxVisible={5} />
       ),
     },
   ];

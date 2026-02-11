@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -7,6 +8,11 @@ export const Wrapper = styled.div`
   gap: 1.5rem;
   flex: 1;
   height: 100%;
+
+  ${mq.mobile} {
+    height: 45vh;
+    gap: 0.5rem;
+  }
 `;
 
 export const TitleSection = styled.div`
@@ -22,6 +28,10 @@ export const Title = styled.h2`
   
   @media (max-width: 1400px) {
     font-size: ${fontSizes.H4};
+  }
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.Body};
   }
 `;
 
@@ -44,6 +54,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
     padding: 0.5rem 1.5rem;
     font-size: ${fontSizes.Body};
   }
+
+  ${mq.mobile} {
+    padding: 0.25rem 0.75rem;
+    font-size: ${fontSizes.Small};
+  }
 `;
 
 export const Container = styled.div`
@@ -52,19 +67,15 @@ export const Container = styled.div`
   border-radius: ${radius.lg};
   padding: 1.5rem;
   flex: 1;
-  overflow-y: auto;
   overflow-x: hidden;
   min-width: 0;
-  
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${colors.n02};
-    border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+
+  ${mq.mobile} {
+    height: 40vh;
+    max-height: 31vh;
+    padding: 1rem;
   }
 `;
 
@@ -73,7 +84,12 @@ export const DayNavigation = styled.div`
   align-items: center;
   justify-content: center;
   gap: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom:0.9rem;
+
+  ${mq.mobile} {
+    gap: 0.5rem;
+    margin-bottom: 0rem;
+  }
 `;
 
 export const DayNavButton = styled.button`
@@ -94,6 +110,13 @@ export const DayNavButton = styled.button`
   &:hover img {
     filter: brightness(0) saturate(100%) invert(44%) sepia(85%) saturate(1200%) hue-rotate(200deg) brightness(95%) contrast(95%);
   }
+
+  ${mq.mobile} {
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
 `;
 
 export const DayText = styled.span`
@@ -102,18 +125,37 @@ export const DayText = styled.span`
   color: ${colors.primary};
   min-width: 140px;
   text-align: center;
+  
+  ${mq.mobile} {
+    min-width: 100px;
+    font-size: ${fontSizes.Body};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 `;
 
 export const TimeSlotList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  overflow-y: auto;
+  flex: 1;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.n02};
+    border-radius: 3px;
+  }
 `;
 
 export const TimeSlotSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
 `;
 
 export const TimeHeader = styled.div`
@@ -129,6 +171,13 @@ export const TimeText = styled.span`
   color: ${colors.text};
   white-space: nowrap;
   flex-shrink: 0;
+
+  ${mq.mobile} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+  }
 `;
 
 export const ArrowButtons = styled.div`
@@ -170,6 +219,12 @@ export const ClassList = styled.div`
   @media (max-width: 1400px) {
     grid-template-columns: 1fr;
   }
+
+  ${mq.mobile} {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: minmax(120px, auto);  
+    gap: 0.5rem;
+  }
 `;
 
 export const ClassCard = styled.div`
@@ -183,6 +238,12 @@ export const ClassCard = styled.div`
   gap: 0.75rem;
   overflow: hidden;
   min-width: 0;
+
+  ${mq.mobile} {
+    min-height: 70px;
+    padding: 0.5rem;
+    gap: 0.25rem;
+  }
 `;
 
 export const ClassSubject = styled.h4`
@@ -190,8 +251,14 @@ export const ClassSubject = styled.h4`
   font-weight: 600;
   color: ${colors.text};
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+
+  ${mq.mobile} {
+    font-size: 14px;
+  }
 `;
 
 export const ClassInfo = styled.p`
@@ -218,5 +285,5 @@ export const EmptyState = styled.div`
   color: ${colors.n03};
   font-size: ${fontSizes.Body};
   text-align: center;
-  min-height: 300px;
+  height: 100%;
 `;

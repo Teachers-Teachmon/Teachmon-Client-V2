@@ -1,11 +1,19 @@
 import styled from '@emotion/styled';
 import { fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
   min-width: 400px;
+
+  ${mq.mobile} {
+    min-width: auto;
+    width: 100%;
+    max-width: 100vw;
+    gap: 1.5rem;
+  }
 `;
 
 export const Header = styled.div`
@@ -19,18 +27,32 @@ export const Title = styled.h2`
   font-weight: 600;
   margin: 0;
   color: #000;
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.H4};
+  }
 `;
 
 export const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  ${mq.mobile} {
+    gap: 1rem;
+  }
 `;
 
 export const InfoRow = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 `;
 
 export const Label = styled.div`
@@ -38,11 +60,21 @@ export const Label = styled.div`
   font-weight: 600;
   color: #666;
   min-width: 80px;
+
+  ${mq.mobile} {
+    min-width: auto;
+    font-size: ${fontSizes.Small};
+  }
 `;
 
 export const Value = styled.div`
   font-size: ${fontSizes.Body};
   color: #000;
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.Small};
+    word-break: break-word;
+  }
 `;
 
 export const GradeBadge = styled.div<{ $bgColor: string; $textColor: string }>`
@@ -53,6 +85,11 @@ export const GradeBadge = styled.div<{ $bgColor: string; $textColor: string }>`
   font-size: ${fontSizes.Body};
   font-weight: 600;
   border: 1px solid ${props => props.$textColor}40;
+
+  ${mq.mobile} {
+    padding: 0.4rem 0.8rem;
+    font-size: ${fontSizes.Small};
+  }
 `;
 
 export const ButtonGroup = styled.div`
@@ -61,6 +98,11 @@ export const ButtonGroup = styled.div`
 
   & > button {
     width: 100% !important;
+  }
+
+  ${mq.mobile} {
+    flex-direction: column;
+    gap: 0.75rem;
   }
 `;
 

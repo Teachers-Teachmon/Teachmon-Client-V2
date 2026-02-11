@@ -56,6 +56,7 @@ export interface CalendarProps {
   onRangeSelect?: (startDate: Date, endDate: Date) => void
   showYear?: boolean
   showLegend?: boolean
+  showMobilePopover?: boolean
   selectable?: boolean
   exchangeMode?: boolean
   currentTeacherId?: number
