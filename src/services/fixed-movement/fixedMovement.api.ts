@@ -34,3 +34,12 @@ export const updateFixedMovement = async (
   );
   return response.data;
 };
+
+export const deleteFixedMovement = async (
+  id: string,
+): Promise<{ message: string }> => {
+  const response = await axiosInstance.delete<{ message: string }>(
+    `/leaveseat/static/${id}`,
+  );
+  return response.data;
+};
