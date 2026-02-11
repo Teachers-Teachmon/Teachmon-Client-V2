@@ -2,6 +2,9 @@ import { useState } from 'react';
 import Modal from '@/components/layout/modal';
 import DateInput from '@/components/ui/input/date';
 import Button from '@/components/ui/button';
+import { useCreateAutoScheduleMutation } from '@/services/admin/supervision/adminSupervision.mutation';
+import { toast } from 'react-toastify';
+import { getApiErrorMessage } from '@/utils/error';
 import * as S from './style';
 
 interface AdminSupervisionCreateModalProps {
@@ -13,11 +16,28 @@ export default function AdminSupervisionCreateModal({ isOpen, onClose }: AdminSu
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  const handleCreate = () => {
-    console.log('생성:', { startDate, endDate });
-    setStartDate('');
-    setEndDate('');
-    onClose();
+  const createAutoScheduleMutation = useCreateAutoScheduleMutation();
+
+  const handleCreate = async () => {
+    if (!startDate || !endDate) {
+      toast.error('시작일과 종료일을 모두 입력해주세요.');
+      return;
+    }
+
+    try {
+      await createAutoScheduleMutation.mutateAsync({
+        start_day: startDate,
+        end_day: endDate,
+      });
+
+      toast.success('자습감독 일정이 생성되었습니다.');
+      setStartDate('');
+      setEndDate('');
+      onClose();
+    } catch (error) {
+      console.error('자습감독 일정 생성 실패:', error);
+      toast.error(getApiErrorMessage(error, '일정 생성에 실패했습니다.'));
+    }
   };
 
   return (

@@ -1,21 +1,60 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   createSupervisionSchedule,
   deleteSupervisionSchedule,
   updateSupervisionSchedule,
+  createAutoSchedule,
 } from './adminSupervision.api';
+import { adminSupervisionQueryKeys } from './adminSupervision.query';
 
 export const useCreateSupervisionScheduleMutation = () =>
-  useMutation({
+{
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: createSupervisionSchedule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminSupervisionQueryKeys.all,
+      });
+    },
   });
+};
 
 export const useUpdateSupervisionScheduleMutation = () =>
-  useMutation({
+{
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: updateSupervisionSchedule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminSupervisionQueryKeys.all,
+      });
+    },
   });
+};
 
 export const useDeleteSupervisionScheduleMutation = () =>
-  useMutation({
+{
+  const queryClient = useQueryClient();
+  return useMutation({
     mutationFn: deleteSupervisionSchedule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminSupervisionQueryKeys.all,
+      });
+    },
   });
+};
+
+export const useCreateAutoScheduleMutation = () =>
+{
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createAutoSchedule,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: adminSupervisionQueryKeys.all,
+      });
+    },
+  });
+};

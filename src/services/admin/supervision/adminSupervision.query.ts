@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { SupervisionDay, SupervisionRank } from '@/types/supervision';
 import {
-  fetchAutoSchedule,
   fetchSupervision,
   fetchSupervisionRank,
 } from './adminSupervision.api';
@@ -27,11 +26,4 @@ export const useSupervisionRankQuery = (query = '', order: 'asc' | 'desc' = 'asc
   useQuery<SupervisionRank[]>({
     queryKey: adminSupervisionQueryKeys.rank(query, order),
     queryFn: () => fetchSupervisionRank({ query, order }),
-  });
-
-export const useAutoScheduleQuery = (startDay: string, endDay: string) =>
-  useQuery<SupervisionDay[]>({
-    queryKey: adminSupervisionQueryKeys.autoSchedule(startDay, endDay),
-    queryFn: () => fetchAutoSchedule({ start_day: startDay, end_day: endDay }),
-    enabled: !!startDay && !!endDay,
   });

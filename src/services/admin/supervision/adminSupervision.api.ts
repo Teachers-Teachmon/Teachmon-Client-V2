@@ -30,10 +30,10 @@ export interface FetchAutoScheduleParams {
   end_day: string;
 }
 
-export const fetchAutoSchedule = async (
+export const createAutoSchedule = async (
   params: FetchAutoScheduleParams
 ): Promise<SupervisionDay[]> => {
-  const { data } = await axiosInstance.get('/supervision/schedule/auto', { params });
+  const { data } = await axiosInstance.post('/supervision/schedule/auto', null, { params });
   return data;
 };
 
