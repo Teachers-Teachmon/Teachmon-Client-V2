@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -8,4 +9,9 @@ export const Container = styled.div`
   padding: 48px;
   box-sizing: border-box;
   overflow: hidden;
+
+  ${mq.mobile} {
+    padding: 12px;
+    overflow: visible;
+  }
 `;

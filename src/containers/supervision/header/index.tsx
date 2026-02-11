@@ -52,7 +52,7 @@ export default function SupervisionHeader({
                 </S.ToggleWrapper>
                 <S.SearchContainer>
                     <TextInput
-                        placeholder="이름을 입력해주세요."
+                        placeholder="이름을 입력해 선생님을 찾아보세요."
                         value={value}
                         onChange={(e) => setValue(e.target.value)}
                         onKeyDown={handleKeyDown}

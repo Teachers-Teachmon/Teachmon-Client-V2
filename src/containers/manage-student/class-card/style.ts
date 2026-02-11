@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   width: 100%;
@@ -7,12 +8,16 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 40px;
+  gap: 30px;
   align-items: center;
   background: rgba(221, 231, 255, 0.1);
   border: 1px solid #E8EFFF;
   border-radius: ${radius.md};
   padding: 32px 24px;
+  overflow: visible;
+  ${mq.mobile}{
+    padding: 24px 12px;
+  }
 `;
 
 export const ClassTitle = styled.h3`
@@ -22,6 +27,9 @@ export const ClassTitle = styled.h3`
   color: ${colors.text};
   line-height: 20px;
   text-align: center;
+  ${mq.mobile}{
+    font-size: 24px;
+  }
 `;
 
 export const StudentsGrid = styled.div`
@@ -29,7 +37,12 @@ export const StudentsGrid = styled.div`
   grid-template-columns: repeat(8, 1fr);
   gap: 0;
   width: 100%;
-  height: 60%;
+  height: 70%;
+  overflow: visible;
+
+  ${mq.mobile}{
+    height: 80%;
+  }
 `;
 
 export const StudentCard = styled.div`
@@ -41,9 +54,11 @@ export const StudentCard = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 4px;
   cursor: pointer;
   transition: all 0.2s;
   position: relative;
+  padding: 8px 4px;
 
   &:hover {
     border-color: ${colors.primary};
@@ -62,12 +77,11 @@ export const StudentNumber = styled.span`
 
 export const StudentName = styled.span`
   font-family: 'Paperlogy', sans-serif;
-  font-size: clamp(10px, 1vw, 14px);
+  font-size: clamp(11px, 1.1vw, 15px);
   font-weight: 500;
   color: ${colors.text};
-  line-height: 1.2;
+  line-height: 1.3;
   text-align: center;
-  margin-top: 2px;
 `;
 
 export const StatusPopupContainer = styled.div`
@@ -83,8 +97,9 @@ export const StatusPopupContainer = styled.div`
   flex-direction: column;
   gap: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 1000;
   width: max-content;
+  min-width: 80px;
 `;
 
 export const StatusBadgeWrapper = styled.div`

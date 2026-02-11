@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import FullPageLayout, {
   moveToSection,
+  type FullPageSection,
 } from '@/components/layout/fullpage';
-import type { FullPageSection } from '@/components/layout/fullpage';
 import styled from '@emotion/styled';
 import LandingHeader from '@/containers/landing/header';
 import MainLanding from '@/containers/landing/main';
@@ -15,25 +15,7 @@ import LoginModal from '@/containers/login';
 
 const LandingPage: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  // 인증 체크 로직
-  useEffect(() => {
-    const checkAuth = async () => {
-      // 여기에 인증 로직 추가
-      // const res = await Check();
-      // if (res.data === "Authentication Success") {
-      //   window.location.href = '/main';
-      // }
-      
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
-    };
-
-    checkAuth();
-  }, []);
 
   // 섹션 정의
   const sections: FullPageSection[] = [
@@ -104,7 +86,7 @@ const LandingPage: React.FC = () => {
       
       {/* FullPage 레이아웃 */}
       <FullPageLayout
-      hasHeader={true}
+        hasHeader={true}
         sections={sections}
         onSectionChange={handleSectionChange}
       />

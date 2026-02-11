@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const SidePanel = styled.div`
   width: 280px;
@@ -25,12 +26,30 @@ export const SidePanel = styled.div`
       transform: translateX(0);
     }
   }
+
+  ${mq.mobile} {
+    width: 100%;
+    max-height: none;
+    margin-top: 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.5rem 1rem 1rem 1rem;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 3;
+  }
 `;
 
 export const PanelSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+
+  ${mq.mobile} {
+    flex: 1;
+    min-width: 0;
+    gap: 0.5rem;
+  }
 `;
 
 export const SectionTitle = styled.h3`
@@ -38,12 +57,22 @@ export const SectionTitle = styled.h3`
   font-weight: 600;
   color: ${colors.text};
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: 15px;
+  }
 `;
 
 export const GradeTabsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+
+  ${mq.mobile} {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
 `;
 
 export const GradeTab = styled.button<{ $active: boolean }>`
@@ -59,6 +88,12 @@ export const GradeTab = styled.button<{ $active: boolean }>`
 
   &:hover {
     background: ${props => props.$active ? colors.primary100 : colors.n02};
+  }
+
+  ${mq.mobile} {
+    padding: 0.4rem 0.6rem;
+    font-size: 13px;
+    border-radius: 6px;
   }
 `;
 
@@ -105,8 +140,16 @@ export const DropdownMenu = styled.div`
   border-radius: ${radius.md};
   max-height: 200px;
   overflow-y: auto;
-  z-index: 10;
+  z-index: 20;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  ${mq.mobile} {
+    width: auto;
+    min-width: 100%;
+    max-height: 150px;
+    bottom: calc(100% + 0.5rem);
+    top: auto;
+  }
 `;
 
 export const DropdownItem = styled.div<{ $selected: boolean }>`
@@ -139,8 +182,14 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
   flex-shrink: 0;
 `;
 
-export const ButtonWrapper = styled.div`
+export const ButtonWrapper = styled.div<{ $hasMany?: boolean }>`
   margin-top: auto;
+
+  ${mq.mobile} {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding-bottom: ${props => props.$hasMany ? '4rem' : '0'};
+  }
 `;
 
 export const SelectedPeriodsWrapper = styled.div`
@@ -148,6 +197,13 @@ export const SelectedPeriodsWrapper = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   margin-top: 1rem;
+
+  ${mq.mobile} {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.3rem;
+    margin-top: 0.5rem;
+    max-height: none;
+  }
 `;
 
 export const SelectedPeriodTag = styled.div`
@@ -160,6 +216,10 @@ export const SelectedPeriodTag = styled.div`
   color: ${colors.primary};
   font-size: 12px;
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 10px;
+  }
 `;
 
 export const RemovePeriodButton = styled.button`

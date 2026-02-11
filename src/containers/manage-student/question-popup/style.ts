@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
-import { keyframes, css } from '@emotion/react';
+import { css } from '@emotion/react';
 import { colors } from '@/styles/theme';
 import {fadeInBounce} from '@/styles/animations'
+import { mq } from '@/styles/media';
 
 
 export const PopupContainer = styled.div<{ $isAnimation: boolean }>`
@@ -20,6 +21,11 @@ export const PopupContainer = styled.div<{ $isAnimation: boolean }>`
   gap: 20px;
   display: flex;
   flex-direction: row;
+  ${mq.mobile}{
+    flex-direction: column;
+    align-items: flex-end;
+    bottom: -13rem;
+  }
   z-index: 200;
 `;
 

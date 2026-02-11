@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Modal from '@/components/layout/modal';
+import { useDevice } from '@/hooks/useDevice';
 import type { StatusType } from '@/components/ui/status';
 import * as S from './style';
 
@@ -18,6 +19,7 @@ interface LocationDetailProps {
 
 export default function LocationDetail({ locationName, students, onClose, isOpen }: LocationDetailProps) {
     const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
+    const { isMobile } = useDevice();
 
     const handleModalClick = (e: React.MouseEvent) => {
         e.stopPropagation();
@@ -25,7 +27,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} padding="60px">
+        <Modal isOpen={isOpen} onClose={onClose} padding={isMobile ? "32px 20px" : "60px"}>
             <S.ModalContainer onClick={handleModalClick}>
                 <S.Header>
                     <S.Title>{locationName}</S.Title>
