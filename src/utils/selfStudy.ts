@@ -1,5 +1,21 @@
 import { colors } from '@/styles/theme';
-import type { Grade } from '@/types/selfStudy';
+import type { Grade, SelfStudyPeriod } from '@/types/selfStudy';
+
+export const PERIOD_ENUM_TO_LABEL: Record<SelfStudyPeriod, string> = {
+  ONE_PERIOD: '1교시',
+  TWO_PERIOD: '2교시',
+  THREE_PERIOD: '3교시',
+  FOUR_PERIOD: '4교시',
+  FIVE_PERIOD: '5교시',
+  SIX_PERIOD: '6교시',
+  SEVEN_PERIOD: '7교시',
+  EIGHT_AND_NINE_PERIOD: '8교시',
+  TEN_AND_ELEVEN_PERIOD: '10교시',
+};
+
+export const PERIOD_LABEL_TO_ENUM: Record<string, SelfStudyPeriod> = Object.fromEntries(
+  Object.entries(PERIOD_ENUM_TO_LABEL).map(([key, value]) => [value, key as SelfStudyPeriod]),
+) as Record<string, SelfStudyPeriod>;
 
 export const generateScheduleId = (): string => {
   return `schedule-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

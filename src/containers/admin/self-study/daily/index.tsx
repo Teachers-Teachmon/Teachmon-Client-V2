@@ -1,11 +1,15 @@
 import { useState, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import Calendar from '@/components/ui/calendar';
 import type { CalendarRangeEvent, CalendarEvent } from '@/components/ui/calendar';
 import Button from '@/components/ui/button';
+import Loading from '@/components/ui/loading';
 import { colors } from '@/styles/theme';
 import type { SelfStudySchedule, Grade } from '@/types/selfStudy';
-import { INITIAL_SELF_STUDY_SCHEDULES } from '@/constants/adminSelfStudy';
-import { generateScheduleId, getDatesInRange, getGradeColor, formatGrade, formatPeriods } from '@/utils/selfStudy';
+import { selfStudyQuery } from '@/services/self-study/selfStudy.query';
+import { createAdditionalSelfStudy, deleteAdditionalSelfStudy } from '@/services/self-study/selfStudy.api';
+import { getDatesInRange, getGradeColor, formatGrade, formatPeriods, PERIOD_ENUM_TO_LABEL, PERIOD_LABEL_TO_ENUM } from '@/utils/selfStudy';
 import SidePanel from './side-panel';
 import DetailModal from './detail-modal';
 import * as S from './style';
@@ -18,9 +22,33 @@ export default function DailySection() {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<Grade>(2);
   const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
-  const [schedules, setSchedules] = useState<SelfStudySchedule[]>(INITIAL_SELF_STUDY_SCHEDULES);
   const [selectedSchedule, setSelectedSchedule] = useState<SelfStudySchedule | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data: rawData, isLoading } = useQuery(selfStudyQuery.additional(selectedYear));
+  const queryClient = useQueryClient();
+
+  const schedules: SelfStudySchedule[] = useMemo(() => {
+    if (!rawData) return [];
+    return rawData.map((item, index) => {
+      const date = new Date(item.day);
+      const periodIds: Record<string, number> = {};
+      const periods = item.periods.map((p) => {
+        const label = PERIOD_ENUM_TO_LABEL[p.period] ?? p.period;
+        periodIds[label] = p.id;
+        return label;
+      });
+      return {
+        id: `additional-${index}-${item.day}-${item.grade}`,
+        date,
+        grade: item.grade as Grade,
+        periods,
+        periodIds,
+        startDate: date,
+        endDate: date,
+      };
+    });
+  }, [rawData]);
 
   const handleMonthChange = (year: number, month: number) => {
     setSelectedYear(year);
@@ -65,20 +93,38 @@ export default function DailySection() {
       return;
     }
 
-    const datesInRange = getDatesInRange(startDate, endDate);
-    const newSchedules: SelfStudySchedule[] = datesInRange.map(date => ({
-      id: generateScheduleId(),
-      date: new Date(date),
-      grade: selectedGrade,
-      periods: [...selectedPeriods],
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
-    }));
+    const periodEnums = selectedPeriods
+      .map((p) => PERIOD_LABEL_TO_ENUM[p])
+      .filter(Boolean);
 
-    setSchedules(prev => [...prev, ...newSchedules]);
-    setStartDate(null);
-    setEndDate(null);
-    setSelectedPeriods([]);
+    if (periodEnums.length === 0) {
+      toast.error('유효한 교시를 선택해주세요.');
+      return;
+    }
+
+    const gradeValue = selectedGrade === 'all' ? 0 : selectedGrade;
+    const datesInRange = getDatesInRange(startDate, endDate);
+
+    const promises = datesInRange.map((date) => {
+      const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      return createAdditionalSelfStudy({
+        day,
+        grade: gradeValue,
+        periods: periodEnums,
+      });
+    });
+
+    Promise.all(promises)
+      .then(() => {
+        toast.success('일별 자습을 추가 설정하였습니다.');
+        queryClient.invalidateQueries({ queryKey: ['selfStudy.additional', selectedYear] });
+        setStartDate(null);
+        setEndDate(null);
+        setSelectedPeriods([]);
+      })
+      .catch(() => {
+        toast.error('일별 자습 추가 설정에 실패했습니다.');
+      });
   };
 
   const handleCancelSelection = () => {
@@ -88,7 +134,20 @@ export default function DailySection() {
   };
 
   const handleDeleteSchedule = (id: string) => {
-    setSchedules(prev => prev.filter(schedule => schedule.id !== id));
+    const schedule = schedules.find((s) => s.id === id);
+    if (!schedule) return;
+
+    const deleteIds = Object.values(schedule.periodIds);
+    if (deleteIds.length === 0) return;
+
+    Promise.all(deleteIds.map((pid) => deleteAdditionalSelfStudy(pid)))
+      .then(() => {
+        toast.success('일별 자습을 삭제하였습니다.');
+        queryClient.invalidateQueries({ queryKey: ['selfStudy.additional', selectedYear] });
+      })
+      .catch(() => {
+        toast.error('일별 자습 삭제에 실패했습니다.');
+      });
   };
 
   const handleCloseModal = () => {
@@ -140,6 +199,8 @@ export default function DailySection() {
   }, [startDate, endDate]);
 
   const showPanel = startDate && endDate;
+
+  if (isLoading) return <Loading />;
 
   return (
     <S.Container>
