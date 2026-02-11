@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import { MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
+import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
+import { toFixedMovements } from '@/utils/fixedMovementMapper';
 import { getFixedMovementTableColumns } from '@/utils/fixedMovementTableColumns';
 import type { FixedMovement } from '@/types/fixedMovement';
 import FixedMovementDetailModal from '../detail-modal';
@@ -14,7 +16,8 @@ interface FixedMovementTableProps {
 
 export default function FixedMovementTable({ searchQuery }: FixedMovementTableProps) {
   const navigate = useNavigate();
-  const [movements, setMovements] = useState<FixedMovement[]>(MOCK_FIXED_MOVEMENTS);
+  const { data: rawData, isLoading, isError } = useQuery(fixedMovementQuery.list());
+  const movements = rawData ? toFixedMovements(rawData) : [];
   const [selectedMovement, setSelectedMovement] = useState<FixedMovement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -25,7 +28,6 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    setMovements(movements.filter(m => m.id !== id));
   };
 
   const handleRowClick = (movement: FixedMovement) => {
@@ -52,6 +54,9 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
       <Button text="삭제" variant="delete" width="100px" onClick={(e) => handleDelete(row.id, e)} />
     </S.ActionCell>
   );
+
+  if (isLoading) return <S.TableWrapper>로딩 중...</S.TableWrapper>;
+  if (isError) return <S.TableWrapper>데이터를 불러오는데 실패했습니다.</S.TableWrapper>;
 
   return (
     <S.TableWrapper>

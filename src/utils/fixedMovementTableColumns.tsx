@@ -26,7 +26,7 @@ export function getFixedMovementTableColumns(): import('@/components/layout/tabl
       key: 'count',
       header: '인원',
       width: '80px',
-      render: (row) => `${row.students.length}명`,
+      render: (row) => `${row.personnel}명`,
     },
     {
       key: 'students',

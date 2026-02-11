@@ -38,12 +38,12 @@ export default function FixedMovementDetailModal({
           </S.InfoSection>
 
           <S.InfoSection>
-            <S.InfoLabel>사유</S.InfoLabel>
-            <S.InfoValue>{movement.reason}</S.InfoValue>
+            <S.InfoLabel>인원</S.InfoLabel>
+            <S.InfoValue>{movement.personnel}명</S.InfoValue>
           </S.InfoSection>
 
           <S.InfoSection>
-            <S.InfoLabel>학생 {movement.students.length}명</S.InfoLabel>
+            <S.InfoLabel>학생 {movement.personnel}명</S.InfoLabel>
             <S.StudentGrid>
               {movement.students.map((student, idx) => (
                 <S.StudentCard key={idx}>
