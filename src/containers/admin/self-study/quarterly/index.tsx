@@ -33,7 +33,7 @@ const QUARTER_OPTIONS: Quarter[] = [1, 2, 3, 4];
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
-const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu', 'fri'];
+const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu'];
 
 const UI_DAY_TO_API: Record<DayOfWeek, SelfStudyWeekDay> = {
   mon: 'MON',
