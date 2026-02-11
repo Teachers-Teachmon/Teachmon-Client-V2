@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { toast } from 'react-toastify';
 import Header from '@/containers/admin/users/header';
 import Teachers from '@/containers/admin/users/teachers';
 import Students from '@/containers/admin/users/students';
@@ -87,7 +86,6 @@ export default function AdminUsersPage() {
         <Teachers
           teachersData={teachersData || []}
           forbiddenDates={[]}
-          searchQuery={searchQuery}
           onOpenForbiddenDates={handleOpenForbiddenDates}
           isLoading={isTeachersLoading}
         />

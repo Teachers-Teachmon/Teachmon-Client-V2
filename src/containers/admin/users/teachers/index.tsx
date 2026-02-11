@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import { USER_ROLES } from '@/constants/admin';
@@ -30,17 +30,17 @@ export interface Teacher {
 interface TeachersProps {
   teachersData: ApiTeacher[];
   forbiddenDates: ForbiddenDay[];
-  searchQuery: string;
   onOpenForbiddenDates: (teacher: Teacher) => void;
   isLoading?: boolean;
 }
 
 
-export default function Teachers({ searchQuery, teachersData, forbiddenDates, onOpenForbiddenDates, isLoading = false }: TeachersProps) {
+export default function Teachers({ teachersData, forbiddenDates, onOpenForbiddenDates, isLoading = false }: TeachersProps) {
   const { openMenuId, setOpenMenuId, menuRef } = useActionMenu();
   const [editingTeacher, setEditingTeacher] = useState<Teacher | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localTeachers, setLocalTeachers] = useState<Teacher[]>([]);
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
 
   const { mutate: createTeacher } = useCreateTeacherMutation();
   const { mutate: updateTeacher } = useUpdateTeacherMutation();
@@ -77,20 +77,12 @@ export default function Teachers({ searchQuery, teachersData, forbiddenDates, on
     };
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  }, [menuRef, setOpenMenuId]);
 
   const handleEdit = (teacher: Teacher) => {
     setEditingTeacher({ ...teacher });
     setEditingIds((prev) => new Set(prev).add(teacher.id));
     setOpenMenuId(null);
-  };
-
-  const handleKebabClick = (rowId: string) => {
-    setOpenMenuId(openMenuId === rowId ? null : rowId);
-  };
-
-  const handleForbiddenDatesClick = (row: Teacher) => {
-    onOpenForbiddenDates(row);
   };
 
   const handleSave = (teacherId: string) => {
@@ -191,6 +183,26 @@ export default function Teachers({ searchQuery, teachersData, forbiddenDates, on
     setLocalTeachers(prev => [...prev, newTeacher]);
     setEditingTeacher(newTeacher);
     setEditingIds((prev) => new Set(prev).add(newTeacher.id));
+    
+    // 스크롤을 맨 아래로 이동
+    setTimeout(() => {
+      if (tableWrapperRef.current) {
+        // tableWrapperRef의 모든 자식 중 스크롤 가능한 요소 찾기
+        const scrollableElements = Array.from(tableWrapperRef.current.children).filter(
+          (child) => {
+            const style = window.getComputedStyle(child);
+            return style.overflowY === 'auto' || style.overflowY === 'scroll';
+          }
+        );
+        
+        scrollableElements.forEach((element) => {
+          (element as HTMLElement).scrollTo({ 
+            top: element.scrollHeight, 
+            behavior: 'smooth' 
+          });
+        });
+      }
+    }, 150);
   };
 
   const renderActions = (row: Teacher) => (
@@ -250,7 +262,7 @@ export default function Teachers({ searchQuery, teachersData, forbiddenDates, on
 
   return (
     <>
-      <S.TableWrapper>
+      <S.TableWrapper ref={tableWrapperRef}>
         <TableLayout columns={columns} data={teachers} renderActions={renderActions} isLoading={isLoading} />
       </S.TableWrapper>
       <PageS.AddButton onClick={handleAdd}>

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
 
@@ -32,6 +32,7 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localStudents, setLocalStudents] = useState<Student[]>([]);
+  const tableWrapperRef = useRef<HTMLDivElement>(null);
 
   const { mutate: createStudent } = useCreateStudentMutation();
   const { mutate: updateStudent } = useUpdateStudentMutation();
@@ -161,6 +162,26 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
     setLocalStudents(prev => [...prev, newStudent]);
     setEditingStudent(newStudent);
     setEditingIds((prev) => new Set(prev).add(newStudent.id));
+    
+    // 스크롤을 맨 아래로 이동
+    setTimeout(() => {
+      if (tableWrapperRef.current) {
+        // tableWrapperRef의 모든 자식 중 스크롤 가능한 요소 찾기
+        const scrollableElements = Array.from(tableWrapperRef.current.children).filter(
+          (child) => {
+            const style = window.getComputedStyle(child);
+            return style.overflowY === 'auto' || style.overflowY === 'scroll';
+          }
+        );
+        
+        scrollableElements.forEach((element) => {
+          (element as HTMLElement).scrollTo({ 
+            top: element.scrollHeight, 
+            behavior: 'smooth' 
+          });
+        });
+      }
+    }, 150);
   };
 
   const renderActions = (row: Student) => (
@@ -201,7 +222,7 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
 
   return (
     <>
-      <S.TableWrapper>
+      <S.TableWrapper ref={tableWrapperRef}>
         <TableLayout columns={columns} data={students} renderActions={renderActions} isLoading={isLoading} />
       </S.TableWrapper>
       <PageS.AddButton onClick={handleAdd}>
