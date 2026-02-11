@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
+import Loading from '@/components/ui/loading';
 import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
 import { toFixedMovements } from '@/utils/fixedMovementMapper';
 import { getFixedMovementTableColumns } from '@/utils/fixedMovementTableColumns';
@@ -55,8 +57,11 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
     </S.ActionCell>
   );
 
-  if (isLoading) return <S.TableWrapper>로딩 중...</S.TableWrapper>;
-  if (isError) return <S.TableWrapper>데이터를 불러오는데 실패했습니다.</S.TableWrapper>;
+  if (isLoading) return <Loading />;
+  if (isError) {
+    toast.error('데이터를 불러오는데 실패했습니다.');
+    return <S.TableWrapper />;
+  }
 
   return (
     <S.TableWrapper>

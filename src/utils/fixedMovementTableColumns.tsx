@@ -33,7 +33,7 @@ export function getFixedMovementTableColumns(): import('@/components/layout/tabl
       header: '학생',
       width: '1fr',
       render: (row) => (
-        <StudentListWithOverflow students={row.students} maxVisible={5} />
+        <StudentListWithOverflow students={row.students.map(student => ({ ...student, studentNumber: String(student.studentNumber) }))} maxVisible={5} />
       ),
     },
   ];
