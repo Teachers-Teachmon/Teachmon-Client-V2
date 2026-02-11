@@ -33,10 +33,10 @@ export const SidePanel = styled.div`
     margin-top: 0;
     flex-direction: row;
     flex-wrap: wrap;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem 1rem 1rem;
     gap: 0.5rem;
     position: relative;
-    z-index: -10;
+    z-index: 3;
   }
 `;
 
@@ -182,12 +182,13 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
   flex-shrink: 0;
 `;
 
-export const ButtonWrapper = styled.div`
+export const ButtonWrapper = styled.div<{ $hasMany?: boolean }>`
   margin-top: auto;
 
   ${mq.mobile} {
     width: 100%;
     margin-top: 0.5rem;
+    padding-bottom: ${props => props.$hasMany ? '4rem' : '0'};
   }
 `;
 
