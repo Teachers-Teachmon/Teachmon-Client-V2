@@ -20,7 +20,7 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
   const navigate = useNavigate();
   const { data: rawData, isLoading, isError } = useQuery(fixedMovementQuery.list());
   const movements = rawData ? toFixedMovements(rawData) : [];
-  const [selectedMovement, setSelectedMovement] = useState<FixedMovement | null>(null);
+  const [selectedMovementId, setSelectedMovementId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleEdit = (id: string, e?: React.MouseEvent) => {
@@ -33,13 +33,13 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
   };
 
   const handleRowClick = (movement: FixedMovement) => {
-    setSelectedMovement(movement);
+    setSelectedMovementId(movement.id);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedMovement(null);
+    setSelectedMovementId(null);
   };
 
   const filteredMovements = movements.filter(
@@ -72,7 +72,7 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
         onRowClick={handleRowClick}
       />
       <FixedMovementDetailModal 
-        movement={selectedMovement}
+        movementId={selectedMovementId}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       />

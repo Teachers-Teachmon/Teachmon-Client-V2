@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getFixedMovements } from './fixedMovement.api';
+import { getFixedMovements, getFixedMovementDetail } from './fixedMovement.api';
 
 export const fixedMovementQuery = {
   list: () =>
@@ -7,5 +7,12 @@ export const fixedMovementQuery = {
       queryKey: ['fixedMovement.list'],
       queryFn: getFixedMovements,
       staleTime: 1000 * 60 * 5,
+    }),
+
+  detail: (id?: string) =>
+    queryOptions({
+      queryKey: ['fixedMovement.detail', id],
+      queryFn: () => getFixedMovementDetail(id!),
+      enabled: !!id,
     }),
 };

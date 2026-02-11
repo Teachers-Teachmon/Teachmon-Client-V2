@@ -6,8 +6,6 @@ export const Container = styled.div`
   border-radius: ${radius.lg};
   width: 600px;
   max-width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
 `;
 
 export const Header = styled.div`
@@ -50,6 +48,21 @@ export const Content = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   margin-top: -0.7rem;
+  max-height: 40vh;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${colors.n03};
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 `;
 
 export const InfoSection = styled.div`
@@ -60,13 +73,13 @@ export const InfoSection = styled.div`
 `;
 
 export const InfoLabel = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 600;
   color: ${colors.primary};
 `;
 
 export const InfoValue = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 500;
   color: ${colors.text};
 `;
@@ -87,13 +100,13 @@ export const StudentCard = styled.div`
 `;
 
 export const StudentNumber = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 600;
   color: ${colors.text};
 `;
 
 export const StudentName = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 500;
   color: ${colors.text};
 `;

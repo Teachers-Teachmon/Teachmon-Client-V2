@@ -9,6 +9,7 @@ export interface FixedMovement {
   period: string;
   location: string;
   personnel: number;
+  cause?: string;
   students: Student[];
 }
 
@@ -31,16 +32,19 @@ export type Period =
   | 'TEN_AND_ELEVEN_PERIOD';
 
 export interface FixedMovementStudentResponse {
+  id?: number;
   number: number;
   name: string;
 }
 
 export interface FixedMovementResponse {
-  static_leaveseat_id: number;
-  weekday: Weekday;
+  static_leaveseat_id?: number;
+  weekday?: Weekday;
+  week_day?: Weekday;
   period: Period;
-  place: string;
-  personnel: number;
+  place: string | { id: number; name: string };
+  personnel?: number;
+  cause?: string;
   students: FixedMovementStudentResponse[];
 }
 

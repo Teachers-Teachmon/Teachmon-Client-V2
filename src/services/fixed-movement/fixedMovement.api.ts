@@ -10,6 +10,11 @@ export const getFixedMovements = async (): Promise<FixedMovementResponse[]> => {
   return response.data;
 };
 
+export const getFixedMovementDetail = async (id: string): Promise<FixedMovementResponse> => {
+  const response = await axiosInstance.get<FixedMovementResponse>(`/leaveseat/static/${id}`);
+  return response.data;
+};
+
 export const createFixedMovement = async (
   data: CreateFixedMovementRequest,
 ): Promise<CreateFixedMovementResponse> => {
