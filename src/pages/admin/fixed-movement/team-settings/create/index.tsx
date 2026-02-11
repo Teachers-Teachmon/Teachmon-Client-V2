@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import TextInput from '@/components/ui/input/text-input';
 import Button from '@/components/ui/button';
-import { MOCK_TEAMS } from '@/constants/fixedMovement';
+import { searchQuery } from '@/services/search/search.query';
+import { teamQuery } from '@/services/team/team.query';
+import { useCreateTeamMutation, useUpdateTeamMutation } from '@/services/team/team.mutation';
+import { useDebounce } from '@/hooks/useDebounce';
 import type { Student } from '@/types/fixedMovement';
 import * as S from '../../create/style';
 
@@ -11,37 +16,44 @@ export default function TeamFormPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
+  const createMutation = useCreateTeamMutation();
+  const updateMutation = useUpdateTeamMutation();
+
+  const { data: teamsData } = useQuery(teamQuery.list());
 
   const [teamName, setTeamName] = useState<string>('');
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [studentIdMap, setStudentIdMap] = useState<Record<number, number>>({});
+  const [searchInput, setSearchInput] = useState('');
 
-  const mockStudents: Student[] = [
-    { studentNumber: 1401, name: '김동욱' },
-    { studentNumber: 1402, name: '이민수' },
-    { studentNumber: 1403, name: '박지훈' },
-    { studentNumber: 1404, name: '최예준' },
-    { studentNumber: 1406, name: '정서연' },
-    { studentNumber: 1407, name: '정서연' },
-    { studentNumber: 1408, name: '정서연' },
-    { studentNumber: 1409, name: '정서연' },
-  ];
+  const debouncedSearch = useDebounce(searchInput, 300);
+  const { data: studentResults = [] } = useQuery(searchQuery.students(debouncedSearch));
 
   useEffect(() => {
-    if (isEditMode) {
-      const team = MOCK_TEAMS.find(t => t.id === id);
+    if (isEditMode && teamsData) {
+      const team = teamsData.find((t) => String(t.id) === id);
       if (team) {
         setTeamName(team.name);
-        setSelectedStudents(team.students);
+        setSelectedStudents(
+          team.students.map((s) => ({
+            studentNumber: s.student_number,
+            name: s.name,
+          })),
+        );
+        const idMap: Record<number, number> = {};
+        team.students.forEach((s) => {
+          idMap[s.student_number] = s.id;
+        });
+        setStudentIdMap(idMap);
       }
     }
-  }, [id, isEditMode]);
+  }, [id, isEditMode, teamsData]);
 
   const handleAddStudent = (student: Student) => {
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
       setSelectedStudents([...selectedStudents, student]);
     }
-    setSearchQuery('');
+    setSearchInput('');
   };
 
   const handleRemoveStudent = (studentNumber: number) => {
@@ -53,12 +65,32 @@ export default function TeamFormPage() {
   };
 
   const handleSubmit = () => {
-    console.log({
-      id: isEditMode ? id : undefined,
-      teamName,
-      students: selectedStudents,
-    });
-    navigate('/admin/fixed-movement/team-settings');
+    if (!teamName.trim()) {
+      toast.error('팀 이름을 입력해주세요.');
+      return;
+    }
+
+    if (selectedStudents.length === 0) {
+      toast.error('학생을 1명 이상 선택해주세요.');
+      return;
+    }
+
+    if (isEditMode && id) {
+      updateMutation.mutate({
+        id: Number(id),
+        name: teamName,
+        students: selectedStudents.map((s) => ({
+          id: studentIdMap[s.studentNumber] ?? s.studentNumber,
+          student_number: s.studentNumber,
+          name: s.name,
+        })),
+      });
+    } else {
+      createMutation.mutate({
+        name: teamName,
+        students_id: selectedStudents.map((s) => s.studentNumber),
+      });
+    }
   };
 
   return (
@@ -80,9 +112,9 @@ export default function TeamFormPage() {
             <S.SectionTitle>학생</S.SectionTitle>
             <S.DropdownWrapper>
               <TextInput
-                placeholder="학생을 입력해주세요"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="학생을 검색해주세요"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 leftIcon={
                   <img
                     src="/icons/common/search.svg"
@@ -92,22 +124,19 @@ export default function TeamFormPage() {
                 }
               />
 
-              {searchQuery && (
+              {searchInput && studentResults.length > 0 && (
                 <S.StudentDropdown>
-                  {mockStudents
+                  {studentResults
                     .filter(student =>
-                      `${student.studentNumber} ${student.name}`.includes(searchQuery)
+                      !selectedStudents.find(s => s.studentNumber === student.id)
                     )
-                    .filter(student =>
-                      !selectedStudents.find(s => s.studentNumber === student.studentNumber)
-                    )
-                    .slice(0, 3)
+                    .slice(0, 5)
                     .map((student) => (
                       <S.StudentDropdownItem
-                        key={student.studentNumber}
-                        onClick={() => handleAddStudent(student)}
+                        key={student.id}
+                        onClick={() => handleAddStudent({ studentNumber: student.id, name: student.name })}
                       >
-                        {student.studentNumber} {student.name}
+                        {student.grade}{student.class}{String(student.number).padStart(2, '0')} {student.name}
                       </S.StudentDropdownItem>
                     ))
                   }

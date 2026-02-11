@@ -74,7 +74,6 @@ export interface UpdateFixedMovementResponse {
   message: string;
 }
 
-// === 검색 API 응답 ===
 
 export interface StudentSearchResponse {
   id: number;
@@ -93,4 +92,32 @@ export interface PlaceSearchResponse {
 export interface TeamSearchResponse {
   id: number;
   name: string;
+}
+export interface TeamResponse {
+  id: number;
+  name: string;
+  students: {
+    id: number;
+    student_number: number;
+    name: string;
+  }[];
+}
+
+export interface CreateTeamRequest {
+  name: string;
+  students_id: number[];
+}
+
+export interface UpdateTeamRequest {
+  id: number;
+  name: string;
+  students: {
+    id: number;
+    student_number: number;
+    name: string;
+  }[];
+}
+
+export interface DeleteTeamRequest {
+  id: number;
 }

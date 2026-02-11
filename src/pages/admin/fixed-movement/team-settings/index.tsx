@@ -1,14 +1,30 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import { MOCK_TEAMS } from '@/constants/fixedMovement';
+import Loading from '@/components/ui/loading';
+import ConfirmModal from '@/components/layout/modal/confirm';
+import { teamQuery } from '@/services/team/team.query';
+import { useDeleteTeamMutation } from '@/services/team/team.mutation';
 import type { Team } from '@/types/fixedMovement';
 import * as S from './style';
 
 export default function TeamSettingsPage() {
   const navigate = useNavigate();
-  const [teams, setTeams] = useState<Team[]>(MOCK_TEAMS);
+  const { data: rawTeams, isLoading, isError } = useQuery(teamQuery.list());
+  const deleteMutation = useDeleteTeamMutation();
+  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+
+  const teams: Team[] = (rawTeams ?? []).map((t) => ({
+    id: String(t.id),
+    name: t.name,
+    students: t.students.map((s) => ({
+      studentNumber: s.student_number,
+      name: s.name,
+    })),
+  }));
 
   const handleBack = () => {
     navigate('/admin/fixed-movement');
@@ -25,7 +41,14 @@ export default function TeamSettingsPage() {
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    setTeams(teams.filter(t => t.id !== id));
+    setDeleteTargetId(Number(id));
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteTargetId) {
+      deleteMutation.mutate({ id: deleteTargetId });
+      setDeleteTargetId(null);
+    }
   };
 
   const columns: TableColumn<Team>[] = [
@@ -61,6 +84,11 @@ export default function TeamSettingsPage() {
     </S.ActionCell>
   );
 
+  if (isLoading) return <Loading />;
+  if (isError) {
+    toast.error('팀 목록을 불러오는데 실패했습니다.');
+  }
+
   return (
     <S.Container>
       <S.Header>
@@ -80,6 +108,14 @@ export default function TeamSettingsPage() {
           renderActions={renderActions}
         />
       </S.TableWrapper>
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleConfirmDelete}
+        title="팀 삭제"
+        message="정말 삭제하시겠습니까?"
+        confirmText="삭제"
+      />
     </S.Container>
   );
 }
