@@ -24,7 +24,7 @@ export default function WelcomeSection({ todayType, totalCount }: WelcomeSection
                 <S.WelcomeTitle>티치몬에 오신 것을 환영합니다.</S.WelcomeTitle>
                 <S.WelcomeBottom>
                     <S.WelcomeMessage>{message}</S.WelcomeMessage>
-                    <S.SupervisionCount>총 감독 횟수: {totalCount}회</S.SupervisionCount>
+                    <S.SupervisionCount>이번 달 감독 횟수: {totalCount}회</S.SupervisionCount>
                 </S.WelcomeBottom>
             </S.WelcomeContent>
         </S.WelcomeCard>
