@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as S from './style';
 
 export interface SupervisorRankingItem {
@@ -14,6 +15,7 @@ interface SupervisorRankingProps {
 
 export default function SupervisorRanking({ ranking, isError }: SupervisorRankingProps) {
   const showEmpty = isError || ranking.length === 0;
+  const [showAll, setShowAll] = useState(false);
 
   return (
     <S.SupervisorSection>
@@ -28,7 +30,6 @@ export default function SupervisorRanking({ ranking, isError }: SupervisorRankin
             {[1, 0, 2].map((index) => {
               const item = ranking[index];
               const rank = index + 1;
-              console.log('Rendering rank:', rank, 'with item:', item);
               return (
                 <S.TopRankCard key={rank} $isFirst={rank === 1}>
                   <S.TeacherImage>
@@ -48,19 +49,25 @@ export default function SupervisorRanking({ ranking, isError }: SupervisorRankin
               );
             })}
           </S.TopThreeContainer>
-          <S.RankingList>
-            {ranking.length > 3 ? (
-              ranking.slice(3).map((item) => (
-                <S.RankingRow key={item.rank}>
-                  <S.RankNumber>{item.rank}위</S.RankNumber>
-                  <S.RankName>{item.name}</S.RankName>
-                  <S.RankCount>{item.count}회</S.RankCount>
-                </S.RankingRow>
-              ))
+            
+          <S.RankingList $showAll={showAll}>
+            {ranking.slice(3).map((item) => (
+          <S.RankingRow key={item.rank}>
+            <S.RankNumber>{item.rank}위</S.RankNumber>
+            <S.RankName>{item.name}</S.RankName>
+            <S.RankCount>{item.count}회</S.RankCount>
+          </S.RankingRow>
+        ))
             ) : (
               <S.EmptyMessage>하위 순위 데이터가 없습니다</S.EmptyMessage>
             )}
           </S.RankingList>
+            
+            {ranking.length > 3 && (
+        <S.ShowMoreButton onClick={() => setShowAll(!showAll)}>
+          {showAll ? '접기' : '더보기'}
+        </S.ShowMoreButton>
+              )}
         </>
       )}
     </S.SupervisorSection>

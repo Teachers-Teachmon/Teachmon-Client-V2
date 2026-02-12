@@ -115,7 +115,7 @@ export default function SidePanel({
         </S.PeriodDropdownWrapper>
       </S.PanelSection>
 
-      <S.ButtonWrapper>
+      <S.ButtonWrapper $hasMany={selectedPeriods.length >= 7}>
         <Button 
           text="완료" 
           variant="confirm" 

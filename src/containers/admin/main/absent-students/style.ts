@@ -1,16 +1,22 @@
-import { colors } from '@/styles/theme';
+import { colors, fontSizes } from '@/styles/theme';
 import styled from '@emotion/styled';
+import { mq } from '@/styles/media';
 
 export const AbsentStudentSection = styled.div`
   width: 100%;
   flex: 1;
-  background-color: #ffffff;
-  border: 1px solid #f2f3f6;
+  background-color: ${colors.background};
+  border: 1px solid ${colors.n02};
   border-radius: 16px;
   min-height: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
+  ${mq.mobile} {
+    height: 200px;
+    flex: none;
+  }
 `;
 
 export const SectionHeader = styled.div`
@@ -19,6 +25,11 @@ export const SectionHeader = styled.div`
   align-items: center;
   padding: 20px 28px 0 28px;
   margin-bottom: 14px;
+
+  ${mq.mobile} {
+    padding: 16px 16px 0 16px;
+    margin-bottom: 12px;
+  }
 `;
 
 export const SectionTitle = styled.h2`
@@ -26,8 +37,13 @@ export const SectionTitle = styled.h2`
   font-weight: 600;
   font-size: 22px;
   line-height: 26px;
-  color: #000000;
+  color: ${colors.text};
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: 18px;
+    line-height: 22px;
+  }
 `;
 
 export const AbsentStudentGrid = styled.div`
@@ -37,6 +53,12 @@ export const AbsentStudentGrid = styled.div`
   flex: 1;
   overflow-y: auto;
   min-height: 0;
+
+  ${mq.mobile} {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+    min-height: 0;
+  }
 `;
 
 export const AbsentStudentRow = styled.div`
@@ -45,12 +67,17 @@ export const AbsentStudentRow = styled.div`
   gap: 10px;
   padding: 14px 28px;
   justify-content: space-between;
-  border-bottom: 1px solid #f2f3f6;
+  width: 100%;
+  border-bottom: 1px solid ${colors.n02};
   box-sizing: border-box;
-  border-right: 1px solid #f2f3f6;
-  min-height: 80px;
+  border-right: 1px solid ${colors.n02};
   
   &:nth-of-type(2n) {
+    border-right: none;
+  }
+
+  ${mq.mobile} {
+    padding: 12px 16px;
     border-right: none;
   }
 `;
@@ -65,16 +92,16 @@ export const StudentInfo = styled.div`
 export const StudentDate = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: ${fontSizes.Body};
   line-height: 20px;
-  color: #000000;
+  color: ${colors.text};
   min-width: 75px;
 `;
 
 export const StudentName = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
-  font-size: 14px;
+  font-size: ${fontSizes.Small};
   line-height: 20px;
   color: ${colors.primaryGray};
   flex: 1;

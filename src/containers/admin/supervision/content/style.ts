@@ -2,12 +2,19 @@ import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
 import { SUPERVISION_EDITOR_HEIGHT, SUPERVISION_EDITOR_WIDTH } from '@/constants/adminSupervision';
 import { slideInLeft, slideOutLeft } from '@/styles/animations';
+import { mq } from '@/styles/media';
 
 export const ContentWrapper = styled.div`
   display: flex;
   flex: 1;
   gap: 16px;
   overflow: hidden;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    gap: 12px;
+    overflow: visible;
+  }
 `;
 
 export const SidePanel = styled.div<{ $isClosing?: boolean }>`
@@ -15,7 +22,7 @@ export const SidePanel = styled.div<{ $isClosing?: boolean }>`
   top: 0;
   left: 0;
   width: 400px;
-  height: 100vh;
+  height: 100dvh;
   background: ${colors.background};
   border-right: 1px solid ${colors.n02};
   display: flex;
@@ -24,6 +31,12 @@ export const SidePanel = styled.div<{ $isClosing?: boolean }>`
   z-index: 100;
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
   animation: ${({ $isClosing }) => $isClosing ? slideOutLeft : slideInLeft} 0.3s ease-out forwards;
+  padding-bottom: max(env(safe-area-inset-bottom), 12px);
+
+  ${mq.mobile} {
+    width: 100%;
+    overscroll-behavior: contain;
+  }
 `;
 
 export const SidePanelHeader = styled.div`
@@ -54,30 +67,29 @@ export const SearchContainer = styled.div`
   align-items: center;
   gap: 12px;
   padding: 0 16px 16px;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
 `;
 
-export const SearchInput = styled.input`
+export const SearchInputWrapper = styled.div`
   flex: 1;
-  height: 40px;
-  padding: 0 12px;
-  border: 1px solid ${colors.n02};
-  border-radius: ${radius.md};
-  font-size: ${fontSizes.Body};
-  outline: none;
-
-  &:focus {
-    border-color: ${colors.primary};
-  }
-
-  &::placeholder {
-    color: ${colors.n03};
-  }
+  width: 100%;
 `;
 
 export const SortButtons = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  ${mq.mobile} {
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 8px;
+  }
 `;
 
 export const SortButton = styled.button<{ $active: boolean }>`
@@ -98,11 +110,20 @@ export const TableHeader = styled.div`
   padding: 12px 16px;
   margin: 0 16px 12px;
   border-bottom: 2px solid ${colors.n03};
+
+  ${mq.mobile} {
+    margin: 0 12px 12px;
+  }
 `;
 
 export const TableBody = styled.div`
   flex: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  ${mq.mobile} {
+    overflow-x: auto;
+  }
 `;
 
 export const TableRow = styled.div`
@@ -119,6 +140,10 @@ export const TableRow = styled.div`
   &:last-child {
     margin-bottom: 16px;
   }
+
+  ${mq.mobile} {
+    margin: 0 12px 8px;
+  }
 `;
 
 export const TableCell = styled.div<{ $width: string }>`
@@ -131,6 +156,10 @@ export const TableCell = styled.div<{ $width: string }>`
 export const CalendarWrapper = styled.div<{ $hasSidePanel?: boolean }>`
   flex: 1;
   position: relative;
+
+  ${mq.mobile} {
+    width: 100%;
+  }
 `;
 
 export const EditTitle = styled.h3`
@@ -154,4 +183,12 @@ export const FloatingEditor = styled.div<{ $top: number; $left: number }>`
   background: ${colors.background};
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   z-index: 20;
+
+  ${mq.mobile} {
+    position: fixed;
+    top: 12%;
+    left: 50%;
+    width: min(90vw, 360px);
+    transform: translateX(-50%);
+  }
 `;

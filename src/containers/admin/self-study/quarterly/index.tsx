@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as S from './style';
 import Dropdown from '@/components/ui/input/dropdown';
-import Button from '@/components/ui/button';
 import { DAY_LABELS, PERIOD_OPTIONS } from '@/constants/adminSelfStudy';
 import plusIcon from '/icons/admin-self-study/plus.svg';
 import minusIcon from '/icons/admin-self-study/minus.svg';
@@ -22,6 +21,11 @@ interface DaySchedule {
   periods: PeriodItem[];
 }
 
+export interface QuarterlySectionHandle {
+  save: () => void;
+  cancel: () => void;
+}
+
 const QUARTER_OPTIONS: Quarter[] = [1, 2, 3, 4];
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
@@ -35,7 +39,7 @@ const createInitialSchedule = (): DaySchedule[] => {
   }));
 };
 
-export default function QuarterlySection() {
+const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySection(_props, ref) {
   const navigate = useNavigate();
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(1);
   const [selectedGrade, setSelectedGrade] = useState<Grade>(1);
@@ -97,6 +101,11 @@ export default function QuarterlySection() {
     navigate(-1);
   };
 
+  useImperativeHandle(ref, () => ({
+    save: handleSave,
+    cancel: handleCancel,
+  }));
+
   return (
     <S.Container>
       <S.FilterContainer>
@@ -125,10 +134,6 @@ export default function QuarterlySection() {
             ))}
           </S.GradeButtonGroup>
         </S.FilterLeft>
-        <S.ActionGroup>
-          <Button variant="confirm" text="돌아가기" onClick={handleCancel} />
-          <Button variant="confirm" text="저장" onClick={handleSave} />
-        </S.ActionGroup>
       </S.FilterContainer>
 
       <S.ScheduleContainer>
@@ -177,4 +182,6 @@ export default function QuarterlySection() {
       </S.ScheduleContainer>
     </S.Container>
   );
-}
+});
+
+export default QuarterlySection;

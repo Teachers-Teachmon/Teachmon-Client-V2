@@ -4,6 +4,7 @@ import DateInput from '@/components/ui/input/date';
 import Button from '@/components/ui/button';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
 
 interface QuarterSettingsModalProps {
@@ -24,6 +25,7 @@ export default function QuarterSettingsModal({
     const [selectedQuarter, setSelectedQuarter] = useState<string>('');
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
+    const { isMobile } = useDevice();
 
     const handleQuarterChange = (quarter: string) => {
         setSelectedQuarter(quarter);
@@ -98,7 +100,7 @@ export default function QuarterSettingsModal({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={handleClose} padding="40px 77px">
+        <Modal isOpen={isOpen} onClose={handleClose} padding={isMobile ? '1.5rem' : '2.75rem'}>
             <S.ModalContent>
                 <S.Title>분기설정</S.Title>
 
