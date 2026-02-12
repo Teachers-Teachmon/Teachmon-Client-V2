@@ -9,12 +9,14 @@ import {
 
 interface ExchangeRequestSectionProps {
     exchanges: ExchangeRequest[];
+    isLoading: boolean;
     currentTeacherId: number;
     onOpenModal: (exchange: ExchangeRequest) => void;
 }
 
 export default function ExchangeRequestSection({
     exchanges,
+    isLoading,
     currentTeacherId,
     onOpenModal,
 }: ExchangeRequestSectionProps) {
@@ -22,7 +24,9 @@ export default function ExchangeRequestSection({
         <S.SectionCard>
             <S.SectionTitle>교체 요청</S.SectionTitle>
             <S.SectionContent>
-                {exchanges.length > 0 ? (
+                {isLoading ? (
+                    <S.EmptyMessage>교체 요청을 불러오는 중입니다...</S.EmptyMessage>
+                ) : exchanges.length > 0 ? (
                     <>
                         <S.ExchangeHeader>
                             <S.ExchangeHeaderText>받는 사람</S.ExchangeHeaderText>

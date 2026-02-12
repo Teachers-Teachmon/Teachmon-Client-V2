@@ -29,8 +29,8 @@ export default function HomePage() {
 
     const { data: todaySupervision } = useTodaySupervisionQuery();
     const { data: mySupervisionDays } = useMySupervisionDaysQuery(month);
-    const { data: exchangeRequests } = useExchangeRequestsQuery();
-    const { data: weeklyExitStudents } = useWeeklyExitStudentsQuery();
+    const { data: exchangeRequests, isLoading: isExchangeRequestsLoading } = useExchangeRequestsQuery();
+    const { data: weeklyExitStudents, isLoading: isWeeklyExitStudentsLoading } = useWeeklyExitStudentsQuery();
     const { mutate: acceptExchange } = useAcceptExchangeRequestMutation();
     const { mutate: rejectExchange } = useRejectExchangeRequestMutation();
 
@@ -85,10 +85,14 @@ export default function HomePage() {
             <S.BottomSection>
                 <ExchangeRequestSection
                     exchanges={exchanges}
+                    isLoading={isExchangeRequestsLoading}
                     currentTeacherId={CURRENT_TEACHER_ID}
                     onOpenModal={handleOpenModal}
                 />
-                <WeeklyExitSection exits={exits} />
+                <WeeklyExitSection
+                    exits={exits}
+                    isLoading={isWeeklyExitStudentsLoading}
+                />
             </S.BottomSection>
 
             <ExchangeDetailModal

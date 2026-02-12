@@ -4,9 +4,10 @@ import { formatDate, formatPeriod } from '@/utils/format';
 
 interface WeeklyExitSectionProps {
     exits: ExitStudent[];
+    isLoading: boolean;
 }
 
-export default function WeeklyExitSection({ exits }: WeeklyExitSectionProps) {
+export default function WeeklyExitSection({ exits, isLoading }: WeeklyExitSectionProps) {
     const exitRows = exits.reduce<ExitStudent[][]>(
         (acc, item, index) => {
             if (index % 2 === 0) {
@@ -23,7 +24,9 @@ export default function WeeklyExitSection({ exits }: WeeklyExitSectionProps) {
         <S.SectionCard>
             <S.SectionTitle>이번 주 이탈 현황</S.SectionTitle>
             <S.SectionContent>
-                {exits.length > 0 ? (
+                {isLoading ? (
+                    <S.EmptyMessage>이탈 현황을 불러오는 중입니다...</S.EmptyMessage>
+                ) : exits.length > 0 ? (
                     <S.DepartureGrid>
                         {exitRows.map((row, rowIndex) => (
                             <S.DepartureRow key={rowIndex}>
