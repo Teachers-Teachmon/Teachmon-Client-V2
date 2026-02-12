@@ -1,7 +1,31 @@
 // 관리자 페이지 관련 상수
 
+import type { ForbiddenDay } from '@/services/user-management/user-management.api';
+
 // 요일 목록
 export const WEEKDAYS = ['월요일', '화요일', '수요일', '목요일'] as const;
+
+// API 요일 형식을 한글로 변환
+export const DAY_MAP: Record<ForbiddenDay, string> = {
+  MON: '월요일',
+  TUE: '화요일',
+  WED: '수요일',
+  THU: '목요일',
+  FRI: '금요일',
+  SAT: '토요일',
+  SUN: '일요일',
+};
+
+// 한글 요일을 API 형식으로 변환
+export const REVERSE_DAY_MAP: Record<string, ForbiddenDay> = {
+  '월요일': 'MON',
+  '화요일': 'TUE',
+  '수요일': 'WED',
+  '목요일': 'THU',
+  '금요일': 'FRI',
+  '토요일': 'SAT',
+  '일요일': 'SUN',
+};
 
 // 사용자 역할
 export const USER_ROLES = {

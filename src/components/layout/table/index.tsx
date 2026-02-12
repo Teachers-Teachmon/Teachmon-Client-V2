@@ -13,6 +13,7 @@ interface TableLayoutProps<T> {
     renderActions?: (row: T) => React.ReactNode;
     actionsHeader?: string;
     onRowClick?: (row: T) => void;
+    isLoading?: boolean;
 }
 
 export default function TableLayout<T extends { id: string }>({
@@ -21,6 +22,7 @@ export default function TableLayout<T extends { id: string }>({
     renderActions,
     actionsHeader = '',
     onRowClick,
+    isLoading = false,
 }: TableLayoutProps<T>) {
     return (
         <>
@@ -41,7 +43,13 @@ export default function TableLayout<T extends { id: string }>({
                         </S.TableRow>
                     </S.TableHead>
                     <tbody>
-                        {data.length === 0 ? (
+                        {isLoading ? (
+                            <S.TableRow>
+                                <S.TableCell colSpan={columns.length + (renderActions ? 1 : 0)} style={{ textAlign: 'center', height: '300px', color: '#aaa', fontSize: '1.2rem' }}>
+                                    로딩 중...
+                                </S.TableCell>
+                            </S.TableRow>
+                        ) : data.length === 0 ? (
                             <S.TableRow>
                                 <S.TableCell colSpan={columns.length + (renderActions ? 1 : 0)} style={{ textAlign: 'center', height: '300px', color: '#aaa', fontSize: '1.2rem' }}>
                                     데이터가 없습니다
@@ -74,7 +82,9 @@ export default function TableLayout<T extends { id: string }>({
 
             {/* 모바일 카드 */}
             <S.MobileCardContainer>
-                {data.length === 0 ? (
+                {isLoading ? (
+                    <S.EmptyMessage>로딩 중...</S.EmptyMessage>
+                ) : data.length === 0 ? (
                     <S.EmptyMessage>데이터가 없습니다</S.EmptyMessage>
                 ) : (
                     data.map((row) => (

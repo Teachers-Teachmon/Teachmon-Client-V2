@@ -21,11 +21,12 @@ export function useStudentColumns({
       render: (row) =>
         editingIds.has(row.id) ? (
           <TextInput
-            value={editingStudent?.id === row.id ? editingStudent.grade : row.grade}
+            value={editingStudent?.id === row.id ? (editingStudent.grade || '') : (row.grade || '')}
             onChange={(e) => {
+              const value: number | '' = e.target.value === '' ? '' : Number(e.target.value);
               const updatedStudent = editingStudent?.id === row.id
-                ? { ...editingStudent, grade: Number(e.target.value) }
-                : { ...row, grade: Number(e.target.value) };
+                ? { ...editingStudent, grade: value }
+                : { ...row, grade: value };
               onEditingStudentChange(updatedStudent);
             }}
             customPadding="0 14px"
@@ -42,11 +43,12 @@ export function useStudentColumns({
       render: (row) =>
         editingIds.has(row.id) ? (
           <TextInput
-            value={editingStudent?.id === row.id ? editingStudent.classNum : row.classNum}
+            value={editingStudent?.id === row.id ? (editingStudent.classNum || '') : (row.classNum || '')}
             onChange={(e) => {
+              const value: number | '' = e.target.value === '' ? '' : Number(e.target.value);
               const updatedStudent = editingStudent?.id === row.id
-                ? { ...editingStudent, classNum: Number(e.target.value) }
-                : { ...row, classNum: Number(e.target.value) };
+                ? { ...editingStudent, classNum: value }
+                : { ...row, classNum: value };
               onEditingStudentChange(updatedStudent);
             }}
             customPadding="0 14px"
@@ -63,18 +65,19 @@ export function useStudentColumns({
       render: (row) =>
         editingIds.has(row.id) ? (
           <TextInput
-            value={editingStudent?.id === row.id ? editingStudent.number : row.number}
+            value={editingStudent?.id === row.id ? (editingStudent.number || '') : (row.number || '')}
             onChange={(e) => {
+              const value: number | '' = e.target.value === '' ? '' : Number(e.target.value);
               const updatedStudent = editingStudent?.id === row.id
-                ? { ...editingStudent, number: Number(e.target.value) }
-                : { ...row, number: Number(e.target.value) };
+                ? { ...editingStudent, number: value }
+                : { ...row, number: value };
               onEditingStudentChange(updatedStudent);
             }}
             customPadding="0 14px"
             customFontSize="16px"
           />
         ) : (
-          row.number
+          String(row.number).padStart(2, '0')
         ),
     },
     {

@@ -13,6 +13,15 @@ export const TableWrapper = styled.div`
     }
 `;
 
+export const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: ${fontSizes.H4};
+  color: ${colors.n03};
+`;
+
 export const ActionCell = styled.div`
   display: flex;
   align-items: center;
@@ -46,7 +55,7 @@ export const DropdownMenu = styled.div`
   border: 1px solid #cccccc;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 1000;
   min-width: 122px;
 `;
 
