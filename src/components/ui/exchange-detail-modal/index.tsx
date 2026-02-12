@@ -9,7 +9,7 @@ import * as S from './style';
 interface ExchangeDetailModalProps {
     isOpen: boolean;
     exchange: ExchangeRequest | null;
-    currentTeacherId: number;
+    currentTeacherId: number | string;
     onClose: () => void;
     onAccept: () => void;
     onReject: () => void;
@@ -36,7 +36,7 @@ export default function ExchangeDetailModal({
 
     if (!exchange) return null;
 
-    const isReceiver = exchange.requestor.teacher.id === currentTeacherId;
+    const isReceiver = String(exchange.responser.teacher.id) === String(currentTeacherId);
     const isPending = exchange.status === 'PENDING';
     const isCreating = !!onSubmit;
 

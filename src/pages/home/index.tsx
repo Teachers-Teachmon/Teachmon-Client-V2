@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import * as S from './style';
 import type { ExchangeRequest } from '@/types/home';
 import WelcomeSection from '@/containers/home/welcome';
@@ -18,14 +19,15 @@ import {
     useAcceptExchangeRequestMutation,
     useRejectExchangeRequestMutation,
 } from '@/services/home/home.mutation';
-
-const CURRENT_TEACHER_ID = 353526346;
+import { useUserStore } from '@/stores/useUserStore';
 
 export default function HomePage() {
     const [selectedExchange, setSelectedExchange] = useState<ExchangeRequest | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const queryClient = useQueryClient();
+    const user = useUserStore((state) => state.user);
     const month = new Date().getMonth() + 1;
+    const currentTeacherId = user?.id ?? '';
 
     const { data: todaySupervision } = useTodaySupervisionQuery();
     const { data: mySupervisionDays } = useMySupervisionDaysQuery(month);
@@ -52,10 +54,14 @@ export default function HomePage() {
         if (!selectedExchange?.id) return;
         acceptExchange(selectedExchange.id, {
             onSuccess: () => {
+                toast.success('교체요청을 수락했어요.');
                 queryClient.invalidateQueries({
                     queryKey: homeQueryKeys.exchangeRequests(),
                 });
                 handleCloseModal();
+            },
+            onError: () => {
+                toast.error('교체요청 수락에 실패했어요.');
             },
         });
     };
@@ -64,10 +70,14 @@ export default function HomePage() {
         if (!selectedExchange?.id) return;
         rejectExchange(selectedExchange.id, {
             onSuccess: () => {
+                toast.success('교체요청을 거절했어요.');
                 queryClient.invalidateQueries({
                     queryKey: homeQueryKeys.exchangeRequests(),
                 });
                 handleCloseModal();
+            },
+            onError: () => {
+                toast.error('교체요청 거절에 실패했어요.');
             },
         });
     };
@@ -86,7 +96,7 @@ export default function HomePage() {
                 <ExchangeRequestSection
                     exchanges={exchanges}
                     isLoading={isExchangeRequestsLoading}
-                    currentTeacherId={CURRENT_TEACHER_ID}
+                    currentTeacherId={currentTeacherId}
                     onOpenModal={handleOpenModal}
                 />
                 <WeeklyExitSection
@@ -98,7 +108,7 @@ export default function HomePage() {
             <ExchangeDetailModal
                 isOpen={isModalOpen}
                 exchange={selectedExchange}
-                currentTeacherId={CURRENT_TEACHER_ID}
+                currentTeacherId={currentTeacherId}
                 onClose={handleCloseModal}
                 onAccept={handleAccept}
                 onReject={handleReject}

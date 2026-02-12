@@ -37,9 +37,9 @@ export const getStatusStyle = (status: ExchangeStatus): ExchangeStatus => {
 };
 
 export const getDisplayName = (
-  teacherId: number,
+  teacherId: number | string,
   teacherName: string,
-  currentTeacherId: number
+  currentTeacherId: number | string
 ): string => {
-  return teacherId === currentTeacherId ? '(나)' : `${teacherName} 선생님`;
+  return String(teacherId) === String(currentTeacherId) ? '(나)' : `${teacherName} 선생님`;
 };
