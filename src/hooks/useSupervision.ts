@@ -4,6 +4,7 @@ import type { CalendarEvent } from '@/types/calendar';
 import type { ExchangeRequest } from '@/types/home';
 import { CURRENT_TEACHER_ID } from '@/constants/supervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
+import { useUserStore } from '@/stores/useUserStore';
 import { useSupervisionSearchQuery } from '@/services/supervision/supervision.query';
 import { useRequestSupervisionExchangeMutation } from '@/services/supervision/supervision.mutation';
 
@@ -23,6 +24,8 @@ export const useSupervision = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [exchangeRequest, setExchangeRequest] = useState<ExchangeRequest | null>(null);
     const [exchangeIds, setExchangeIds] = useState<{ requestorId: number; changeId: number } | null>(null);
+    const user = useUserStore((state) => state.user);
+    const currentTeacherId = user?.id ?? CURRENT_TEACHER_ID;
 
     const { data: supervisionDays } = useSupervisionSearchQuery(month, queryParam);
     const { mutate: requestExchange } = useRequestSupervisionExchangeMutation();
@@ -34,8 +37,9 @@ export const useSupervision = () => {
 
     const events = useMemo(() => {
         if (!showMyOnly) return baseEvents;
-        return baseEvents.filter((event) => event.teacherId === CURRENT_TEACHER_ID);
-    }, [baseEvents, showMyOnly]);
+        if (!currentTeacherId) return baseEvents;
+        return baseEvents.filter((event) => event.teacherId === currentTeacherId);
+    }, [baseEvents, showMyOnly, currentTeacherId]);
 
     const parseSupervisionId = (eventId: string) => {
         const id = Number(eventId.split('_')[1]);
@@ -122,6 +126,7 @@ export const useSupervision = () => {
         year,
         month,
         events,
+        currentTeacherId,
         exchangeMode,
         selectedMyEvent,
         showMyOnly,
