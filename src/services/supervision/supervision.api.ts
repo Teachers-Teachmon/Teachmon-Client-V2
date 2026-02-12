@@ -12,8 +12,8 @@ export const fetchSupervision = async (params: FetchSupervisionParams): Promise<
 };
 
 export interface RequestExchangePayload {
-  requestor_supervision_id: number;
-  change_supervision_id: number;
+  requestor_supervision_id: string;
+  change_supervision_id: string;
   reason: string;
 }
 

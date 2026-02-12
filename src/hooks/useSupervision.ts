@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import JSONbig from 'json-bigint';
 import { useSearchParams } from 'react-router-dom';
 import type { CalendarEvent } from '@/types/calendar';
 import type { ExchangeRequest } from '@/types/home';
@@ -7,6 +8,8 @@ import { convertToCalendarEvents } from '@/utils/supervision';
 import { useUserStore } from '@/stores/useUserStore';
 import { useSupervisionSearchQuery } from '@/services/supervision/supervision.query';
 import { useRequestSupervisionExchangeMutation } from '@/services/supervision/supervision.mutation';
+
+const JSONbigNative = JSONbig({ useNativeBigInt: false, storeAsString: true });
 
 export const useSupervision = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -23,7 +26,7 @@ export const useSupervision = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [exchangeRequest, setExchangeRequest] = useState<ExchangeRequest | null>(null);
-    const [exchangeIds, setExchangeIds] = useState<{ requestorId: number; changeId: number } | null>(null);
+    const [exchangeIds, setExchangeIds] = useState<{ requestorId: string; changeId: string } | null>(null);
     const user = useUserStore((state) => state.user);
     const currentTeacherId = user?.id ?? CURRENT_TEACHER_ID;
 
@@ -42,8 +45,16 @@ export const useSupervision = () => {
     }, [baseEvents, showMyOnly, currentTeacherId]);
 
     const parseSupervisionId = (eventId: string) => {
-        const id = Number(eventId.split('_')[1]);
-        return Number.isNaN(id) ? null : id;
+        const rawId = eventId.split('_')[1];
+        if (!rawId) return null;
+
+        try {
+            const parsed = JSONbigNative.parse(`{"id":${rawId}}`) as { id?: string | number };
+            if (!parsed.id) return null;
+            return String(parsed.id);
+        } catch {
+            return null;
+        }
     };
 
     useEffect(() => {
