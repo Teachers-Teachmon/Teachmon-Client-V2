@@ -48,9 +48,9 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
       name: student.name,
     }));
     
-    // 로컬에서 추가된 학생들과 병합
+    // 로컬에서 추가된 학생들과 병합 (새로 추가된 항목을 맨 위에)
     const newStudents = localStudents.filter(s => s.id.startsWith('new-'));
-    return [...apiStudents, ...newStudents];
+    return [...newStudents, ...apiStudents];
   }, [studentsData, localStudents]);
 
   const columns = useStudentColumns({
@@ -159,11 +159,11 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
       number: '',
       name: '',
     };
-    setLocalStudents(prev => [...prev, newStudent]);
+    setLocalStudents(prev => [newStudent, ...prev]);
     setEditingStudent(newStudent);
     setEditingIds((prev) => new Set(prev).add(newStudent.id));
     
-    // 스크롤을 맨 아래로 이동
+    // 스크롤을 맨 위로 이동
     setTimeout(() => {
       if (tableWrapperRef.current) {
         // tableWrapperRef의 모든 자식 중 스크롤 가능한 요소 찾기
@@ -176,7 +176,7 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
         
         scrollableElements.forEach((element) => {
           (element as HTMLElement).scrollTo({ 
-            top: element.scrollHeight, 
+            top: 0, 
             behavior: 'smooth' 
           });
         });

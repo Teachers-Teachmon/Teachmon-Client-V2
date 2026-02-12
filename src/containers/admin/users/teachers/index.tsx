@@ -58,9 +58,9 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
       forbiddenDates: forbiddenDates,
     }));
     
-    // 로컬에서 추가된 선생님들과 병합
+    // 로컬에서 추가된 선생님들과 병합 (새로 추가된 항목을 맨 위에)
     const newTeachers = localTeachers.filter(t => t.id.startsWith('new-'));
-    return [...apiTeachers, ...newTeachers];
+    return [...newTeachers, ...apiTeachers];
   }, [teachersData, forbiddenDates, localTeachers]);
 
   const columns = useTeacherColumns({
@@ -180,11 +180,11 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
       email: '',
       supervisionCount: 0,
     };
-    setLocalTeachers(prev => [...prev, newTeacher]);
+    setLocalTeachers(prev => [newTeacher, ...prev]);
     setEditingTeacher(newTeacher);
     setEditingIds((prev) => new Set(prev).add(newTeacher.id));
     
-    // 스크롤을 맨 아래로 이동
+    // 스크롤을 맨 위로 이동
     setTimeout(() => {
       if (tableWrapperRef.current) {
         // tableWrapperRef의 모든 자식 중 스크롤 가능한 요소 찾기
@@ -197,7 +197,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
         
         scrollableElements.forEach((element) => {
           (element as HTMLElement).scrollTo({ 
-            top: element.scrollHeight, 
+            top: 0, 
             behavior: 'smooth' 
           });
         });
