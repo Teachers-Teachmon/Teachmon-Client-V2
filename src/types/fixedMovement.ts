@@ -92,6 +92,13 @@ export interface PlaceSearchResponse {
 export interface TeamSearchResponse {
   id: number;
   name: string;
+  members: {
+    id: number;
+    number: number;
+    name: string;
+    grade: number;
+    classNumber: number;
+  }[];
 }
 export interface TeamResponse {
   id: number;

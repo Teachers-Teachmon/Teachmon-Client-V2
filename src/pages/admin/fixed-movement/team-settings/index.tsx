@@ -20,9 +20,9 @@ export default function TeamSettingsPage() {
   const teams: Team[] = (rawTeams ?? []).map((t) => ({
     id: String(t.id),
     name: t.name,
-    students: t.students.map((s) => ({
-      studentNumber: s.student_number,
-      name: s.name,
+    students: t.members.map((m) => ({
+      studentNumber: Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`),
+      name: m.name,
     })),
   }));
 
