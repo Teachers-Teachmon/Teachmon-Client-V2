@@ -91,12 +91,6 @@ export const RankBadge = styled.div`
     height: 100%;
     object-fit: contain;
   }
-
-  ${mq.mobile} {
-    width: 28px;
-    height: 30px;
-    top: -18px;
-  }
 `;
 
 export const TeacherImage = styled.div`
