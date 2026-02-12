@@ -11,6 +11,7 @@ import { useDeleteExitHistoryMutation } from '@/services/manage/manage.mutation'
 import { branchQuery } from '@/services/branch/branch.query';
 import { useCreateBranchMutation } from '@/services/branch/branch.mutation';
 import { toast } from 'react-toastify';
+import { formatDateShort, formatPeriod } from '@/utils/format';
 
 export default function AdminMain() {
     const { data: supervisionData, isError: isSupervisionError } = useQuery(supervisionQuery.rank());
@@ -60,9 +61,9 @@ export default function AdminMain() {
 
     // 이탈 학생 데이터 변환
     const absentStudents = exitHistoryData?.map((item) => ({
-        id: item.exit_history_id,
-        date: item.period.replace('_', ' '),
-        name: `${item.student_number} ${item.student_name}`,
+        id: item.exit_id,
+        date: `${formatDateShort(item.day)} ${formatPeriod(item.period)}`,
+        name: `${item.number} ${item.name}`,
     })) || [];
 
     // 분기 설정 데이터 변환

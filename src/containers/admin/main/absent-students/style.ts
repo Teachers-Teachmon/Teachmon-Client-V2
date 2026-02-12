@@ -33,7 +33,7 @@ export const SectionTitle = styled.h2`
 export const AbsentStudentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: minmax(100px, auto);
+  grid-auto-rows: max-content;
   flex: 1;
   overflow-y: auto;
   min-height: 0;
@@ -45,10 +45,10 @@ export const AbsentStudentRow = styled.div`
   gap: 10px;
   padding: 14px 28px;
   justify-content: space-between;
-  width: 100%;
   border-bottom: 1px solid #f2f3f6;
   box-sizing: border-box;
   border-right: 1px solid #f2f3f6;
+  min-height: 80px;
   
   &:nth-of-type(2n) {
     border-right: none;

@@ -18,6 +18,13 @@ export const formatDateFull = (dateStr: string): string => {
   return `${month}월 ${day}일 ${weekday}요일`;
 };
 
+export const formatDateShort = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month}/${day}`;
+};
+
 export const formatSupervisionType = (type: SupervisionType | string): string => {
   return type === 'self_study' ? '자습감독' : '이석감독';
 };
