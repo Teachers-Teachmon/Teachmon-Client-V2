@@ -7,7 +7,7 @@ import type {
 } from '@/types/fixedMovement';
 
 export const getTeams = async (): Promise<TeamResponse[]> => {
-  const response = await axiosInstance.get<TeamResponse[]>('/search/all');
+  const response = await axiosInstance.get<TeamResponse[]>('/team/search/all');
   return response.data;
 };
 
