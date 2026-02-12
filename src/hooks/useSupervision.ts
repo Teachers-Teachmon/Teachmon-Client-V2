@@ -1,13 +1,20 @@
 import { useState, useMemo, useEffect } from 'react';
+import JSONbig from 'json-bigint';
 import { useSearchParams } from 'react-router-dom';
 import type { CalendarEvent } from '@/types/calendar';
 import type { ExchangeRequest } from '@/types/home';
-import { SAMPLE_DATA, CURRENT_TEACHER_ID } from '@/constants/supervision';
+import { CURRENT_TEACHER_ID } from '@/constants/supervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
+import { useUserStore } from '@/stores/useUserStore';
+import { useSupervisionSearchQuery } from '@/services/supervision/supervision.query';
+import { useRequestSupervisionExchangeMutation } from '@/services/supervision/supervision.mutation';
+
+const JSONbigNative = JSONbig({ useNativeBigInt: false, storeAsString: true });
 
 export const useSupervision = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const monthParam = searchParams.get('month');
+    const queryParam = searchParams.get('query') ?? '';
 
     const currentDate = new Date();
     const [year, setYear] = useState(currentDate.getFullYear());
@@ -19,12 +26,36 @@ export const useSupervision = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [exchangeRequest, setExchangeRequest] = useState<ExchangeRequest | null>(null);
+    const [exchangeIds, setExchangeIds] = useState<{ requestorId: string; changeId: string } | null>(null);
+    const user = useUserStore((state) => state.user);
+    const currentTeacherId = user?.id ?? CURRENT_TEACHER_ID;
+
+    const { data: supervisionDays } = useSupervisionSearchQuery(month, queryParam);
+    const { mutate: requestExchange } = useRequestSupervisionExchangeMutation();
+
+    const baseEvents = useMemo(
+        () => convertToCalendarEvents(supervisionDays ?? []),
+        [supervisionDays]
+    );
 
     const events = useMemo(() => {
-        const baseEvents = convertToCalendarEvents(SAMPLE_DATA);
         if (!showMyOnly) return baseEvents;
-        return baseEvents.filter((event) => event.teacherId === CURRENT_TEACHER_ID);
-    }, [showMyOnly]);
+        if (!currentTeacherId) return baseEvents;
+        return baseEvents.filter((event) => event.teacherId === currentTeacherId);
+    }, [baseEvents, showMyOnly, currentTeacherId]);
+
+    const parseSupervisionId = (eventId: string) => {
+        const rawId = eventId.split('_')[1];
+        if (!rawId) return null;
+
+        try {
+            const parsed = JSONbigNative.parse(`{"id":${rawId}}`) as { id?: string | number };
+            if (!parsed.id) return null;
+            return String(parsed.id);
+        } catch {
+            return null;
+        }
+    };
 
     useEffect(() => {
         const newParams = new URLSearchParams(searchParams);
@@ -41,6 +72,7 @@ export const useSupervision = () => {
         if (exchangeMode) {
             setExchangeMode(false);
             setSelectedMyEvent(null);
+            setExchangeIds(null);
         } else {
             setExchangeMode(true);
         }
@@ -52,6 +84,10 @@ export const useSupervision = () => {
 
     const handleTargetEventSelect = (event: CalendarEvent) => {
         if (selectedMyEvent && selectedMyEvent.teacherId && selectedMyEvent.supervisionType && event.teacherId && event.supervisionType) {
+            const requestorId = parseSupervisionId(selectedMyEvent.id);
+            const changeId = parseSupervisionId(event.id);
+            if (!requestorId || !changeId) return;
+
             const newRequest: ExchangeRequest = {
                 id: Date.now(),
                 status: 'PENDING',
@@ -68,6 +104,7 @@ export const useSupervision = () => {
                 reason: '',
             };
             setExchangeRequest(newRequest);
+            setExchangeIds({ requestorId, changeId });
             setIsModalOpen(true);
         }
     };
@@ -75,22 +112,32 @@ export const useSupervision = () => {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setExchangeRequest(null);
+        setExchangeIds(null);
     };
 
     const handleSubmit = (reason: string) => {
-        if (exchangeRequest) {
-            const updatedRequest = { ...exchangeRequest, reason };
-            console.log('교체 요청 전송:', updatedRequest);
-        }
-        handleCloseModal();
-        setExchangeMode(false);
-        setSelectedMyEvent(null);
+        if (!exchangeIds) return;
+        requestExchange(
+            {
+                requestor_supervision_id: exchangeIds.requestorId,
+                change_supervision_id: exchangeIds.changeId,
+                reason,
+            },
+            {
+                onSuccess: () => {
+                    handleCloseModal();
+                    setExchangeMode(false);
+                    setSelectedMyEvent(null);
+                },
+            }
+        );
     };
 
     return {
         year,
         month,
         events,
+        currentTeacherId,
         exchangeMode,
         selectedMyEvent,
         showMyOnly,

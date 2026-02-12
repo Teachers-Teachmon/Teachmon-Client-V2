@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Button from '@/components/ui/button';
 import TextInput from '@/components/ui/input/text-input';
+import { useDebounce } from '@/hooks/useDebounce';
 import * as S from './style';
 
 interface SupervisionHeaderProps {
@@ -20,21 +21,38 @@ export default function SupervisionHeader({
     const [searchParams, setSearchParams] = useSearchParams();
     const queryParam = searchParams.get('query') || '';
     const [value, setValue] = useState(queryParam);
+    const debouncedValue = useDebounce(value, 300);
 
     useEffect(() => {
         setValue(queryParam);
     }, [queryParam]);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            const newParams = new URLSearchParams(searchParams);
-            if (value.trim()) {
-                newParams.set('query', value.trim());
-            } else {
-                newParams.delete('query');
-            }
-            setSearchParams(newParams, { replace: true });
+    useEffect(() => {
+        const nextQuery = debouncedValue.trim();
+        if (nextQuery === queryParam) return;
+
+        const newParams = new URLSearchParams(searchParams);
+        if (nextQuery) {
+            newParams.set('query', nextQuery);
+        } else {
+            newParams.delete('query');
         }
+        setSearchParams(newParams, { replace: true });
+    }, [debouncedValue, queryParam, searchParams, setSearchParams]);
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key !== 'Enter') return;
+
+        const nextQuery = value.trim();
+        if (nextQuery === queryParam) return;
+
+        const newParams = new URLSearchParams(searchParams);
+        if (nextQuery) {
+            newParams.set('query', nextQuery);
+        } else {
+            newParams.delete('query');
+        }
+        setSearchParams(newParams, { replace: true });
     };
 
     return (
