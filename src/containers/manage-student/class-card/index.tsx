@@ -1,13 +1,16 @@
 import { useEffect } from 'react';
 import StatusBadge from '@/components/ui/status';
 import type { StatusType } from '@/components/ui/status';
+import type { StudentState } from '@/services/manage/manage.api';
+import { getStudentStateInfo } from '@/utils/studentState';
 import * as S from './style';
 
 interface Student {
     id: number;
     number: number;
     name: string;
-    status?: StatusType;
+    state?: StudentState | null;
+    scheduleId?: number;
 }
 
 interface ClassCardProps {
@@ -15,9 +18,11 @@ interface ClassCardProps {
     students: Student[];
     selectedStudentId: number | null;
     onStudentSelect: (id: number | null) => void;
+    onStatusChange?: (scheduleId: number, status: StatusType, currentState?: StudentState | null) => void;
+    isLoading?: boolean;
 }
 
-export default function ClassCard({ classNum, students, selectedStudentId, onStudentSelect }: ClassCardProps) {
+export default function ClassCard({ classNum, students, selectedStudentId, onStudentSelect, onStatusChange, isLoading }: ClassCardProps) {
     useEffect(() => {
         const handleClickOutside = () => onStudentSelect(null);
         if (selectedStudentId) {
@@ -27,37 +32,65 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
     }, [selectedStudentId, onStudentSelect]);
 
     const getStatusOptions = (student: Student): StatusType[] => {
-        if (student.status === '조퇴' || student.status === '이탈') {
+        if (student.state === 'AWAY' || student.state === 'EXIT' || 
+            student.state === 'EARLY_LEAVE' || student.state === 'EVASION') {
             return ['취소' as StatusType];
         }
         return ['조퇴', '이탈'];
+    };
+
+    const handleStatusClick = (student: Student, status: StatusType) => {
+        if (!student.scheduleId || !onStatusChange) return;
+        onStatusChange(student.scheduleId, status, student.state);
     };
 
     return (
         <S.Container>
             <S.ClassTitle>{classNum}반</S.ClassTitle>
             <S.StudentsGrid>
-                {students.map((student) => (
-                    <S.StudentCard 
-                        key={student.id}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            onStudentSelect(student.id);
-                        }}
-                    >
-                        <S.StudentNumber>{student.number}</S.StudentNumber>
-                        <S.StudentName>{student.name}</S.StudentName>
-                        {selectedStudentId === student.id && (
-                            <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
-                                {getStatusOptions(student).map((status, index) => (
-                                    <S.StatusBadgeWrapper key={index}>
-                                        <StatusBadge status={status} />
-                                    </S.StatusBadgeWrapper>
-                                ))}
-                            </S.StatusPopupContainer>
-                        )}
-                    </S.StudentCard>
-                ))}
+                {isLoading ? (
+                    <S.EmptyState>로딩중...</S.EmptyState>
+                ) : students.length === 0 ? (
+                    <S.EmptyState>학생 데이터가 없습니다.</S.EmptyState>
+                ) : (
+                    students.map((student) => {
+                        const stateInfo = getStudentStateInfo(student.state);
+                        // state가 null이면 회색으로 표시
+                        const displayColor = stateInfo?.color || '#9CA4BA';
+                        const displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
+                        
+                        return (
+                            <S.StudentCard 
+                                key={student.id}
+                                $stateColor={displayColor}
+                                $stateBgColor={displayBgColor}
+                                $hasState={!!student.state}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    // state가 있을 때만 선택 가능
+                                    if (student.state) {
+                                        onStudentSelect(student.id);
+                                    }
+                                }}
+                            >
+                                <S.StudentNumber>{student.number}</S.StudentNumber>
+                                <S.StudentName>{student.name}</S.StudentName>
+                                {selectedStudentId === student.id && student.state && (
+                                    <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
+                                        {getStatusOptions(student).map((status, index) => (
+                                            <S.StatusBadgeWrapper 
+                                                key={index}
+                                                onClick={() => handleStatusClick(student, status)}
+                                            >
+                                                <StatusBadge status={status} />
+                                            </S.StatusBadgeWrapper>
+                                        ))}
+                                    </S.StatusPopupContainer>
+                                )}
+                            </S.StudentCard>
+                        );
+                    })
+                )}
             </S.StudentsGrid>
         </S.Container>
     );
