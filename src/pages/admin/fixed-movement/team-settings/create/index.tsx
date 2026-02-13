@@ -35,14 +35,15 @@ export default function TeamFormPage() {
       if (team) {
         setTeamName(team.name);
         setSelectedStudents(
-          team.students.map((s) => ({
-            studentNumber: s.student_number,
-            name: s.name,
+          team.members.map((m) => ({
+            studentNumber: Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`),
+            name: m.name,
           })),
         );
         const idMap: Record<number, number> = {};
-        team.students.forEach((s) => {
-          idMap[s.student_number] = s.id;
+        team.members.forEach((m) => {
+          const studentNumber = Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`);
+          idMap[studentNumber] = m.id;
         });
         setStudentIdMap(idMap);
       }
@@ -77,7 +78,7 @@ export default function TeamFormPage() {
 
     if (isEditMode && id) {
       updateMutation.mutate({
-        id: Number(id),
+        id,
         name: teamName,
         students: selectedStudents.map((s) => ({
           id: studentIdMap[s.studentNumber] ?? s.studentNumber,

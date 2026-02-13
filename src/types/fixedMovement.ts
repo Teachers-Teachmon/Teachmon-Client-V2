@@ -90,7 +90,7 @@ export interface PlaceSearchResponse {
 }
 
 export interface TeamSearchResponse {
-  id: number;
+  id: string;
   name: string;
   members: {
     id: number;
@@ -101,12 +101,14 @@ export interface TeamSearchResponse {
   }[];
 }
 export interface TeamResponse {
-  id: number;
+  id: string;
   name: string;
-  students: {
+  members: {
     id: number;
-    student_number: number;
+    number: number;
     name: string;
+    grade: number;
+    classNumber: number;
   }[];
 }
 
@@ -116,7 +118,7 @@ export interface CreateTeamRequest {
 }
 
 export interface UpdateTeamRequest {
-  id: number;
+  id: string;
   name: string;
   students: {
     id: number;
@@ -126,5 +128,5 @@ export interface UpdateTeamRequest {
 }
 
 export interface DeleteTeamRequest {
-  id: number;
+  id: string;
 }

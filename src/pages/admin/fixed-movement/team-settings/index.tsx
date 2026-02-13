@@ -15,12 +15,12 @@ export default function TeamSettingsPage() {
   const navigate = useNavigate();
   const { data: rawTeams, isLoading, isError } = useQuery(teamQuery.list());
   const deleteMutation = useDeleteTeamMutation();
-  const [deleteTargetId, setDeleteTargetId] = useState<number | null>(null);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const teams: Team[] = (rawTeams ?? []).map((t) => ({
     id: String(t.id),
     name: t.name,
-    students: t.members.map((m) => ({
+    students: t.members.map((m: { grade: any; classNumber: any; number: any; name: any; }) => ({
       studentNumber: Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`),
       name: m.name,
     })),
@@ -41,7 +41,7 @@ export default function TeamSettingsPage() {
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    setDeleteTargetId(Number(id));
+    setDeleteTargetId(id);
   };
 
   const handleConfirmDelete = () => {
