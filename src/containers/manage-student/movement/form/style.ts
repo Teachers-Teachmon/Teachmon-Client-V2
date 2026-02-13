@@ -286,57 +286,12 @@ export const StudentName = styled.span`
     color: ${colors.primary};
 `;
 
+
 export const ButtonWrapper = styled.div`
     display: flex;
     gap: 20px;
 
     ${mq.mobile} {
         gap: 12px;
-    }
-`;
-
-export const CancelButton = styled.button`
-    flex: 1;
-    height: 45px;
-    background-color: #f3f3f3;
-    border: none;
-    border-radius: 10px;
-    font-family: 'Paperlogy', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 21.2px;
-    color: ${colors.primaryGray};
-    cursor: pointer;
-    
-    &:hover {
-        background-color: #e8e8e8;
-    }
-
-    ${mq.mobile} {
-        height: 42px;
-        font-size: 16px;
-    }
-`;
-
-export const NextButton = styled.button`
-    flex: 1;
-    height: 45px;
-    background-color: ${colors.primary};
-    border: none;
-    border-radius: ${radius.md};
-    font-family: 'Paperlogy', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 21.2px;
-    color: ${colors.background};
-    cursor: pointer;
-    
-    &:hover {
-        background-color: #2558c9;
-    }
-
-    ${mq.mobile} {
-        height: 42px;
-        font-size: 16px;
     }
 `;
