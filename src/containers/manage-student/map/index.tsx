@@ -4,36 +4,41 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import LocationDetail from '../modal/location-detail';
 import useLocationStore from '@/stores/useLocationStore';
 import { manageQuery } from '@/services/manage/manage.query';
+import { getStudentStateInfo } from '@/utils/studentState';
 import { colors } from '@/styles/theme';
 import { FLOOR_ELEMENTS_MAP, type FloorElement } from '@/constants/floorMaps';
+import type { PlaceStatus, StudentState, Period } from '@/services/manage/manage.api';
+import type { StatusType } from '@/components/ui/status';
 import * as S from './style';
 
 interface MapProps {
     selectedFloor: number;
     highlightedPlace?: string;
+    placesData?: PlaceStatus[];
+    selectedDate?: string;
+    selectedPeriod?: Period;
+    onStatusChange?: (scheduleId: number, status: StatusType, currentState?: StudentState | null) => void;
 }
 
-export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
+export default function Map({ selectedFloor, highlightedPlace, placesData, selectedDate, selectedPeriod, onStatusChange }: MapProps) {
     const [isModal, setIsModal] = useState(false);
     const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
-    const setPlace = useLocationStore((state: any) => state.setPlace);
-    
-    // 층별 장소 상태 조회
-    const { data: placesData = [] } = useQuery({
-        ...manageQuery.placesByFloor({ floor: selectedFloor }),
-        retry: false,
-    });
+    const setPlace = useLocationStore((state) => state.setPlace);
 
     // 선택된 장소의 학생 목록 조회
     const { data: placeSchedule } = useQuery({
-        ...manageQuery.placeSchedule(selectedPlaceId!),
+        ...manageQuery.placeSchedule(
+            selectedPlaceId!,
+            selectedDate && selectedPeriod ? { day: selectedDate, period: selectedPeriod } : undefined
+        ),
         enabled: !!selectedPlaceId && isModal,
         retry: false,
     });
 
     // 장소 이름으로 place_id 찾기
-    const getPlaceIdByName = (placeName: string) => {
-        const place = placesData.find((p: any) => p.place_name === placeName);
+    const getPlaceIdByName = (placeName: string): number | undefined => {
+        if (!placesData) return undefined;
+        const place = placesData.find((p: PlaceStatus) => p.place_name === placeName);
         return place?.place_id;
     };
 
@@ -50,12 +55,6 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
         setIsModal(false);
         setSelectedPlaceId(null);
     };
-
-    // 장소별 상태 데이터를 맵으로 변환
-    const placeStatusMap: { [key: string]: any } = {};
-    placesData.forEach((place: any) => {
-        placeStatusMap[place.place_name] = place;
-    });
 
 
     const elements = FLOOR_ELEMENTS_MAP[selectedFloor] || [];
@@ -93,8 +92,10 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
                             <S.MapContent>
                                 <S.MapWrapper>
                                     {elements.map((el: FloorElement) => {
-                                        const placeData = placeStatusMap[el.name];
+                                        const placeData = placesData?.find(p => p.place_name === el.name);
                                         const isHighlighted = highlightedPlace === el.name && el.name !== '' && el.name !== 'X';
+                                        // 모든 상태에 대해 색상 표시
+                                        const stateInfo = placeData?.state ? getStudentStateInfo(placeData.state) : null;
                                         
                                         return (
                                             <S.Element
@@ -111,10 +112,8 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
                                                 $background={
                                                     isHighlighted
                                                         ? colors.primary200
-                                                        : placeData?.status === 'LEAVE_SEAT'
-                                                        ? '#CCBCFF'
-                                                        : placeData?.status === 'SELF_STUDY'
-                                                        ? '#72FAAA'
+                                                        : stateInfo?.label
+                                                        ? stateInfo.backgroundColor
                                                         : '#DDDDDD'
                                                 }
                                                 $cursor={!!placeData}
@@ -132,11 +131,14 @@ export default function Map({ selectedFloor, highlightedPlace }: MapProps) {
             <LocationDetail
                 isOpen={isModal}
                 locationName={placeSchedule?.place_name || ''}
-                students={placeSchedule?.students.map((s: any) => ({
+                students={placeSchedule?.students.map((s) => ({
                     studentNumber: s.number,
                     studentName: s.name,
+                    scheduleId: s.schedule_id,
+                    state: s.state,
                 })) || []}
                 onClose={handleModalClose}
+                onStatusChange={onStatusChange}
             />
         </S.Container>
     );
