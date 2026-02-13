@@ -5,6 +5,36 @@ interface TimeRange {
   end: { hour: number; minute: number };
 }
 
+/**
+ * 한글 교시명을 Period 타입으로 매핑
+ */
+export const PERIOD_MAP: Record<string, Period> = {
+  '1교시': 'ONE_PERIOD',
+  '2교시': 'TWO_PERIOD',
+  '3교시': 'THREE_PERIOD',
+  '4교시': 'FOUR_PERIOD',
+  '5교시': 'FIVE_PERIOD',
+  '6교시': 'SIX_PERIOD',
+  '7교시': 'SEVEN_PERIOD',
+  '8-9교시': 'EIGHT_AND_NINE_PERIOD',
+  '10-11교시': 'TEN_AND_ELEVEN_PERIOD',
+};
+
+/**
+ * Period 타입을 한글 교시명으로 변환
+ */
+export const PERIOD_TO_KOREAN: Record<Period, string> = {
+  'ONE_PERIOD': '1교시',
+  'TWO_PERIOD': '2교시',
+  'THREE_PERIOD': '3교시',
+  'FOUR_PERIOD': '4교시',
+  'FIVE_PERIOD': '5교시',
+  'SIX_PERIOD': '6교시',
+  'SEVEN_PERIOD': '7교시',
+  'EIGHT_AND_NINE_PERIOD': '8-9교시',
+  'TEN_AND_ELEVEN_PERIOD': '10-11교시',
+};
+
 // 교시별 시간표
 const PERIOD_SCHEDULE: Record<string, TimeRange> = {
   ONE_PERIOD: { start: { hour: 8, minute: 40 }, end: { hour: 9, minute: 30 } },
