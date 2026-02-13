@@ -1,15 +1,16 @@
 import { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import * as S from './style';
 import Dropdown from '@/components/ui/input/dropdown';
 import { DAY_LABELS, PERIOD_OPTIONS } from '@/constants/adminSelfStudy';
-import type { SelfStudyPeriod, SelfStudyQuarterlyItem, SelfStudyWeekDay } from '@/types/selfStudy';
+import type { SelfStudyPeriod, SelfStudyQuarterlyItem } from '@/types/selfStudy';
 import { useSelfStudyQuarterlyQuery } from '@/services/admin/selfStudy/adminSelfStudy.query';
 import { useUpdateSelfStudyQuarterlyMutation } from '@/services/admin/selfStudy/adminSelfStudy.mutation';
+import { API_DAY_TO_UI, API_TO_PERIOD, DAY_ORDER, PERIOD_TO_API, type DayOfWeek, UI_DAY_TO_API } from '@/utils/selfStudy';
 import plusIcon from '/icons/admin-self-study/plus.svg';
 import minusIcon from '/icons/admin-self-study/minus.svg';
 
-type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu' | 'fri';
 type Grade = 1 | 2 | 3;
 type Quarter = 1 | 2 | 3 | 4;
 
@@ -32,42 +33,6 @@ export interface QuarterlySectionHandle {
 const QUARTER_OPTIONS: Quarter[] = [1, 2, 3, 4];
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
-
-const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu'];
-
-const UI_DAY_TO_API: Record<DayOfWeek, SelfStudyWeekDay> = {
-  mon: 'MON',
-  tue: 'TUE',
-  wed: 'WED',
-  thu: 'THU',
-  fri: 'FRI',
-};
-
-const API_DAY_TO_UI: Record<SelfStudyWeekDay, DayOfWeek> = {
-  MON: 'mon',
-  TUE: 'tue',
-  WED: 'wed',
-  THU: 'thu',
-  FRI: 'fri',
-};
-
-const PERIOD_TO_API: Record<string, SelfStudyPeriod> = {
-  '7교시': 'SEVEN_PERIOD',
-  '8~9교시': 'EIGHT_AND_NINE_PERIOD',
-  '10~11교시': 'TEN_AND_ELEVEN_PERIOD',
-};
-
-const API_TO_PERIOD: Record<SelfStudyPeriod, string> = {
-  ONE_PERIOD: '1교시',
-  TWO_PERIOD: '2교시',
-  THREE_PERIOD: '3교시',
-  FOUR_PERIOD: '4교시',
-  FIVE_PERIOD: '5교시',
-  SIX_PERIOD: '6교시',
-  SEVEN_PERIOD: '7교시',
-  EIGHT_AND_NINE_PERIOD: '8~9교시',
-  TEN_AND_ELEVEN_PERIOD: '10~11교시',
-};
 
 const createInitialSchedule = (): DaySchedule[] => {
   return DAY_ORDER.map(day => ({
@@ -175,6 +140,13 @@ const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySe
         grade: selectedGrade,
       },
       payload,
+    }, {
+      onSuccess: () => {
+        toast.success('자습 설정이 저장되었습니다.');
+      },
+      onError: () => {
+        toast.error('자습 설정 저장에 실패했습니다.');
+      },
     });
   };
 
