@@ -1,9 +1,9 @@
 import { createPortal } from 'react-dom';
-import HeaderRight from '@/containers/manage-student/header-right';
+import ActionBar from '@/containers/manage-student/header/action-bar';
 import TextInput from '@/components/ui/input/text-input';
 import * as S from './style';
 
-interface MobileHeaderRightProps {
+interface MobileSidebarProps {
   isOpen: boolean;
   onClose: () => void;
   isMapEnabled: boolean;
@@ -14,7 +14,7 @@ interface MobileHeaderRightProps {
   onSelectPlace: (place: { name: string; floor: number }) => void;
 }
 
-export default function MobileHeaderRight({
+export default function MobileSidebar({
   isOpen,
   onClose,
   isMapEnabled,
@@ -23,7 +23,7 @@ export default function MobileHeaderRight({
   onSearchChange,
   searchResults,
   onSelectPlace,
-}: MobileHeaderRightProps) {
+}: MobileSidebarProps) {
   if (!isOpen) return null;
 
   const handleMapToggle = () => {
@@ -61,7 +61,7 @@ export default function MobileHeaderRight({
           </S.SearchContainer>
         )}
         
-        <HeaderRight
+        <ActionBar
           isMapEnabled={isMapEnabled}
           onMapToggle={handleMapToggle}
         />
