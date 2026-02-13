@@ -10,6 +10,14 @@ export const DAY_MAPPING: Record<string, string> = {
     '금요일': '금',
 };
 
+export const DAY_TO_ENGLISH: Record<string, 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI'> = {
+    '월요일': 'MON',
+    '화요일': 'TUE',
+    '수요일': 'WED',
+    '목요일': 'THU',
+    '금요일': 'FRI',
+};
+
 export const ITEMS_PER_PAGE = 4;
 
 export const MENU_OPTIONS = ['출장', '보강', '종료'] as const;

@@ -1,24 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import ConfirmModal from '@/components/layout/modal/confirm';
 import * as S from './style';
-import type { AfterSchoolClass } from '@/types/after-school';
+import type { MyAfterSchool } from '@/types/after-school';
 import { MENU_OPTIONS } from '@/constants/after-school';
 import { colors } from '@/styles/theme';
+import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 
-interface MyClassTableProps {
-  classes: AfterSchoolClass[];
-}
-
-export default function MyClassTable({ classes }: MyClassTableProps) {
+export default function MyClassTable() {
   const navigate = useNavigate();
   const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
-  const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<AfterSchoolClass | null>(null);
+  const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<MyAfterSchool | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
 
-  const filteredClasses = classes.filter(cls => cls.grade === selectedGrade);
+  const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.my(selectedGrade));
+
+  const filteredClasses = classes;
 
   useEffect(() => {
     if (!menuOpenId) return;
@@ -42,7 +42,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
     }
   };
 
-  const handleMenuItemClick = (e: React.MouseEvent, option: string, classData: AfterSchoolClass) => {
+  const handleMenuItemClick = (e: React.MouseEvent, option: string, classData: MyAfterSchool) => {
     e.stopPropagation();
     setMenuOpenId(null);
     
@@ -64,7 +64,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
   return (
     <S.Wrapper>
       <S.TitleSection>
-        <S.Title>나의 방과후({filteredClasses.length})</S.Title>
+        <S.Title>나의 방과후({isLoading ? '...' : filteredClasses.length})</S.Title>
         <S.GradeTabs>
                   <S.GradeTab $active={selectedGrade === 1} onClick={() => setSelectedGrade(1)}>1학년</S.GradeTab>
                   <S.GradeTab $active={selectedGrade === 2} onClick={() => setSelectedGrade(2)}>2학년</S.GradeTab>
@@ -80,7 +80,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
               {filteredClasses.map((cls) => (
                 <S.MobileCard key={cls.id}>
                   <S.MobileCardTop>
-                    <S.MobileTimeTag>{cls.time}</S.MobileTimeTag>
+                    <S.MobileTimeTag>{cls.period}</S.MobileTimeTag>
                     <S.MobileMenuButton
                       onClick={(e) => handleMenuToggle(e, cls.id)}
                     >
@@ -101,8 +101,8 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
                       </S.MenuDropdown>
                     )}
                   </S.MobileCardTop>
-                  <S.MobileCardSubject>{cls.subject}</S.MobileCardSubject>
-                  <S.MobileCardInfo>{cls.day} · {cls.program}</S.MobileCardInfo>
+                  <S.MobileCardSubject>{cls.name}</S.MobileCardSubject>
+                  <S.MobileCardInfo>{cls.week_day} · {cls.place.name}</S.MobileCardInfo>
                 </S.MobileCard>
               ))}
             </S.MobileCardList>
@@ -113,16 +113,16 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
                 {filteredClasses.map((cls, index) => (
                   <S.TableRow key={cls.id}>
                     <S.TableCell>
-                      <S.DayText>{cls.day}</S.DayText>
+                      <S.DayText>{cls.week_day}</S.DayText>
                     </S.TableCell>
                     <S.TableCell>
-                      <S.TimeTag>{cls.time}</S.TimeTag>
+                      <S.TimeTag>{cls.period}</S.TimeTag>
                     </S.TableCell>
                     <S.TableCell>
-                      <S.ClassText>{cls.subject}</S.ClassText>
+                      <S.ClassText>{cls.name}</S.ClassText>
                     </S.TableCell>
                     <S.TableCell>
-                      <S.ProgramText>{cls.program}</S.ProgramText>
+                      <S.ProgramText>{cls.place.name}</S.ProgramText>
                     </S.TableCell>
                     <S.TableCell>
                       <S.MenuButton 
@@ -167,7 +167,7 @@ export default function MyClassTable({ classes }: MyClassTableProps) {
             <div style={{ fontSize: '14px', lineHeight: '1.4', textAlign: 'center' }}>
               정말로{' '}
               <span style={{ color: colors.primary, fontWeight: 600, fontSize: '16px' }}>
-                {selectedClassForTerminate?.subject}
+                {selectedClassForTerminate?.name}
               </span>
               {' '}방과후를<br />종료하시겠습니까?
             </div>
