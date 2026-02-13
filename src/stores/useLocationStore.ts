@@ -1,8 +1,13 @@
 import { create } from 'zustand';
 
-const useLocation = create((set) => ({
+interface LocationState {
+    place: string;
+    setPlace: (newPlace: string) => void;
+}
+
+const useLocation = create<LocationState>((set) => ({
     place: '',
-    setPlace: (newPlace : string) => set({ place: newPlace }),
+    setPlace: (newPlace: string) => set({ place: newPlace }),
 }));
 
 export default useLocation;
