@@ -32,7 +32,6 @@ export const transformAffordableToCalendarEvents = (
             label,
             bgColor,
             textColor,
-            supervisionType: 'makeup',
         };
     });
 };
