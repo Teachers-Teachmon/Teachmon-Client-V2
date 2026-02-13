@@ -261,16 +261,11 @@ export const MenuButton = styled.button`
   }
 `;
 
-export const MenuDropdown = styled.div<{ $openUp?: boolean }>`
-  position: absolute;
-  right: 0.5rem;
-  ${({ $openUp }) => $openUp ? `
-    bottom: 100%;
-    margin-bottom: 0;
-  ` : `
-    top: 100%;
-    margin-top: -0.5rem;
-  `}
+export const MenuDropdown = styled.div<{ $openUp?: boolean; $top: number; $left: number }>`
+  position: fixed;
+  top: ${({ $top }) => `${$top}px`};
+  left: ${({ $left }) => `${$left}px`};
+  transform: ${({ $openUp }) => ($openUp ? 'translate(-100%, calc(-100% - 8px))' : 'translate(-100%, 8px)')};
   background: ${colors.background};
   border: 1px solid ${colors.n02};
   border-radius: ${radius.md};
@@ -281,14 +276,6 @@ export const MenuDropdown = styled.div<{ $openUp?: boolean }>`
 
   ${mq.mobile} {
     min-width: 3rem;
-
-    ${({ $openUp }) => $openUp ? `
-    bottom: 100%;
-    margin-bottom: -1rem;
-  ` : `
-    top: 100%;
-    margin-top: -0.7rem;
-  `}
   }
 `;
 
