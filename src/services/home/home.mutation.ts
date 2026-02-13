@@ -1,5 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { acceptExchangeRequest, rejectExchangeRequest } from './home.api';
+import {
+    acceptExchangeRequest,
+    rejectExchangeRequest,
+    checkExchangeRequest,
+} from './home.api';
 
 export const useAcceptExchangeRequestMutation = () =>
     useMutation({
@@ -9,4 +13,9 @@ export const useAcceptExchangeRequestMutation = () =>
 export const useRejectExchangeRequestMutation = () =>
     useMutation({
         mutationFn: rejectExchangeRequest,
+    });
+
+export const useCheckExchangeRequestMutation = () =>
+    useMutation({
+        mutationFn: checkExchangeRequest,
     });

@@ -17,6 +17,7 @@ import {
 } from '@/services/home/home.query';
 import {
     useAcceptExchangeRequestMutation,
+    useCheckExchangeRequestMutation,
     useRejectExchangeRequestMutation,
 } from '@/services/home/home.mutation';
 import { useUserStore } from '@/stores/useUserStore';
@@ -35,6 +36,7 @@ export default function HomePage() {
     const { data: weeklyExitStudents, isLoading: isWeeklyExitStudentsLoading } = useWeeklyExitStudentsQuery();
     const { mutate: acceptExchange } = useAcceptExchangeRequestMutation();
     const { mutate: rejectExchange } = useRejectExchangeRequestMutation();
+    const { mutate: checkExchange } = useCheckExchangeRequestMutation();
 
     const exchanges = exchangeRequests ?? [];
     const exits = weeklyExitStudents ?? [];
@@ -82,6 +84,22 @@ export default function HomePage() {
         });
     };
 
+    const handleCheck = () => {
+        if (!selectedExchange?.id) return;
+        checkExchange(selectedExchange.id, {
+            onSuccess: () => {
+                toast.success('교체요청을 확인했어요.');
+                queryClient.invalidateQueries({
+                    queryKey: homeQueryKeys.exchangeRequests(),
+                });
+                handleCloseModal();
+            },
+            onError: () => {
+                toast.error('교체요청 확인 처리에 실패했어요.');
+            },
+        });
+    };
+
     return (
         <S.Container>
             <S.TopSection>
@@ -112,6 +130,7 @@ export default function HomePage() {
                 onClose={handleCloseModal}
                 onAccept={handleAccept}
                 onReject={handleReject}
+                onCheck={handleCheck}
             />
         </S.Container>
     );

@@ -1,4 +1,4 @@
-export type ExchangeStatus = 'PENDING' | 'REJECTED' | 'ACCEPTED';
+export type ExchangeStatus = 'PENDING' | 'REJECTED' | 'ACCEPTED' | 'CHECKED';
 
 export type SupervisionType = 'self_study' | 'leave_seat';
 export type SupervisionTodayType = 'NONE' | 'SELF_STUDY' | 'LEAVE_SEAT' | 'ALL';
@@ -15,7 +15,7 @@ export interface ExchangeParty {
 }
 
 export interface ExchangeRequest {
-  id: number;
+  id: number | string;
   requestor: ExchangeParty;
   responser: ExchangeParty;
   status: ExchangeStatus;

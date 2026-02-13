@@ -22,15 +22,22 @@ export const fetchExchangeRequests = async (): Promise<ExchangeRequest[]> => {
     return data;
 };
 
-export const acceptExchangeRequest = async (exchangeRequestId: number) => {
+export const acceptExchangeRequest = async (exchangeRequestId: number | string) => {
     const { data } = await axiosInstance.post('/supervision/exchange/accept', {
         exchange_request_id: exchangeRequestId,
     });
     return data;
 };
 
-export const rejectExchangeRequest = async (exchangeRequestId: number) => {
+export const rejectExchangeRequest = async (exchangeRequestId: number | string) => {
     const { data } = await axiosInstance.post('/supervision/exchange/reject', {
+        exchange_request_id: exchangeRequestId,
+    });
+    return data;
+};
+
+export const checkExchangeRequest = async (exchangeRequestId: number | string) => {
+    const { data } = await axiosInstance.post('/exchange/check', {
         exchange_request_id: exchangeRequestId,
     });
     return data;
