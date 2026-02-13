@@ -3,6 +3,14 @@
 // 요일 목록
 export const WEEKDAYS = ['월요일', '화요일', '수요일', '목요일'] as const;
 
+export const WEEKDAY_MAP = {
+  '월요일': 'MON',
+  '화요일': 'TUE', 
+  '수요일': 'WED',
+  '목요일': 'THU',
+  '금요일': 'FRI',
+} as const;
+
 // 사용자 역할
 export const USER_ROLES = {
   ADMIN: '관리자',

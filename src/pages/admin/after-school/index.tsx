@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/ui/button';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import type { TableColumn } from '@/types/afterSchool';
+import Loading from '@/components/ui/loading';
+import type { TableColumn, AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
-import { WEEKDAYS, MOCK_ADMIN_AFTER_SCHOOL } from '@/constants/admin';
+import { WEEKDAYS, WEEKDAY_MAP } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
+import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
@@ -19,9 +22,36 @@ export default function AdminAfterSchoolPage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [selectedQuarter, setSelectedQuarter] = useState('1분기');
   const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
-  const [classes, setClasses] = useState<AdminAfterSchoolClass[]>(MOCK_ADMIN_AFTER_SCHOOL);
   const [googleSheetUrl, setGoogleSheetUrl] = useState('');
   const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
+
+  const apiParams: AfterSchoolRequestParams = useMemo(() => ({
+    grade: selectedGrade,
+    week_day: WEEKDAY_MAP[selectedDay],
+    start_period: 8,
+    end_period: 11,
+  }), [selectedGrade, selectedDay]);
+
+  const { data: apiData, isLoading } = useQuery({
+    ...afterSchoolQuery.classes(apiParams),
+  });
+
+  const queryClient = useQueryClient();
+
+  const classes = useMemo(() => {
+    if (!apiData) return [];
+    
+    return apiData.map((item): AdminAfterSchoolClass => ({
+      id: item.id.toString(),
+      grade: selectedGrade,
+      day: item.week_day,
+      period: item.period,
+      teacher: item.teacher.name,
+      location: item.place.name,
+      subject: item.name,
+      students: item.students.map(student => student.name),
+    }));
+  }, [apiData, selectedGrade]);
 
   const filteredClasses = classes.filter(
     cls => cls.grade === selectedGrade && cls.day === selectedDay
@@ -61,7 +91,10 @@ export default function AdminAfterSchoolPage() {
 
   const handleConfirmDelete = () => {
     if (deleteTargetId) {
-      setClasses(prev => prev.filter(cls => cls.id !== deleteTargetId));
+      // TODO: 삭제 API 구현 필요
+      console.log('삭제할 ID:', deleteTargetId);
+      // 임시로 쿼리 무효화하여 데이터 새로고침
+      queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
     }
     setIsDeleteModalOpen(false);
     setDeleteTargetId(null);
@@ -187,50 +220,56 @@ export default function AdminAfterSchoolPage() {
       />
 
       <S.PageContainer style={{ overflow: isDeleteModalOpen ? 'hidden' : undefined }}>
-        <AdminAfterSchoolHeaderContainer
-          selectedQuarter={selectedQuarter}
-          setSelectedQuarter={setSelectedQuarter}
-          selectedGrade={selectedGrade}
-          setSelectedGrade={setSelectedGrade}
-          googleSheetUrl={googleSheetUrl}
-          setGoogleSheetUrl={setGoogleSheetUrl}
-          handleGoogleSheetSync={handleGoogleSheetSync}
-          handleGoogleSheetUpload={handleGoogleSheetUpload}
-        />
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <AdminAfterSchoolHeaderContainer
+              selectedQuarter={selectedQuarter}
+              setSelectedQuarter={setSelectedQuarter}
+              selectedGrade={selectedGrade}
+              setSelectedGrade={setSelectedGrade}
+              googleSheetUrl={googleSheetUrl}
+              setGoogleSheetUrl={setGoogleSheetUrl}
+              handleGoogleSheetSync={handleGoogleSheetSync}
+              handleGoogleSheetUpload={handleGoogleSheetUpload}
+            />
 
-        <S.DaySelector>
-          <S.NavButton onClick={handlePrevDay}>
-            «
-          </S.NavButton>
-          <S.DayText $active={false} onClick={handlePrevDay}>
-            {prevDay}
-          </S.DayText>
-          <S.DayText $active={true}>
-            {selectedDay}
-          </S.DayText>
-          <S.DayText $active={false} onClick={handleNextDay}>
-            {nextDay}
-          </S.DayText>
-          <S.NavButton onClick={handleNextDay}>
-            »
-          </S.NavButton>
-        </S.DaySelector>
+            <S.DaySelector>
+              <S.NavButton onClick={handlePrevDay}>
+                «
+              </S.NavButton>
+              <S.DayText $active={false} onClick={handlePrevDay}>
+                {prevDay}
+              </S.DayText>
+              <S.DayText $active={true}>
+                {selectedDay}
+              </S.DayText>
+              <S.DayText $active={false} onClick={handleNextDay}>
+                {nextDay}
+              </S.DayText>
+              <S.NavButton onClick={handleNextDay}>
+                »
+              </S.NavButton>
+            </S.DaySelector>
 
-        <S.ContentWrapper>
-          <S.TableWrapper>
-            <TableLayout
-              columns={columns}
-              data={filteredClasses}
-              renderActions={renderActions}
-              actionsHeader=""
-              onRowClick={handleRowClick}
-              />
-          </S.TableWrapper>
+            <S.ContentWrapper>
+              <S.TableWrapper>
+                <TableLayout
+                  columns={columns}
+                  data={filteredClasses}
+                  renderActions={renderActions}
+                  actionsHeader=""
+                  onRowClick={handleRowClick}
+                  />
+              </S.TableWrapper>
 
-          <S.AddButtonWrapper>
-            <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
-          </S.AddButtonWrapper>
-        </S.ContentWrapper>
+              <S.AddButtonWrapper>
+                <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
+              </S.AddButtonWrapper>
+            </S.ContentWrapper>
+          </>
+        )}
       </S.PageContainer>
     </>
   );
