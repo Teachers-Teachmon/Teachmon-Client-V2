@@ -56,13 +56,12 @@ export const StyledInput = styled.input`
 
 export const HiddenDateInput = styled.input`
   position: absolute;
-  opacity: 0;
-  pointer-events: auto;
   width: 100%;
   height: 100%;
+  opacity: 0;
+  pointer-events: none;
   left: 0;
   top: 0;
-  cursor: pointer;
 `;
 
 export const ErrorMessage = styled.p`
