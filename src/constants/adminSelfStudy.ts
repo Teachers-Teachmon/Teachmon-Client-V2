@@ -14,7 +14,7 @@ export const PERIOD_OPTIONS = [
   '10~11교시',
 ];
 
-export const PERIODS = ['1교시', '2교시', '3교시', '4교시', '5교시', '6교시', '7교시', '8교시', '9교시', '10교시', '11교시'];
+export const PERIODS = ['1교시', '2교시', '3교시', '4교시', '5교시', '6교시', '7교시', '8~9교시', '10~11교시'];
 
 export const INITIAL_SELF_STUDY_SCHEDULES: SelfStudySchedule[] = [
   {
@@ -24,6 +24,7 @@ export const INITIAL_SELF_STUDY_SCHEDULES: SelfStudySchedule[] = [
     periods: ['1교시', '2교시', '3교시', '4교시'],
     startDate: new Date(2026, 0, 14),
     endDate: new Date(2026, 0, 16),
+    periodIds: undefined
   },
   {
     id: '2',

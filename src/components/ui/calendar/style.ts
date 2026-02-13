@@ -384,6 +384,8 @@ export const EventTag = styled.span<{ bgColor: string; textColor: string; clicka
   ${mq.mobile} {
     padding: 2px 6px;
     font-size: 11px;
+    line-height: 1.1;
+    min-height: 1.1em;
   }
 `
 
