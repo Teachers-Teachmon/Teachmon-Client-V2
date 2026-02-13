@@ -1,5 +1,5 @@
 import * as S from './style';
-import type { SupervisionTodayType } from '@/types/home';
+import type { SupervisionTodayType } from '@/types/supervision';
 
 interface WelcomeSectionProps {
     todayType?: SupervisionTodayType;

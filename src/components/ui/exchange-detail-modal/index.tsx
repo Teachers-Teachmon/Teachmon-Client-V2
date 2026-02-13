@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
 import { useDevice } from '@/hooks/useDevice';
-import type { ExchangeRequest } from '@/types/home';
+import type { ExchangeRequest } from '@/types/supervision';
 import { formatDateFull, formatSupervisionType } from '@/utils/format';
 import * as S from './style';
 

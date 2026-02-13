@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import * as S from './style';
-import type { ExchangeRequest } from '@/types/home';
+import type { ExchangeRequest } from '@/types/supervision';
 import WelcomeSection from '@/containers/home/welcome';
 import QuickLinkSection from '@/containers/home/quick-link';
 import ExchangeRequestSection from '@/containers/home/exchange-request';
@@ -38,7 +38,12 @@ export default function HomePage() {
     const { mutate: rejectExchange } = useRejectExchangeRequestMutation();
     const { mutate: checkExchange } = useCheckExchangeRequestMutation();
 
-    const exchanges = exchangeRequests ?? [];
+    const exchanges = [...(exchangeRequests ?? [])].sort((a, b) => {
+        const aId = String(a.id);
+        const bId = String(b.id);
+        if (aId.length !== bId.length) return bId.length - aId.length;
+        return bId.localeCompare(aId);
+    });
     const exits = weeklyExitStudents ?? [];
     const totalSupervisionCount = mySupervisionDays?.length ?? 0;
 

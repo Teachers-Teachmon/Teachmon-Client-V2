@@ -1,5 +1,5 @@
 import * as S from './style';
-import type { ExitStudent } from '@/types/home';
+import type { ExitStudent } from '@/types/supervision';
 import { formatDate, formatPeriod } from '@/utils/format';
 
 interface WeeklyExitSectionProps {

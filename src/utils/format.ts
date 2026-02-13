@@ -1,4 +1,4 @@
-import type { ExchangeStatus, PeriodType, SupervisionType } from '@/types/home';
+import type { ExchangeStatus, PeriodType, SupervisionType } from '@/types/supervision';
 
 export const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);

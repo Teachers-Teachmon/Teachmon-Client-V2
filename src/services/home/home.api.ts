@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type { ExchangeRequest, ExitStudent, SupervisionTodayType } from '@/types/home';
+import type { ExchangeRequest, ExitStudent, SupervisionTodayType } from '@/types/supervision';
 
 export interface TodaySupervisionResponse {
     type: SupervisionTodayType;

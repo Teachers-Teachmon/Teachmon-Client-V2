@@ -1,5 +1,5 @@
 import * as S from './style';
-import type { ExchangeRequest } from '@/types/home';
+import type { ExchangeRequest } from '@/types/supervision';
 import {
     formatDate,
     formatSupervisionType,
