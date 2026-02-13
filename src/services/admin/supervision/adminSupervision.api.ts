@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type { SupervisionDay, SupervisionRank } from '@/types/supervision';
+import type { SupervisionDay, SupervisionRank, SupervisionTeacher } from '@/types/supervision';
 
 export interface FetchSupervisionParams {
   month: number;
@@ -22,6 +22,13 @@ export const fetchSupervisionRank = async (
   params: FetchSupervisionRankParams
 ): Promise<SupervisionRank[]> => {
   const { data } = await axiosInstance.get('/supervision/rank', { params });
+  return data;
+};
+
+export const fetchTeacherSearch = async (query: string): Promise<SupervisionTeacher[]> => {
+  const { data } = await axiosInstance.get('/teacher/search', {
+    params: { query },
+  });
   return data;
 };
 

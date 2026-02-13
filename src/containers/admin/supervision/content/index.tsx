@@ -8,7 +8,8 @@ import type { CalendarEvent, DayInfo } from '@/types/calendar';
 import type { SupervisionCount } from '@/types/admin';
 import { SUPERVISION_LABEL_TO_TYPE, SUPERVISION_TYPE_LABELS, SUPERVISION_TYPE_STYLES, type SupervisionType } from '@/constants/adminSupervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
-import { useAdminSupervisionQuery, useSupervisionRankQuery } from '@/services/admin/supervision/adminSupervision.query';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useAdminSupervisionQuery, useSupervisionRankQuery, useTeacherSearchQuery } from '@/services/admin/supervision/adminSupervision.query';
 import {
   useCreateSupervisionScheduleMutation,
   useDeleteSupervisionScheduleMutation,
@@ -94,6 +95,8 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   const [editAnchor, setEditAnchor] = useState<{ top: number; left: number } | null>(null);
   const [isClosing, setIsClosing] = useState(false);
   const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
+  const debouncedRankQuery = useDebounce(searchQuery, 300);
+  const debouncedTeacherSearchQuery = useDebounce(teacherSearchQuery, 300);
 
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [draftEventsByMonth, setDraftEventsByMonth] = useState<Record<string, CalendarEvent[]>>({});
@@ -103,7 +106,11 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   const editorRef = useRef<HTMLDivElement>(null);
 
   const { data: supervisionDays } = useAdminSupervisionQuery(month, '');
-  const { data: supervisionRanks } = useSupervisionRankQuery(searchQuery, sortOrder);
+  const { data: supervisionRanks } = useSupervisionRankQuery(debouncedRankQuery, sortOrder);
+  const { data: searchedTeachers, isFetching: isSearchingTeachers } = useTeacherSearchQuery(
+    debouncedTeacherSearchQuery,
+    viewMode === 'edit',
+  );
   const createScheduleMutation = useCreateSupervisionScheduleMutation();
   const updateScheduleMutation = useUpdateSupervisionScheduleMutation();
   const deleteScheduleMutation = useDeleteSupervisionScheduleMutation();
@@ -145,9 +152,17 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   }, [baseEvents]);
 
   const filteredTeacherOptions = useMemo(() => {
-    if (!teacherSearchQuery) return teacherOptions;
-    return teacherOptions.filter((teacher) => teacher.label.includes(teacherSearchQuery));
-  }, [teacherOptions, teacherSearchQuery]);
+    const trimmedQuery = debouncedTeacherSearchQuery.trim();
+
+    if (!trimmedQuery) return teacherOptions;
+
+    const remoteOptions = (searchedTeachers ?? []).map((teacher) => ({
+      id: teacher.id,
+      label: `${teacher.name} 선생님`,
+    }));
+
+    return remoteOptions;
+  }, [debouncedTeacherSearchQuery, searchedTeachers, teacherOptions]);
 
   const filteredCounts = useMemo<SupervisionCount[]>(() => {
     return (supervisionRanks ?? []).map((item) => ({
@@ -472,10 +487,12 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
               items={filteredTeacherOptions}
               value={selectedTeacher}
               onChange={handleTeacherSelect}
+              searchQuery={teacherSearchQuery}
               onSearchChange={setTeacherSearchQuery}
               renderItem={(item) => item.label}
               getItemKey={(item) => item.id}
               customWidth="100%"
+              noResultText={isSearchingTeachers ? '검색 중입니다...' : '검색 결과가 없습니다'}
             />
             <S.EditTitle>자습/이석 선택</S.EditTitle>
             <Dropdown

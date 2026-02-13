@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import type { SupervisionDay, SupervisionRank } from '@/types/supervision';
+import type { SupervisionDay, SupervisionRank, SupervisionTeacher } from '@/types/supervision';
 import {
+  fetchTeacherSearch,
   fetchSupervision,
   fetchSupervisionRank,
 } from './adminSupervision.api';
@@ -11,6 +12,8 @@ export const adminSupervisionQueryKeys = {
     [...adminSupervisionQueryKeys.all, 'supervision', month, query] as const,
   rank: (query: string, order: 'asc' | 'desc') =>
     [...adminSupervisionQueryKeys.all, 'rank', query, order] as const,
+  teacherSearch: (query: string) =>
+    [...adminSupervisionQueryKeys.all, 'teacherSearch', query] as const,
   autoSchedule: (startDay: string, endDay: string) =>
     [...adminSupervisionQueryKeys.all, 'autoSchedule', startDay, endDay] as const,
 };
@@ -26,4 +29,11 @@ export const useSupervisionRankQuery = (query = '', order: 'asc' | 'desc' = 'asc
   useQuery<SupervisionRank[]>({
     queryKey: adminSupervisionQueryKeys.rank(query, order),
     queryFn: () => fetchSupervisionRank({ query, order }),
+  });
+
+export const useTeacherSearchQuery = (query: string, enabled = true) =>
+  useQuery<SupervisionTeacher[]>({
+    queryKey: adminSupervisionQueryKeys.teacherSearch(query),
+    queryFn: () => fetchTeacherSearch(query),
+    enabled: enabled && query.trim().length > 0,
   });
