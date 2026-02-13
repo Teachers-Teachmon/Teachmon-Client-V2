@@ -60,3 +60,9 @@ export const StatusOption = styled.div`
         opacity: 0.8;
     }
 `;
+
+export const EmptyStatus = styled.span`
+    color: #9CA4BA;
+    font-size: 16px;
+    font-weight: 500;
+`;

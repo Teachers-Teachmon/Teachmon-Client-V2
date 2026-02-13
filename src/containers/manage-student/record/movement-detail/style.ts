@@ -166,6 +166,10 @@ export const StudentInfo = styled.div`
 export const ButtonWrapper = styled.div`
     display: flex;
     justify-content: flex-end;
-    margin-top: 24px;
+    margin-top: 32px;
     gap: 12px;
+
+    ${mq.mobile} {
+        margin-top: 24px;
+    }
 `;
