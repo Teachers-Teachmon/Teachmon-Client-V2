@@ -9,6 +9,8 @@ import {
   type GetStudentScheduleParams,
   type GetPlacesByFloorParams,
   type GetAllFloorsStatusParams,
+  type GetScheduleHistoryParams,
+  type Period,
 } from './manage.api';
 
 export const manageQuery = {
@@ -18,10 +20,10 @@ export const manageQuery = {
       queryFn: () => getStudentSchedule(params),
     }),
 
-  placeSchedule: (placeId: number) =>
+  placeSchedule: (placeId: number, params?: { day?: string; period?: Period }) =>
     queryOptions({
-      queryKey: ['manage.placeSchedule', placeId],
-      queryFn: () => getPlaceSchedule(placeId),
+      queryKey: ['manage.placeSchedule', placeId, params],
+      queryFn: () => getPlaceSchedule(placeId, params),
     }),
 
   placesByFloor: (params: GetPlacesByFloorParams) =>
@@ -36,15 +38,15 @@ export const manageQuery = {
       queryFn: () => getAllFloorsStatus(params),
     }),
 
-  dailyEvasion: (date: string) =>
+  dailyEvasion: (day: string) =>
     queryOptions({
-      queryKey: ['manage.dailyEvasion', date],
-      queryFn: () => getDailyEvasion(date),
+      queryKey: ['manage.dailyEvasion', day],
+      queryFn: () => getDailyEvasion(day),
     }),
 
-  scheduleHistory: (studentId?: number) =>
+  scheduleHistory: (params?: GetScheduleHistoryParams) =>
     queryOptions({
-      queryKey: ['manage.scheduleHistory', studentId],
-      queryFn: () => getScheduleHistory(studentId),
+      queryKey: ['manage.scheduleHistory', params],
+      queryFn: () => getScheduleHistory(params),
     }),
 };

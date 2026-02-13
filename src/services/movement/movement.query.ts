@@ -8,7 +8,7 @@ export const movementQuery = {
       queryFn: () => getLeaveSeatList(params),
     }),
 
-  detail: (leaveseatId: number) =>
+  detail: (leaveseatId: string) =>
     queryOptions({
       queryKey: ['movement.detail', leaveseatId],
       queryFn: () => getLeaveSeatDetail(leaveseatId),
