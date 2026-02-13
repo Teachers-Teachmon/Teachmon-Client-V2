@@ -9,14 +9,14 @@ import { MOCK_ADMIN_AFTER_SCHOOL, ADMIN_AFTER_SCHOOL_PERIODS } from '@/constants
 import { searchQuery as searchApiQuery } from '@/services/search/search.query';
 import { createAfterSchoolClass } from '@/services/after-school/afterSchool.api';
 import { toast } from 'react-toastify';
-import type { StudentSearchResponse, PlaceSearchResponse, TeacherSearchResponse } from '@/types/search';
+import type { StudentSearchResponse, PlaceSearchResponse, TeacherSearchResponse, TeamSearchResponse } from '@/types/search';
 import type { CreateAfterSchoolRequest } from '@/types/afterSchool';
 import * as S from './style';
 
 
 
 interface Student {
-  id?: string;
+  id?: number | string;
   studentNumber: number;
   name: string;
   grade: number;
@@ -59,6 +59,11 @@ export default function AfterSchoolFormPage() {
     enabled: teacherSearchQuery.length > 0,
   }) as { data: TeacherSearchResponse[] };
 
+  const { data: teamsData = [] } = useQuery({
+    ...searchApiQuery.teams(searchQuery),
+    enabled: searchQuery.length > 0 && isTeamMode,
+  }) as { data: TeamSearchResponse[] };
+
   useEffect(() => {
     if (isEditMode) {
       const classData = MOCK_ADMIN_AFTER_SCHOOL.find(c => c.id === id);
@@ -75,8 +80,8 @@ export default function AfterSchoolFormPage() {
             id: `existing-${idx}`,
             studentNumber,
             name,
-            grade: 1, // TODO: 실제 학년 데이터 필요
-            classNumber: 1, // TODO: 실제 반 데이터 필요
+            grade: 1,
+            classNumber: 1,
           };
         });
         setSelectedStudents(students);
@@ -84,16 +89,38 @@ export default function AfterSchoolFormPage() {
     }
   }, [id, isEditMode]);
 
-  const handleAddStudent = (student: StudentSearchResponse) => {
-    const newStudent: Student = {
-      id: `new-${Date.now()}-${Math.random()}`,
-      studentNumber: student.number,
-      name: student.name,
-      grade: student.grade,
-      classNumber: student.class,
-    };
-    setSelectedStudents([...selectedStudents, newStudent]);
+  const handleAddStudent = (student: StudentSearchResponse | TeamSearchResponse) => {
+    if ('members' in student) {
+      const newStudents: Student[] = student.members.map(member => ({
+        id: member.id, // 원래 학생 ID 저장
+        studentNumber: member.number,
+        name: member.name,
+        grade: member.grade,
+        classNumber: member.classNumber,
+      }));
+      setSelectedStudents([...selectedStudents, ...newStudents]);
+    } else {
+      const newStudent: Student = {
+        id: student.id,
+        studentNumber: student.number,
+        name: student.name,
+        grade: student.grade,
+        classNumber: student.classNumber,
+      };
+      setSelectedStudents([...selectedStudents, newStudent]);
+    }
     setSearchQuery('');
+  };
+
+  const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
+    const name = student.name;
+    const number = 'number' in student ? student.number : (student as Student).studentNumber;
+    const grade = 'grade' in student ? student.grade : (student as Student).grade;
+    const classNumber = 'classNumber' in student ? student.classNumber : (student as Student).classNumber;
+    
+    const formattedNumber = number < 10 ? `0${number}` : number.toString();
+  
+    return `${grade}${classNumber}${formattedNumber} ${name}`;
   };
 
   const handleRemoveStudent = (studentId: string) => {
@@ -112,13 +139,14 @@ export default function AfterSchoolFormPage() {
 
     try {
       const requestData: CreateAfterSchoolRequest = {
-        grade: selectedStudents[0].grade, // 첫 번째 학생의 학년으로 설정
-        week_day: 'MON', // TODO: 요일 선택 UI 추가 필요
+        grade: selectedStudents[0].grade, 
+        week_day: 'MON',
         period: period === '8~9교시' ? 'EIGHT_AND_NINE_PERIOD' : 'TEN_AND_ELEVEN_PERIOD',
         teacher_id: teacher.id,
         place_id: location.id,
         name: subject,
-        students_id: selectedStudents.map(s => parseInt(s.studentNumber.toString())),
+        students_id: selectedStudents.map(s => s.id as number),
+        year: new Date().getFullYear(), 
       };
 
       await createAfterSchoolClass(requestData);
@@ -190,7 +218,7 @@ export default function AfterSchoolFormPage() {
             <S.ToggleRow>
               <S.SectionTitle>학생</S.SectionTitle>
               <S.ToggleContent>
-                <S.SectionTitle>반</S.SectionTitle>
+                <S.SectionTitle>팀</S.SectionTitle>
                 <S.Toggle
                   $active={isTeamMode}
                   onClick={() => setIsTeamMode(!isTeamMode)}
@@ -216,20 +244,37 @@ export default function AfterSchoolFormPage() {
 
               {searchQuery && (
                 <S.StudentDropdown>
-                  {studentsData
-                    .filter((student: StudentSearchResponse) => 
-                      !selectedStudents.find(s => s.studentNumber === student.number)
-                    )
-                    .slice(0, 3)
-                    .map((student: StudentSearchResponse) => (
-                      <S.StudentDropdownItem 
-                        key={student.id}
-                        onClick={() => handleAddStudent(student)}
-                      >
-                        {student.number} {student.name}
-                      </S.StudentDropdownItem>
-                    ))
-                  }
+                  {isTeamMode ? (
+                    // 팀 검색 모드
+                    teamsData
+                      .filter((team: TeamSearchResponse) => 
+                        !selectedStudents.find(s => s.id?.toString().includes(team.id))
+                      )
+                      .slice(0, 3)
+                      .map((team: TeamSearchResponse) => (
+                        <S.StudentDropdownItem 
+                          key={team.id}
+                          onClick={() => handleAddStudent(team)}
+                        >
+                          {team.name} ({team.members.length}명)
+                        </S.StudentDropdownItem>
+                      ))
+                  ) : (
+                    // 개별 학생 검색 모드
+                    studentsData
+                      .filter((student: StudentSearchResponse) => 
+                        !selectedStudents.find(s => s.studentNumber === student.number)
+                      )
+                      .slice(0, 3)
+                      .map((student: StudentSearchResponse) => (
+                        <S.StudentDropdownItem 
+                          key={student.id}
+                          onClick={() => handleAddStudent(student)}
+                        >
+                          {formatStudentDisplay(student)}
+                        </S.StudentDropdownItem>
+                      ))
+                  )}
                 </S.StudentDropdown>
               )}
             </S.DropdownWrapper>
@@ -240,10 +285,10 @@ export default function AfterSchoolFormPage() {
               {selectedStudents.map((student) => (
                 <S.StudentCard key={student.id || student.studentNumber}>
                   <S.StudentInfo>
-                    <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
-                    <S.StudentName>{student.name}</S.StudentName>
+                    <S.StudentNumber>{formatStudentDisplay(student).split(' ')[0]}</S.StudentNumber>
+                    <S.StudentName>{formatStudentDisplay(student).split(' ').slice(1).join(' ')}</S.StudentName>
                   </S.StudentInfo>
-                  <S.RemoveButton onClick={() => handleRemoveStudent(student.id || String(student.studentNumber))}>
+                  <S.RemoveButton onClick={() => handleRemoveStudent(String(student.id || student.studentNumber))}>
                     <img src="/icons/common/x.svg" alt="삭제" width={20} height={20} />
                   </S.RemoveButton>
                 </S.StudentCard>

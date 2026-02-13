@@ -47,36 +47,6 @@ export const QuarterDropdown = styled.div`
   width: 120px;
 `;
 
-export const HeaderButtons = styled.div`
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-
-  ${mq.mobile} {
-    width: 100%;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-`;
-
-export const GoogleSheetActionButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  width: 140px;
-  background-color: transparent;
-  color: ${colors.primary};
-  border: 1px solid ${colors.primary};
-  border-radius: ${radius.md};
-  font-size: ${fontSizes.Body};
-  font-weight: 500;
-  cursor: pointer;
-  white-space: nowrap;
-
-  ${mq.mobile} {
-    font-size: 12px;
-    padding: 1rem 1rem;
-  }
-`;
-
 export const DaySelector = styled.div`
   display: flex;
   justify-content: center;

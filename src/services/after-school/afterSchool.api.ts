@@ -15,7 +15,7 @@ export const createAfterSchoolClass = async (
   data: CreateAfterSchoolRequest,
 ): Promise<{ message: string }> => {
   const response = await axiosInstance.post<{ message: string }>(
-    '/admin/afterschool',
+    '/afterschool',
     data,
   );
   return response.data;

@@ -1,9 +1,9 @@
 
 
 export interface StudentSearchResponse {
-  id: number;
+  id: number | string;
   grade: number;
-  class: number;
+  classNumber: number;
   number: number;
   name: string;
 }
