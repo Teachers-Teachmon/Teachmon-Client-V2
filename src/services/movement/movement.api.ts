@@ -2,8 +2,14 @@ import axiosInstance from '@/lib/axiosInstance';
 import type { Period, Reason } from '@/constants/movement';
 
 // Types
+export interface LeaveSeatStudent {
+  number: number;
+  name: string;
+  state: string;
+}
+
 export interface LeaveSeat {
-  leaveseat_id: number;
+  leaveseat_id: string;
   period: Period;
   teacher: string;
   place: string;
@@ -12,14 +18,13 @@ export interface LeaveSeat {
 }
 
 export interface LeaveSeatDetail {
-  leaveseat_id: number;
+  day: string;
   period: Period;
-  reason: Reason;
   teacher: string;
   place: string;
   personnel: number;
-  items: string;
-  students: string[];
+  cause: string;
+  students: LeaveSeatStudent[];
 }
 
 export interface GetLeaveSeatListParams {
@@ -28,18 +33,18 @@ export interface GetLeaveSeatListParams {
 }
 
 export interface CreateLeaveSeatRequest {
+  day: string;
   period: Period;
-  reason: Reason;
-  place: string;
-  items?: string;
-  students: string[];
+  place_id: number;
+  cause: string;
+  students: number[];
 }
 
 export interface UpdateLeaveSeatRequest {
   period?: Period;
   reason?: Reason;
   place?: string;
-  items?: string;
+  cause?: string;
   students?: string[];
 }
 
@@ -53,7 +58,7 @@ export const getLeaveSeatList = async (params: GetLeaveSeatListParams): Promise<
   return response.data;
 };
 
-export const getLeaveSeatDetail = async (leaveseatId: number): Promise<LeaveSeatDetail> => {
+export const getLeaveSeatDetail = async (leaveseatId: string): Promise<LeaveSeatDetail> => {
   const response = await axiosInstance.get<LeaveSeatDetail>(`/leaveseat/${leaveseatId}`);
   return response.data;
 };
@@ -64,14 +69,14 @@ export const createLeaveSeat = async (data: CreateLeaveSeatRequest): Promise<Mes
 };
 
 export const updateLeaveSeat = async (
-  leaveseatId: number,
+  leaveseatId: string,
   data: UpdateLeaveSeatRequest
 ): Promise<MessageResponse> => {
   const response = await axiosInstance.patch<MessageResponse>(`/leaveseat/${leaveseatId}`, data);
   return response.data;
 };
 
-export const deleteLeaveSeat = async (leaveseatId: number): Promise<MessageResponse> => {
+export const deleteLeaveSeat = async (leaveseatId: string): Promise<MessageResponse> => {
   const response = await axiosInstance.delete<MessageResponse>(`/leaveseat/${leaveseatId}`);
   return response.data;
 };

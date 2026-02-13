@@ -21,7 +21,7 @@ export const useUpdateLeaveSeatMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ leaveseatId, data }: { leaveseatId: number; data: Parameters<typeof updateLeaveSeat>[1] }) =>
+    mutationFn: ({ leaveseatId, data }: { leaveseatId: string; data: Parameters<typeof updateLeaveSeat>[1] }) =>
       updateLeaveSeat(leaveseatId, data),
     onSuccess: (data, variables) => {
       toast.success(data.message);
