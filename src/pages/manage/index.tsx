@@ -1,66 +1,62 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import HeaderLeft from '@/containers/manage-student/header-left';
-import HeaderRight from '@/containers/manage-student/header-right';
-import MobileHeaderRight from '@/containers/manage-student/mobile-header-right';
+import { HeaderLeft, HeaderRight } from '@/containers/manage-student/header';
 import ClassCard from '@/containers/manage-student/class-card';
-import FloorSelector from '@/containers/manage-student/floor-selector';
 import Map from '@/containers/manage-student/map';
-import TextInput from '@/components/ui/input/text-input';
+
 import { manageQuery } from '@/services/manage/manage.query';
-import { placeQuery } from '@/services/search/search.query';
-import { useDebounce } from '@/hooks/useDebounce';
-import type { Period } from '@/services/manage/manage.api';
+import type { StudentSchedule } from '@/services/manage/manage.api';
+import { useStudentStatus } from '@/hooks/useStudentStatus';
 import { CLASSES } from '@/constants/manage';
+import { PERIOD_MAP, getCurrentPeriod, PERIOD_TO_KOREAN } from '@/utils/period';
+import { getTodayISO } from '@/utils/format';
+import type { StatusType } from '@/components/ui/status';
+import type { StudentState } from '@/services/manage/manage.api';
+
 import * as S from './style';
 
-// Period 매핑
-const PERIOD_MAP: Record<string, Period> = {
-    '7교시': 'SEVEN_PERIOD',
-    '8-9교시': 'EIGHT_AND_NINE_PERIOD',
-    '10-11교시': 'TEN_AND_ELEVEN_PERIOD',
-};
-
-// 오늘 날짜를 "M월 D일 (요일)" 형식으로 반환
-const getTodayFormatted = () => {
-    const today = new Date();
-    const days = ['일', '월', '화', '수', '목', '금', '토'];
-    return `${today.getMonth() + 1}월 ${today.getDate()}일 (${days[today.getDay()]})`;
-};
-
 export default function Manage() {
+    const currentPeriod = getCurrentPeriod();
+    const initialPeriod = currentPeriod ? PERIOD_TO_KOREAN[currentPeriod] : '7교시';
+    
     const [selectedGrade, setSelectedGrade] = useState<number>(1);
     const [selectedFloor, setSelectedFloor] = useState<number>(1);
-    const [selectedDate] = useState<string>(getTodayFormatted());
-    const [selectedPeriod, setSelectedPeriod] = useState<string>('7교시');
+    const [selectedDate, setSelectedDate] = useState<string>(getTodayISO());
+    const [selectedPeriod, setSelectedPeriod] = useState<string>(initialPeriod);
     const [isMapEnabled, setIsMapEnabled] = useState<boolean>(false);
-    const [searchQuery, setSearchQuery] = useState<string>('');
     const [highlightedPlace, setHighlightedPlace] = useState<string>('');
+    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
+    const { changeStatus } = useStudentStatus();
+
+    // 학생 상태 변경 핸들러
+    const handleStatusChange = (scheduleId: number, status: StatusType, currentState?: StudentState | null) => {
+        changeStatus(scheduleId, status, currentState);
+        setSelectedStudentId(null);
+    };
 
     // 학년별 학생 스케줄 조회
-    const { data: studentSchedules = [] } = useQuery({
+    const { data: studentSchedules = [], isLoading: isLoadingSchedules } = useQuery({
         ...manageQuery.studentSchedule({
             grade: selectedGrade,
             period: PERIOD_MAP[selectedPeriod] || 'SEVEN_PERIOD',
+            day: selectedDate,
         }),
         retry: false,
     });
 
     // 층별 장소 상태 조회 (맵 모드일 때만)
     const { data: placesByFloor } = useQuery({
-        ...manageQuery.placesByFloor({ floor: selectedFloor }),
+        ...manageQuery.placesByFloor({ 
+            floor: selectedFloor,
+            day: selectedDate,
+            period: PERIOD_MAP[selectedPeriod] || 'SEVEN_PERIOD',
+        }),
         enabled: isMapEnabled,
         retry: false,
     });
 
-    // 장소 검색 (디바운스 적용)
-    const debouncedSearchQuery = useDebounce(searchQuery, 300);
-    const { data: searchResults = [] } = useQuery({
-        ...placeQuery.search(debouncedSearchQuery),
-        enabled: isMapEnabled && !!debouncedSearchQuery,
-    });
-
-    const handleDatePeriodChange = (period: string) => {
+    const handleDatePeriodChange = (date: string, period: string) => {
+        setSelectedDate(date);
         setSelectedPeriod(period);
     };
 
@@ -68,86 +64,76 @@ export default function Manage() {
     const handleSelectPlace = (place: { name: string; floor: number }) => {
         setSelectedFloor(place.floor);
         setHighlightedPlace(place.name);
-        setSearchQuery('');
+        
+        // 4초 후 하이라이트 해제
+        setTimeout(() => {
+            setHighlightedPlace('');
+        }, 4000);
     };
 
-    // 학생 데이터를 8x2 형식으로 변환
-    const students = studentSchedules.map((schedule) => ({
-        id: schedule.number,
-        number: schedule.number,
-        name: schedule.name,
-        state: schedule.state,
-    }));
+    // class별 학생 데이터를 객체로 변환
+    const studentsByClass: Record<number, StudentSchedule[]> = {};
+    studentSchedules.forEach((classData) => {
+        studentsByClass[classData.class] = classData.students;
+    });
 
     return (
         <S.Container>
             <S.Header isMapEnabled={isMapEnabled}>
-                {/* 왼쪽: 층 선택 or 날짜/학년 선택 */}
-                {isMapEnabled ? (
-                    <FloorSelector
-                        selectedFloor={selectedFloor}
-                        onFloorChange={setSelectedFloor}
-                    />
-                ) : (
-                    <HeaderLeft
-                        selectedDate={selectedDate}
-                        selectedPeriod={selectedPeriod}
-                        selectedGrade={selectedGrade}
-                        onGradeChange={setSelectedGrade}
-                        onDatePeriodChange={handleDatePeriodChange}
-                    />
-                )}
-                <S.RightSection>
-                    <HeaderRight
-                        isMapEnabled={isMapEnabled}
-                        onMapToggle={() => setIsMapEnabled(!isMapEnabled)}
-                    />
-                    {isMapEnabled && (
-                        <S.SearchContainer>
-                            <S.SearchInputWrapper>
-                                <TextInput
-                                    placeholder="장소 검색"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                            </S.SearchInputWrapper>
-                            {searchResults.length > 0 && (
-                                <S.SearchResults>
-                                    {searchResults.map((place) => (
-                                        <S.SearchResultItem
-                                            key={place.id}
-                                            onClick={() => handleSelectPlace(place)}
-                                        >
-                                            <S.PlaceName>{place.name}</S.PlaceName>
-                                            <S.FloorBadge>{place.floor}층</S.FloorBadge>
-                                        </S.SearchResultItem>
-                                    ))}
-                                </S.SearchResults>
-                            )}
-                        </S.SearchContainer>
-                    )}
-                </S.RightSection>
+                {/* 헤더 왼쪽: 지도 모드 → 층 선택 / 리스트 모드 → 날짜·교시·학년 선택 */}
+                <HeaderLeft
+                    isMapEnabled={isMapEnabled}
+                    selectedFloor={selectedFloor}
+                    onFloorChange={setSelectedFloor}
+                    selectedDate={selectedDate}
+                    selectedPeriod={selectedPeriod}
+                    selectedGrade={selectedGrade}
+                    onGradeChange={setSelectedGrade}
+                    onDatePeriodChange={handleDatePeriodChange}
+                />
+                {/* 헤더 오른쪽: 액션 버튼(기록·이석작성) + 지도 토글 + 장소 검색 + 날짜/교시 모달 */}
+                <HeaderRight
+                    isMapEnabled={isMapEnabled}
+                    onMapToggle={() => setIsMapEnabled(!isMapEnabled)}
+                    selectedDate={selectedDate}
+                    selectedPeriod={selectedPeriod}
+                    onSelectPlace={handleSelectPlace}
+                    onDatePeriodChange={handleDatePeriodChange}
+                />
             </S.Header>
 
             {/* 메인 컨텐츠: 지도 or 학급 그리드 */}
             {isMapEnabled ? (
                 <Map 
                     selectedFloor={selectedFloor} 
-                    highlightedPlace={highlightedPlace} 
+                    highlightedPlace={highlightedPlace}
+                    placesData={placesByFloor}
+                    selectedDate={selectedDate}
+                    selectedPeriod={PERIOD_MAP[selectedPeriod] || 'SEVEN_PERIOD'}
+                    onStatusChange={handleStatusChange}
                 />
             ) : (
                 <S.ClassGrid>
-                    {students.length === 0 ? (
-                        <S.EmptyState>학생 데이터가 없습니다.</S.EmptyState>
-                    ) : (
-                        CLASSES.map((classNum) => (
+                    {CLASSES.map((classNum) => {
+                        const classStudents = studentsByClass[classNum] || [];
+                        return (
                             <ClassCard
                                 key={classNum}
                                 classNum={classNum}
-                                students={students}
+                                students={classStudents.map((student) => ({
+                                    id: student.student_id,
+                                    number: student.number,
+                                    name: student.name,
+                                    state: student.state,
+                                    scheduleId: student.schedule_id,
+                                }))}
+                                selectedStudentId={selectedStudentId}
+                                onStudentSelect={setSelectedStudentId}
+                                onStatusChange={handleStatusChange}
+                                isLoading={isLoadingSchedules}
                             />
-                        ))
-                    )}
+                        );
+                    })}
                 </S.ClassGrid>
             )}
         </S.Container>
