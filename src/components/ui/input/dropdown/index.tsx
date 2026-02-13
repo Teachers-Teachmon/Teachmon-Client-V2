@@ -51,10 +51,14 @@ export default function Dropdown<T = string>({
     setIsOpen(false);
   };
 
-  const displayValue = value !== undefined && value !== null ? String(value) : null;
   const defaultRenderItem = (item: T) => String(item);
   const itemRenderer = renderItem || defaultRenderItem;
   const keyGenerator = getItemKey || ((_item: T, index: number) => index);
+  
+  // renderItem이 있으면 선택된 값도 renderItem으로 표시
+  const displayValue = value !== undefined && value !== null 
+    ? (renderItem ? renderItem(value) : String(value))
+    : null;
 
   return (
     <S.DropdownWrapper ref={dropdownRef} $width={customWidth}>
