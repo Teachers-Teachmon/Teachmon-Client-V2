@@ -30,24 +30,56 @@ export default function DailySection() {
 
   const schedules: SelfStudySchedule[] = useMemo(() => {
     if (!rawData) return [];
-    return rawData.map((item, index) => {
-      const date = new Date(item.day);
-      const periodIds: Record<string, number> = {};
-      const periods = item.periods.map((p) => {
-        const label = PERIOD_ENUM_TO_LABEL[p.period] ?? p.period;
-        periodIds[label] = p.id;
-        return label;
+    
+    // 날짜별로 데이터 그룹화
+    const groupedByDate: Record<string, {
+      grades: number[];
+      periods: string[];
+      periodIds: Record<string, number>;
+    }> = {};
+    
+    rawData.forEach((item) => {
+      const date = item.day;
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = {
+          grades: [],
+          periods: [],
+          periodIds: {}
+        };
+      }
+      
+      groupedByDate[date].grades.push(item.grade as number);
+      
+      item.periods.forEach((p) => {
+        const periodLabel = PERIOD_ENUM_TO_LABEL[p.period] ?? p.period;
+        if (!groupedByDate[date].periods.includes(periodLabel)) {
+          groupedByDate[date].periods.push(periodLabel);
+        }
+        groupedByDate[date].periodIds[periodLabel] = p.id;
       });
-      return {
-        id: `additional-${index}-${item.day}-${item.grade}`,
-        date,
-        grade: item.grade as Grade,
-        periods,
-        periodIds,
-        startDate: date,
-        endDate: date,
-      };
     });
+    
+    const result: SelfStudySchedule[] = [];
+    
+    Object.entries(groupedByDate).forEach(([date, data]) => {
+      const dateObj = new Date(date);
+      const uniqueGrades = [...new Set(data.grades)].sort();
+      const displayGrade = uniqueGrades.length === 3 && uniqueGrades.every(g => [1, 2, 3].includes(g)) ? 'all' : uniqueGrades[0];
+      
+      const sortedPeriods = data.periods.sort((a, b) => parseInt(a) - parseInt(b));
+      
+      result.push({
+        id: `additional-${date}-${displayGrade}`,
+        date: dateObj,
+        grade: displayGrade as Grade,
+        periods: sortedPeriods,
+        periodIds: data.periodIds,
+        startDate: dateObj,
+        endDate: dateObj,
+      });
+    });
+    
+    return result;
   }, [rawData]);
 
   const handleMonthChange = (year: number, month: number) => {
@@ -102,17 +134,31 @@ export default function DailySection() {
       return;
     }
 
-    const gradeValue = selectedGrade === 'all' ? 0 : selectedGrade;
     const datesInRange = getDatesInRange(startDate, endDate);
 
-    const promises = datesInRange.map((date) => {
-      const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      return createAdditionalSelfStudy({
-        day,
-        grade: gradeValue,
-        periods: periodEnums,
-      });
-    });
+    const promises = [];
+    
+    if (selectedGrade === 'all') {
+      for (const grade of [1, 2, 3]) {
+        for (const date of datesInRange) {
+          const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+          promises.push(createAdditionalSelfStudy({
+            day,
+            grade,
+            periods: periodEnums,
+          }));
+        }
+      }
+    } else {
+      for (const date of datesInRange) {
+        const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        promises.push(createAdditionalSelfStudy({
+          day,
+          grade: selectedGrade,
+          periods: periodEnums,
+        }));
+      }
+    }
 
     Promise.all(promises)
       .then(() => {
@@ -137,7 +183,17 @@ export default function DailySection() {
     const schedule = schedules.find((s) => s.id === id);
     if (!schedule) return;
 
-    const deleteIds = Object.values(schedule.periodIds);
+    const idParts = schedule.id.split('-');
+    const date = `${idParts[1]}-${idParts[2]}-${idParts[3]}`;
+    const deleteIds: number[] = [];
+    rawData?.forEach((item) => {
+      if (item.day === date) {
+        item.periods.forEach((p) => {
+          deleteIds.push(p.id);
+        });
+      }
+    });
+
     if (deleteIds.length === 0) return;
 
     Promise.all(deleteIds.map((pid) => deleteAdditionalSelfStudy(pid)))

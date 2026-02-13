@@ -9,8 +9,8 @@ export const PERIOD_ENUM_TO_LABEL: Record<SelfStudyPeriod, string> = {
   FIVE_PERIOD: '5교시',
   SIX_PERIOD: '6교시',
   SEVEN_PERIOD: '7교시',
-  EIGHT_AND_NINE_PERIOD: '8교시',
-  TEN_AND_ELEVEN_PERIOD: '10교시',
+  EIGHT_AND_NINE_PERIOD: '8~9교시',
+  TEN_AND_ELEVEN_PERIOD: '10~11교시',
 };
 
 export const PERIOD_LABEL_TO_ENUM: Record<string, SelfStudyPeriod> = Object.fromEntries(
