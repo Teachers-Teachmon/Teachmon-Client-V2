@@ -1,24 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
 import { manageQuery } from '@/services/manage/manage.query';
-import { getCurrentPeriod, getTodayDate } from '@/utils/period';
+import { useDevice } from '@/hooks/useDevice';
+import type { Period } from '@/services/manage/manage.api';
+
 import * as S from './style';
 
 interface FloorSelectorProps {
     selectedFloor: number;
     onFloorChange: (floor: number) => void;
+    selectedDate?: string;
+    selectedPeriod?: Period;
 }
 
-export default function FloorSelector({ selectedFloor, onFloorChange }: FloorSelectorProps) {
+export default function FloorSelector({ selectedFloor, onFloorChange, selectedDate, selectedPeriod }: FloorSelectorProps) {
     const floors = [1, 2, 3, 4];
-
-    // 현재 날짜와 교시 가져오기
-    const currentPeriod = getCurrentPeriod();
-    const todayDate = getTodayDate();
 
     // 각 층별 교실 수 조회
     const { data: floorsStatus = [] } = useQuery(
         manageQuery.allFloorsStatus(
-            currentPeriod ? { day: todayDate, period: currentPeriod } : undefined
+            selectedDate && selectedPeriod ? { day: selectedDate, period: selectedPeriod } : undefined
         )
     );
 

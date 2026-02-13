@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { colors } from '@/styles/theme';
+import { colors, zIndex } from '@/styles/theme';
 import { mq } from '@/styles/media';
 
 export const Container = styled.div`
@@ -41,7 +41,6 @@ export const Title = styled.h2`
 
 export const FloorTabs = styled.div`
   border-radius: 4px;
-  overflow: hidden;
   display: flex;
   box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
   gap: 0;
@@ -72,8 +71,9 @@ export const FloorTab = styled.button<{ $isSelected: boolean }>`
 
 export const Badge = styled.div`
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: -8px;
+  right: -4px;
+  z-index: ${zIndex.dropdown};
   width: 20px;
   height: 20px;
   background: #FF4444;
