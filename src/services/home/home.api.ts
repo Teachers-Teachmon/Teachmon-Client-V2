@@ -37,7 +37,7 @@ export const rejectExchangeRequest = async (exchangeRequestId: number | string) 
 };
 
 export const checkExchangeRequest = async (exchangeRequestId: number | string) => {
-    const { data } = await axiosInstance.post('/exchange/check', {
+    const { data } = await axiosInstance.post('/supervision/exchange/check', {
         exchange_request_id: exchangeRequestId,
     });
     return data;
