@@ -55,7 +55,7 @@ export default function MakeupSelectionModal({
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} padding="40px">
-            <div style={{ width: '500px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <S.ModalContent>
                 <div>
                     <S.Title>방과후 보강 선택</S.Title>
                     <S.DateText>{formattedDate}</S.DateText>
@@ -96,7 +96,7 @@ export default function MakeupSelectionModal({
                     <Button variant="cancel" text="취소" onClick={onClose} width="50%" />
                     <Button variant="confirm" text="완료" onClick={handleComplete} width="50%" />
                 </S.ButtonContainer>
-            </div>
+            </S.ModalContent>
         </Modal>
     );
 }

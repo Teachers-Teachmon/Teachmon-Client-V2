@@ -144,6 +144,15 @@ export default function DailySection() {
   return (
     <S.Container>
       <S.CalendarWrapper>
+        {startDate && (
+          <S.CancelButtonWrapper>
+            <Button
+              text="취소하기"
+              variant="confirm"
+              onClick={handleCancelSelection}
+            />
+          </S.CancelButtonWrapper>
+        )}
         <Calendar
           year={selectedYear}
           month={selectedMonth}
@@ -155,15 +164,6 @@ export default function DailySection() {
           showYear={true}
           showLegend={false}
         />
-        {startDate && (
-          <div style={{ position: 'absolute', top: '0px', right: '30px' }}>
-            <Button
-              text="취소하기"
-              variant="confirm"
-              onClick={handleCancelSelection}
-            />
-          </div>
-        )}
       </S.CalendarWrapper>
 
       {showPanel && (

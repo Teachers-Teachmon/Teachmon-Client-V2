@@ -1,16 +1,18 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Calendar from '@/components/ui/calendar';
-import type { CalendarEvent, CalendarRangeEvent } from '@/components/ui/calendar';
+import type { CalendarEvent } from '@/components/ui/calendar';
 import Button from '@/components/ui/button';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import { colors } from '@/styles/theme';
+import { toast } from 'react-toastify';
 import * as S from './style';
+import { createAfterSchoolBusinessTrip } from '@/services/after-school/afterSchool.api';
+import type { MyAfterSchool } from '@/types/after-school';
 
 export default function BusinessTripPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const classData = location.state?.classData;
+  const classData = location.state?.classData as MyAfterSchool | undefined;
   
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
@@ -18,12 +20,13 @@ export default function BusinessTripPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const businessTripEvents: CalendarEvent[] = useMemo(() => {
     if (!classData) return [];
     
     const dayMap: Record<string, number> = { '월': 1, '화': 2, '수': 3, '목': 4, '금': 5 };
-    const targetDay = dayMap[classData.day];
+    const targetDay = dayMap[classData.week_day];
     if (!targetDay) return [];
     
     const events: CalendarEvent[] = [];
@@ -35,7 +38,7 @@ export default function BusinessTripPage() {
         events.push({
           id: `event-${date.getDate()}`,
           date: new Date(date),
-          label: classData.subject,
+          label: classData.name,
           bgColor: 'rgba(0, 133, 255, 0.1)',
           textColor: '#0085FF'
         });
@@ -50,8 +53,33 @@ export default function BusinessTripPage() {
   };
 
   const handleConfirm = () => { 
-    setIsModalOpen(false);
-    setIsSecondModalOpen(true);
+    if (!classData || !selectedDate) return;
+
+    const day = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+
+    setIsSubmitting(true);
+    createAfterSchoolBusinessTrip({
+      day,
+      after_school_id: String(classData.id),
+    })
+      .then(() => {
+        toast.success('출장이 완료되었습니다.');
+        setIsModalOpen(false);
+        setIsSecondModalOpen(true);
+      })
+      .catch((error: unknown) => {
+        const message =
+          typeof error === 'object' &&
+          error !== null &&
+          'response' in error &&
+          typeof (error as any).response?.data?.message === 'string'
+            ? (error as any).response.data.message
+            : '출장 처리에 실패했습니다.';
+        toast.error(message);
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   };
 
   const handleSecondModalConfirm = () => {
@@ -88,7 +116,7 @@ export default function BusinessTripPage() {
   return (
     <S.PageContainer>
       <S.Header>
-        <S.Title>"{classData?.subject || '스프링 수업'}" 방과후 출장 날짜를 선택해주세요.</S.Title>
+        <S.Title>"{classData?.name || ''}" 방과후 출장 날짜를 선택해주세요.</S.Title>
         <Button text="돌아가기" variant="confirm" width="120px" onClick={handleGoBack} />
       </S.Header>
       
@@ -102,9 +130,11 @@ export default function BusinessTripPage() {
           onEventClick={handleEventClick}
           showYear={false}
           showLegend={false}
+          showMobilePopover={false}
         />
       </S.CalendarWrapper>
 
+      
       <ConfirmModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -113,13 +143,13 @@ export default function BusinessTripPage() {
         message={
           <S.ModalMessage>
             <S.ModalHighlight>
-              {selectedDate?.getFullYear()}년 {(selectedDate?.getMonth() || 0) + 1}월 {selectedDate?.getDate()}일 {classData?.subject || '스프링 수업'}
+              {selectedDate?.getFullYear()}년 {(selectedDate?.getMonth() || 0) + 1}월 {selectedDate?.getDate()}일 {classData?.name || ''}
             </S.ModalHighlight>
-            을<br />출장 처리 하시겠습니까?
+            을 출장 처리 하시겠습니까?
           </S.ModalMessage>
         }
         cancelText="취소"
-        confirmText="완료"
+        confirmText={isSubmitting ? '처리중...' : '완료'}
       />
 
       <ConfirmModal

@@ -39,12 +39,12 @@ export const TabGroup = styled.div`
 export const Tab = styled.button<{ $isActive: boolean }>`
     padding: 12px 24px;
     font-family: 'Paperlogy', sans-serif;
-    font-size: clamp(14px, 1.4vw, 24px);
+    font-size: clamp(18px, 1.6vw, 24px);
     font-weight: 500;
     color: ${({ $isActive }) => ($isActive ? colors.primary : colors.primaryGray)};
     background-color: ${colors.background};
     border: none;
-    border-bottom: 2px solid ${({ $isActive }) => ($isActive ? colors.primary : colors.n02)};
+    border-bottom: 2px solid ${({ $isActive }) => ($isActive ? colors.primary : "none")};
     cursor: pointer;
     transition: all 0.2s;
     min-width: 90px;

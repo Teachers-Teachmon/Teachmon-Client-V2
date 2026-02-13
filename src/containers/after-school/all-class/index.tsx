@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import * as S from './style';
-import type { AfterSchoolClass } from '@/types/after-school';
-import { DAYS, ITEMS_PER_PAGE, DAY_MAPPING } from '@/constants/after-school';
+import type { AllAfterSchool, AfterSchoolSearchParams } from '@/types/after-school';
+import { DAYS, ITEMS_PER_PAGE, DAY_TO_ENGLISH } from '@/constants/after-school';
+import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 
 interface AllClassSectionProps {
   selectedGrade: 1 | 2 | 3;
   onGradeChange: (grade: 1 | 2 | 3) => void;
-  classes: AfterSchoolClass[];
 }
 
 const getInitialDay = () => {
@@ -18,26 +19,30 @@ const getInitialDay = () => {
 export default function AllClassSection({
   selectedGrade,
   onGradeChange,
-  classes
 }: AllClassSectionProps) {
   const [selectedDay, setSelectedDay] = useState(getInitialDay());
   const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
 
+  const params: AfterSchoolSearchParams = {
+    grade: selectedGrade,
+    week_day: DAY_TO_ENGLISH[DAYS[selectedDay]],
+    start_period: 8,
+    end_period: 11,
+  };
+
+  const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.all(params));
+
   useEffect(() => {
     setTimeSlotPages({});
-  }, [selectedGrade]);
-  
-  const selectedDayKey = DAY_MAPPING[DAYS[selectedDay]];
-  const filteredClasses = classes.filter(cls => cls.day === selectedDayKey);
+  }, [selectedGrade, selectedDay]);
 
-
-  const groupedByTime = filteredClasses.reduce((acc, cls) => {
-    if (!acc[cls.time]) {
-      acc[cls.time] = [];
+  const groupedByTime = classes.reduce((acc, cls) => {
+    if (!acc[cls.period]) {
+      acc[cls.period] = [];
     }
-    acc[cls.time].push(cls);
+    acc[cls.period].push(cls);
     return acc;
-  }, {} as Record<string, AfterSchoolClass[]>);
+  }, {} as Record<string, AllAfterSchool[]>);
 
   const handlePrevDay = () => {
     setSelectedDay(prev => (prev > 0 ? prev - 1 : DAYS.length - 1));
@@ -114,9 +119,9 @@ export default function AllClassSection({
                   <S.ClassList>
                     {displayClasses.map(cls => (
                       <S.ClassCard key={cls.id}>
-                        <S.ClassSubject>{cls.subject}</S.ClassSubject>
-                        <S.ClassInfo>{cls.program}</S.ClassInfo>
-                        <S.TeacherName>{cls.teacher} 선생님</S.TeacherName>
+                        <S.ClassSubject>{cls.name}</S.ClassSubject>
+                        <S.ClassInfo>{cls.place.name}</S.ClassInfo>
+                        <S.TeacherName>{cls.teacher.name} 선생님</S.TeacherName>
                       </S.ClassCard>
                     ))}
                   </S.ClassList>

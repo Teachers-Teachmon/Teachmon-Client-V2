@@ -2,15 +2,17 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { SIDEBAR_MENU_ITEMS, SIDEBAR_ICONS, LOGO, MINI_LOGO } from '@/constants/sidebar'
 import type { MenuItemType } from '@/constants/sidebar'
+import { useLogoutMutation } from '@/services/auth/auth.mutation'
+import { useUserStore } from '@/stores/useUserStore'
 import * as S from './style'
-
-const userName = '이혜정 선생님'
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const { mutate: logoutMutate } = useLogoutMutation()
+  const user = useUserStore((state) => state.user)
 
   const getActiveMenu = (): MenuItemType => {
     const currentPath = location.pathname
@@ -30,7 +32,7 @@ export default function Sidebar() {
   }
 
   const handleLogout = () => {
-    console.log('로그아웃')
+    logoutMutate()
   }
 
   const handleProfileToggle = () => {
@@ -50,8 +52,11 @@ export default function Sidebar() {
         <S.MobileSheet>
           <S.MobilePopoverPointer />
           <S.MobileSheetHeader>
-            <S.ProfileAvatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=teacher" alt="프로필" />
-            <S.MobileProfileName>{userName}</S.MobileProfileName>
+            <S.ProfileAvatar 
+              src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
+              alt="프로필" 
+            />
+            <S.MobileProfileName>{user?.name || '선생님'}</S.MobileProfileName>
           </S.MobileSheetHeader>
           <S.MobileLogoutButton onClick={handleLogout}>로그아웃</S.MobileLogoutButton>
         </S.MobileSheet>
@@ -87,14 +92,20 @@ export default function Sidebar() {
 
         <S.MobileActions>
           <S.MobileProfileButton onClick={handleProfileToggle} aria-label="프로필 메뉴">
-            <S.ProfileAvatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=teacher" alt="프로필" />
+            <S.ProfileAvatar 
+              src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
+              alt="프로필" 
+            />
           </S.MobileProfileButton>
         </S.MobileActions>
 
         <S.FooterSection collapsed={isCollapsed}>
-          <S.ProfileAvatar src="https://api.dicebear.com/7.x/avataaars/svg?seed=teacher" alt="프로필" />
+          <S.ProfileAvatar 
+            src={user?.profile || "https://api.dicebear.com/7.x/avataaars/svg?seed=teacher"} 
+            alt="프로필" 
+          />
           <S.ProfileInfo collapsed={isCollapsed}>
-            <S.ProfileName>{userName}</S.ProfileName>
+            <S.ProfileName>{user?.name || '선생님'}</S.ProfileName>
             <S.LogoutButton onClick={handleLogout}>로그아웃</S.LogoutButton>
           </S.ProfileInfo>
         </S.FooterSection>

@@ -1,17 +1,15 @@
 import { useState, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Calendar from '@/components/ui/calendar';
 import MakeupSelectionModal from '@/components/ui/makeup-selection-modal';
 import { transformAffordableToCalendarEvents } from '@/utils/afterSchool';
-import type { AfterSchoolClass } from '@/types/after-school';
 import type { PlaceSearchResult } from '@/types/afterSchool';
 import { useAffordableReinforcementQuery, usePlaceSearchQuery } from '@/services/after-school/afterSchool.query';
 import { useRequestReinforcementMutation } from '@/services/after-school/afterSchool.mutation';
 import * as S from './style';
 
 export default function AfterSchoolExtraPage() {
-    const location = useLocation();
-    const classData = (location.state as { classData?: AfterSchoolClass } | undefined)?.classData;
+    const navigate = useNavigate();
     const currentDate = new Date();
     const [year, setYear] = useState(currentDate.getFullYear());
     const [month, setMonth] = useState(currentDate.getMonth() + 1);
@@ -34,13 +32,12 @@ export default function AfterSchoolExtraPage() {
         setMonth(newMonth);
     };
 
-    const handleDateClick = (date: Date) => {
+    const getAvailablePeriods = (date: Date) => {
         const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-
-        const availableData = (affordableReinforcements ?? []).filter(item => item.day === dateString);
+        const availableData = SAMPLE_DATA.filter(item => item.day === dateString);
 
         if (availableData.length === 0) {
-            return;
+            return null;
         }
 
         const periods: string[] = [];
@@ -49,30 +46,30 @@ export default function AfterSchoolExtraPage() {
             if (item.start_period === 10 && item.end_period === 11) periods.push('10~11');
         });
 
+        return periods;
+    };
+
+    const openModalForDate = (date: Date) => {
+        const periods = getAvailablePeriods(date);
+        if (!periods || periods.length === 0) return;
         setAvailablePeriods(periods);
         setSelectedDate(date);
         setSelectedPlace(null);
         setIsModalOpen(true);
     };
 
-    const handleComplete = (data: { periods: string[]; place: PlaceSearchResult }) => {
-        if (!selectedDate || !classData) return;
-        const day = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+    const handleDateClick = (date: Date) => {
+        openModalForDate(date);
+    };
 
-        const requests = data.periods.map((period) => {
-            const isFirst = period === '8~9';
-            return {
-                day,
-                afterschool_id: Number(classData.id),
-                change_start_period: isFirst ? 8 : 10,
-                change_end_period: isFirst ? 9 : 11,
-                change_place_id: data.place.id,
-            };
-        });
+    const handleEventClick = (event: { date: Date }) => {
+        openModalForDate(event.date);
+    };
 
-        requests.forEach((payload) => {
-            requestReinforcement(payload);
-        });
+    const handleComplete = (data: { periods: string[]; location: string }) => {
+        // TODO: 보강 신청 API 호출
+        console.log('보강 신청 완료:', { date: selectedDate, ...data });
+        navigate('/after-school');
     };
 
     return (
@@ -86,7 +83,9 @@ export default function AfterSchoolExtraPage() {
                     events={events}
                     showYear={true}
                     showLegend={false}
+                    showMobilePopover={false}
                     onDateClick={handleDateClick}
+                    onEventClick={handleEventClick}
                 />
             </S.CalendarWrapper>
             <MakeupSelectionModal
