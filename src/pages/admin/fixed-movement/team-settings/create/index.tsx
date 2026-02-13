@@ -21,7 +21,10 @@ export default function TeamFormPage() {
     { studentNumber: 1402, name: '이민수' },
     { studentNumber: 1403, name: '박지훈' },
     { studentNumber: 1404, name: '최예준' },
-    { studentNumber: 1405, name: '정서연' },
+    { studentNumber: 1406, name: '정서연' },
+    { studentNumber: 1407, name: '정서연' },
+    { studentNumber: 1408, name: '정서연' },
+    { studentNumber: 1409, name: '정서연' },
   ];
 
   useEffect(() => {

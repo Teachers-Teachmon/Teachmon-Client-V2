@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const ButtonGroup = styled.div`
   display: flex;
@@ -44,6 +45,11 @@ export const Container = styled.div`
   min-height: 0;
   box-sizing: border-box;
   justify-content: stretch;
+
+  ${mq.mobile} {
+    padding: 2rem;
+    gap: 0rem;
+  }
 `;
 
 export const Header = styled.div`
@@ -57,6 +63,10 @@ export const Title = styled.h1`
   font-weight: 700;
   color: ${colors.text};
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: 20px;
+  }
 `;
 
 export const ButtonRow = styled.div`

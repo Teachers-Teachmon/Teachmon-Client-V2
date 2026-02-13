@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import * as S from "./style";
 import bottomArrow from "/icons/bottomArrow.svg";
 import type { SearchDropdownProps } from "@/types/dropdown";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function SearchDropdown<T = string>({
   label,
@@ -12,6 +13,8 @@ export default function SearchDropdown<T = string>({
   onChange,
   searchQuery: externalSearchQuery,
   onSearchChange,
+  onDebouncedSearchChange,
+  debounceDelay = 300,
   error,
   helperText,
   disabled = false,
@@ -30,6 +33,7 @@ export default function SearchDropdown<T = string>({
   const hasError = !!error;
 
   const searchQuery = externalSearchQuery !== undefined ? externalSearchQuery : internalSearchQuery;
+  const debouncedSearchQuery = useDebounce(searchQuery, debounceDelay);
 
   // 외부 클릭 감지
   useEffect(() => {
@@ -56,6 +60,14 @@ export default function SearchDropdown<T = string>({
       }, 0);
     }
   }, [isOpen]);
+
+  // 디바운스된 검색어로 API 호출
+  useEffect(() => {
+    if (onDebouncedSearchChange && isOpen) {
+      onDebouncedSearchChange(debouncedSearchQuery);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearchQuery, isOpen]);
 
   const handleToggle = () => {
     if (!disabled) {
