@@ -1,18 +1,24 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import MovementForm from '@/containers/manage-student/movement/form';
 import MovementMap from '@/containers/manage-student/movement/map';
-import type { Period, Reason } from '@/constants/movement';
-
-export interface MovementFormData {
-    period: Period;
-    reason: Reason;
-    items: string;
-    students: string[];
-}
+import { movementQuery } from '@/services/movement/movement.query';
+import type { MovementFormData } from '@/constants/movement';
 
 export default function Movement() {
+    const [searchParams] = useSearchParams();
+    const isEditMode = searchParams.get('edit') === 'true';
+    const editId = searchParams.get('id');
+    
     const [step, setStep] = useState<1 | 2>(1);
     const [formData, setFormData] = useState<MovementFormData | null>(null);
+
+    // 수정 모드일 때 이석 상세 조회
+    const { data: editData } = useQuery({
+        ...movementQuery.detail(editId!),
+        enabled: isEditMode && !!editId,
+    });
 
     const handleCancel = () => {
         window.history.back();
@@ -31,5 +37,5 @@ export default function Movement() {
         return <MovementMap onBack={handleBackToStep1} formData={formData} />;
     }
 
-    return <MovementForm onNext={handleNext} onCancel={handleCancel} />;
+    return <MovementForm onNext={handleNext} onCancel={handleCancel} initialData={editData} savedFormData={formData ?? undefined} />;
 }

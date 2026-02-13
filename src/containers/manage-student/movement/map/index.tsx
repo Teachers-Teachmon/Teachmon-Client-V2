@@ -1,8 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { useQuery } from '@tanstack/react-query';
+import { useCreateLeaveSeatMutation } from '@/services/movement/movement.mutation';
+import { searchPlaces } from '@/services/search/search.api';
+import { placeQuery } from '@/services/search/search.query';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useLeaveSeatList } from '@/hooks/useLeaveSeatList';
+import type { MovementFormData } from '@/constants/movement';
+import TextInput from '@/components/ui/input/text-input';
 import { FLOOR_ELEMENTS_MAP, type FloorElement } from '@/constants/floorMaps';
 import { colors } from '@/styles/theme';
+import { toast } from 'react-toastify';
+
 import * as S from './style';
 
 interface MovementMapProps {
@@ -14,26 +24,80 @@ export default function MovementMap({ onBack, formData }: MovementMapProps) {
     const navigate = useNavigate();
     const [selectedFloor, setSelectedFloor] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
+    const [highlightedPlace, setHighlightedPlace] = useState('');
 
-    const { mutate: createLeaveSeat } = useCreateLeaveSeatMutation();
+    const { mutateAsync: createLeaveSeat } = useCreateLeaveSeatMutation();
+    
+    const isFullPeriod = formData.period === 'EIGHT_TO_ELEVEN_PERIOD';
+    
+    // 현재 선택된 교시와 날짜의 이석 목록 불러오기
+    const { data: leaveSeatList } = useLeaveSeatList({
+        day: formData.day,
+        period: formData.period,
+    });
+    
+    // 장소 검색 (디바운스 적용)
+    const debouncedSearchQuery = useDebounce(searchQuery, 300);
+    const { data: searchResults = [] } = useQuery({
+        ...placeQuery.search(debouncedSearchQuery),
+        enabled: debouncedSearchQuery.length > 0,
+    });
+    
+    // 이석이 있는 장소 목록
+    const occupiedPlaces = new Set(leaveSeatList.map(seat => seat.place));
 
-    const handleLocationClick = (placeName: string) => {
-        if (placeName && placeName !== '' && placeName !== 'X') {
-            createLeaveSeat(
-                {
-                    ...formData,
-                    place: placeName,
-                },
-                {
-                    onSuccess: () => {
-                        navigate('/manage');
-                    },
+    const handleSelectPlace = (place: { name: string; floor: number }) => {
+        setSelectedFloor(place.floor);
+        setHighlightedPlace(place.name);
+        setSearchQuery('');
+        
+        // 4초 후 하이라이트 해제
+        setTimeout(() => {
+            setHighlightedPlace('');
+        }, 4000);
+    };
+
+    const handleLocationClick = async (placeName: string) => {
+        if (placeName && placeName !== '' && placeName !== 'X' && !occupiedPlaces.has(placeName)) {
+            try {
+                // 장소 검색 API로 실제 place_id 획득
+                const places = await searchPlaces(placeName);
+                const place = places.find(p => p.name === placeName);
+                
+                if (!place) {
+                    toast.error('장소를 찾을 수 없습니다.');
+                    return;
                 }
-            );
+                
+                if (isFullPeriod) {
+                    // 8~11교시: 8~9교시, 10~11교시 두 번 생성
+                    await createLeaveSeat({
+                        ...formData,
+                        period: 'EIGHT_AND_NINE_PERIOD',
+                        place_id: place.id,
+                    });
+                    await createLeaveSeat({
+                        ...formData,
+                        period: 'TEN_AND_ELEVEN_PERIOD',
+                        place_id: place.id,
+                    });
+                } else {
+                    await createLeaveSeat({
+                        ...formData,
+                        place_id: place.id,
+                    });
+                }
+                toast.success('이석이 작성되었습니다.');
+                navigate('/manage/record');
+            } catch (error) {
+                console.error(error);
+            }
+        } else if (occupiedPlaces.has(placeName)) {
+            toast.warning('이미 이석이 등록된 장소입니다.');
         }
     };
 
-    const floors = [1, 2, 3, 4];
+    const floors = Object.keys(FLOOR_ELEMENTS_MAP).map(Number);
     const elements = FLOOR_ELEMENTS_MAP[selectedFloor] || [];
 
     return (
@@ -70,6 +134,21 @@ export default function MovementMap({ onBack, formData }: MovementMapProps) {
                             />
                         }
                     />
+                    
+                    {/* 검색 결과 드롭다운 */}
+                    {searchResults.length > 0 && (
+                        <S.SearchResults>
+                            {searchResults.map((place, index) => (
+                                <S.SearchResultItem
+                                    key={index}
+                                    onClick={() => handleSelectPlace(place)}
+                                >
+                                    <S.PlaceName>{place.name}</S.PlaceName>
+                                    <S.FloorBadge>{place.floor}층</S.FloorBadge>
+                                </S.SearchResultItem>
+                            ))}
+                        </S.SearchResults>
+                    )}
                 </S.SearchWrapper>
             </S.FloorSearchContainer>
 
@@ -107,8 +186,21 @@ export default function MovementMap({ onBack, formData }: MovementMapProps) {
                             <S.MapContent>
                                 <S.MapWrapper>
                                     {elements.map((el: FloorElement) => {
-                                        const isHighlighted = searchQuery && el.name.includes(searchQuery);
-                                        const isClickable = el.name && el.name !== '' && el.name !== 'X';
+                                        const isHighlighted = !!highlightedPlace && highlightedPlace === el.name;
+                                        const isOccupied = occupiedPlaces.has(el.name);
+                                        const isStairsOrHallway = el.name.includes('계단') || el.name.includes('복도');
+                                        const isClickable = el.name && el.name !== '' && el.name !== 'X' && !isOccupied && !isStairsOrHallway;
+                                        
+                                        let backgroundColor = '#DDDDDD';
+                                        if (isHighlighted) {
+                                            backgroundColor = colors.primary200;
+                                        } else if (isOccupied) {
+                                            backgroundColor = '#F87067'; // 빨간색 - 이석 있음
+                                        } else if (isStairsOrHallway) {
+                                            backgroundColor = '#DDDDDD'; // 회색 - 계단/복도
+                                        } else if (el.name && el.name !== '' && el.name !== 'X') {
+                                            backgroundColor = '#84FFC7'; // 초록색 - 선택 가능
+                                        }
                                         
                                         return (
                                             <S.Element
@@ -117,11 +209,7 @@ export default function MovementMap({ onBack, formData }: MovementMapProps) {
                                                 $top={el.y}
                                                 $width={el.width}
                                                 $height={el.height}
-                                                $background={
-                                                    isHighlighted
-                                                        ? colors.primary200
-                                                        : '#DDDDDD'
-                                                }
+                                                $background={backgroundColor}
                                                 $cursor={!!isClickable}
                                                 onClick={() => handleLocationClick(el.name)}
                                             >
