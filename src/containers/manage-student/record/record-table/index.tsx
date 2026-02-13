@@ -6,36 +6,34 @@ import TableLayout from '@/components/layout/table';
 import MovementDetailModal from '@/containers/manage-student/record/movement-detail';
 
 import { movementQuery } from '@/services/movement/movement.query';
+import { useMovementStore } from '@/stores/useMovementStore';
 import { useDeleteLeaveSeatMutation } from '@/services/movement/movement.mutation';
-import type { RecordData, LeaveData, StudentData, RecordTableProps } from '@/types/record';
+import { useDeleteEvasionMutation } from '@/services/manage/manage.mutation';
+import { useStudentStatus } from '@/hooks/useStudentStatus';
+import type { RecordTableProps } from '@/types/record';
 import type { StatusType } from '@/components/ui/status';
+import type { StudentState } from '@/services/manage/manage.api';
+import type { ScheduleHistoryRecord } from '@/services/manage/manage.api';
 import { useRecordTableColumns } from '@/hooks/useRecordTableColumns';
 import * as S from './style';
 
 export default function RecordTable({
     activeTab,
+    movementData,
     leaveData,
-    studentData: initialStudentData,
-    selectedDate,
-    selectedPeriod,
+    studentData,
+    isLoading = false,
 }: RecordTableProps) {
     const navigate = useNavigate();
     const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
     const [selectAll, setSelectAll] = useState(false);
-    const [studentData, setStudentData] = useState<StudentData[]>(initialStudentData);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedLeaveseatId, setSelectedLeaveseatId] = useState<number | null>(null);
+    const [selectedLeaveseatId, setSelectedLeaveseatId] = useState<string | null>(null);
+    const { setSelectedMovement, selectedMovement } = useMovementStore();
 
     const { mutate: deleteLeaveSeat } = useDeleteLeaveSeatMutation();
-
-    // 이석 목록 조회
-    const { data: movementData = [] } = useQuery({
-        ...movementQuery.list({
-            day: selectedDate,
-            period: selectedPeriod as any,
-        }),
-        enabled: activeTab === 'movement' && !!selectedDate && !!selectedPeriod,
-    });
+    const { mutate: deleteEvasion } = useDeleteEvasionMutation();
+    const { changeStatus } = useStudentStatus();
 
     // 이석 상세 조회
     const { data: detailData } = useQuery({
@@ -43,18 +41,22 @@ export default function RecordTable({
         enabled: isModalOpen && !!selectedLeaveseatId,
     });
 
-    const handleEdit = (leaveseatId: number) => {
+    const handleEdit = (leaveseatId: string) => {
         navigate(`/manage/movement?edit=true&id=${leaveseatId}`);
     };
 
-    const handleDelete = (leaveseatId: number) => {
+    const handleDelete = (leaveseatId: string) => {
         deleteLeaveSeat(leaveseatId);
+    };
+
+    const handleDeleteEvasion = (exitId: number) => {
+        deleteEvasion(exitId);
     };
 
     const handleSelectAll = (checked: boolean) => {
         setSelectAll(checked);
         if (checked) {
-            setSelectedStudents(new Set(studentData.map((s) => s.id)));
+            setSelectedStudents(new Set(studentData.map((s) => String(s.student_number))));
         } else {
             setSelectedStudents(new Set());
         }
@@ -71,7 +73,14 @@ export default function RecordTable({
         setSelectAll(newSelected.size === studentData.length);
     };
 
-    const handleMovementRowClick = (leaveseatId: number) => {
+    const handleMovementRowClick = (leaveseatId: string) => {
+        const movement = movementData.find(m => m.leaveseat_id === leaveseatId);
+        if (movement) {
+            setSelectedMovement({
+                leaveseatId,
+                place: movement.place,
+            });
+        }
         setSelectedLeaveseatId(leaveseatId);
         setIsModalOpen(true);
     };
@@ -81,24 +90,21 @@ export default function RecordTable({
         setSelectedLeaveseatId(null);
     };
 
-    const handleStatusChange = (studentId: string, period: string, status: StatusType) => {
-        setStudentData((prevData) =>
-            prevData.map((student) =>
-                student.id === studentId
-                    ? { ...student, [period]: status }
-                    : student
-            )
-        );
+    const handleStatusChange = (studentNumber: number, periodKey: keyof ScheduleHistoryRecord, status: StatusType, currentState?: StudentState | null) => {
+        const student = studentData.find(s => s.student_number === studentNumber);
+        const scheduleId = (student?.[periodKey] as { schedule_id: number } | null)?.schedule_id;
+        if (!scheduleId) return;
+        changeStatus(scheduleId, status, currentState);
     };
 
-    const handleBulkStatusChange = (studentIds: string[], period: string, status: StatusType) => {
-        setStudentData((prevData) =>
-            prevData.map((student) =>
-                studentIds.includes(student.id)
-                    ? { ...student, [period]: status }
-                    : student
-            )
-        );
+    const handleBulkStatusChange = (studentNumbers: number[], periodKey: keyof ScheduleHistoryRecord, status: StatusType) => {
+        if (status === '취소') return;
+
+        studentNumbers.forEach(studentNumber => {
+            const student = studentData.find(s => s.student_number === studentNumber);
+            const scheduleId = (student?.[periodKey] as { schedule_id: number } | null)?.schedule_id;
+            if (scheduleId) changeStatus(scheduleId, status);
+        });
     };
 
     const { movementColumns, leaveColumns, studentColumns } = useRecordTableColumns({
@@ -110,23 +116,13 @@ export default function RecordTable({
         onBulkStatusChange: handleBulkStatusChange,
     });
 
-    // API 데이터를 UI 형식으로 변환
-    const formattedMovementData: RecordData[] = movementData.map((item) => ({
-        id: String(item.leaveseat_id),
-        location: item.place,
-        teacher: item.teacher,
-        students: item.students,
-        count: String(item.personnel),
-        period: item.period,
-    }));
-
-    const renderMovementActions = (row: RecordData) => (
+    const renderMovementActions = (row: typeof movementData[0]) => (
         <S.ActionButtons>
             <Button 
                 text="수정" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleEdit(Number(row.id));
+                    handleEdit(row.leaveseat_id);
                 }} 
                 variant="confirm" 
             />
@@ -134,20 +130,20 @@ export default function RecordTable({
                 text="삭제" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleDelete(Number(row.id));
+                    handleDelete(row.leaveseat_id);
                 }} 
                 variant="delete" 
             />
         </S.ActionButtons>
     );
 
-    const renderLeaveActions = (row: LeaveData) => (
+    const renderLeaveActions = (row: typeof leaveData[0]) => (
         <S.ActionButtons>
             <Button 
-                text="삭제" 
+                text="이탈삭제" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleDelete(Number(row.id));
+                    handleDeleteEvasion(row.exit_id);
                 }} 
                 variant="delete" 
             />
@@ -159,9 +155,11 @@ export default function RecordTable({
             {activeTab === 'movement' && (
                 <TableLayout
                     columns={movementColumns}
-                    data={formattedMovementData}
+                    data={movementData}
                     renderActions={renderMovementActions}
-                    onRowClick={(row) => handleMovementRowClick(Number(row.id))}
+                    onRowClick={(row) => handleMovementRowClick(row.leaveseat_id)}
+                    getRowId={(row) => String(row.leaveseat_id)}
+                    isLoading={isLoading}
                 />
             )}
             {activeTab === 'leave' && (
@@ -169,6 +167,8 @@ export default function RecordTable({
                     columns={leaveColumns}
                     data={leaveData}
                     renderActions={renderLeaveActions}
+                    getRowId={(row) => String(row.exit_id)}
+                    isLoading={isLoading}
                 />
             )}
             {activeTab === 'student' && (
@@ -176,17 +176,18 @@ export default function RecordTable({
                     columns={studentColumns}
                     data={studentData}
                     renderActions={() => <></>}
+                    getRowId={(row) => String(row.student_number)}
+                    isLoading={isLoading}
                 />
             )}
-            {detailData && (
+            {detailData && selectedMovement && (
                 <MovementDetailModal
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
-                    leaveseatId={selectedLeaveseatId!}
                     data={{
-                        location: detailData.place,
+                        location: selectedMovement.place,
                         teacher: detailData.teacher,
-                        reason: detailData.items,
+                        reason: detailData.cause,
                         students: detailData.students,
                     }}
                 />
