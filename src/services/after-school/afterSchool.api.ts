@@ -24,3 +24,18 @@ export const getAllAfterSchool = async (params: AfterSchoolSearchParams): Promis
   });
   return response.data;
 };
+
+export const createAfterSchoolBusinessTrip = async (data: {
+  day: string;
+  after_school_id: string;
+}): Promise<unknown> => {
+  const response = await axiosInstance.post('/afterschool/business-trip', data);
+  return response.data;
+};
+
+export const quitAfterSchool = async (data: {
+  after_school_id: string;
+}): Promise<unknown> => {
+  const response = await axiosInstance.post('/afterschool/quit', data);
+  return response.data;
+};

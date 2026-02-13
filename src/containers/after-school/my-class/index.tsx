@@ -1,20 +1,26 @@
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import ConfirmModal from '@/components/layout/modal/confirm';
 import * as S from './style';
 import type { MyAfterSchool } from '@/types/after-school';
 import { MENU_OPTIONS } from '@/constants/after-school';
 import { colors } from '@/styles/theme';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
+import { quitAfterSchool } from '@/services/after-school/afterSchool.api';
+import { toast } from 'react-toastify';
 
 export default function MyClassTable() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
   const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<MyAfterSchool | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
   const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
+  const [isQuitSubmitting, setIsQuitSubmitting] = useState(false);
 
   const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.my(selectedGrade));
 
@@ -37,6 +43,7 @@ export default function MyClassTable() {
     e.stopPropagation();
     if (menuOpenId === id) {
       setMenuOpenId(null);
+      setMenuPosition(null);
     } else {
       setMenuOpenId(id);
     }
@@ -56,10 +63,52 @@ export default function MyClassTable() {
     }
   };
 
-  const handleTerminateConfirm = () => {
-    setIsTerminateModalOpen(false);
-    setSelectedClassForTerminate(null);
+  const handleTerminateConfirm = async () => {
+    if (!selectedClassForTerminate?.id) return;
+
+    setIsQuitSubmitting(true);
+    try {
+      await quitAfterSchool({ after_school_id: String(selectedClassForTerminate.id) });
+      toast.success('방과후를 종료했습니다.');
+      setIsTerminateModalOpen(false);
+      setSelectedClassForTerminate(null);
+      queryClient.invalidateQueries({ queryKey: ['afterSchool', 'my', selectedGrade] });
+    } catch (error: unknown) {
+      const message =
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        typeof (error as any).response?.data?.message === 'string'
+          ? (error as any).response.data.message
+          : '방과후 종료에 실패했습니다.';
+      toast.error(message);
+    } finally {
+      setIsQuitSubmitting(false);
+    }
   };
+
+  const shouldOpenMenuUp = (index: number) => {
+    if (filteredClasses.length <= 6) return false;
+    return index >= 4;
+  };
+
+  useEffect(() => {
+    if (!menuOpenId) {
+      setMenuPosition(null);
+      return;
+    }
+
+    const buttonEl = menuButtonRefs.current[menuOpenId];
+    if (!buttonEl) return;
+
+    const rect = buttonEl.getBoundingClientRect();
+    const index = filteredClasses.findIndex((c) => c.id === menuOpenId);
+    const openUp = shouldOpenMenuUp(Math.max(index, 0));
+    const top = openUp ? rect.top : rect.bottom;
+    const left = rect.right;
+
+    setMenuPosition({ top, left, openUp });
+  }, [filteredClasses, menuOpenId]);
 
   return (
     <S.Wrapper>
@@ -82,24 +131,11 @@ export default function MyClassTable() {
                   <S.MobileCardTop>
                     <S.MobileTimeTag>{cls.period}</S.MobileTimeTag>
                     <S.MobileMenuButton
+                      ref={(el) => { menuButtonRefs.current[cls.id] = el; }}
                       onClick={(e) => handleMenuToggle(e, cls.id)}
                     >
                       <img src="/icons/common/expand.svg" alt="메뉴" />
                     </S.MobileMenuButton>
-                    {menuOpenId === cls.id && (
-                      <S.MenuDropdown 
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {MENU_OPTIONS.map((option) => (
-                          <S.MenuItem 
-                            key={option}
-                            onClick={(e) => handleMenuItemClick(e, option, cls)}
-                          >
-                            {option}
-                          </S.MenuItem>
-                        ))}
-                      </S.MenuDropdown>
-                    )}
                   </S.MobileCardTop>
                   <S.MobileCardSubject>{cls.name}</S.MobileCardSubject>
                   <S.MobileCardInfo>{cls.week_day} · {cls.place.name}</S.MobileCardInfo>
@@ -107,10 +143,33 @@ export default function MyClassTable() {
               ))}
             </S.MobileCardList>
 
+            {menuOpenId && menuPosition && createPortal(
+              <S.MenuDropdown
+                $openUp={menuPosition.openUp}
+                $top={menuPosition.top}
+                $left={menuPosition.left}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {MENU_OPTIONS.map((option) => {
+                  const classData = filteredClasses.find((c) => c.id === menuOpenId);
+                  if (!classData) return null;
+                  return (
+                    <S.MenuItem
+                      key={option}
+                      onClick={(e) => handleMenuItemClick(e, option, classData)}
+                    >
+                      {option}
+                    </S.MenuItem>
+                  );
+                })}
+              </S.MenuDropdown>,
+              document.body,
+            )}
+
             {/* 데스크톱용 테이블 */}
             <S.Table>
               <tbody>
-                {filteredClasses.map((cls, index) => (
+                {filteredClasses.map((cls) => (
                   <S.TableRow key={cls.id}>
                     <S.TableCell>
                       <S.DayText>{cls.week_day}</S.DayText>
@@ -131,21 +190,6 @@ export default function MyClassTable() {
                       >
                         <img src="/icons/common/expand.svg" alt="메뉴" />
                       </S.MenuButton>
-                      {menuOpenId === cls.id && (
-                        <S.MenuDropdown 
-                          $openUp={index >= filteredClasses.length - 2}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          {MENU_OPTIONS.map((option) => (
-                            <S.MenuItem 
-                              key={option}
-                              onClick={(e) => handleMenuItemClick(e, option, cls)}
-                            >
-                              {option}
-                            </S.MenuItem>
-                          ))}
-                        </S.MenuDropdown>
-                      )}
                     </S.TableCell>
                   </S.TableRow>
                 ))}
@@ -174,7 +218,7 @@ export default function MyClassTable() {
           </div>
         }
         cancelText="취소"
-        confirmText="종료"
+        confirmText={isQuitSubmitting ? '처리중...' : '종료'}
       />
     </S.Wrapper>
   );
