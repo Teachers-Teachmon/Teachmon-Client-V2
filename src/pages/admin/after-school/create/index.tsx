@@ -91,6 +91,7 @@ export default function AfterSchoolFormPage() {
 
   const handleAddStudent = (student: StudentSearchResponse | TeamSearchResponse) => {
     if ('members' in student) {
+      // 팀인 경우 - 각 멤버의 원래 ID 저장
       const newStudents: Student[] = student.members.map(member => ({
         id: member.id, // 원래 학생 ID 저장
         studentNumber: member.number,
@@ -100,8 +101,9 @@ export default function AfterSchoolFormPage() {
       }));
       setSelectedStudents([...selectedStudents, ...newStudents]);
     } else {
+      // 개별 학생인 경우
       const newStudent: Student = {
-        id: student.id,
+        id: student.id, // 원래 학생 ID 저장
         studentNumber: student.number,
         name: student.name,
         grade: student.grade,
@@ -118,6 +120,7 @@ export default function AfterSchoolFormPage() {
     const grade = 'grade' in student ? student.grade : (student as Student).grade;
     const classNumber = 'classNumber' in student ? student.classNumber : (student as Student).classNumber;
     
+    // 한 자리 번호일 경우 0 추가 (number만)
     const formattedNumber = number < 10 ? `0${number}` : number.toString();
   
     return `${grade}${classNumber}${formattedNumber} ${name}`;

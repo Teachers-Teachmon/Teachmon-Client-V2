@@ -25,12 +25,19 @@ export default function AdminAfterSchoolPage() {
   const [googleSheetUrl, setGoogleSheetUrl] = useState('');
   const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
 
+  const branch = useMemo(() => {
+    const match = selectedQuarter.match(/\d+/);
+    const value = match ? Number(match[0]) : 1;
+    return Number.isFinite(value) ? value : 1;
+  }, [selectedQuarter]);
+
   const apiParams: AfterSchoolRequestParams = useMemo(() => ({
     grade: selectedGrade,
+    branch,
     week_day: WEEKDAY_MAP[selectedDay],
     start_period: 8,
     end_period: 11,
-  }), [selectedGrade, selectedDay]);
+  }), [selectedGrade, selectedDay, branch]);
 
   const { data: apiData, isLoading } = useQuery({
     ...afterSchoolQuery.classes(apiParams),
@@ -38,20 +45,35 @@ export default function AdminAfterSchoolPage() {
 
   const queryClient = useQueryClient();
 
+  const API_WEEKDAY_TO_UI: Record<string, (typeof WEEKDAYS)[number]> = {
+    '월': '월요일',
+    '화': '화요일',
+    '수': '수요일',
+    '목': '목요일',
+    MON: '월요일',
+    TUE: '화요일',
+    WED: '수요일',
+    THU: '목요일',
+    '월요일': '월요일',
+    '화요일': '화요일',
+    '수요일': '수요일',
+    '목요일': '목요일',
+  };
+
   const classes = useMemo(() => {
     if (!apiData) return [];
     
     return apiData.map((item): AdminAfterSchoolClass => ({
       id: item.id.toString(),
       grade: selectedGrade,
-      day: item.week_day,
+      day: API_WEEKDAY_TO_UI[item.week_day] ?? (selectedDay as (typeof WEEKDAYS)[number]),
       period: item.period,
       teacher: item.teacher.name,
       location: item.place.name,
       subject: item.name,
-      students: item.students.map(student => student.name),
+      students: item.students.map(student => `${student.number} ${student.name}`),
     }));
-  }, [apiData, selectedGrade]);
+  }, [apiData, selectedGrade, selectedDay]);
 
   const filteredClasses = classes.filter(
     cls => cls.grade === selectedGrade && cls.day === selectedDay
