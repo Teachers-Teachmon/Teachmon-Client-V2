@@ -43,6 +43,31 @@ const createInitialSchedule = (): DaySchedule[] => {
   }));
 };
 
+const mapQuarterlyDataToSchedules = (data?: SelfStudyQuarterlyItem[]): DaySchedule[] => {
+  if (!data) return createInitialSchedule();
+
+  const scheduleMap = new Map<DayOfWeek, string[]>();
+  DAY_ORDER.forEach((day) => scheduleMap.set(day, []));
+
+  data.forEach((item) => {
+    const uiDay = API_DAY_TO_UI[item.week_day];
+    if (!uiDay) return;
+    const mappedPeriods = item.periods
+      .map((period) => API_TO_PERIOD[period])
+      .filter((period) => PERIOD_OPTIONS.includes(period));
+    scheduleMap.set(uiDay, mappedPeriods);
+  });
+
+  return DAY_ORDER.map((day) => ({
+    day,
+    label: DAY_LABELS[day],
+    periods: (scheduleMap.get(day) ?? []).map((value) => ({
+      id: generateId(),
+      value,
+    })),
+  }));
+};
+
 const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySection(_props, ref) {
   const navigate = useNavigate();
   const currentYear = new Date().getFullYear();
@@ -58,31 +83,7 @@ const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySe
   const { mutate: updateQuarterly } = useUpdateSelfStudyQuarterlyMutation();
 
   useEffect(() => {
-    if (!quarterlyData) return;
-
-    const scheduleMap = new Map<DayOfWeek, string[]>();
-    DAY_ORDER.forEach((day) => scheduleMap.set(day, []));
-
-    quarterlyData.forEach((item) => {
-      const uiDay = API_DAY_TO_UI[item.week_day];
-      if (!uiDay) return;
-      const mappedPeriods = item.periods
-        .map((period) => API_TO_PERIOD[period])
-        .filter((period) => PERIOD_OPTIONS.includes(period));
-      scheduleMap.set(uiDay, mappedPeriods);
-    });
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSchedules(
-      DAY_ORDER.map((day) => ({
-        day,
-        label: DAY_LABELS[day],
-        periods: (scheduleMap.get(day) ?? []).map((value) => ({
-          id: generateId(),
-          value,
-        })),
-      }))
-    );
+    setSchedules(mapQuarterlyDataToSchedules(quarterlyData));
   }, [quarterlyData]);
 
   useEffect(() => {
@@ -159,6 +160,7 @@ const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySe
         toast.success('자습 설정이 저장되었습니다.');
       },
       onError: (error) => {
+        setSchedules(mapQuarterlyDataToSchedules(quarterlyData));
         toast.error(getApiErrorMessage(error, '자습 설정 저장에 실패했습니다.'));
       },
     });
