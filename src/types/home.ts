@@ -24,8 +24,10 @@ export interface ExchangeRequest {
 export type PeriodType =
   | 'SEVEN_PERIOD'
   | 'EIGHT_PERIOD'
+  | 'EIGHT_AND_NINE_PERIOD'
   | 'NINE_PERIOD'
-  | 'TEN_PERIOD';
+  | 'TEN_PERIOD'
+  | 'TEN_AND_ELEVEN_PERIOD';
 
 export interface ExitStudent {
   exit_id: number;

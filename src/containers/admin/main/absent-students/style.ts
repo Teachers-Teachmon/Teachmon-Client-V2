@@ -49,7 +49,7 @@ export const SectionTitle = styled.h2`
 export const AbsentStudentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: minmax(100px, auto);
+  grid-auto-rows: max-content;
   flex: 1;
   overflow-y: auto;
   min-height: 0;
@@ -105,5 +105,18 @@ export const StudentName = styled.span`
   line-height: 20px;
   color: ${colors.primaryGray};
   flex: 1;
+`;
+
+export const EmptyMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #9ca4ba;
+  padding: 40px 20px;
 `;
 
