@@ -42,8 +42,12 @@ export interface SearchDropdownProps<T = string> {
   onChange: (value: T) => void;
   /** 검색어 (제어 컴포넌트로 사용시) */
   searchQuery?: string;
-  /** 검색어 변경 시 호출되는 함수 (백엔드 API 호출용) */
+  /** 검색어 변경 시 호출되는 함수 (즉시 실행) */
   onSearchChange?: (query: string) => void;
+  /** 디바운스된 검색어로 호출되는 함수 (API 호출용) */
+  onDebouncedSearchChange?: (query: string) => void;
+  /** 디바운스 지연 시간 (ms, 기본값: 300) */
+  debounceDelay?: number;
   /** 에러 메시지 (존재하면 빨간색 스타일 적용) */
   error?: string;
   /** Dropdown 하단에 표시될 도움말 텍스트 */
