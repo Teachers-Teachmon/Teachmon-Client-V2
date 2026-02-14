@@ -7,6 +7,7 @@ import { DAY_LABELS, PERIOD_OPTIONS } from '@/constants/adminSelfStudy';
 import type { SelfStudyPeriod, SelfStudyQuarterlyItem } from '@/types/selfStudy';
 import { useSelfStudyQuarterlyQuery } from '@/services/admin/selfStudy/adminSelfStudy.query';
 import { useUpdateSelfStudyQuarterlyMutation } from '@/services/admin/selfStudy/adminSelfStudy.mutation';
+import { getApiErrorMessage } from '@/utils/error';
 import { API_DAY_TO_UI, API_TO_PERIOD, DAY_ORDER, PERIOD_TO_API, type DayOfWeek, UI_DAY_TO_API } from '@/utils/selfStudy';
 import plusIcon from '/icons/admin-self-study/plus.svg';
 import minusIcon from '/icons/admin-self-study/minus.svg';
@@ -49,22 +50,29 @@ const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySe
   const [selectedGrade, setSelectedGrade] = useState<Grade>(1);
   const [schedules, setSchedules] = useState<DaySchedule[]>(() => createInitialSchedule());
 
-  const { data: quarterlyData } = useSelfStudyQuarterlyQuery(currentYear, selectedQuarter, selectedGrade);
+  const {
+    data: quarterlyData,
+    error: quarterlyError,
+    isError: isQuarterlyError,
+  } = useSelfStudyQuarterlyQuery(currentYear, selectedQuarter, selectedGrade);
   const { mutate: updateQuarterly } = useUpdateSelfStudyQuarterlyMutation();
 
   useEffect(() => {
     if (!quarterlyData) return;
+
     const scheduleMap = new Map<DayOfWeek, string[]>();
     DAY_ORDER.forEach((day) => scheduleMap.set(day, []));
 
     quarterlyData.forEach((item) => {
       const uiDay = API_DAY_TO_UI[item.week_day];
+      if (!uiDay) return;
       const mappedPeriods = item.periods
         .map((period) => API_TO_PERIOD[period])
         .filter((period) => PERIOD_OPTIONS.includes(period));
       scheduleMap.set(uiDay, mappedPeriods);
     });
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSchedules(
       DAY_ORDER.map((day) => ({
         day,
@@ -76,6 +84,12 @@ const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySe
       }))
     );
   }, [quarterlyData]);
+
+  useEffect(() => {
+    if (!isQuarterlyError) return;
+
+    toast.error(getApiErrorMessage(quarterlyError, '해당 분기의 분기 설정이 필요합니다. 분기 설정을 먼저 진행해주세요.'));
+  }, [isQuarterlyError, quarterlyError]);
 
   const handleGradeSelect = (grade: Grade) => {
     setSelectedGrade(grade);
@@ -144,8 +158,8 @@ const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySe
       onSuccess: () => {
         toast.success('자습 설정이 저장되었습니다.');
       },
-      onError: () => {
-        toast.error('자습 설정 저장에 실패했습니다.');
+      onError: (error) => {
+        toast.error(getApiErrorMessage(error, '자습 설정 저장에 실패했습니다.'));
       },
     });
   };

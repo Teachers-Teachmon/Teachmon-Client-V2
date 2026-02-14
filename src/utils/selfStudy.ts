@@ -1,24 +1,21 @@
 import { colors } from '@/styles/theme';
 import type { Grade, SelfStudyPeriod, SelfStudyWeekDay } from '@/types/selfStudy';
 
-export type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu' | 'fri';
-
-export const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu', 'fri'];
+export type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu';
+export const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu'];
 
 export const UI_DAY_TO_API: Record<DayOfWeek, SelfStudyWeekDay> = {
   mon: 'MON',
   tue: 'TUE',
   wed: 'WED',
   thu: 'THU',
-  fri: 'FRI',
 };
 
-export const API_DAY_TO_UI: Record<SelfStudyWeekDay, DayOfWeek> = {
+export const API_DAY_TO_UI: Partial<Record<SelfStudyWeekDay, DayOfWeek>> = {
   MON: 'mon',
   TUE: 'tue',
   WED: 'wed',
   THU: 'thu',
-  FRI: 'fri',
 };
 
 export const PERIOD_TO_API: Record<string, SelfStudyPeriod> = {
