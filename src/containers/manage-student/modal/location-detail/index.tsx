@@ -2,23 +2,15 @@ import { useState } from 'react';
 import Modal from '@/components/layout/modal';
 import { useDevice } from '@/hooks/useDevice';
 import type { StatusType } from '@/components/ui/status';
-import type { StudentState } from '@/services/manage/manage.api';
+import type { StudentState, StudentSchedule } from '@/services/manage/manage.api';
 import * as S from './style';
-
-interface Student {
-    studentNumber: number;
-    studentName: string;
-    status?: StatusType;
-    scheduleId?: number;
-    state?: StudentState | null;
-}
 
 interface LocationDetailProps {
     locationName: string;
-    students: Student[];
+    students: StudentSchedule[];
     onClose: () => void;
     isOpen: boolean;
-    onStatusChange?: (scheduleId: number, status: StatusType, currentState?: StudentState | null) => void;
+    onStatusChange?: (scheduleId: string, status: StatusType, currentState?: StudentState | null) => void;
 }
 
 export default function LocationDetail({ locationName, students, onClose, isOpen, onStatusChange }: LocationDetailProps) {
@@ -30,9 +22,9 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
         setSelectedStudentId(null);
     };
 
-    const handleStatusClick = (student: Student, status: StatusType) => {
-        if (!student.scheduleId || !onStatusChange) return;
-        onStatusChange(student.scheduleId, status, student.state);
+    const handleStatusClick = (student: StudentSchedule, status: StatusType) => {
+        if (!student.schedule_id || !onStatusChange) return;
+        onStatusChange(student.schedule_id, status, student.state);
         setSelectedStudentId(null);
     };
 
@@ -51,27 +43,27 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                 </S.InfoSection>
                 <S.StudentsGrid>
                     {students.map((student) => {
-                        const isSelected = selectedStudentId === student.studentNumber;
+                        const isSelected = selectedStudentId === student.number;
                         const hasStatus = student.state === 'AWAY' || student.state === 'EXIT' || 
                                         student.state === 'EARLY_LEAVE' || student.state === 'EVASION';
                         
                         return (
                             <S.StudentCard
-                                key={student.studentNumber}
+                                key={student.number}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     // state가 있을 때만 선택 가능
                                     if (student.state) {
-                                        setSelectedStudentId(isSelected ? null : student.studentNumber);
+                                        setSelectedStudentId(isSelected ? null : student.number);
                                     }
                                 }}
                                 $state={student.state}
                             >
                                 {!isSelected || !student.state ? (
                                     <S.StudentInfo>
-                                        {student.studentNumber}
+                                        {student.number}
                                         <br />
-                                        {student.studentName}
+                                        {student.name}
                                     </S.StudentInfo>
                                 ) : (
                                     <S.StatusButtons>

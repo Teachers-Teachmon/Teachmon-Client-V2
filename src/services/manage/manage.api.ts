@@ -28,7 +28,7 @@ export interface StudentSchedule {
   number: number;
   name: string;
   state: StudentState | null;
-  schedule_id: number;
+  schedule_id: string;
 }
 
 export interface ClassSchedule {
@@ -43,7 +43,7 @@ export interface GetStudentScheduleParams {
 }
 
 export interface UpdateStudentScheduleRequest {
-  schedule_id: number;
+  schedule_id: string;
   state: StudentState;
 }
 
@@ -94,7 +94,7 @@ export interface GetScheduleHistoryParams {
 }
 
 export interface PeriodScheduleInfo {
-  schedule_id: number;
+  schedule_id: string;
   state: StudentState | null;
 }
 
@@ -131,7 +131,13 @@ export const updateStudentSchedule = async (data: UpdateStudentScheduleRequest):
 };
 
 // 학생 스케줄 변경 취소 (조퇴, 이탈로 처리)
-export const cancelStudentSchedule = async (scheduleId: number, state: StudentState): Promise<MessageResponse> => {
+export const cancelStudentSchedule = async (scheduleId: string, state: StudentState): Promise<MessageResponse> => {
+  console.log('cancelStudentSchedule API call:', {
+    scheduleId,
+    state,
+    scheduleIdType: typeof scheduleId,
+    url: `/student-schedule/${scheduleId}`
+  });
   const response = await axiosInstance.delete<MessageResponse>(`/student-schedule/${scheduleId}`, { data: { state } });
   return response.data;
 };

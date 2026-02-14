@@ -1,8 +1,9 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type { Period, Reason } from '@/constants/movement';
+import type { Period } from '@/constants/movement';
 
 // Types
 export interface LeaveSeatStudent {
+  id: number;
   number: number;
   name: string;
   state: string;
@@ -21,7 +22,10 @@ export interface LeaveSeatDetail {
   day: string;
   period: Period;
   teacher: string;
-  place: string;
+  place: {
+    id: number;
+    name: string;
+  };
   personnel: number;
   cause: string;
   students: LeaveSeatStudent[];
@@ -41,11 +45,11 @@ export interface CreateLeaveSeatRequest {
 }
 
 export interface UpdateLeaveSeatRequest {
-  period?: Period;
-  reason?: Reason;
-  place?: string;
-  cause?: string;
-  students?: string[];
+  day: string;
+  period: Period;
+  place: number;
+  cause: string;
+  students: number[];
 }
 
 export interface MessageResponse {

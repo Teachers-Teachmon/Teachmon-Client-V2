@@ -5,7 +5,6 @@ import Button from '@/components/ui/button';
 import TableLayout from '@/components/layout/table';
 import MovementDetailModal from '@/containers/manage-student/record/movement-detail';
 import { movementQuery } from '@/services/movement/movement.query';
-import { useMovementStore } from '@/stores/useMovementStore';
 import { useDeleteLeaveSeatMutation } from '@/services/movement/movement.mutation';
 import { useDeleteEvasionMutation } from '@/services/manage/manage.mutation';
 import { useStudentStatus } from '@/hooks/useStudentStatus';
@@ -28,7 +27,6 @@ export default function RecordTable({
     const [selectAll, setSelectAll] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedLeaveseatId, setSelectedLeaveseatId] = useState<string | null>(null);
-    const { setSelectedMovement, selectedMovement } = useMovementStore();
 
     const { mutate: deleteLeaveSeat } = useDeleteLeaveSeatMutation();
     const { mutate: deleteEvasion } = useDeleteEvasionMutation();
@@ -73,13 +71,6 @@ export default function RecordTable({
     };
 
     const handleMovementRowClick = (leaveseatId: string) => {
-        const movement = movementData.find(m => m.leaveseat_id === leaveseatId);
-        if (movement) {
-            setSelectedMovement({
-                leaveseatId,
-                place: movement.place,
-            });
-        }
         setSelectedLeaveseatId(leaveseatId);
         setIsModalOpen(true);
     };
@@ -91,7 +82,7 @@ export default function RecordTable({
 
     const handleStatusChange = (studentNumber: number, periodKey: keyof ScheduleHistoryRecord, status: StatusType, currentState?: StudentState | null) => {
         const student = studentData.find(s => s.student_number === studentNumber);
-        const scheduleId = (student?.[periodKey] as { schedule_id: number } | null)?.schedule_id;
+        const scheduleId = (student?.[periodKey] as { schedule_id: string } | null)?.schedule_id;
         if (!scheduleId) return;
         changeStatus(scheduleId, status, currentState);
     };
@@ -101,7 +92,7 @@ export default function RecordTable({
 
         studentNumbers.forEach(studentNumber => {
             const student = studentData.find(s => s.student_number === studentNumber);
-            const scheduleId = (student?.[periodKey] as { schedule_id: number } | null)?.schedule_id;
+            const scheduleId = (student?.[periodKey] as { schedule_id: string } | null)?.schedule_id;
             if (scheduleId) changeStatus(scheduleId, status);
         });
     };
@@ -179,12 +170,12 @@ export default function RecordTable({
                     isLoading={isLoading}
                 />
             )}
-            {detailData && selectedMovement && (
+            {detailData && (
                 <MovementDetailModal
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
                     data={{
-                        location: selectedMovement.place,
+                        location: detailData.place.name,
                         teacher: detailData.teacher,
                         reason: detailData.cause,
                         students: detailData.students,

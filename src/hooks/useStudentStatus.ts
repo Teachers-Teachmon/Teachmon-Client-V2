@@ -36,7 +36,7 @@ export const useStudentStatus = () => {
     });
 
     const cancelMutation = useMutation({
-        mutationFn: ({ scheduleId, state }: { scheduleId: number; state: StudentState }) =>
+        mutationFn: ({ scheduleId, state }: { scheduleId: string; state: StudentState }) =>
             cancelStudentSchedule(scheduleId, state),
         onSuccess: (data) => {
             toast.success(data.message);
@@ -47,7 +47,7 @@ export const useStudentStatus = () => {
         },
     });
 
-    const changeStatus = (scheduleId: number, status: StatusType, currentState?: StudentState | null) => {
+    const changeStatus = (scheduleId: string, status: StatusType, currentState?: StudentState | null) => {
         if (status === '취소' && currentState) {
             cancelMutation.mutate({ scheduleId, state: currentState });
         } else {
