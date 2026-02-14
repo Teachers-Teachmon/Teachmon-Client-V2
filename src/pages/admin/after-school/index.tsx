@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/ui/button';
+import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
@@ -12,6 +13,7 @@ import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
+import { deleteAfterSchoolClass } from '@/services/after-school/afterSchool.api';
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
@@ -69,9 +71,12 @@ export default function AdminAfterSchoolPage() {
       day: API_WEEKDAY_TO_UI[item.week_day] ?? (selectedDay as (typeof WEEKDAYS)[number]),
       period: item.period,
       teacher: item.teacher.name,
+      teacherId: item.teacher.id,
       location: item.place.name,
+      placeId: item.place.id,
       subject: item.name,
       students: item.students.map(student => `${student.number} ${student.name}`),
+      studentIds: item.students.map(student => student.id ?? 0),
     }));
   }, [apiData, selectedGrade, selectedDay]);
 
@@ -100,7 +105,7 @@ export default function AdminAfterSchoolPage() {
     if (e) {
       e.stopPropagation();
     }
-    navigate(`/admin/after-school/edit/${classData.id}`);
+    navigate(`/admin/after-school/edit/${classData.id}`, { state: classData });
   };
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
@@ -111,12 +116,15 @@ export default function AdminAfterSchoolPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteTargetId) {
-      // TODO: 삭제 API 구현 필요
-      console.log('삭제할 ID:', deleteTargetId);
-      // 임시로 쿼리 무효화하여 데이터 새로고침
-      queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
+      try {
+        await deleteAfterSchoolClass(Number(deleteTargetId));
+        toast.success('방과후가 성공적으로 삭제되었습니다.');
+        queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
+      } catch (error) {
+        toast.error('방과후 삭제에 실패했습니다.');
+      }
     }
     setIsDeleteModalOpen(false);
     setDeleteTargetId(null);

@@ -1,5 +1,5 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest } from '@/types/afterSchool';
+import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/afterSchool';
 
 export const getAfterSchoolClasses = async (
   params: AfterSchoolRequestParams,
@@ -17,6 +17,26 @@ export const createAfterSchoolClass = async (
   const response = await axiosInstance.post<{ message: string }>(
     '/afterschool',
     data,
+  );
+  return response.data;
+};
+
+export const updateAfterSchoolClass = async (
+  data: UpdateAfterSchoolRequest,
+): Promise<{ message: string }> => {
+  const response = await axiosInstance.patch<{ message: string }>(
+    '/afterschool',
+    data,
+  );
+  return response.data;
+};
+
+export const deleteAfterSchoolClass = async (
+  afterSchoolId: number,
+): Promise<{ message: string }> => {
+  const response = await axiosInstance.delete<{ message: string }>(
+    '/afterschool',
+    { data: { after_school_id: afterSchoolId } },
   );
   return response.data;
 };
