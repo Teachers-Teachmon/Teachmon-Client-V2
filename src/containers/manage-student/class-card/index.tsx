@@ -55,9 +55,14 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                 ) : (
                     students.map((student) => {
                         const stateInfo = getStudentStateInfo(student.state);
-                        // state가 null이면 회색으로 표시
-                        const displayColor = stateInfo?.color || '#9CA4BA';
-                        const displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
+                        // AFTER_SCHOOL이면 흰색, state가 null이면 회색으로 표시
+                        let displayColor = stateInfo?.color || '#9CA4BA';
+                        let displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
+                        
+                        if (student.state === 'AFTER_SCHOOL') {
+                            displayColor = '#eaeaea';
+                            displayBgColor = '#FFFFFF';
+                        }
                         
                         return (
                             <S.StudentCard 
@@ -73,7 +78,7 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                                     }
                                 }}
                             >
-                                <S.StudentNumber>{student.number}</S.StudentNumber>
+                                <S.StudentNumber>{String(student.number).slice(-2)}</S.StudentNumber>
                                 <S.StudentName>{student.name}</S.StudentName>
                                 {selectedStudentId === student.id && student.state && (
                                     <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
