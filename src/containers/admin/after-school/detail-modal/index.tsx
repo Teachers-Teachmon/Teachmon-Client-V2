@@ -39,8 +39,6 @@ export default function AfterSchoolDetailModal({
             <S.InfoValue>{classData.location}</S.InfoValue>
           </S.InfoRow>
 
-          <S.ClassLabel>{classData.grade}반</S.ClassLabel>
-
           <S.StudentGrid>
             {classData.students.map((student, idx) => (
               <S.StudentCard key={idx}>

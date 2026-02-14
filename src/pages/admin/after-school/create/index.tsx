@@ -107,11 +107,8 @@ export default function AfterSchoolFormPage() {
   const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
     const name = student.name;
     const number = 'number' in student ? student.number : (student as Student).studentNumber;
-    const grade = 'grade' in student ? student.grade : (student as Student).grade;
-    const classNumber = 'classNumber' in student ? student.classNumber : (student as Student).classNumber;
-    const formattedNumber = number < 10 ? `0${number}` : number.toString();
   
-    return `${grade}${classNumber}${formattedNumber} ${name}`;
+    return `${number} ${name}`;
   };
 
   const handleRemoveStudent = (studentId: string) => {
