@@ -9,7 +9,7 @@ export const Container = styled.div`
   padding: 1rem 0;
 
   ${mq.mobile} {
-    padding: 0rem;
+    padding: 0;
   }
 `;
 
