@@ -45,24 +45,28 @@ export const StudentsGrid = styled.div`
   }
 `;
 
-export const StudentCard = styled.div`
+export const StudentCard = styled.div<{
+  $stateColor?: string;
+  $stateBgColor?: string;
+  $hasState?: boolean;
+}>`
   width: 100%;
   height: 100%;
-  background: ${colors.background};
-  border: 1px solid #F5F5F5;
+  background: ${({ $stateBgColor }) => $stateBgColor || colors.background};
+  border: 1px solid ${({ $stateColor }) => $stateColor || '#F5F5F5'};
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  cursor: pointer;
+  cursor: ${({ $hasState }) => $hasState !== false ? 'pointer' : 'default'};
   transition: all 0.2s;
   position: relative;
   padding: 8px 4px;
 
   &:hover {
-    border-color: ${colors.primary};
-    background: ${colors.primary100};
+    border-color: ${({ $stateColor, $hasState }) => $hasState !== false ? ($stateColor || colors.primary) : $stateColor};
+    filter: brightness(0.95);
   }
 `;
 
@@ -109,4 +113,25 @@ export const StatusBadgeWrapper = styled.div`
   &:hover {
     opacity: 0.8;
   }
+`;
+
+export const StateLabel = styled.span<{ $color: string }>`
+  font-family: 'Paperlogy', sans-serif;
+  font-size: clamp(9px, 0.9vw, 12px);
+  font-weight: 600;
+  color: ${({ $color }) => $color};
+  line-height: 1.2;
+  text-align: center;
+  margin-top: 2px;
+`;
+
+export const EmptyState = styled.div`
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: ${colors.text};
+  font-size: 14px;
+  opacity: 0.5;
 `;

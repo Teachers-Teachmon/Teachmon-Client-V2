@@ -2,27 +2,29 @@ import { useState } from 'react';
 import Modal from '@/components/layout/modal';
 import { useDevice } from '@/hooks/useDevice';
 import type { StatusType } from '@/components/ui/status';
+import type { StudentState, StudentSchedule } from '@/services/manage/manage.api';
 import * as S from './style';
-
-interface Student {
-    studentNumber: number;
-    studentName: string;
-    status?: StatusType;
-}
 
 interface LocationDetailProps {
     locationName: string;
-    students: Student[];
+    students: StudentSchedule[];
     onClose: () => void;
     isOpen: boolean;
+    onStatusChange?: (scheduleId: string, status: StatusType, currentState?: StudentState | null) => void;
 }
 
-export default function LocationDetail({ locationName, students, onClose, isOpen }: LocationDetailProps) {
+export default function LocationDetail({ locationName, students, onClose, isOpen, onStatusChange }: LocationDetailProps) {
     const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
     const { isMobile } = useDevice();
 
     const handleModalClick = (e: React.MouseEvent) => {
         e.stopPropagation();
+        setSelectedStudentId(null);
+    };
+
+    const handleStatusClick = (student: StudentSchedule, status: StatusType) => {
+        if (!student.schedule_id || !onStatusChange) return;
+        onStatusChange(student.schedule_id, status, student.state);
         setSelectedStudentId(null);
     };
 
@@ -41,23 +43,27 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                 </S.InfoSection>
                 <S.StudentsGrid>
                     {students.map((student) => {
-                        const isSelected = selectedStudentId === student.studentNumber;
-                        const hasStatus = student.status === '조퇴' || student.status === '이탈';
+                        const isSelected = selectedStudentId === student.number;
+                        const hasStatus = student.state === 'AWAY' || student.state === 'EXIT' || 
+                                        student.state === 'EARLY_LEAVE' || student.state === 'EVASION';
                         
                         return (
                             <S.StudentCard
-                                key={student.studentNumber}
+                                key={student.number}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    setSelectedStudentId(isSelected ? null : student.studentNumber);
+                                    // state가 있을 때만 선택 가능
+                                    if (student.state) {
+                                        setSelectedStudentId(isSelected ? null : student.number);
+                                    }
                                 }}
-                                $status={student.status}
+                                $state={student.state}
                             >
-                                {!isSelected ? (
+                                {!isSelected || !student.state ? (
                                     <S.StudentInfo>
-                                        {student.studentNumber}
+                                        {student.number}
                                         <br />
-                                        {student.studentName}
+                                        {student.name}
                                     </S.StudentInfo>
                                 ) : (
                                     <S.StatusButtons>
@@ -65,8 +71,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                                             <S.StatusButton
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    // TODO: 취소 로직
-                                                    setSelectedStudentId(null);
+                                                    handleStatusClick(student, '취소' as StatusType);
                                                 }}
                                             >
                                                 취소
@@ -76,8 +81,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                                                 <S.StatusButton
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        // TODO: 이탈 로직
-                                                        setSelectedStudentId(null);
+                                                        handleStatusClick(student, '이탈' as StatusType);
                                                     }}
                                                 >
                                                     이탈
@@ -85,8 +89,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                                                 <S.StatusButton
                                                     onClick={(e) => {
                                                         e.stopPropagation();
-                                                        // TODO: 조퇴 로직
-                                                        setSelectedStudentId(null);
+                                                        handleStatusClick(student, '조퇴' as StatusType);
                                                     }}
                                                 >
                                                     조퇴

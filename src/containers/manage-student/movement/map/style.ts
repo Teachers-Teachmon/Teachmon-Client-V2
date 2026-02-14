@@ -111,10 +111,56 @@ export const FloorTab = styled.button<{ $isSelected: boolean }>`
 
 export const SearchWrapper = styled.div`
     width: 391px;
+    position: relative;
+    z-index: 100;
 
     ${mq.mobile} {
         width: 100%;
     }
+`;
+
+export const SearchResults = styled.div`
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+`;
+
+export const SearchResultItem = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: ${colors.primary100};
+    }
+
+    &:not(:last-child) {
+        border-bottom: 1px solid ${colors.n02};
+    }
+`;
+
+export const PlaceName = styled.span`
+    font-size: 14px;
+    color: ${colors.text};
+`;
+
+export const FloorBadge = styled.span`
+    padding: 4px 8px;
+    background-color: ${colors.primary200};
+    color: ${colors.primary};
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
 `;
 
 export const ZoomControls = styled.div`

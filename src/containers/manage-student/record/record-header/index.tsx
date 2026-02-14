@@ -1,9 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import DateInput from '@/components/ui/input/date';
 import TextInput from '@/components/ui/input/text-input';
+import Dropdown from '@/components/ui/input/dropdown';
 import Button from '@/components/ui/button';
 import type { RecordHeaderProps } from '@/types/record';
+import { PERIOD_OPTIONS } from '@/constants/movement';
 import * as S from './style';
+
 
 export default function RecordHeader({
     selectedDate,
@@ -12,6 +15,8 @@ export default function RecordHeader({
     onTabChange,
     searchQuery,
     onSearchChange,
+    selectedPeriod,
+    onPeriodChange,
 }: RecordHeaderProps) {
     const navigate = useNavigate();
 
@@ -19,10 +24,23 @@ export default function RecordHeader({
         navigate('/manage');
     };
 
+    const getTitle = () => {
+        switch (activeTab) {
+            case 'movement':
+                return '이석 기록';
+            case 'leave':
+                return '이탈 기록';
+            case 'student':
+                return '학생 기록';
+            default:
+                return '기록';
+        }
+    };
+
     return (
         <>
             <S.Header>
-                <S.Title>이석기록</S.Title>
+                <S.Title>{getTitle()}</S.Title>
                 <Button text="돌아가기" onClick={handleBack} variant="confirm" />
             </S.Header>
 
@@ -55,6 +73,20 @@ export default function RecordHeader({
                         학생
                     </S.Tab>
                 </S.TabGroup>
+
+                {activeTab === 'movement' && (
+                    <S.SearchInputWrapper>
+                        <Dropdown
+                            items={PERIOD_OPTIONS}
+                            value={PERIOD_OPTIONS.find(opt => opt.value === selectedPeriod)}
+                            onChange={(option) => onPeriodChange?.(option.value)}
+                            renderItem={(option) => option.label}
+                            getItemKey={(option) => option.value}
+                            placeholder="교시 선택"
+                            customWidth="319px"
+                        />
+                    </S.SearchInputWrapper>
+                )}
 
                 {activeTab === 'student' && (
                     <S.SearchInputWrapper>

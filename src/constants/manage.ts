@@ -96,6 +96,18 @@ export const ALL_PLACES = [
 // 학생 수
 export const STUDENT_COUNT = 16;
 
+export const PERIODS = [
+    '1교시',
+    '2교시',
+    '3교시',
+    '4교시',
+    '5교시',
+    '6교시',
+    '7교시',
+    '8-9교시',
+    '10-11교시',
+];
+
 // 목업 학생 이름 리스트
 const STUDENT_NAMES = [
     '김민수', '이서연', '박지훈', '최유진',

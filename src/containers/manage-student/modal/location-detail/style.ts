@@ -145,16 +145,23 @@ export const StudentsGrid = styled.div`
   }
 `;
 
-export const StudentCard = styled.div<{ $status?: string }>`
+export const StudentCard = styled.div<{ $state?: string | null }>`
   width: 100%;
   height: 81px;
-  background: ${({ $status }) => 
-    $status === '이탈' ? '#CCBCFF' : 
-    $status === '조퇴' ? '#FFD6A5' : 
-    colors.background
-  };
-  border: 1px solid #F5F5F5;
-  border-radius: 8px;
+  background: ${({ $state }) => {
+    if ($state === 'SELF_STUDY'|| $state === 'ADDITIONAL_SELF_STUDY') return '#ECFDF3'; // 자습 - 초록
+    if ($state === 'LEAVE_SEAT') return '#F0ECFD'; // 이석 - 보라
+    if ($state === 'AWAY' || $state === 'EARLY_LEAVE') return '#FFF6E4'; // 조퇴 - 주황
+    if ($state === 'EXIT' || $state === 'EVASION') return '#FFEBEA'; // 이탈 - 빨강
+    return colors.background;
+  }};
+  border: 1px solid ${({ $state }) => {
+    if ($state === 'SELF_STUDY' || $state === 'ADDITIONAL_SELF_STUDY') return '#14BA6D'; // 자습
+    if ($state === 'LEAVE_SEAT') return '#6A1EC1'; // 이석
+    if ($state === 'AWAY' || $state === 'EARLY_LEAVE') return '#FF9000'; // 조퇴
+    if ($state === 'EXIT' || $state === 'EVASION') return '#FF938C'; // 이탈
+    return '#F5F5F5';
+  }};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,13 +171,11 @@ export const StudentCard = styled.div<{ $status?: string }>`
   overflow: visible;
 
   &:hover {
-    border-color: ${colors.primary};
-    opacity: 0.9;
+    filter: brightness(0.95);
   }
 
   ${mq.mobile} {
     height: 70px;
-    border-radius: 6px;
   }
 `;
 

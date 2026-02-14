@@ -64,7 +64,7 @@ export const TableHeader = styled.th`
         padding-left: 40px;
     }
 
-    & :last-child {
+    &:last-child {
         padding-right: 40px;
     }
 `;

@@ -9,15 +9,30 @@ interface DateInputProps {
   helperText?: string;
 }
 
-export default function DateInput({ 
-  label = '날짜', 
+export default function DateInput({
+  label = '날짜',
   value = '',
   onChange,
   error,
-  helperText 
+  helperText
 }: DateInputProps) {
   const [isFocused, setIsFocused] = useState(false);
   const hiddenInputRef = useRef<HTMLInputElement | null>(null);
+
+  const openDatePicker = () => {
+    const hiddenInput = hiddenInputRef.current;
+    if (!hiddenInput) return;
+    hiddenInput.focus();
+    if (hiddenInput.showPicker) {
+      try {
+        hiddenInput.showPicker();
+        return;
+      } catch {
+        // showPicker가 지원되지 않는 경우 무시
+      }
+    }
+    hiddenInput.click();
+  };
 
   const formatDate = (isoDate: string) => {
     if (!isoDate) return '';
@@ -46,15 +61,7 @@ export default function DateInput({
           value={displayValue}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          onClick={() => {
-            const hiddenInput = hiddenInputRef.current;
-            if (!hiddenInput) return;
-            if (hiddenInput.showPicker) {
-              hiddenInput.showPicker();
-              return;
-            }
-            hiddenInput.click();
-          }}
+          onClick={openDatePicker}
         />
 
         <S.HiddenDateInput

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LegendPopup from '../question-popup';
+import LegendPopup from '../../question-popup';
 import { useDevice } from '@/hooks/useDevice';
 import * as S from './style';
 
@@ -9,7 +9,7 @@ interface HeaderRightProps {
     onMapToggle: () => void;
 }
 
-export default function HeaderRight({ isMapEnabled, onMapToggle }: HeaderRightProps) {
+export default function ActionBar({ isMapEnabled, onMapToggle }: HeaderRightProps) {
     const [isLegendOpen, setIsLegendOpen] = useState(false);
     const navigate = useNavigate();
     const { isMobile } = useDevice();
