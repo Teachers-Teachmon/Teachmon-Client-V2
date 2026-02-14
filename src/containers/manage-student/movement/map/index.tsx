@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useQuery } from '@tanstack/react-query';
-import { useCreateLeaveSeatMutation } from '@/services/movement/movement.mutation';
+import { useCreateLeaveSeatMutation, useUpdateLeaveSeatMutation } from '@/services/movement/movement.mutation';
 import { searchPlaces } from '@/services/search/search.api';
 import { placeQuery } from '@/services/search/search.query';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -22,11 +22,16 @@ interface MovementMapProps {
 
 export default function MovementMap({ onBack, formData }: MovementMapProps) {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const isEditMode = searchParams.get('edit') === 'true';
+    const editId = searchParams.get('id');
+    
     const [selectedFloor, setSelectedFloor] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const [highlightedPlace, setHighlightedPlace] = useState('');
 
     const { mutateAsync: createLeaveSeat } = useCreateLeaveSeatMutation();
+    const { mutateAsync: updateLeaveSeat } = useUpdateLeaveSeatMutation();
     
     const isFullPeriod = formData.period === 'EIGHT_TO_ELEVEN_PERIOD';
     
@@ -69,25 +74,41 @@ export default function MovementMap({ onBack, formData }: MovementMapProps) {
                     return;
                 }
                 
-                if (isFullPeriod) {
-                    // 8~11교시: 8~9교시, 10~11교시 두 번 생성
-                    await createLeaveSeat({
-                        ...formData,
-                        period: 'EIGHT_AND_NINE_PERIOD',
-                        place_id: place.id,
+                if (isEditMode && editId) {
+                    // 수정 모드: 모든 필드 전송
+                    await updateLeaveSeat({
+                        leaveseatId: editId,
+                        data: {
+                            day: formData.day,
+                            period: formData.period,
+                            place: place.id,
+                            cause: formData.cause,
+                            students: formData.students,
+                        }
                     });
-                    await createLeaveSeat({
-                        ...formData,
-                        period: 'TEN_AND_ELEVEN_PERIOD',
-                        place_id: place.id,
-                    });
+                    toast.success('이석이 수정되었습니다.');
                 } else {
-                    await createLeaveSeat({
-                        ...formData,
-                        place_id: place.id,
-                    });
+                    // 생성 모드
+                    if (isFullPeriod) {
+                        // 8~11교시: 8~9교시, 10~11교시 두 번 생성
+                        await createLeaveSeat({
+                            ...formData,
+                            period: 'EIGHT_AND_NINE_PERIOD',
+                            place_id: place.id,
+                        });
+                        await createLeaveSeat({
+                            ...formData,
+                            period: 'TEN_AND_ELEVEN_PERIOD',
+                            place_id: place.id,
+                        });
+                    } else {
+                        await createLeaveSeat({
+                            ...formData,
+                            place_id: place.id,
+                        });
+                    }
+                    toast.success('이석이 작성되었습니다.');
                 }
-                toast.success('이석이 작성되었습니다.');
                 navigate('/manage/record');
             } catch (error) {
                 console.error(error);

@@ -27,6 +27,11 @@ export const Header = styled.div<{ isMapEnabled?: boolean }>`
   align-items: ${({ isMapEnabled }) => isMapEnabled ? 'flex-start' : 'center'};
   position: relative;
   z-index: 1;
+  pointer-events: none;
+  
+  & > * {
+    pointer-events: auto;
+  }
   
   ${mq.mobile}{
     padding: 16px;

@@ -31,7 +31,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
     const [selectedStudents, setSelectedStudents] = useState<Array<{ id: number; display: string }>>(
         savedFormData?.studentDetails ||
         initialData?.students.map(student => ({
-            id: student.number,
+            id: student.id,
             display: `${student.number} ${student.name}`,
         })) || []
     );
@@ -45,7 +45,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
             setReason(initialData.cause || '');
             setSelectedStudents(
                 initialData.students.map(student => ({
-                    id: student.number,
+                    id: student.id,
                     display: `${student.number} ${student.name}`,
                 }))
             );

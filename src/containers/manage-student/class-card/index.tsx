@@ -10,7 +10,7 @@ interface Student {
     number: number;
     name: string;
     state?: StudentState | null;
-    scheduleId?: number;
+    scheduleId?: string;
 }
 
 interface ClassCardProps {
@@ -18,7 +18,7 @@ interface ClassCardProps {
     students: Student[];
     selectedStudentId: number | null;
     onStudentSelect: (id: number | null) => void;
-    onStatusChange?: (scheduleId: number, status: StatusType, currentState?: StudentState | null) => void;
+    onStatusChange?: (scheduleId: string, status: StatusType, currentState?: StudentState | null) => void;
     isLoading?: boolean;
 }
 

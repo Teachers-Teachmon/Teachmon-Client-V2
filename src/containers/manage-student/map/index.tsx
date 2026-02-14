@@ -17,7 +17,7 @@ interface MapProps {
     placesData?: PlaceStatus[];
     selectedDate?: string;
     selectedPeriod?: Period;
-    onStatusChange?: (scheduleId: number, status: StatusType, currentState?: StudentState | null) => void;
+    onStatusChange?: (scheduleId: string, status: StatusType, currentState?: StudentState | null) => void;
 }
 
 export default function Map({ selectedFloor, highlightedPlace, placesData, selectedDate, selectedPeriod, onStatusChange }: MapProps) {
@@ -131,12 +131,7 @@ export default function Map({ selectedFloor, highlightedPlace, placesData, selec
             <LocationDetail
                 isOpen={isModal}
                 locationName={placeSchedule?.place_name || ''}
-                students={placeSchedule?.students.map((s) => ({
-                    studentNumber: s.number,
-                    studentName: s.name,
-                    scheduleId: s.schedule_id,
-                    state: s.state,
-                })) || []}
+                students={placeSchedule?.students || []}
                 onClose={handleModalClose}
                 onStatusChange={onStatusChange}
             />

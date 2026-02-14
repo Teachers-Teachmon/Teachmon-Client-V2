@@ -29,7 +29,7 @@ export default function Manage() {
     const { changeStatus } = useStudentStatus();
 
     // 학생 상태 변경 핸들러
-    const handleStatusChange = (scheduleId: number, status: StatusType, currentState?: StudentState | null) => {
+    const handleStatusChange = (scheduleId: string, status: StatusType, currentState?: StudentState | null) => {
         changeStatus(scheduleId, status, currentState);
         setSelectedStudentId(null);
     };
