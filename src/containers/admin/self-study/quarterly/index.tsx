@@ -1,12 +1,17 @@
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import * as S from './style';
 import Dropdown from '@/components/ui/input/dropdown';
 import { DAY_LABELS, PERIOD_OPTIONS } from '@/constants/adminSelfStudy';
+import type { SelfStudyPeriod, SelfStudyQuarterlyItem } from '@/types/selfStudy';
+import { useSelfStudyQuarterlyQuery } from '@/services/admin/selfStudy/adminSelfStudy.query';
+import { useUpdateSelfStudyQuarterlyMutation } from '@/services/admin/selfStudy/adminSelfStudy.mutation';
+import { getApiErrorMessage } from '@/utils/error';
+import { API_DAY_TO_UI, API_TO_PERIOD, DAY_ORDER, PERIOD_TO_API, type DayOfWeek, UI_DAY_TO_API } from '@/utils/selfStudy';
 import plusIcon from '/icons/admin-self-study/plus.svg';
 import minusIcon from '/icons/admin-self-study/minus.svg';
 
-type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu';
 type Grade = 1 | 2 | 3;
 type Quarter = 1 | 2 | 3 | 4;
 
@@ -31,19 +36,61 @@ const QUARTER_OPTIONS: Quarter[] = [1, 2, 3, 4];
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
 const createInitialSchedule = (): DaySchedule[] => {
-  const days: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu'];
-  return days.map(day => ({
+  return DAY_ORDER.map(day => ({
     day,
     label: DAY_LABELS[day],
     periods: [],
   }));
 };
 
+const mapQuarterlyDataToSchedules = (data?: SelfStudyQuarterlyItem[]): DaySchedule[] => {
+  if (!data) return createInitialSchedule();
+
+  const scheduleMap = new Map<DayOfWeek, string[]>();
+  DAY_ORDER.forEach((day) => scheduleMap.set(day, []));
+
+  data.forEach((item) => {
+    const uiDay = API_DAY_TO_UI[item.week_day];
+    if (!uiDay) return;
+    const mappedPeriods = item.periods
+      .map((period) => API_TO_PERIOD[period])
+      .filter((period) => PERIOD_OPTIONS.includes(period));
+    scheduleMap.set(uiDay, mappedPeriods);
+  });
+
+  return DAY_ORDER.map((day) => ({
+    day,
+    label: DAY_LABELS[day],
+    periods: (scheduleMap.get(day) ?? []).map((value) => ({
+      id: generateId(),
+      value,
+    })),
+  }));
+};
+
 const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySection(_props, ref) {
   const navigate = useNavigate();
+  const currentYear = new Date().getFullYear();
   const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(1);
   const [selectedGrade, setSelectedGrade] = useState<Grade>(1);
   const [schedules, setSchedules] = useState<DaySchedule[]>(() => createInitialSchedule());
+
+  const {
+    data: quarterlyData,
+    error: quarterlyError,
+    isError: isQuarterlyError,
+  } = useSelfStudyQuarterlyQuery(currentYear, selectedQuarter, selectedGrade);
+  const { mutate: updateQuarterly } = useUpdateSelfStudyQuarterlyMutation();
+
+  useEffect(() => {
+    setSchedules(mapQuarterlyDataToSchedules(quarterlyData));
+  }, [quarterlyData]);
+
+  useEffect(() => {
+    if (!isQuarterlyError) return;
+
+    toast.error(getApiErrorMessage(quarterlyError, '해당 분기의 분기 설정이 필요합니다. 분기 설정을 먼저 진행해주세요.'));
+  }, [isQuarterlyError, quarterlyError]);
 
   const handleGradeSelect = (grade: Grade) => {
     setSelectedGrade(grade);
@@ -94,7 +141,29 @@ const QuarterlySection = forwardRef<QuarterlySectionHandle>(function QuarterlySe
   };
 
   const handleSave = () => {
-    console.log('저장:', { selectedQuarter, selectedGrade, schedules });
+    const payload: SelfStudyQuarterlyItem[] = schedules.map((schedule) => ({
+      week_day: UI_DAY_TO_API[schedule.day],
+      periods: schedule.periods
+        .map((period) => PERIOD_TO_API[period.value])
+        .filter((period): period is SelfStudyPeriod => !!period),
+    }));
+
+    updateQuarterly({
+      params: {
+        year: currentYear,
+        branch: selectedQuarter,
+        grade: selectedGrade,
+      },
+      payload,
+    }, {
+      onSuccess: () => {
+        toast.success('자습 설정이 저장되었습니다.');
+      },
+      onError: (error) => {
+        setSchedules(mapQuarterlyDataToSchedules(quarterlyData));
+        toast.error(getApiErrorMessage(error, '자습 설정 저장에 실패했습니다.'));
+      },
+    });
   };
 
   const handleCancel = () => {

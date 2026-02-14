@@ -1,5 +1,23 @@
 export type Grade = 1 | 2 | 3 | 'all';
 
+export type SelfStudyWeekDay = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI';
+
+export type SelfStudyPeriod =
+  | 'ONE_PERIOD'
+  | 'TWO_PERIOD'
+  | 'THREE_PERIOD'
+  | 'FOUR_PERIOD'
+  | 'FIVE_PERIOD'
+  | 'SIX_PERIOD'
+  | 'SEVEN_PERIOD'
+  | 'EIGHT_AND_NINE_PERIOD'
+  | 'TEN_AND_ELEVEN_PERIOD';
+
+export interface SelfStudyQuarterlyItem {
+  week_day: SelfStudyWeekDay;
+  periods: SelfStudyPeriod[];
+}
+
 export interface SelfStudySchedule {
   id: string;
   date: Date;
@@ -20,4 +38,3 @@ export interface DetailModalProps {
   onClose: () => void;
   onDelete: (id: string) => void;
 }
-
