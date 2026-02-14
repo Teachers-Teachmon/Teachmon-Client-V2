@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { CalendarEvent } from '@/types/calendar';
-import type { ExchangeRequest } from '@/types/home';
+import type { ExchangeRequest } from '@/types/supervision';
 import { SAMPLE_DATA, CURRENT_TEACHER_ID } from '@/constants/supervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
 

@@ -2,17 +2,18 @@ import { useState, useEffect } from 'react';
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
 import { useDevice } from '@/hooks/useDevice';
-import type { ExchangeRequest } from '@/types/home';
+import type { ExchangeRequest } from '@/types/supervision';
 import { formatDateFull, formatSupervisionType } from '@/utils/format';
 import * as S from './style';
 
 interface ExchangeDetailModalProps {
     isOpen: boolean;
     exchange: ExchangeRequest | null;
-    currentTeacherId: number;
+    currentTeacherId: number | string;
     onClose: () => void;
     onAccept: () => void;
     onReject: () => void;
+    onCheck?: () => void;
     onSubmit?: (reason: string) => void;
 }
 
@@ -23,6 +24,7 @@ export default function ExchangeDetailModal({
     onClose,
     onAccept,
     onReject,
+    onCheck,
     onSubmit,
 }: ExchangeDetailModalProps) {
     const [reason, setReason] = useState('');
@@ -36,8 +38,9 @@ export default function ExchangeDetailModal({
 
     if (!exchange) return null;
 
-    const isReceiver = exchange.requestor.teacher.id === currentTeacherId;
+    const isReceiver = String(exchange.responser.teacher.id) === String(currentTeacherId);
     const isPending = exchange.status === 'PENDING';
+    const isDecided = exchange.status === 'ACCEPTED' || exchange.status === 'REJECTED';
     const isCreating = !!onSubmit;
 
     const getModalTitle = () => {
@@ -137,7 +140,12 @@ export default function ExchangeDetailModal({
                     ) : (
                         <>
                             <Button variant="cancel" text="취소" onClick={onClose} width="50%" />
-                            <Button variant="confirm" text="확인" onClick={onClose} width="50%" />
+                            <Button
+                                variant="confirm"
+                                text="확인"
+                                onClick={isDecided && onCheck ? onCheck : onClose}
+                                width="50%"
+                            />
                         </>
                     )}
                 </S.ButtonContainer>

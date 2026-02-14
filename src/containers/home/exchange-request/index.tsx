@@ -1,5 +1,5 @@
 import * as S from './style';
-import type { ExchangeRequest } from '@/types/home';
+import type { ExchangeRequest } from '@/types/supervision';
 import {
     formatDate,
     formatSupervisionType,
@@ -9,12 +9,14 @@ import {
 
 interface ExchangeRequestSectionProps {
     exchanges: ExchangeRequest[];
-    currentTeacherId: number;
+    isLoading: boolean;
+    currentTeacherId: number | string;
     onOpenModal: (exchange: ExchangeRequest) => void;
 }
 
 export default function ExchangeRequestSection({
     exchanges,
+    isLoading,
     currentTeacherId,
     onOpenModal,
 }: ExchangeRequestSectionProps) {
@@ -22,7 +24,9 @@ export default function ExchangeRequestSection({
         <S.SectionCard>
             <S.SectionTitle>교체 요청</S.SectionTitle>
             <S.SectionContent>
-                {exchanges.length > 0 ? (
+                {isLoading ? (
+                    <S.EmptyMessage>교체 요청을 불러오는 중입니다...</S.EmptyMessage>
+                ) : exchanges.length > 0 ? (
                     <>
                         <S.ExchangeHeader>
                             <S.ExchangeHeaderText>받는 사람</S.ExchangeHeaderText>
@@ -34,10 +38,10 @@ export default function ExchangeRequestSection({
                                 <S.ExchangeRow key={exchange.id}>
                                     <S.ExchangeItem status={getStatusStyle(exchange.status)}>
                                         <S.ExchangeItemLabel status={getStatusStyle(exchange.status)}>
-                                            {getDisplayName(exchange.requestor.teacher.id, exchange.requestor.teacher.name, currentTeacherId)}
+                                            {getDisplayName(exchange.responser.teacher.id, exchange.responser.teacher.name, currentTeacherId)}
                                         </S.ExchangeItemLabel>
                                         <S.ExchangeItemText status={getStatusStyle(exchange.status)}>
-                                            {formatDate(exchange.requestor.day)} {formatSupervisionType(exchange.requestor.type)}
+                                            {formatDate(exchange.responser.day)} {formatSupervisionType(exchange.responser.type)}
                                         </S.ExchangeItemText>
                                     </S.ExchangeItem>
                                     <S.ExchangeIcon>
@@ -48,10 +52,10 @@ export default function ExchangeRequestSection({
                                     </S.ExchangeIcon>
                                     <S.ExchangeItem status={getStatusStyle(exchange.status)}>
                                         <S.ExchangeItemLabel status={getStatusStyle(exchange.status)}>
-                                            {getDisplayName(exchange.responser.teacher.id, exchange.responser.teacher.name, currentTeacherId)}
+                                            {getDisplayName(exchange.requestor.teacher.id, exchange.requestor.teacher.name, currentTeacherId)}
                                         </S.ExchangeItemLabel>
                                         <S.ExchangeItemText status={getStatusStyle(exchange.status)}>
-                                            {formatDate(exchange.responser.day)} {formatSupervisionType(exchange.responser.type)}
+                                            {formatDate(exchange.requestor.day)} {formatSupervisionType(exchange.requestor.type)}
                                         </S.ExchangeItemText>
                                     </S.ExchangeItem>
                                 </S.ExchangeRow>
