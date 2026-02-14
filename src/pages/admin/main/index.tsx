@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import { formatDateShort, formatPeriod } from '@/utils/format';
 
 export default function AdminMain() {
-    const { data: supervisionData, isError: isSupervisionError } = useQuery(supervisionQuery.rank());
+    const { data: supervisionData, isError: isSupervisionError, isLoading: isSupervisionLoading } = useQuery(supervisionQuery.rank());
     const { data: exitHistoryData, isError: isExitHistoryError } = useQuery(manageQuery.weeklyExitHistory());
     const { data: branchData, isError: isBranchError } = useQuery(branchQuery.list());
     
@@ -84,6 +84,7 @@ export default function AdminMain() {
                     <SupervisorRanking 
                         ranking={supervisorRanking} 
                         isError={isSupervisionError}
+                        isLoading={isSupervisionLoading}
                     />
                 </S.Row>
                 {/* 두 번째 행: 이탈학생 + 분기설정 */}

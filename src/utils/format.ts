@@ -33,8 +33,10 @@ export const formatPeriod = (period: PeriodType | string): string => {
   const periodMap: Record<string, string> = {
     SEVEN_PERIOD: '7교시',
     EIGHT_PERIOD: '8교시',
+    EIGHT_AND_NINE_PERIOD: '8~9교시',
     NINE_PERIOD: '9교시',
     TEN_PERIOD: '10교시',
+    TEN_AND_ELEVEN_PERIOD: '10~11교시',
   };
   return periodMap[period] || period;
 };

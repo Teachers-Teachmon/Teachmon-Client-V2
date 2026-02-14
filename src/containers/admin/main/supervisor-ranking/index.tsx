@@ -11,10 +11,11 @@ export interface SupervisorRankingItem {
 interface SupervisorRankingProps {
   ranking: SupervisorRankingItem[];
   isError?: boolean;
+  isLoading?: boolean;
 }
 
-export default function SupervisorRanking({ ranking, isError }: SupervisorRankingProps) {
-  const showEmpty = isError || ranking.length === 0;
+export default function SupervisorRanking({ ranking, isError, isLoading }: SupervisorRankingProps) {
+  const showEmpty = isError || (!isLoading && ranking.length === 0);
   const [showAll, setShowAll] = useState(false);
 
   return (
@@ -22,7 +23,9 @@ export default function SupervisorRanking({ ranking, isError }: SupervisorRankin
       <S.SectionHeader>
         <S.SectionTitle>자습감독 횟수</S.SectionTitle>
       </S.SectionHeader>
-      {showEmpty ? (
+      {isLoading ? (
+        <S.EmptyMessage>로딩중...</S.EmptyMessage>
+      ) : showEmpty ? (
         <S.EmptyMessage>데이터가 없습니다</S.EmptyMessage>
       ) : (
         <>
