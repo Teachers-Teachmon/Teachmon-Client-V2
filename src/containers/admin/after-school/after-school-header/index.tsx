@@ -39,15 +39,6 @@ const AdminAfterSchoolHeaderContainer = ({
         <S.GradeTab $active={selectedGrade === 3} onClick={() => setSelectedGrade(3)}>3학년</S.GradeTab>
       </S.GradeTabs>
     </S.LeftSection>
-    <S.HeaderButtons>
-      <TextInput
-        placeholder="구글스프레드시트"
-        value={googleSheetUrl}
-        onChange={(e) => setGoogleSheetUrl(e.target.value)}
-      />
-      <S.GoogleSheetActionButton onClick={handleGoogleSheetSync}>시트 동기화</S.GoogleSheetActionButton>
-      <S.GoogleSheetActionButton onClick={handleGoogleSheetUpload}>시트 업로드</S.GoogleSheetActionButton>
-    </S.HeaderButtons>
   </S.Header>
 );
 

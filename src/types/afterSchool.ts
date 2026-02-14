@@ -10,9 +10,12 @@ export interface AdminAfterSchoolClass {
     day: string;
     period: string;
     teacher: string;
+    teacherId: number;
     location: string;
+    placeId: number;
     subject: string;
     students: string[];
+    studentIds: number[];
 }
 
 export interface TableColumn<T> {
@@ -20,4 +23,59 @@ export interface TableColumn<T> {
   header: string | React.ReactNode;
   width?: string;
   render?: (row: T) => React.ReactNode;
+}
+
+export interface Student {
+  id?: number;
+  number: number;
+  name: string;
+}
+
+export interface Teacher {
+  id: number;
+  name: string;
+}
+
+export interface Place {
+  id: number;
+  name: string;
+}
+
+export interface AfterSchoolResponse {
+  id: number;
+  week_day: string;
+  period: string;
+  name: string;
+  teacher: Teacher;
+  place: Place;
+  students: Student[];
+}
+
+export interface AfterSchoolRequestParams {
+  grade?: number;
+  branch?: number;
+  week_day?: string;
+  start_period?: number;
+  end_period?: number;
+}
+
+export interface CreateAfterSchoolRequest {
+  grade: number;
+  week_day: string;
+  period: string;
+  teacher_id: number;
+  place_id: number;
+  name: string;
+  students_id: number[];
+}
+
+export interface UpdateAfterSchoolRequest {
+  grade: number;
+  week_day: string;
+  period: string;
+  after_school_id: number;
+  teacher_id: number;
+  place_id: number;
+  name: string;
+  students_id: number[];
 }

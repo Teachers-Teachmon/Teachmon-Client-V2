@@ -1,84 +1,114 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
-import { MOCK_ADMIN_AFTER_SCHOOL } from '@/constants/admin';
+import { ADMIN_AFTER_SCHOOL_PERIODS } from '@/constants/admin';
+import { searchQuery as searchApiQuery } from '@/services/search/search.query';
+import { createAfterSchoolClass, updateAfterSchoolClass } from '@/services/after-school/afterSchool.api';
+import { toast } from 'react-toastify';
+import type { StudentSearchResponse, PlaceSearchResponse, TeacherSearchResponse, TeamSearchResponse } from '@/types/search';
+import type { CreateAfterSchoolRequest, UpdateAfterSchoolRequest, AdminAfterSchoolClass } from '@/types/afterSchool';
 import * as S from './style';
-
-const TEACHER_OPTIONS = ['차수민', '차수민2', '차수민3', '차수민4'];
 
 
 
 interface Student {
-  id?: string;
+  id?: number | string;
   studentNumber: number;
+  name: string;
+  grade: number;
+  classNumber: number;
+}
+
+interface Teacher {
+  id: number;
   name: string;
 }
 
 export default function AfterSchoolFormPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const routerLocation = useLocation();
   const isEditMode = !!id;
+  const editData = routerLocation.state as AdminAfterSchoolClass | null;
   
-  const [teacher, setTeacher] = useState<string>('');
+  const [teacher, setTeacher] = useState<Teacher | null>(
+    isEditMode && editData ? { id: editData.teacherId, name: editData.teacher } : null
+  );
   const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
-  const [location, setLocation] = useState<string>('');
-  const [period, setPeriod] = useState<string>('');
-  const [subject, setSubject] = useState<string>('');
+  const [selectedLocation, setSelectedLocation] = useState<PlaceSearchResponse | null>(
+    isEditMode && editData ? { id: editData.placeId, name: editData.location, floor: 1 } : null
+  );
+  const [period, setPeriod] = useState<string>(editData?.period || '');
+  const [subject, setSubject] = useState<string>(editData?.subject || '');
   const [isTeamMode, setIsTeamMode] = useState(false);
-  const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
+  const [selectedStudents, setSelectedStudents] = useState<Student[]>(
+    editData?.students.map((s, idx) => {
+      const parts = s.split(' ');
+      const studentNumber = parseInt(parts[0]) || 0;
+      const name = parts.slice(1).join(' ');
+      return {
+        id: editData.studentIds?.[idx] ?? 0,
+        studentNumber,
+        name,
+        grade: editData.grade,
+        classNumber: 1,
+      };
+    }) || []
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [locationSearchQuery, setLocationSearchQuery] = useState('');
+  const { data: studentsData = [] } = useQuery({
+    ...searchApiQuery.students(searchQuery),
+    enabled: searchQuery.length > 0,
+  }) as { data: StudentSearchResponse[] };
 
-  const mockStudents: Student[] = [
-    { id: 'mock-1', studentNumber: 1402, name: '김동욱' },
-    { id: 'mock-2', studentNumber: 1403, name: '김동욱2' },
-    { id: 'mock-3', studentNumber: 1404, name: '김동욱3' },
-    { id: 'mock-4', studentNumber: 1405, name: '김동욱4' },
-    { id: 'mock-5', studentNumber: 1406, name: '김동욱5' },
-  ];
+  const { data: placesData = [] } = useQuery({
+    ...searchApiQuery.places(locationSearchQuery),
+    enabled: locationSearchQuery.length > 0,
+  }) as { data: PlaceSearchResponse[] };
 
-  const mockLocationNames: string[] = [
-    '객체지향 프로그래밍',
-    '파이썬을 이용한 문제해결',
-    '스프링 수업',
-    '1학년 1반',
-    '1학년 2반',
-    '음악실',
-  ];
+  const { data: teachersData = [] } = useQuery({
+    ...searchApiQuery.teachers(teacherSearchQuery),
+    enabled: teacherSearchQuery.length > 0,
+  }) as { data: TeacherSearchResponse[] };
 
-  useEffect(() => {
-    if (isEditMode) {
-      const classData = MOCK_ADMIN_AFTER_SCHOOL.find(c => c.id === id);
-      if (classData) {
-        setTeacher(classData.teacher);
-        setLocation(classData.location);
-        setPeriod(classData.period || '');
-        setSubject(classData.subject);
-        const students = classData.students.map((studentStr, idx) => {
-          const parts = studentStr.split(' ');
-          const studentNumber = parseInt(parts[0]) || 1410 + idx * 10;
-          const name = parts.slice(1).join(' ') || studentStr;
-          return {
-            id: `existing-${idx}`,
-            studentNumber,
-            name,
-          };
-        });
-        setSelectedStudents(students);
-      }
+  const { data: teamsData = [] } = useQuery({
+    ...searchApiQuery.teams(searchQuery),
+    enabled: searchQuery.length > 0 && isTeamMode,
+  }) as { data: TeamSearchResponse[] };
+
+  const handleAddStudent = (student: StudentSearchResponse | TeamSearchResponse) => {
+    if ('members' in student) {
+      const newStudents: Student[] = student.members.map(member => ({
+        id: member.id,
+        studentNumber: member.number,
+        name: member.name,
+        grade: member.grade,
+        classNumber: member.classNumber,
+      }));
+      setSelectedStudents([...selectedStudents, ...newStudents]);
+    } else {
+      const newStudent: Student = {
+        id: student.id,
+        studentNumber: student.number,
+        name: student.name,
+        grade: student.grade,
+        classNumber: student.classNumber,
+      };
+      setSelectedStudents([...selectedStudents, newStudent]);
     }
-  }, [id, isEditMode]);
-
-  const handleAddStudent = (student: Student) => {
-    const newStudent = {
-      ...student,
-      id: `new-${Date.now()}-${Math.random()}`,
-    };
-    setSelectedStudents([...selectedStudents, newStudent]);
     setSearchQuery('');
+  };
+
+  const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
+    const name = student.name;
+    const number = 'number' in student ? student.number : (student as Student).studentNumber;
+  
+    return `${number} ${name}`;
   };
 
   const handleRemoveStudent = (studentId: string) => {
@@ -89,17 +119,45 @@ export default function AfterSchoolFormPage() {
     navigate('/admin/after-school');
   };
 
-  const handleSubmit = () => {
-    console.log({
-      id: isEditMode ? id : undefined,
-      teacher,
-      location,
-      period,
-      subject,
-      isTeamMode,
-      students: selectedStudents,
-    });
-    navigate('/admin/after-school');
+  const handleSubmit = async () => {
+    if (!teacher || !selectedLocation || !period || !subject || selectedStudents.length === 0) {
+      toast.error('모든 필드를 채워주세요.');
+      return;
+    }
+
+    try {
+      if (isEditMode) {
+        const requestData: UpdateAfterSchoolRequest = {
+          grade: selectedStudents[0].grade,
+          week_day: 'MON',
+          period: period === '8~9교시' ? 'EIGHT_AND_NINE_PERIOD' : period === '10~11교시' ? 'TEN_AND_ELEVEN_PERIOD' : 'SEVEN_AND_EIGHT_PERIOD',
+          after_school_id: Number(id),
+          teacher_id: teacher.id,
+          place_id: selectedLocation.id,
+          name: subject,
+          students_id: selectedStudents.map(s => s.id as number),
+        };
+
+        await updateAfterSchoolClass(requestData);
+        toast.success('방과후가 성공적으로 수정되었습니다.');
+      } else {
+        const requestData: CreateAfterSchoolRequest = {
+          grade: selectedStudents[0].grade,
+          week_day: 'MON',
+          period: period === '8~9교시' ? 'EIGHT_AND_NINE_PERIOD' : period === '10~11교시' ? 'TEN_AND_ELEVEN_PERIOD' : 'SEVEN_AND_EIGHT_PERIOD',
+          teacher_id: teacher.id,
+          place_id: selectedLocation.id,
+          name: subject,
+          students_id: selectedStudents.map(s => s.id as number),
+        };
+
+        await createAfterSchoolClass(requestData);
+        toast.success('방과후가 성공적으로 생성되었습니다.');
+      }
+      navigate('/admin/after-school');
+    } catch (error) {
+      toast.error(isEditMode ? '방과후 수정에 실패했습니다.' : '방과후 생성에 실패했습니다.');
+    }
   };
 
   return (
@@ -112,9 +170,12 @@ export default function AfterSchoolFormPage() {
             <S.SectionTitle>담당 교사</S.SectionTitle>
             <SearchDropdown
               placeholder="교사"
-              items={TEACHER_OPTIONS.filter((t) => t.includes(teacherSearchQuery))}
-              value={teacher}
-              onChange={setTeacher}
+              items={teachersData.map((t: TeacherSearchResponse) => t.name)}
+              value={teacher?.name || ''}
+              onChange={(value) => {
+                const teacher = teachersData.find((t: TeacherSearchResponse) => t.name === value);
+                setTeacher(teacher || null);
+              }}
               searchQuery={teacherSearchQuery}
               onSearchChange={setTeacherSearchQuery}
             />
@@ -125,9 +186,12 @@ export default function AfterSchoolFormPage() {
             <S.SectionTitle>장소</S.SectionTitle>
             <SearchDropdown
               placeholder="장소"
-              items={mockLocationNames}
-              value={location}
-              onChange={setLocation}
+              items={placesData.map((p: PlaceSearchResponse) => p.name)}
+              value={selectedLocation?.name || ''}
+              onChange={(value) => {
+                const place = placesData.find((p: PlaceSearchResponse) => p.name === value);
+                setSelectedLocation(place || null);
+              }}
               searchQuery={locationSearchQuery}
               onSearchChange={setLocationSearchQuery}
             />
@@ -137,7 +201,7 @@ export default function AfterSchoolFormPage() {
             <S.SectionTitle>교시</S.SectionTitle>
             <Dropdown
               placeholder="교시 선택"
-              items={["8~9교시", "10~11교시"]}
+              items={[...ADMIN_AFTER_SCHOOL_PERIODS]}
               value={period}
               onChange={setPeriod}
               customWidth="100%"
@@ -157,7 +221,7 @@ export default function AfterSchoolFormPage() {
             <S.ToggleRow>
               <S.SectionTitle>학생</S.SectionTitle>
               <S.ToggleContent>
-                <S.SectionTitle>반</S.SectionTitle>
+                <S.SectionTitle>팀</S.SectionTitle>
                 <S.Toggle
                   $active={isTeamMode}
                   onClick={() => setIsTeamMode(!isTeamMode)}
@@ -183,23 +247,35 @@ export default function AfterSchoolFormPage() {
 
               {searchQuery && (
                 <S.StudentDropdown>
-                  {mockStudents
-                    .filter(student => 
-                      `${student.studentNumber} ${student.name}`.includes(searchQuery)
-                    )
-                    .filter(student => 
-                      !selectedStudents.find(s => s.studentNumber === student.studentNumber)
-                    )
-                    .slice(0, 3)
-                    .map((student) => (
-                      <S.StudentDropdownItem 
-                        key={student.studentNumber}
-                        onClick={() => handleAddStudent(student)}
-                      >
-                        {student.studentNumber} {student.name}
-                      </S.StudentDropdownItem>
-                    ))
-                  }
+                  {isTeamMode ? (
+                    teamsData
+                      .filter((team: TeamSearchResponse) => 
+                        !selectedStudents.find(s => s.id?.toString().includes(team.id))
+                      )
+                      .slice(0, 3)
+                      .map((team: TeamSearchResponse) => (
+                        <S.StudentDropdownItem 
+                          key={team.id}
+                          onClick={() => handleAddStudent(team)}
+                        >
+                          {team.name} ({team.members.length}명)
+                        </S.StudentDropdownItem>
+                      ))
+                  ) : (
+                    studentsData
+                      .filter((student: StudentSearchResponse) => 
+                        !selectedStudents.find(s => s.studentNumber === student.number)
+                      )
+                      .slice(0, 3)
+                      .map((student: StudentSearchResponse) => (
+                        <S.StudentDropdownItem 
+                          key={student.id}
+                          onClick={() => handleAddStudent(student)}
+                        >
+                          {formatStudentDisplay(student)}
+                        </S.StudentDropdownItem>
+                      ))
+                  )}
                 </S.StudentDropdown>
               )}
             </S.DropdownWrapper>
@@ -210,10 +286,10 @@ export default function AfterSchoolFormPage() {
               {selectedStudents.map((student) => (
                 <S.StudentCard key={student.id || student.studentNumber}>
                   <S.StudentInfo>
-                    <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
-                    <S.StudentName>{student.name}</S.StudentName>
+                    <S.StudentNumber>{formatStudentDisplay(student).split(' ')[0]}</S.StudentNumber>
+                    <S.StudentName>{formatStudentDisplay(student).split(' ').slice(1).join(' ')}</S.StudentName>
                   </S.StudentInfo>
-                  <S.RemoveButton onClick={() => handleRemoveStudent(student.id || String(student.studentNumber))}>
+                  <S.RemoveButton onClick={() => handleRemoveStudent(String(student.id || student.studentNumber))}>
                     <img src="/icons/common/x.svg" alt="삭제" width={20} height={20} />
                   </S.RemoveButton>
                 </S.StudentCard>
