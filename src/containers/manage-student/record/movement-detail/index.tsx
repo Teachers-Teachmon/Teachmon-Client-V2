@@ -1,6 +1,6 @@
 import Modal from '@/components/layout/modal';
 import { useDevice } from '@/hooks/useDevice';
-import type { LeaveSeatStudent } from '@/services/movement/movement.api';
+import type { LeaveSeatStudent } from '@/types/movement';
 
 import * as S from './style';
 

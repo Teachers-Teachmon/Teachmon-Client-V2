@@ -1,5 +1,5 @@
-import type { LeaveSeat } from '@/services/movement/movement.api';
-import type { EvasionRecord, ScheduleHistoryRecord } from '@/services/manage/manage.api';
+import type { LeaveSeat } from '@/types/movement';
+import type { EvasionRecord, ScheduleHistoryRecord } from '@/types/manage';
 import type { Period } from '@/constants/movement';
 
 export type RecordTabType = 'movement' | 'leave' | 'student';

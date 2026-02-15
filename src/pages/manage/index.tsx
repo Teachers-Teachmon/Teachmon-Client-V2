@@ -5,13 +5,13 @@ import ClassCard from '@/containers/manage-student/class-card';
 import Map from '@/containers/manage-student/map';
 
 import { manageQuery } from '@/services/manage/manage.query';
-import type { StudentSchedule } from '@/services/manage/manage.api';
+import type { StudentSchedule } from '@/types/manage';
 import { useStudentStatus } from '@/hooks/useStudentStatus';
 import { CLASSES } from '@/constants/manage';
 import { PERIOD_MAP, getCurrentPeriod, PERIOD_TO_KOREAN } from '@/utils/period';
 import { getTodayISO } from '@/utils/format';
 import type { StatusType } from '@/components/ui/status';
-import type { StudentState } from '@/services/manage/manage.api';
+import type { StudentState } from '@/types/manage';
 
 import * as S from './style';
 
