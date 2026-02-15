@@ -11,7 +11,7 @@ export default function Loading(){
 }
 
 const Container = styled.div`
-    z-index: ${zIndex.overlay};
+    z-index: ${zIndex.modal + 100};
     position: fixed;
     top: 0;
     left: 0;
