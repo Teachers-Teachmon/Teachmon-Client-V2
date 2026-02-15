@@ -8,11 +8,13 @@ export interface QuarterSettingItem {
   endDate: string;
   rawStartDate?: string; // YYYY-MM-DD 형식
   rawEndDate?: string; // YYYY-MM-DD 형식
+  afterSchoolEndDate?: string; // 방과후 종료일
+  rawAfterSchoolEndDate?: string;
 }
 
 interface QuarterSettingsProps {
   quarters: QuarterSettingItem[];
-  onCreateBranch: (quarter: number, startDate: string, endDate: string) => void;
+  onCreateBranch: (quarter: number, startDate: string, endDate: string, afterSchoolEndDate?: string) => void;
   isError?: boolean;
 }
 
@@ -27,9 +29,9 @@ export default function QuarterSettings({ quarters, onCreateBranch, isError }: Q
     setIsModalOpen(false);
   };
 
-  const handleConfirm = (quarter: string, startDate: string, endDate: string) => {
+  const handleConfirm = (quarter: string, startDate: string, endDate: string, afterSchoolEndDate?: string) => {
     const quarterNumber = parseInt(quarter.replace('분기', ''));
-    onCreateBranch(quarterNumber, startDate, endDate);
+    onCreateBranch(quarterNumber, startDate, endDate, afterSchoolEndDate);
   };
 
   return (
@@ -50,17 +52,22 @@ export default function QuarterSettings({ quarters, onCreateBranch, isError }: Q
               return (
                 <S.QuarterRow key={quarterNum}>
                   <S.QuarterName>{quarterNum}분기</S.QuarterName>
-                  <S.QuarterDates>
-                    {quarterData ? (
-                      <>
-                        <span>{quarterData.startDate}</span>
-                        <span className="to">to</span>
-                        <span>{quarterData.endDate}</span>
-                      </>
-                    ) : (
-                      <span>X</span>
-                    )}
-                  </S.QuarterDates>
+                  <S.QuarterDatesContainer>
+                    <S.QuarterDates>
+                      {quarterData ? (
+                        <>
+                          <span>{quarterData.startDate}</span>
+                          <span className="to">to</span>
+                          <span>{quarterData.endDate}</span>
+                        </>
+                      ) : (
+                        <span>X</span>
+                      )}
+                    </S.QuarterDates>
+                    <S.AfterSchoolEndDate>
+                      방과후 종료일: {quarterData?.afterSchoolEndDate || 'X'}
+                    </S.AfterSchoolEndDate>
+                  </S.QuarterDatesContainer>
                 </S.QuarterRow>
               );
             })}
@@ -75,7 +82,8 @@ export default function QuarterSettings({ quarters, onCreateBranch, isError }: Q
         existingQuarters={quarters.map(q => ({
           quarter: q.quarter,
           startDate: q.rawStartDate || q.startDate,
-          endDate: q.rawEndDate || q.endDate
+          endDate: q.rawEndDate || q.endDate,
+          afterSchoolEndDate: q.rawAfterSchoolEndDate || q.afterSchoolEndDate
         }))}
       />
     </>

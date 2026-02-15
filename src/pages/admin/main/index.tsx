@@ -33,11 +33,12 @@ export default function AdminMain() {
         });
     };
 
-    const handleCreateBranch = (quarter: number, startDate: string, endDate: string) => {
+    const handleCreateBranch = (quarter: number, startDate: string, endDate: string, afterSchoolEndDate?: string) => {
         createBranchMutation.mutate({
             number: quarter,
             start_day: startDate,
             end_day: endDate,
+            after_school_end_day: afterSchoolEndDate,
         }, {
             onSuccess: () => {
                 toast.success('분기가 설정되었습니다.');
@@ -73,6 +74,10 @@ export default function AdminMain() {
         endDate: new Date(item.end_day).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }),
         rawStartDate: item.start_day,
         rawEndDate: item.end_day,
+        afterSchoolEndDate: item.after_school_end_day 
+            ? new Date(item.after_school_end_day).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' })
+            : undefined,
+        rawAfterSchoolEndDate: item.after_school_end_day,
     })) || [];
 
     return (

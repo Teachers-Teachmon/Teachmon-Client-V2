@@ -10,8 +10,13 @@ import * as S from './style';
 interface QuarterSettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (quarter: string, startDate: string, endDate: string) => void;
-    existingQuarters?: Array<{ quarter: number; startDate: string; endDate: string }>;
+    onConfirm: (quarter: string, startDate: string, endDate: string, afterSchoolEndDate?: string) => void;
+    existingQuarters?: Array<{ 
+        quarter: number; 
+        startDate: string; 
+        endDate: string;
+        afterSchoolEndDate?: string;
+    }>;
 }
 
 const QUARTER_OPTIONS = ['1분기', '2분기', '3분기', '4분기'];
@@ -25,6 +30,7 @@ export default function QuarterSettingsModal({
     const [selectedQuarter, setSelectedQuarter] = useState<string>('');
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
+    const [afterSchoolEndDate, setAfterSchoolEndDate] = useState<string>('');
     const { isMobile } = useDevice();
 
     const handleQuarterChange = (quarter: string) => {
@@ -37,15 +43,17 @@ export default function QuarterSettingsModal({
         if (existingQuarter) {
             setStartDate(existingQuarter.startDate);
             setEndDate(existingQuarter.endDate);
+            setAfterSchoolEndDate(existingQuarter.afterSchoolEndDate || '');
         } else {
             setStartDate('');
             setEndDate('');
+            setAfterSchoolEndDate('');
         }
     };
 
     const handleConfirm = () => {
         if (!selectedQuarter || !startDate || !endDate) {
-            toast.error('모든 항목을 입력해주세요.');
+            toast.error('분기와 기간을 입력해주세요.');
             return;
         }
 
@@ -64,6 +72,20 @@ export default function QuarterSettingsModal({
         if (start >= end) {
             toast.error('시작일은 종료일보다 이전이어야 합니다.');
             return;
+        }
+
+        // 방과후 종료일 검증
+        let formattedAfterSchoolEndDate: string | undefined;
+
+        if (afterSchoolEndDate) {
+            formattedAfterSchoolEndDate = formatDate(afterSchoolEndDate);
+            const afterSchoolEnd = new Date(formattedAfterSchoolEndDate);
+
+            // 방과후 종료일이 분기 기간 내에 있는지 확인
+            if (afterSchoolEnd < start || afterSchoolEnd > end) {
+                toast.error('방과후 종료일은 분기 기간 내에 있어야 합니다.');
+                return;
+            }
         }
 
         // 2. 선택한 분기 번호
@@ -87,7 +109,8 @@ export default function QuarterSettingsModal({
         onConfirm(
             selectedQuarter, 
             formattedStartDate, 
-            formattedEndDate
+            formattedEndDate,
+            formattedAfterSchoolEndDate
         );
         handleClose();
     };
@@ -96,6 +119,7 @@ export default function QuarterSettingsModal({
         setSelectedQuarter('');
         setStartDate('');
         setEndDate('');
+        setAfterSchoolEndDate('');
         onClose();
     };
 
@@ -114,19 +138,31 @@ export default function QuarterSettingsModal({
                         customHeight="50px"
                     />
 
-                    <S.DateRow>
+                    <S.DateSection>
+                        <S.DateLabel>분기 기간</S.DateLabel>
+                        <S.DateRow>
+                            <DateInput
+                                label="Date"
+                                value={startDate}
+                                onChange={setStartDate}
+                            />
+                            <S.DateSeparator>~</S.DateSeparator>
+                            <DateInput
+                                label="Date"
+                                value={endDate}
+                                onChange={setEndDate}
+                            />
+                        </S.DateRow>
+                    </S.DateSection>
+
+                    <S.DateSection>
+                        <S.DateLabel>방과후 종료일 (선택)</S.DateLabel>
                         <DateInput
                             label="Date"
-                            value={startDate}
-                            onChange={setStartDate}
+                            value={afterSchoolEndDate}
+                            onChange={setAfterSchoolEndDate}
                         />
-                        <S.DateSeparator>~</S.DateSeparator>
-                        <DateInput
-                            label="Date"
-                            value={endDate}
-                            onChange={setEndDate}
-                        />
-                    </S.DateRow>
+                    </S.DateSection>
                 </S.FormSection>
 
                 <S.ButtonRow>

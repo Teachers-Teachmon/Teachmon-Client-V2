@@ -4,12 +4,14 @@ export interface BranchRequest {
   number: number;
   start_day: string;
   end_day: string;
+  after_school_end_day?: string;
 }
 
 export interface BranchResponse {
   number: number;
   start_day: string;
   end_day: string;
+  after_school_end_day?: string;
 }
 
 export const createBranch = async (branchData: BranchRequest) => {
