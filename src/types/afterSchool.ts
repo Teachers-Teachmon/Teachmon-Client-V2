@@ -5,7 +5,7 @@ export interface AffordableReinforcement {
 }
 
 export interface PlaceSearchResult {
-    id: number;
+    id: string | number;
     name: string;
     floor: number;
 }

@@ -20,16 +20,15 @@ export const fetchAffordableReinforcement = async (
 };
 
 export const searchPlace = async (query: string): Promise<PlaceSearchResult[]> => {
-  const { data } = await axiosInstance.get('/search/place', { params: { query } });
+  const { data } = await axiosInstance.get('/place/search', { params: { query } });
   return data;
 };
 
 export interface ReinforcementRequestPayload {
   day: string;
-  afterschool_id: number;
-  change_start_period: number;
-  change_end_period: number;
-  change_place_id: number;
+  afterschool_id: string;
+  change_period: 'EIGHT_AND_NINE_PERIOD' | 'TEN_AND_ELEVEN_PERIOD';
+  change_place_id: string;
 }
 
 export const requestReinforcement = async (payload: ReinforcementRequestPayload) => {
