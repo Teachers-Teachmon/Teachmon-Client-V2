@@ -7,7 +7,7 @@ import { manageQuery } from '@/services/manage/manage.query';
 import { getStudentStateInfo } from '@/utils/studentState';
 import { colors } from '@/styles/theme';
 import { FLOOR_ELEMENTS_MAP, type FloorElement } from '@/constants/floorMaps';
-import type { PlaceStatus, StudentState, Period } from '@/services/manage/manage.api';
+import type { PlaceStatus, StudentState, Period } from '@/types/manage';
 import type { StatusType } from '@/components/ui/status';
 import * as S from './style';
 
@@ -26,7 +26,7 @@ export default function Map({ selectedFloor, highlightedPlace, placesData, selec
     const setPlace = useLocationStore((state) => state.setPlace);
 
     // 선택된 장소의 학생 목록 조회
-    const { data: placeSchedule } = useQuery({
+    const { data: placeSchedule, isLoading: isPlaceLoading } = useQuery({
         ...manageQuery.placeSchedule(
             selectedPlaceId!,
             selectedDate && selectedPeriod ? { day: selectedDate, period: selectedPeriod } : undefined
@@ -134,6 +134,7 @@ export default function Map({ selectedFloor, highlightedPlace, placesData, selec
                 students={placeSchedule?.students || []}
                 onClose={handleModalClose}
                 onStatusChange={onStatusChange}
+                isLoading={isPlaceLoading}
             />
         </S.Container>
     );

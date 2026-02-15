@@ -1,4 +1,4 @@
-import type { Period } from '@/services/manage/manage.api';
+import type { Period } from '@/types/manage';
 
 interface TimeRange {
   start: { hour: number; minute: number };

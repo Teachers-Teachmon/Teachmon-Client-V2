@@ -11,8 +11,8 @@ import { useDeleteEvasionMutation } from '@/services/manage/manage.mutation';
 import { useStudentStatus } from '@/hooks/useStudentStatus';
 import type { RecordTableProps } from '@/types/record';
 import type { StatusType } from '@/components/ui/status';
-import type { StudentState } from '@/services/manage/manage.api';
-import type { ScheduleHistoryRecord } from '@/services/manage/manage.api';
+import type { StudentState } from '@/types/manage';
+import type { ScheduleHistoryRecord } from '@/types/manage';
 import { useRecordTableColumns } from '@/hooks/useRecordTableColumns';
 import * as S from './style';
 

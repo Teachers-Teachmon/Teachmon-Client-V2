@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import StatusBadge from '@/components/ui/status';
 import type { StatusType } from '@/components/ui/status';
-import type { StudentState } from '@/services/manage/manage.api';
+import type { StudentState } from '@/types/manage';
 import { getStudentStateInfo } from '@/utils/studentState';
 import * as S from './style';
 

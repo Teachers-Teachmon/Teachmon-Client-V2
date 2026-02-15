@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { manageQuery } from '@/services/manage/manage.query';
 import { useDevice } from '@/hooks/useDevice';
-import type { Period } from '@/services/manage/manage.api';
+import type { Period } from '@/types/manage';
 
 import * as S from './style';
 
