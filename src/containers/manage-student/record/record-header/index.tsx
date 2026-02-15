@@ -83,7 +83,7 @@ export default function RecordHeader({
                             renderItem={(option) => option.label}
                             getItemKey={(option) => option.value}
                             placeholder="교시 선택"
-                            customWidth="319px"
+                            customWidth="250px"
                         />
                     </S.SearchInputWrapper>
                 )}
