@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import StatusBadge from '@/components/ui/status';
 import type { StatusType } from '@/components/ui/status';
 import * as S from './style';
@@ -13,18 +13,18 @@ interface Student {
 interface ClassCardProps {
     classNum: number;
     students: Student[];
+    selectedStudentId: number | null;
+    onStudentSelect: (id: number | null) => void;
 }
 
-export default function ClassCard({ classNum, students }: ClassCardProps) {
-    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
-
+export default function ClassCard({ classNum, students, selectedStudentId, onStudentSelect }: ClassCardProps) {
     useEffect(() => {
-        const handleClickOutside = () => setSelectedStudentId(null);
+        const handleClickOutside = () => onStudentSelect(null);
         if (selectedStudentId) {
             document.addEventListener('click', handleClickOutside);
         }
         return () => document.removeEventListener('click', handleClickOutside);
-    }, [selectedStudentId]);
+    }, [selectedStudentId, onStudentSelect]);
 
     const getStatusOptions = (student: Student): StatusType[] => {
         if (student.status === '조퇴' || student.status === '이탈') {
@@ -42,7 +42,7 @@ export default function ClassCard({ classNum, students }: ClassCardProps) {
                         key={student.id}
                         onClick={(e) => {
                             e.stopPropagation();
-                            setSelectedStudentId(student.id);
+                            onStudentSelect(student.id);
                         }}
                     >
                         <S.StudentNumber>{student.number}</S.StudentNumber>

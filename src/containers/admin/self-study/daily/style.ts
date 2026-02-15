@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
+import { mq } from '@/styles/media';
 
 export const Container = styled.div`
   display: flex;
@@ -7,12 +8,26 @@ export const Container = styled.div`
   padding: 2rem;
   gap: 1.5rem;
   position: relative;
+
+  ${mq.mobile} {
+    padding: 0.1rem 0;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow: visible;
+    flex: none;
+  }
 `;
 
 export const CalendarWrapper = styled.div`
   flex: 1;
   background: ${colors.background};
   border-radius: ${radius.lg};
+
+  ${mq.mobile} {
+    flex: none;
+    width: 100%;
+    min-height: auto;
+  }
 `;
 
 export const SidePanel = styled.div`
@@ -27,16 +42,25 @@ export const SidePanel = styled.div`
   align-self: flex-start;
   margin-top: 20px;
 
-  animation: slideIn 0.3s ease-out;
+  animation: slideUp 0.3s ease-out;
 
-  @keyframes slideIn {
+  ${mq.mobile} {
+    width: 100%;
+    margin-top: 0;
+    align-self: stretch;
+    padding: 0.75rem;
+    gap: 0.75rem;
+    min-height: 0;
+  }
+
+  @keyframes slideUp {
     from {
       opacity: 0;
-      transform: translateX(20px);
+      transform: translateY(15px);
     }
     to {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateY(0);
     }
   }
 `;
@@ -45,6 +69,10 @@ export const PanelSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+
+  ${mq.mobile} {
+    gap: 0.5rem;
+  }
 `;
 
 export const SectionTitle = styled.h3`
@@ -52,6 +80,10 @@ export const SectionTitle = styled.h3`
   font-weight: 600;
   color: ${colors.text};
   margin: 0;
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.Small};
+  }
 `;
 
 export const GradeTabsContainer = styled.div`
@@ -73,6 +105,11 @@ export const GradeTab = styled.button<{ $active: boolean }>`
 
   &:hover {
     background: ${props => props.$active ? colors.primary100 : colors.n02};
+  }
+
+  ${mq.mobile} {
+    padding: 0.5rem 0.75rem;
+    font-size: ${fontSizes.Small};
   }
 `;
 
@@ -107,6 +144,16 @@ export const DropdownButton = styled.button`
     width: 14px;
     height: 14px;
   }
+
+  ${mq.mobile} {
+    padding: 0.6rem 0.8rem;
+    font-size: ${fontSizes.Small};
+    
+    img {
+      width: 12px;
+      height: 12px;
+    }
+  }
 `;
 
 export const DropdownMenu = styled.div`
@@ -121,6 +168,10 @@ export const DropdownMenu = styled.div`
   overflow-y: auto;
   z-index: 10;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  ${mq.mobile} {
+    max-height: 150px;
+  }
 `;
 
 export const DropdownItem = styled.div<{ $selected: boolean }>`
@@ -137,6 +188,12 @@ export const DropdownItem = styled.div<{ $selected: boolean }>`
   &:hover {
     background: ${props => props.$selected ? colors.primary100 : colors.n02};
   }
+
+  ${mq.mobile} {
+    padding: 0.6rem 0.8rem;
+    font-size: 12px;
+    gap: 0.4rem;
+  }
 `;
 
 export const Checkbox = styled.div<{ $checked: boolean }>`
@@ -151,10 +208,20 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
   justify-content: center;
   font-size: 12px;
   flex-shrink: 0;
+
+  ${mq.mobile} {
+    width: 14px;
+    height: 14px;
+    font-size: 10px;
+  }
 `;
 
 export const ButtonWrapper = styled.div`
   margin-top: auto;
+
+  ${mq.mobile} {
+    margin-top: 1rem;
+  }
 `;
 
 export const SelectedPeriodsWrapper = styled.div`
@@ -162,6 +229,12 @@ export const SelectedPeriodsWrapper = styled.div`
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
   margin-top: 1rem;
+
+  ${mq.mobile} {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
 `;
 
 export const SelectedPeriodTag = styled.div`
@@ -174,6 +247,12 @@ export const SelectedPeriodTag = styled.div`
   color: ${colors.primary};
   font-size: 12px;
   font-weight: 500;
+
+  ${mq.mobile} {
+    padding: 0.4rem 0.6rem;
+    font-size: 11px;
+    gap: 0.3rem;
+  }
 `;
 
 export const RemovePeriodButton = styled.button`
@@ -267,5 +346,15 @@ export const DeleteButton = styled.button`
 
   &:hover {
     color: ${colors.primaryBackground};
+  }
+`;
+
+export const CancelButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+
+  ${mq.mobile} {
+    margin-bottom: 0.25rem;
   }
 `;

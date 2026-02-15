@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
 import type { ExchangeStatus } from '@/types/home';
+import { mq } from '@/styles/media';
 
 export const SectionCard = styled.div`
   flex: 1;
@@ -9,12 +10,20 @@ export const SectionCard = styled.div`
   gap: 12px;
   min-width: 0;
   min-height: 0;
+
+  ${mq.mobile} {
+    gap: 8px;
+  }
 `;
 
 export const SectionTitle = styled.h3`
   font-size: clamp(20px, 2vw, 32px);
   color: ${colors.n04};
   font-weight: 500;
+
+  ${mq.mobile} {
+    font-size: 20px;
+  }
 `;
 
 export const SectionContent = styled.div`
@@ -25,6 +34,10 @@ export const SectionContent = styled.div`
   padding: 15px;
   display: flex;
   flex-direction: column;
+
+  ${mq.mobile} {
+    padding: 12px;
+  }
 `;
 
 export const EmptyMessage = styled.div`
@@ -43,6 +56,10 @@ export const ExchangeHeader = styled.div`
   gap: 16px;
   padding: 7px 0;
   margin-bottom: 14px;
+
+  ${mq.mobile} {
+    display: none;
+  }
 `;
 
 export const ExchangeHeaderText = styled.span`
@@ -65,6 +82,10 @@ export const ExchangeList = styled.div`
   gap: 14px;
   flex: 1;
   overflow-y: auto;
+
+  ${mq.mobile} {
+    gap: 12px;
+  }
 `;
 
 export const ExchangeRow = styled.div`
@@ -72,6 +93,12 @@ export const ExchangeRow = styled.div`
   align-items: center;
   justify-content: center;
   gap: 16px;
+
+  ${mq.mobile} {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
 `;
 
 const getStatusColor = (status: ExchangeStatus) => {
@@ -100,6 +127,13 @@ export const ExchangeItem = styled.div<{ status: ExchangeStatus }>`
   flex-direction: column;
   align-items: center;
   gap: 6px;
+
+  ${mq.mobile} {
+    max-width: none;
+    width: 100%;
+    padding: 8px 10px;
+    min-height: 56px;
+  }
 `;
 
 export const ExchangeItemLabel = styled.span<{ status: ExchangeStatus }>`
@@ -125,6 +159,12 @@ export const ExchangeIcon = styled.div`
   img {
     width: 28px;
     height: 28px;
+  }
+
+  ${mq.mobile} {
+    width: 42px;
+    flex-direction: column;
+    justify-content: center;
   }
 `;
 

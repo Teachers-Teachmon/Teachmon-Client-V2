@@ -1,19 +1,17 @@
 import styled from '@emotion/styled';
+import { mq } from '@/styles/media';
 
 export const PageContainer = styled.div`
   padding: 3rem;
   height: 100vh;
   overflow: hidden;
-  box-sizing: border-box;
-  min-width: 320px;
-  
-  @media (max-width: 1400px) {
-    padding: 2rem;
-  }
-  
-  @media (max-width: 1024px) {
-    padding: 1.5rem;
-    overflow-y: auto;
+
+  ${mq.mobile} {
+    padding: 1rem;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
 `;
 
@@ -23,17 +21,16 @@ export const MainLayout = styled.div`
   gap: 2rem;
   height: 100%;
   overflow: hidden;
-  
-  @media (max-width: 1400px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-  }
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    overflow-y: auto;
+
+  ${mq.mobile} {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+    overflow: hidden;
   }
 `;
+
 
 export const LeftColumn = styled.div`
   display: flex;
@@ -42,15 +39,12 @@ export const LeftColumn = styled.div`
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  
-  @media (max-width: 1400px) {
-    gap: 6.5rem;
-  }
-  
-  @media (max-width: 1024px) {
-    gap: 2rem;
-    height: auto;
-    overflow: visible;
+
+  ${mq.mobile} {
+    gap: 1rem;
+    height: 100%;
+    overflow: hidden;
+    flex: 1;
   }
 `;
 
@@ -58,11 +52,13 @@ export const RightColumn = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
   min-height: 0;
-  
-  @media (max-width: 1024px) {
-    height: auto;
-    margin-top: 2rem;
+  overflow: hidden;
+
+  ${mq.mobile} {
+    height: 100%;
+    overflow: hidden;
+    flex: 1;
   }
 `;
+
