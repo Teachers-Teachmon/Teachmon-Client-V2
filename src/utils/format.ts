@@ -42,6 +42,13 @@ export const formatDateDisplay = (dateStr: string): string => {
   return `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
 };
 
+export const formatDateShort = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month}/${day}`;
+};
+
 export const formatSupervisionType = (type: SupervisionType | string): string => {
   return type === 'self_study' ? '자습감독' : '이석감독';
 };

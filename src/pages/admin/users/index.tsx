@@ -7,7 +7,7 @@ import ForbiddenDates from '@/containers/admin/users/forbidden-dates';
 import TextInput from '@/components/ui/input/text-input';
 import { TAB_TYPES } from '@/constants/admin';
 import { userManagementQuery } from '@/services/user-management/user-management.query';
-import { searchQuery as studentSearchQuery } from '@/services/search/search.query';
+import { studentQuery } from '@/services/search/search.query';
 import { useSetForbiddenDatesMutation } from '@/services/user-management/user-management.mutation';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { ForbiddenDay } from '@/services/user-management/user-management.api';
@@ -33,7 +33,7 @@ export default function AdminUsersPage() {
     enabled: !!selectedTeacher,
   });
   const { data: studentsData, isLoading: isStudentsLoading } = useQuery(
-    studentSearchQuery.students(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : undefined)
+    studentQuery.search(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : undefined)
   );
   const { mutate: setForbiddenDates } = useSetForbiddenDatesMutation();
 

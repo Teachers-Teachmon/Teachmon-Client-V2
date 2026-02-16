@@ -82,12 +82,6 @@ export const deleteEvasionRecord = async (exitId: number): Promise<MessageRespon
   const response = await axiosInstance.delete<MessageResponse>(`/exit/${exitId}`);
   return response.data;
 };
-
-// 이탈 기록 삭제
-export const deleteEvasionRecord = async (exitId: number): Promise<MessageResponse> => {
-  const response = await axiosInstance.delete<MessageResponse>(`/exit/${exitId}`);
-  return response.data;
-};
 export const getWeeklyExitHistory = async () => {
   const { data } = await axiosInstance.get<ExitHistoryResponse[]>('/exit/history/week');
   return data;
