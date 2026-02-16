@@ -6,7 +6,7 @@ export interface AfterSchoolSearchItem {
 }
 
 export const searchAfterSchool = async (query: string): Promise<AfterSchoolSearchItem[]> => {
-  const { data } = await axiosInstance.get('/search/afterschool', { params: { query } });
+  const { data } = await axiosInstance.get('/afterschool/search', { params: { query } });
   return data;
 };
 
@@ -16,16 +16,20 @@ export interface AffordableScheduleItem {
   end_period: number;
 }
 
+interface BusinessTripAffordableResponse {
+  dates: string[];
+}
+
 export interface FetchAffordableParams {
   month: number;
   afterschoolid: number | string;
 }
 
-export const fetchBusinessTripAffordable = async (
-  params: FetchAffordableParams
-): Promise<AffordableScheduleItem[]> => {
-  const { data } = await axiosInstance.get('/afterschool/business-trip/affordable', { params });
-  return data;
+export const fetchBusinessTripAffordable = async (afterschoolid: number | string): Promise<string[]> => {
+  const { data } = await axiosInstance.get<BusinessTripAffordableResponse>(
+    `/afterschool/business-trip/affordable/${afterschoolid}`
+  );
+  return data.dates;
 };
 
 export const fetchReinforcementAffordable = async (
@@ -52,17 +56,20 @@ export interface PlaceSearchItem {
 }
 
 export const searchPlace = async (query: string): Promise<PlaceSearchItem[]> => {
-  const { data } = await axiosInstance.get('/search/place', { params: { query } });
+  const { data } = await axiosInstance.get('/place/search', { params: { query } });
   return data;
 };
 
 export interface ReinforcementPayload {
   day: string;
   afterschool_id: number;
-  change_start_period: number;
-  change_end_period: number;
+  change_period: ReinforcementPeriod;
   change_place_id: number;
 }
+
+export type ReinforcementPeriod =
+  | 'EIGHT_AND_NINE_PERIOD'
+  | 'TEN_AND_ELEVEN_PERIOD';
 
 export const requestReinforcement = async (payload: ReinforcementPayload) => {
   const { data } = await axiosInstance.post('/afterschool/reinforcement', payload);

@@ -14,14 +14,10 @@ export const useAdminAfterSchoolSearchQuery = (query: string) =>
     enabled: query.trim().length > 0,
   });
 
-export const useBusinessTripAffordableQuery = (month: number, afterschoolid?: number | string) =>
-  useQuery<AffordableScheduleItem[]>({
-    queryKey: ['adminBusinessTripAffordable', month, afterschoolid ?? ''],
-    queryFn: () =>
-      fetchBusinessTripAffordable({
-        month,
-        afterschoolid: afterschoolid ?? '',
-      }),
+export const useBusinessTripAffordableQuery = (afterschoolid?: number | string) =>
+  useQuery<string[]>({
+    queryKey: ['adminBusinessTripAffordable', afterschoolid ?? ''],
+    queryFn: () => fetchBusinessTripAffordable(afterschoolid ?? ''),
     enabled: !!afterschoolid,
   });
 

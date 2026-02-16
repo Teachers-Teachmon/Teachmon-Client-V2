@@ -30,14 +30,14 @@ export function TripCompleteContent({ selectedTripDate, onConfirm }: TripComplet
 
 interface MakeupSelectionContentProps {
   selectedMakeupDate: Date | null;
-  availableMakeupPeriods: string[];
-  selectedMakeupPeriods: string[];
+  availableMakeupPeriods: ('8~9' | '10~11')[];
+  selectedMakeupPeriods: ('8~9' | '10~11')[];
   selectedPlace: PlaceSearchItem | null;
   placeItems: PlaceSearchItem[];
   placeQuery: string;
   onPlaceQueryChange: (value: string) => void;
   onPlaceChange: (place: PlaceSearchItem) => void;
-  onTogglePeriod: (period: string) => void;
+  onTogglePeriod: (period: '8~9' | '10~11') => void;
   onCancel: () => void;
   onConfirm: () => void;
 }

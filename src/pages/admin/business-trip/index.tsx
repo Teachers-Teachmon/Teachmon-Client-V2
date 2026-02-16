@@ -5,15 +5,14 @@ import ConfirmModal from '@/components/layout/modal/confirm';
 import Modal from '@/components/layout/modal';
 import type { CalendarEvent } from '@/types/calendar';
 import type { AfterSchoolTeacher } from '@/types/admin';
-import type { PlaceSearchItem } from '@/services/admin/afterSchool/adminAfterSchool.api';
+import type { PlaceSearchItem, ReinforcementPeriod } from '@/services/admin/afterSchool/adminAfterSchool.api';
 import { formatDateString } from '@/utils/admin';
 import { AllCompleteContent, MakeupSelectionContent, TripCompleteContent, TripConfirmMessage } from '@/containers/admin/business-trip/modal-content';
-import { transformBusinessTripToCalendarEvents, transformMakeupToCalendarEvents } from '@/utils/admin';
+import { transformBusinessTripDatesToCalendarEvents } from '@/utils/admin';
 import {
   useAdminAfterSchoolSearchQuery,
   useAdminPlaceSearchQuery,
   useBusinessTripAffordableQuery,
-  useReinforcementAffordableQuery,
 } from '@/services/admin/afterSchool/adminAfterSchool.query';
 import {
   useRequestBusinessTripMutation,
@@ -22,6 +21,7 @@ import {
 
 export default function BusinessTripPage() {
   type Step = 'select' | 'confirm-trip' | 'ask-makeup' | 'trip-complete' | 'select-makeup' | 'makeup-modal' | 'all-complete';
+  type MakeupPeriod = '8~9' | '10~11';
 
   const currentDate = new Date();
   const [year, setYear] = useState(currentDate.getFullYear());
@@ -31,14 +31,13 @@ export default function BusinessTripPage() {
   const [teacherSearchQuery, setTeacherSearchQuery] = useState('');
   const [selectedTripDate, setSelectedTripDate] = useState<Date | null>(null);
   const [selectedMakeupDate, setSelectedMakeupDate] = useState<Date | null>(null);
-  const [availableMakeupPeriods, setAvailableMakeupPeriods] = useState<string[]>([]);
-  const [selectedMakeupPeriods, setSelectedMakeupPeriods] = useState<string[]>([]);
+  const [availableMakeupPeriods, setAvailableMakeupPeriods] = useState<MakeupPeriod[]>([]);
+  const [selectedMakeupPeriods, setSelectedMakeupPeriods] = useState<MakeupPeriod[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<PlaceSearchItem | null>(null);
   const [placeSearchQuery, setPlaceSearchQuery] = useState('');
 
   const { data: afterSchoolOptions } = useAdminAfterSchoolSearchQuery(teacherSearchQuery);
-  const { data: tripAffordable } = useBusinessTripAffordableQuery(month, selectedTeacher?.id);
-  const { data: makeupAffordable } = useReinforcementAffordableQuery(month, selectedTeacher?.id);
+  const { data: tripAffordable } = useBusinessTripAffordableQuery(selectedTeacher?.id);
   const { data: placeOptions } = useAdminPlaceSearchQuery(placeSearchQuery);
   const { mutate: requestBusinessTrip } = useRequestBusinessTripMutation();
   const { mutate: requestReinforcement } = useRequestReinforcementMutation();
@@ -88,18 +87,7 @@ export default function BusinessTripPage() {
   };
 
   const handleMakeupDateClick = (date: Date) => {
-    const dateString = formatDateString(date);
-    const availableData = (makeupAffordable ?? []).filter(item => item.day === dateString);
-
-    if (availableData.length === 0) return;
-
-    const periods: string[] = [];
-    availableData.forEach(item => {
-      if (item.start_period === 8 && item.end_period === 9) periods.push('8~9');
-      if (item.start_period === 10 && item.end_period === 11) periods.push('10~11');
-    });
-
-    setAvailableMakeupPeriods(periods);
+    setAvailableMakeupPeriods(['8~9', '10~11']);
     setSelectedMakeupDate(date);
     setSelectedMakeupPeriods([]);
     setSelectedPlace(null);
@@ -107,7 +95,7 @@ export default function BusinessTripPage() {
     setStep('makeup-modal');
   };
 
-  const handleTogglePeriod = (period: string) => {
+  const handleTogglePeriod = (period: MakeupPeriod) => {
     setSelectedMakeupPeriods(prev =>
       prev.includes(period)
         ? prev.filter(p => p !== period)
@@ -122,13 +110,16 @@ export default function BusinessTripPage() {
     }
 
     const day = formatDateString(selectedMakeupDate);
+    const reinforcementPeriodMap: Record<MakeupPeriod, ReinforcementPeriod> = {
+      '8~9': 'EIGHT_AND_NINE_PERIOD',
+      '10~11': 'TEN_AND_ELEVEN_PERIOD',
+    };
+
     selectedMakeupPeriods.forEach((period) => {
-      const isFirst = period === '8~9';
       requestReinforcement({
         day,
         afterschool_id: selectedTeacher.id,
-        change_start_period: isFirst ? 8 : 10,
-        change_end_period: isFirst ? 9 : 11,
+        change_period: reinforcementPeriodMap[period],
         change_place_id: selectedPlace.id,
       });
     });
@@ -147,7 +138,12 @@ export default function BusinessTripPage() {
   };
 
   const resetState = () => {
+    const now = new Date();
+    setYear(now.getFullYear());
+    setMonth(now.getMonth() + 1);
     setStep('select');
+    setSelectedTeacher(undefined);
+    setTeacherSearchQuery('');
     setSelectedTripDate(null);
     setSelectedMakeupDate(null);
     setAvailableMakeupPeriods([]);
@@ -158,23 +154,10 @@ export default function BusinessTripPage() {
 
   const tripEvents = useMemo<CalendarEvent[]>(() => {
     if (!tripAffordable) return [];
-    const mapped = tripAffordable.map((item) => ({
-      day: item.day,
-      startPeriod: item.start_period,
-      endPeriod: item.end_period,
-    }));
-    return transformBusinessTripToCalendarEvents(mapped);
+    return transformBusinessTripDatesToCalendarEvents(tripAffordable);
   }, [tripAffordable]);
 
-  const makeupEvents = useMemo<CalendarEvent[]>(() => {
-    if (!makeupAffordable) return [];
-    const mapped = makeupAffordable.map((item) => ({
-      day: item.day,
-      startPeriod: item.start_period,
-      endPeriod: item.end_period,
-    }));
-    return transformMakeupToCalendarEvents(mapped);
-  }, [makeupAffordable]);
+  const makeupEvents = useMemo<CalendarEvent[]>(() => [], []);
 
   return (
     <S.Container>
