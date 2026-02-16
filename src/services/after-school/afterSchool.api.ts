@@ -25,9 +25,18 @@ export const getAllAfterSchool = async (params: AfterSchoolSearchParams): Promis
   return response.data;
 };
 
+export const getBranchInfo = async (): Promise<{
+  number: number;
+  start_day: string;
+  end_day: string;
+}[]> => {
+  const response = await axiosInstance.get('/branch');
+  return response.data;
+};
+
 export const createAfterSchoolBusinessTrip = async (data: {
   day: string;
-  after_school_id: string;
+  afterschool_id: string;
 }): Promise<unknown> => {
   const response = await axiosInstance.post('/afterschool/business-trip', data);
   return response.data;

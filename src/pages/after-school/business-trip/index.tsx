@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 import Calendar from '@/components/ui/calendar';
 import type { CalendarEvent } from '@/components/ui/calendar';
 import Button from '@/components/ui/button';
@@ -20,7 +21,26 @@ export default function BusinessTripPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const businessTripMutation = useMutation({
+    mutationFn: createAfterSchoolBusinessTrip,
+    onSuccess: () => {
+      toast.success('출장이 완료되었습니다.');
+      setIsModalOpen(false);
+      setIsSecondModalOpen(true);
+    },
+    onError: (error: unknown) => {
+      console.log('출장 API 에러:', error);
+      const message =
+        typeof error === 'object' &&
+        error !== null &&
+        'response' in error &&
+        typeof (error as any).response?.data?.message === 'string'
+          ? (error as any).response.data.message
+          : '출장 처리에 실패했습니다.';
+      toast.error(message);
+    },
+  });
 
   const businessTripEvents: CalendarEvent[] = useMemo(() => {
     if (!classData) return [];
@@ -57,29 +77,10 @@ export default function BusinessTripPage() {
 
     const day = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
-    setIsSubmitting(true);
-    createAfterSchoolBusinessTrip({
+    businessTripMutation.mutate({
       day,
-      after_school_id: String(classData.id),
-    })
-      .then(() => {
-        toast.success('출장이 완료되었습니다.');
-        setIsModalOpen(false);
-        setIsSecondModalOpen(true);
-      })
-      .catch((error: unknown) => {
-        const message =
-          typeof error === 'object' &&
-          error !== null &&
-          'response' in error &&
-          typeof (error as any).response?.data?.message === 'string'
-            ? (error as any).response.data.message
-            : '출장 처리에 실패했습니다.';
-        toast.error(message);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+      afterschool_id: BigInt(classData.id).toString(),
+    });
   };
 
   const handleSecondModalConfirm = () => {
@@ -149,7 +150,7 @@ export default function BusinessTripPage() {
           </S.ModalMessage>
         }
         cancelText="취소"
-        confirmText={isSubmitting ? '처리중...' : '완료'}
+        confirmText={businessTripMutation.isPending ? '처리중...' : '완료'}
       />
 
       <ConfirmModal

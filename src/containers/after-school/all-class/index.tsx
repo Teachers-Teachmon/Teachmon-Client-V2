@@ -23,6 +23,14 @@ export default function AllClassSection({
   const [selectedDay, setSelectedDay] = useState(getInitialDay());
   const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
 
+  const { data: branchInfo } = useQuery(afterSchoolQuery.branch());
+
+  // 현재 날짜가 속하는 분기 찾기
+  const currentQuarter = branchInfo?.find(q => 
+    new Date() >= new Date(q.start_day) && 
+    new Date() <= new Date(q.end_day)
+  );
+
   const params: AfterSchoolSearchParams = {
     grade: selectedGrade,
     week_day: DAY_TO_ENGLISH[DAYS[selectedDay]],
@@ -30,7 +38,13 @@ export default function AllClassSection({
     end_period: 11,
   };
 
-  const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.all(params));
+  // 분기 정보가 있으면 params에 포함
+  const paramsWithBranch = currentQuarter ? {
+    ...params,
+    branch: currentQuarter.number,
+  } : params;
+
+  const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.all(paramsWithBranch));
 
   useEffect(() => {
     setTimeSlotPages({});

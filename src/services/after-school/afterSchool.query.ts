@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getMyTodayAfterSchool, getMyAfterSchool, getAllAfterSchool } from './afterSchool.api';
+import { getMyTodayAfterSchool, getMyAfterSchool, getAllAfterSchool, getBranchInfo } from './afterSchool.api';
 import type { AfterSchoolSearchParams } from '@/types/after-school';
 
 export const afterSchoolQuery = {
@@ -23,5 +23,12 @@ export const afterSchoolQuery = {
       queryKey: ['afterSchool', 'all', params],
       queryFn: () => getAllAfterSchool(params),
       enabled: !!params.grade,
+    }),
+
+  // 분기 정보
+  branch: () =>
+    queryOptions({
+      queryKey: ['afterSchool', 'branch'],
+      queryFn: getBranchInfo,
     }),
 };

@@ -1,3 +1,4 @@
+import Loading from '@/components/ui/loading';
 import * as S from './style';
 import type { TodayAfterSchool } from '@/types/after-school';
 
@@ -10,8 +11,7 @@ export default function TodayClassSection({ classes, isLoading }: TodayClassSect
   if (isLoading) {
     return (
       <S.Container>
-        <S.Title>나의 오늘 방과후</S.Title>
-        <S.EmptyState>불러오는 중...</S.EmptyState>
+        <Loading />
       </S.Container>
     );
   }
