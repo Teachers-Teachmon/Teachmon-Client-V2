@@ -2,6 +2,32 @@ import { colors } from '@/styles/theme';
 import type { Grade, SelfStudyPeriod } from '@/types/selfStudy';
 
 export const PERIOD_ENUM_TO_LABEL: Record<SelfStudyPeriod, string> = {
+import type { Grade, SelfStudyPeriod, SelfStudyWeekDay } from '@/types/selfStudy';
+
+export type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu';
+export const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu'];
+
+export const UI_DAY_TO_API: Record<DayOfWeek, SelfStudyWeekDay> = {
+  mon: 'MON',
+  tue: 'TUE',
+  wed: 'WED',
+  thu: 'THU',
+};
+
+export const API_DAY_TO_UI: Partial<Record<SelfStudyWeekDay, DayOfWeek>> = {
+  MON: 'mon',
+  TUE: 'tue',
+  WED: 'wed',
+  THU: 'thu',
+};
+
+export const PERIOD_TO_API: Record<string, SelfStudyPeriod> = {
+  '7교시': 'SEVEN_PERIOD',
+  '8~9교시': 'EIGHT_AND_NINE_PERIOD',
+  '10~11교시': 'TEN_AND_ELEVEN_PERIOD',
+};
+
+export const API_TO_PERIOD: Record<SelfStudyPeriod, string> = {
   ONE_PERIOD: '1교시',
   TWO_PERIOD: '2교시',
   THREE_PERIOD: '3교시',
@@ -108,4 +134,3 @@ export const formatPeriods = (periods: string[]): string => {
   
   return ranges.join(', ');
 };
-

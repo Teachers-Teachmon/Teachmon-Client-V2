@@ -5,7 +5,6 @@ export const DAY_LABELS = {
   tue: '화',
   wed: '수',
   thu: '목',
-  fri: '금',
 } as const;
 
 export const PERIOD_OPTIONS = [
