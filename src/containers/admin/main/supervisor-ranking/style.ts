@@ -20,6 +20,7 @@ export const SupervisorSection = styled.div`
     overflow: visible;
   }
 `;
+
 export const SectionHeader = styled.div`
   display: flex;
   justify-content: space-between;
@@ -32,6 +33,7 @@ export const SectionHeader = styled.div`
     margin-bottom: 12px;
   }
 `;
+
 export const SectionTitle = styled.h2`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
@@ -45,6 +47,7 @@ export const SectionTitle = styled.h2`
     line-height: 22px;
   }
 `;
+
 export const TopThreeContainer = styled.div`
   display: flex;
   gap: 14px;
@@ -59,6 +62,7 @@ export const TopThreeContainer = styled.div`
     margin-bottom: 12px;
   }
 `;
+
 export const TopRankCard = styled.div<{ $isFirst?: boolean }>`
   width: 100%;
   background-color: ${colors.primaryBackground};
@@ -75,42 +79,40 @@ export const TopRankCard = styled.div<{ $isFirst?: boolean }>`
     padding: 0 0 8px 0;
   }
 `;
+
 export const RankBadge = styled.div`
-  position: absolute;
-  top: -22px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 36px;
-  height: 38px;
-  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   img {
     width: 100%;
     height: 100%;
     object-fit: contain;
   }
-
-  ${mq.mobile} {
-    width: 28px;
-    height: 30px;
-    top: -18px;
-  }
 `;
+
 export const TeacherImage = styled.div`
   width: 100%;
   height: 90px;
   background: linear-gradient(135deg, #e8f0fe 0%, #f5f8ff 100%);
   border-radius: 8px 8px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   ${mq.mobile} {
     height: 70px;
   }
 `;
-export const TeacherName = styled.span`
+
+export const TeacherName = styled.span<{ $isEmpty?: boolean }>`
   font-family: 'Paperlogy', sans-serif;
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: ${({ $isEmpty }) => ($isEmpty ? 400 : 600)};
+  font-size: ${({ $isEmpty }) => ($isEmpty ? '14px' : '18px')};
   line-height: 22px;
-  color: ${colors.text};
+  color: ${({ $isEmpty }) => ($isEmpty ? '#9ca4ba' : '#000000')};
   margin-top: 10px;
 
   ${mq.mobile} {
@@ -119,6 +121,7 @@ export const TeacherName = styled.span`
     margin-top: 8px;
   }
 `;
+
 export const TeacherCount = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
@@ -147,6 +150,7 @@ export const RankingList = styled.div<{ $showAll?: boolean }>`
     transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
   }
 `;
+
 export const RankingRow = styled.div`
   display: flex;
   align-items: center;
@@ -157,6 +161,7 @@ export const RankingRow = styled.div`
     padding: 12px 16px;
   }
 `;
+
 export const RankNumber = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
@@ -171,6 +176,7 @@ export const RankNumber = styled.span`
     min-width: 40px;
   }
 `;
+
 export const RankName = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
@@ -184,6 +190,7 @@ export const RankName = styled.span`
     line-height: 17px;
   }
 `;
+
 export const RankCount = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
@@ -217,4 +224,17 @@ export const ShowMoreButton = styled.button`
       background-color: ${colors.primary100};
     }
   }
+`;
+
+export const EmptyMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #9ca4ba;
+  padding: 40px 20px;
 `;
