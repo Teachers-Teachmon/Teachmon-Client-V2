@@ -8,12 +8,35 @@ import ConfirmModal from '@/components/layout/modal/confirm';
 import Loading from '@/components/ui/loading';
 import type { TableColumn, AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
-import { WEEKDAYS, WEEKDAY_MAP } from '@/constants/admin';
+import { WEEKDAYS, REVERSE_DAY_MAP } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
-import { deleteAfterSchoolClass } from '@/services/after-school/afterSchool.api';
+import { deleteAfterSchoolClass, getAfterSchoolClasses } from '@/services/after-school/afterSchool.api';
+import {
+  createAdminAfterSchoolPrintHtml,
+  openAdminAfterSchoolLoadingWindow,
+  renderAdminAfterSchoolPrintWindow,
+  type PdfScheduleCell,
+  type PdfWeekDay,
+} from '@/utils/adminAfterSchoolPdf';
+import { getApiErrorMessage } from '@/utils/error';
+
+const API_WEEKDAY_TO_UI: Record<string, (typeof WEEKDAYS)[number]> = {
+  '월': '월요일',
+  '화': '화요일',
+  '수': '수요일',
+  '목': '목요일',
+  MON: '월요일',
+  TUE: '화요일',
+  WED: '수요일',
+  THU: '목요일',
+  '월요일': '월요일',
+  '화요일': '화요일',
+  '수요일': '수요일',
+  '목요일': '목요일',
+};
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
@@ -24,8 +47,16 @@ export default function AdminAfterSchoolPage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [selectedQuarter, setSelectedQuarter] = useState('1분기');
   const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
-  const [googleSheetUrl, setGoogleSheetUrl] = useState('');
   const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
+
+  const quarterItems = ['1분기', '2분기', '3분기', '4분기'];
+
+  const PDF_WEEK_DAYS: PdfWeekDay[] = ['MON', 'TUE', 'WED', 'THU'];
+  const PDF_SLOTS = [
+    { startPeriod: 8 as const, endPeriod: 9 as const },
+    { startPeriod: 10 as const, endPeriod: 11 as const },
+  ];
 
   const branch = useMemo(() => {
     const match = selectedQuarter.match(/\d+/);
@@ -36,7 +67,7 @@ export default function AdminAfterSchoolPage() {
   const apiParams: AfterSchoolRequestParams = useMemo(() => ({
     grade: selectedGrade,
     branch,
-    week_day: WEEKDAY_MAP[selectedDay],
+    week_day: REVERSE_DAY_MAP[selectedDay],
     start_period: 8,
     end_period: 11,
   }), [selectedGrade, selectedDay, branch]);
@@ -46,21 +77,6 @@ export default function AdminAfterSchoolPage() {
   });
 
   const queryClient = useQueryClient();
-
-  const API_WEEKDAY_TO_UI: Record<string, (typeof WEEKDAYS)[number]> = {
-    '월': '월요일',
-    '화': '화요일',
-    '수': '수요일',
-    '목': '목요일',
-    MON: '월요일',
-    TUE: '화요일',
-    WED: '수요일',
-    THU: '목요일',
-    '월요일': '월요일',
-    '화요일': '화요일',
-    '수요일': '수요일',
-    '목요일': '목요일',
-  };
 
   const classes = useMemo(() => {
     if (!apiData) return [];
@@ -122,7 +138,7 @@ export default function AdminAfterSchoolPage() {
         await deleteAfterSchoolClass(Number(deleteTargetId));
         toast.success('방과후가 성공적으로 삭제되었습니다.');
         queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
-      } catch (error) {
+      } catch {
         toast.error('방과후 삭제에 실패했습니다.');
       }
     }
@@ -144,12 +160,46 @@ export default function AdminAfterSchoolPage() {
     setSelectedClass(null);
   };
 
-  const handleGoogleSheetSync = () => {
-    console.log('시트 동기화:', googleSheetUrl);
-  };
+  const handlePdfDownload = async () => {
+    const printWindow = openAdminAfterSchoolLoadingWindow();
+    if (!printWindow) {
+      toast.error('팝업이 차단되어 PDF 창을 열 수 없습니다. 팝업 차단을 해제해주세요.');
+      return;
+    }
 
-  const handleGoogleSheetUpload = () => {
-    console.log('시트 업로드:', googleSheetUrl);
+    setIsPdfLoading(true);
+
+    try {
+      const requests = PDF_WEEK_DAYS.flatMap((weekDay) =>
+        PDF_SLOTS.map(async (slot): Promise<PdfScheduleCell> => {
+          const items = await getAfterSchoolClasses({
+            grade: selectedGrade,
+            branch,
+            week_day: weekDay,
+            start_period: slot.startPeriod,
+            end_period: slot.endPeriod,
+          });
+          return {
+            weekDay,
+            slot,
+            items,
+          };
+        })
+      );
+
+      const schedule = await Promise.all(requests);
+      const html = createAdminAfterSchoolPrintHtml({
+        grade: selectedGrade,
+        branch,
+        schedule,
+      });
+      renderAdminAfterSchoolPrintWindow(printWindow, html);
+    } catch (error) {
+      printWindow.close();
+      toast.error(getApiErrorMessage(error, 'PDF 생성에 실패했습니다.'));
+    } finally {
+      setIsPdfLoading(false);
+    }
   };
 
   const renderStudents = (students: string[]) => {
@@ -255,14 +305,13 @@ export default function AdminAfterSchoolPage() {
         ) : (
           <>
             <AdminAfterSchoolHeaderContainer
+              quarterItems={quarterItems}
               selectedQuarter={selectedQuarter}
               setSelectedQuarter={setSelectedQuarter}
               selectedGrade={selectedGrade}
               setSelectedGrade={setSelectedGrade}
-              googleSheetUrl={googleSheetUrl}
-              setGoogleSheetUrl={setGoogleSheetUrl}
-              handleGoogleSheetSync={handleGoogleSheetSync}
-              handleGoogleSheetUpload={handleGoogleSheetUpload}
+              handlePdfDownload={handlePdfDownload}
+              isPdfLoading={isPdfLoading}
             />
 
             <S.DaySelector>

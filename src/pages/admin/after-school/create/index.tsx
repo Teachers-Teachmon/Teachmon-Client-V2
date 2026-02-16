@@ -34,7 +34,7 @@ export default function AfterSchoolFormPage() {
   const routerLocation = useLocation();
   const isEditMode = !!id;
   const editData = routerLocation.state as AdminAfterSchoolClass | null;
-  
+
   const [teacher, setTeacher] = useState<Teacher | null>(
     isEditMode && editData ? { id: editData.teacherId, name: editData.teacher } : null
   );
@@ -107,7 +107,7 @@ export default function AfterSchoolFormPage() {
   const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
     const name = student.name;
     const number = 'number' in student ? student.number : (student as Student).studentNumber;
-  
+
     return `${number} ${name}`;
   };
 
@@ -237,8 +237,8 @@ export default function AfterSchoolFormPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 leftIcon={
-                  <img 
-                    src="/icons/common/search.svg" 
+                  <img
+                    src="/icons/common/search.svg"
                     alt="search"
                     style={{ width: '20px', height: '20px' }}
                   />
@@ -249,12 +249,12 @@ export default function AfterSchoolFormPage() {
                 <S.StudentDropdown>
                   {isTeamMode ? (
                     teamsData
-                      .filter((team: TeamSearchResponse) => 
+                      .filter((team: TeamSearchResponse) =>
                         !selectedStudents.find(s => s.id?.toString().includes(team.id))
                       )
                       .slice(0, 3)
                       .map((team: TeamSearchResponse) => (
-                        <S.StudentDropdownItem 
+                        <S.StudentDropdownItem
                           key={team.id}
                           onClick={() => handleAddStudent(team)}
                         >
@@ -263,12 +263,12 @@ export default function AfterSchoolFormPage() {
                       ))
                   ) : (
                     studentsData
-                      .filter((student: StudentSearchResponse) => 
+                      .filter((student: StudentSearchResponse) =>
                         !selectedStudents.find(s => s.studentNumber === student.number)
                       )
                       .slice(0, 3)
                       .map((student: StudentSearchResponse) => (
-                        <S.StudentDropdownItem 
+                        <S.StudentDropdownItem
                           key={student.id}
                           onClick={() => handleAddStudent(student)}
                         >
