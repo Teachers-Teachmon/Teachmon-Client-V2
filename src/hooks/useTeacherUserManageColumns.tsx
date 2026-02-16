@@ -71,7 +71,7 @@ export function useTeacherColumns({
       header: '이메일',
       width: '320px',
       render: (row) =>
-        editingIds.has(row.id) ? (
+        editingIds.has(row.id) && row.id.startsWith('new-') ? (
           <div style={{ width: '100%', maxWidth: '250px' }}>
             <TextInput
               value={editingTeacher?.id === row.id ? editingTeacher.email : row.email}

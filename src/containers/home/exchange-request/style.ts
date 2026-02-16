@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { colors, fontSizes, radius } from '@/styles/theme';
-import type { ExchangeStatus } from '@/types/home';
+import type { ExchangeStatus } from '@/types/supervision';
 import { mq } from '@/styles/media';
 
 export const SectionCard = styled.div`
