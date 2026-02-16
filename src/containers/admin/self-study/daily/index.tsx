@@ -15,12 +15,13 @@ import DetailModal from './detail-modal';
 import * as S from './style';
 
 export default function DailySection() {
+  type NumberGrade = Exclude<Grade, 'all'>;
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedGrade, setSelectedGrade] = useState<Grade>(2);
+  const [selectedGrades, setSelectedGrades] = useState<NumberGrade[]>([2]);
   const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
   const [selectedSchedule, setSelectedSchedule] = useState<SelfStudySchedule | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,55 +31,96 @@ export default function DailySection() {
 
   const schedules: SelfStudySchedule[] = useMemo(() => {
     if (!rawData) return [];
-    
-    // 날짜별로 데이터 그룹화
-    const groupedByDate: Record<string, {
-      grades: number[];
-      periods: string[];
-      periodIds: Record<string, number>;
-    }> = {};
-    
+    const groupedByDate: Record<
+      string,
+      Record<
+        number,
+        {
+          periods: string[];
+          periodIds: Record<string, number>;
+        }
+      >
+    > = {};
+
     rawData.forEach((item) => {
       const date = item.day;
+      const grade = item.grade as number;
+
       if (!groupedByDate[date]) {
-        groupedByDate[date] = {
-          grades: [],
+        groupedByDate[date] = {};
+      }
+
+      if (!groupedByDate[date][grade]) {
+        groupedByDate[date][grade] = {
           periods: [],
-          periodIds: {}
+          periodIds: {},
         };
       }
-      
-      groupedByDate[date].grades.push(item.grade as number);
-      
+
       item.periods.forEach((p) => {
         const periodLabel = PERIOD_ENUM_TO_LABEL[p.period] ?? p.period;
-        if (!groupedByDate[date].periods.includes(periodLabel)) {
-          groupedByDate[date].periods.push(periodLabel);
+        if (!groupedByDate[date][grade].periods.includes(periodLabel)) {
+          groupedByDate[date][grade].periods.push(periodLabel);
         }
-        groupedByDate[date].periodIds[periodLabel] = p.id;
+        groupedByDate[date][grade].periodIds[periodLabel] = p.id;
       });
     });
-    
+
     const result: SelfStudySchedule[] = [];
-    
-    Object.entries(groupedByDate).forEach(([date, data]) => {
+
+    Object.entries(groupedByDate).forEach(([date, gradeMap]) => {
       const dateObj = new Date(date);
-      const uniqueGrades = [...new Set(data.grades)].sort();
-      const displayGrade = uniqueGrades.length === 3 && uniqueGrades.every(g => [1, 2, 3].includes(g)) ? 'all' : uniqueGrades[0];
-      
-      const sortedPeriods = data.periods.sort((a, b) => parseInt(a) - parseInt(b));
-      
-      result.push({
-        id: `additional-${date}-${displayGrade}`,
-        date: dateObj,
-        grade: displayGrade as Grade,
-        periods: sortedPeriods,
-        periodIds: data.periodIds,
-        startDate: dateObj,
-        endDate: dateObj,
-      });
+      const gradeNumbers = Object.keys(gradeMap)
+        .map((g) => Number(g))
+        .sort();
+
+      const hasAllGrades =
+        gradeNumbers.length === 3 &&
+        gradeNumbers.every((g) => [1, 2, 3].includes(g));
+      if (hasAllGrades) {
+        const allPeriodsSet = new Set<string>();
+        const periodIds: Record<string, number> = {};
+
+        gradeNumbers.forEach((g) => {
+          gradeMap[g].periods.forEach((period) => {
+            allPeriodsSet.add(period);
+            periodIds[period] = gradeMap[g].periodIds[period];
+          });
+        });
+
+        const sortedPeriods = Array.from(allPeriodsSet).sort(
+          (a, b) => parseInt(a) - parseInt(b),
+        );
+
+        result.push({
+          id: `additional-${date}-all`,
+          date: dateObj,
+          grade: 'all',
+          periods: sortedPeriods,
+          periodIds,
+          startDate: dateObj,
+          endDate: dateObj,
+        });
+      } else {
+        gradeNumbers.forEach((g) => {
+          const data = gradeMap[g];
+          const sortedPeriods = [...data.periods].sort(
+            (a, b) => parseInt(a) - parseInt(b),
+          );
+
+          result.push({
+            id: `additional-${date}-${g}`,
+            date: dateObj,
+            grade: g as Grade,
+            periods: sortedPeriods,
+            periodIds: data.periodIds,
+            startDate: dateObj,
+            endDate: dateObj,
+          });
+        });
+      }
     });
-    
+
     return result;
   }, [rawData]);
 
@@ -136,29 +178,28 @@ export default function DailySection() {
 
     const datesInRange = getDatesInRange(startDate, endDate);
 
-    const promises = [];
-    
-    if (selectedGrade === 'all') {
-      for (const grade of [1, 2, 3]) {
-        for (const date of datesInRange) {
-          const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-          promises.push(createAdditionalSelfStudy({
+    if (selectedGrades.length === 0) {
+      toast.error('학년을 선택해주세요.');
+      return;
+    }
+
+    const promises: Promise<unknown>[] = [];
+
+    selectedGrades.forEach((grade) => {
+      datesInRange.forEach((date) => {
+        const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+          date.getDate(),
+        ).padStart(2, '0')}`;
+
+        promises.push(
+          createAdditionalSelfStudy({
             day,
             grade,
             periods: periodEnums,
-          }));
-        }
-      }
-    } else {
-      for (const date of datesInRange) {
-        const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-        promises.push(createAdditionalSelfStudy({
-          day,
-          grade: selectedGrade,
-          periods: periodEnums,
-        }));
-      }
-    }
+          }),
+        );
+      });
+    });
 
     Promise.all(promises)
       .then(() => {
@@ -285,8 +326,8 @@ export default function DailySection() {
 
       {showPanel && (
         <SidePanel
-          selectedGrade={selectedGrade}
-          onGradeChange={setSelectedGrade}
+          selectedGrades={selectedGrades}
+          onGradesChange={setSelectedGrades}
           selectedPeriods={selectedPeriods}
           onPeriodToggle={handlePeriodToggle}
           onComplete={handleComplete}
