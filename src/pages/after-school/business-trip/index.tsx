@@ -1,14 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import Calendar from '@/components/ui/calendar';
-import type { CalendarEvent } from '@/components/ui/calendar';
-import Button from '@/components/ui/button';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import { toast } from 'react-toastify';
+import Calendar from '@/components/ui/calendar';
+import Button from '@/components/ui/button';
 import * as S from './style';
-import { createAfterSchoolBusinessTrip } from '@/services/after-school/afterSchool.api';
+import { useBusinessTripMutation } from '@/services/after-school/afterSchool.mutation';
 import type { MyAfterSchool } from '@/types/after-school';
+import type { CalendarEvent } from '@/types/calendar';
 
 export default function BusinessTripPage() {
   const navigate = useNavigate();
@@ -22,25 +20,12 @@ export default function BusinessTripPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
 
-  const businessTripMutation = useMutation({
-    mutationFn: createAfterSchoolBusinessTrip,
-    onSuccess: () => {
-      toast.success('출장이 완료되었습니다.');
-      setIsModalOpen(false);
-      setIsSecondModalOpen(true);
-    },
-    onError: (error: unknown) => {
-      console.log('출장 API 에러:', error);
-      const message =
-        typeof error === 'object' &&
-        error !== null &&
-        'response' in error &&
-        typeof (error as any).response?.data?.message === 'string'
-          ? (error as any).response.data.message
-          : '출장 처리에 실패했습니다.';
-      toast.error(message);
-    },
-  });
+  const businessTripMutation = useBusinessTripMutation({
+  onSuccess: () => {
+    setIsModalOpen(false);
+    setIsSecondModalOpen(true);
+  },
+});
 
   const businessTripEvents: CalendarEvent[] = useMemo(() => {
     if (!classData) return [];

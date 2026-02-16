@@ -4,6 +4,7 @@ import * as S from './style';
 import type { AllAfterSchool, AfterSchoolSearchParams } from '@/types/after-school';
 import { DAYS, ITEMS_PER_PAGE, DAY_TO_ENGLISH } from '@/constants/after-school';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
+import { findCurrentQuarter } from '@/utils/branch';
 
 interface AllClassSectionProps {
   selectedGrade: 1 | 2 | 3;
@@ -26,10 +27,7 @@ export default function AllClassSection({
   const { data: branchInfo } = useQuery(afterSchoolQuery.branch());
 
   // 현재 날짜가 속하는 분기 찾기
-  const currentQuarter = branchInfo?.find(q => 
-    new Date() >= new Date(q.start_day) && 
-    new Date() <= new Date(q.end_day)
-  );
+  const currentQuarter = findCurrentQuarter(branchInfo || []);
 
   const params: AfterSchoolSearchParams = {
     grade: selectedGrade,
@@ -44,10 +42,18 @@ export default function AllClassSection({
     branch: currentQuarter.number,
   } : params;
 
-  const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.all(paramsWithBranch));
+  const { data: classes = [] } = useQuery(afterSchoolQuery.all(paramsWithBranch));
 
+  // selectedGrade나 selectedDay가 변경될 때 timeSlotPages 초기화
   useEffect(() => {
-    setTimeSlotPages({});
+    const resetPages = () => {
+      setTimeSlotPages({});
+    };
+    
+    // 다음 렌더링 사이클에서 실행하여 동기 호출 문제 해결
+    const timer = setTimeout(resetPages, 0);
+    
+    return () => clearTimeout(timer);
   }, [selectedGrade, selectedDay]);
 
   const groupedByTime = classes.reduce((acc, cls) => {

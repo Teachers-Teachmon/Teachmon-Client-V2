@@ -1,16 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import Loading from '@/components/ui/loading';
 import * as S from './style';
 import type { MyAfterSchool } from '@/types/after-school';
 import { MENU_OPTIONS } from '@/constants/after-school';
 import { colors } from '@/styles/theme';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
-import { quitAfterSchool } from '@/services/after-school/afterSchool.api';
-import { toast } from 'react-toastify';
+import { useQuitAfterSchoolMutation } from '@/services/after-school/afterSchool.mutation';
 
 export default function MyClassTable() {
   const navigate = useNavigate();
@@ -20,30 +18,17 @@ export default function MyClassTable() {
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
 
-  const quitMutation = useMutation({
-    mutationFn: quitAfterSchool,
-    onSuccess: () => {
-      toast.success('방과후를 종료했습니다.');
-      setIsTerminateModalOpen(false);
-      setSelectedClassForTerminate(null);
-      queryClient.invalidateQueries({ queryKey: ['afterSchool', 'my', selectedGrade] });
-    },
-    onError: (error: unknown) => {
-      const message =
-        typeof error === 'object' &&
-        error !== null &&
-        'response' in error &&
-        typeof (error as any).response?.data?.message === 'string'
-          ? (error as any).response.data.message
-          : '방과후 종료에 실패했습니다.';
-      toast.error(message);
-    },
-  });
+  const quitMutation = useQuitAfterSchoolMutation({
+  onSuccess: () => {
+    setIsTerminateModalOpen(false);
+    setSelectedClassForTerminate(null);
+    queryClient.invalidateQueries({ queryKey: ['afterSchool', 'my', selectedGrade] });
+  },
+});
   const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
 
   const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.my(selectedGrade));
-  const { data: branchInfo } = useQuery(afterSchoolQuery.branch());
 
   const filteredClasses = classes;
 
@@ -113,14 +98,6 @@ export default function MyClassTable() {
     setMenuPosition({ top, left, openUp });
   }, [filteredClasses, menuOpenId]);
 
-  if (isLoading) {
-    return (
-      <S.Container>
-        <Loading />
-      </S.Container>
-    );
-  }
-
   return (
     <S.Wrapper>
       <S.TitleSection>
@@ -133,7 +110,9 @@ export default function MyClassTable() {
       </S.TitleSection>
 
       <S.Container>
-        {filteredClasses.length > 0 ? (
+        {isLoading ? (
+          <S.LoadingText>로딩 중...</S.LoadingText>
+        ) : filteredClasses.length > 0 ? (
           <>
             <S.MobileCardList>
               {filteredClasses.map((cls) => (
