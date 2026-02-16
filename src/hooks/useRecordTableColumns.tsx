@@ -206,37 +206,37 @@ export function useRecordTableColumns({
         {
             key: 'studentInfo',
             header: '학번 / 이름',
-            width: '505px',
+            width: '100%',
             render: (row) => `${row.student_number} ${row.name}`,
         },
         {
             key: 'FIVE_PERIOD',
             header: '5교시',
-            width: '180px',
+            width: '120px',
             render: (row) => renderStatusCell(row, 'FIVE_PERIOD'),
         },
         {
             key: 'SIX_PERIOD',
             header: '6교시',
-            width: '180px',
+            width: '120px',
             render: (row) => renderStatusCell(row, 'SIX_PERIOD'),
         },
         {
             key: 'SEVEN_PERIOD',
             header: '7교시',
-            width: '180px',
+            width: '120px',
             render: (row) => renderStatusCell(row, 'SEVEN_PERIOD'),
         },
         {
             key: 'EIGHT_AND_NINE_PERIOD',
             header: '8~9교시',
-            width: '180px',
+            width: '120px',
             render: (row) => renderStatusCell(row, 'EIGHT_AND_NINE_PERIOD'),
         },
         {
             key: 'TEN_AND_ELEVEN_PERIOD',
             header: '10~11교시',
-            width: '180px',
+            width: '120px',
             render: (row) => renderStatusCell(row, 'TEN_AND_ELEVEN_PERIOD'),
         },
     ];
