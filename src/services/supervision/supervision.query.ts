@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, queryOptions } from '@tanstack/react-query';
 import type { SupervisionDay } from '@/types/supervision';
-import { fetchSupervision } from './supervision.api';
+import { fetchSupervision, getSupervisionRank } from './supervision.api';
 
 export const supervisionQueryKeys = {
   all: ['supervision'] as const,
@@ -14,3 +14,11 @@ export const useSupervisionSearchQuery = (month: number, query: string) =>
     queryFn: () => fetchSupervision({ month, query }),
     enabled: month > 0,
   });
+
+export const supervisionQuery = {
+  rank: () =>
+    queryOptions({
+      queryKey: ['query.supervisionRank'],
+      queryFn: getSupervisionRank,
+    }),
+};
