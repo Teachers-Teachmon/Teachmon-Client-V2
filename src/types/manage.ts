@@ -109,3 +109,12 @@ export interface ScheduleHistoryRecord {
   EIGHT_AND_NINE_PERIOD: PeriodScheduleInfo | null;
   TEN_AND_ELEVEN_PERIOD: PeriodScheduleInfo | null;
 }
+
+export interface ExitHistoryResponse {
+  exit_id: number;
+  day: string;
+  teacher: string;
+  number: number;
+  name: string;
+  period: Period;
+}

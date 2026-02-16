@@ -40,6 +40,7 @@ export const formatDateDisplay = (dateStr: string): string => {
   const date = new Date(dateStr);
   const days = ['일', '월', '화', '수', '목', '금', '토'];
   return `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
+};
 
 export const formatDateShort = (dateStr: string): string => {
   const date = new Date(dateStr);

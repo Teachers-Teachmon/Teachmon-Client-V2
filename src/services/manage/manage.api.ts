@@ -79,10 +79,8 @@ export const getScheduleHistory = async (params?: GetScheduleHistoryParams): Pro
 export const deleteEvasionRecord = async (exitId: number): Promise<MessageResponse> => {
   const response = await axiosInstance.delete<MessageResponse>(`/exit/${exitId}`);
   return response.data;
-
+};
 export const getWeeklyExitHistory = async () => {
   const { data } = await axiosInstance.get<ExitHistoryResponse[]>('/exit/history/week');
   return data;
-};
-
 };
