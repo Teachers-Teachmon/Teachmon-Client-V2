@@ -1,5 +1,40 @@
 import { colors } from '@/styles/theme';
-import type { Grade } from '@/types/selfStudy';
+import type { Grade, SelfStudyPeriod, SelfStudyWeekDay } from '@/types/selfStudy';
+
+export type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu';
+export const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu'];
+
+export const UI_DAY_TO_API: Record<DayOfWeek, SelfStudyWeekDay> = {
+  mon: 'MON',
+  tue: 'TUE',
+  wed: 'WED',
+  thu: 'THU',
+};
+
+export const API_DAY_TO_UI: Partial<Record<SelfStudyWeekDay, DayOfWeek>> = {
+  MON: 'mon',
+  TUE: 'tue',
+  WED: 'wed',
+  THU: 'thu',
+};
+
+export const PERIOD_TO_API: Record<string, SelfStudyPeriod> = {
+  '7교시': 'SEVEN_PERIOD',
+  '8~9교시': 'EIGHT_AND_NINE_PERIOD',
+  '10~11교시': 'TEN_AND_ELEVEN_PERIOD',
+};
+
+export const API_TO_PERIOD: Record<SelfStudyPeriod, string> = {
+  ONE_PERIOD: '1교시',
+  TWO_PERIOD: '2교시',
+  THREE_PERIOD: '3교시',
+  FOUR_PERIOD: '4교시',
+  FIVE_PERIOD: '5교시',
+  SIX_PERIOD: '6교시',
+  SEVEN_PERIOD: '7교시',
+  EIGHT_AND_NINE_PERIOD: '8~9교시',
+  TEN_AND_ELEVEN_PERIOD: '10~11교시',
+};
 
 export const generateScheduleId = (): string => {
   return `schedule-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -75,4 +110,3 @@ export const formatPeriods = (periods: string[]): string => {
   
   return ranges.join(', ');
 };
-

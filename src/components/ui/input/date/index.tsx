@@ -28,6 +28,7 @@ export default function DateInput({
         hiddenInput.showPicker();
         return;
       } catch {
+        // showPicker가 지원되지 않는 경우 무시
       }
     }
     hiddenInput.click();
