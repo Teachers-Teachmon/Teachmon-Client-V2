@@ -15,8 +15,9 @@ export const QuarterHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 14px 20px;
   border-bottom: 1px solid ${colors.n02};
+  flex-shrink: 0;
 `;
 export const QuarterTitleGroup = styled.div`
   display: flex;
@@ -26,8 +27,8 @@ export const QuarterTitleGroup = styled.div`
 export const SectionTitle = styled.h2`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
-  font-size: 22px;
-  line-height: 26px;
+  font-size: 20px;
+  line-height: 24px;
   color: ${colors.text};
   margin: 0;
 `;
@@ -111,30 +112,70 @@ export const QuarterRow = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 10px 20px;
   border-bottom: 1px solid ${colors.n02};
   flex: 1;
+  min-height: 0;
   &:last-child {
     border-bottom: none;
   }
 `;
+
 export const QuarterName = styled.span`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 16px;
+  line-height: 20px;
   color: ${colors.text};
+  flex-shrink: 0;
 `;
+
+export const QuarterDatesContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+`;
+
 export const QuarterDates = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
   font-family: 'Paperlogy', sans-serif;
   font-weight: 600;
-  font-size: ${fontSizes.Body};
-  line-height: 20px;
+  font-size: 14px;
+  line-height: 18px;
   color: ${colors.text};
   .to {
     color: ${colors.text};
   }
+`;
+
+export const ReinforcementWeek = styled.div`
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #999999;
+`;
+
+export const AfterSchoolEndDate = styled.div`
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  color: #999999;
+`;
+
+export const EmptyMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: #9ca4ba;
+  padding: 40px 20px;
 `;

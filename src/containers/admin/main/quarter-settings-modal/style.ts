@@ -25,6 +25,20 @@ export const FormSection = styled.div`
   gap: 24px;
 `;
 
+export const DateSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+`;
+
+export const DateLabel = styled.label`
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 500;
+  font-size: ${fontSizes.Body};
+  color: ${colors.text};
+`;
+
 export const DateRow = styled.div`
   display: flex;
   align-items: center;
