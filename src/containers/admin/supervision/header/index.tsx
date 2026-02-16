@@ -10,6 +10,7 @@ interface AdminSupervisionHeaderProps {
   onCreateOpen: () => void;
   onSave: () => void;
   onCancel: () => void;
+  isSaving?: boolean;
 }
 
 export default function AdminSupervisionHeader({
@@ -19,13 +20,14 @@ export default function AdminSupervisionHeader({
   onCreateOpen,
   onSave,
   onCancel,
+  isSaving = false,
 }: AdminSupervisionHeaderProps) {
   return (
     <S.HeaderContainer>
       {viewMode === 'edit' ? (
         <>
           <Button variant="confirm" text="돌아가기" onClick={onCancel} />
-          <Button variant="confirm" text="저장" onClick={onSave} />
+          <Button variant="confirm" text="저장" onClick={onSave} isLoading={isSaving} />
         </>
       ) : (
         <>

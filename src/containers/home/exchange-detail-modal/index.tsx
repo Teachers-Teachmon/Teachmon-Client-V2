@@ -1,6 +1,6 @@
 import Modal from '@/components/layout/modal';
 import ExchangeDetailContent from '@/components/ui/exchange-detail-content';
-import type { ExchangeRequest } from '@/types/home';
+import type { ExchangeRequest } from '@/types/supervision';
 
 interface ExchangeDetailModalProps {
     isOpen: boolean;

@@ -50,9 +50,3 @@ export const getErrorMessage = (error: unknown, fallback = DEFAULT_ERROR_MESSAGE
 
   return fallback;
 };
-
-export const showErrorToast = (error: unknown, fallback?: string) => {
-  const message = getErrorMessage(error, fallback);
-  if (!message) return;
-  toast.error(message);
-};
