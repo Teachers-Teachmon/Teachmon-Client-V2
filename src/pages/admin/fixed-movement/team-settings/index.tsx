@@ -10,7 +10,7 @@ import StudentListWithOverflow from '@/containers/admin/fixed-movement/table/stu
 import DetailModal from '@/containers/admin/fixed-movement/detail-modal';
 import { teamQuery } from '@/services/team/team.query';
 import { useDeleteTeamMutation } from '@/services/team/team.mutation';
-import type { Team } from '@/types/fixedMovement';
+import type { Team, TeamResponse } from '@/types/fixedMovement';
 import * as S from './style';
 
 export default function TeamSettingsPage() {
@@ -19,12 +19,12 @@ export default function TeamSettingsPage() {
   const deleteMutation = useDeleteTeamMutation();
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [detailTargetId, setDetailTargetId] = useState<string | null>(null);
-  const [detailTeamData, setDetailTeamData] = useState<any>(null);
+  const [detailTeamData, setDetailTeamData] = useState<TeamResponse | Team | null>(null);
 
-  const teams: Team[] = (rawTeams ?? []).map((t) => ({
+  const teams: Team[] = (rawTeams ?? []).map((t: TeamResponse) => ({
     id: String(t.id),
     name: t.name,
-    students: t.members.map((m: { grade: any; classNumber: any; number: any; name: any; }) => ({
+    students: t.members.map((m) => ({
       studentNumber: Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`),
       name: m.name,
     })),
@@ -44,11 +44,7 @@ export default function TeamSettingsPage() {
   };
 
   const handleDetail = (row: Team) => {
-    console.log('handleDetail called with row:', row);
-    console.log('rawTeams:', rawTeams);
-    
     const originalTeam = (rawTeams ?? []).find((t: any) => String(t.id) === row.id);
-    console.log('found originalTeam:', originalTeam);
     
     setDetailTeamData(originalTeam || row);
     setDetailTargetId(row.id);

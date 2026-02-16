@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
@@ -10,7 +11,7 @@ import { useCreateFixedMovementMutation, useUpdateFixedMovementMutation } from '
 import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
 import { searchQuery } from '@/services/search/search.query';
 import { useDebounce } from '@/hooks/useDebounce';
-import type { Student, PlaceSearchResponse } from '@/types/fixedMovement';
+import type { Student, PlaceSearchResponse, TeamSearchResponse } from '@/types/fixedMovement';
 import * as S from './style';
 
 
@@ -46,27 +47,29 @@ export default function FixedMovementFormPage() {
 
   useEffect(() => {
     if (isEditMode && detailData) {
-      const weekday = detailData.weekday ?? detailData.week_day;
-      if (weekday) {
-        setDayOfWeek(WEEKDAY_LABEL[weekday] ?? '');
-      }
-      setPeriod(PERIOD_LABEL[detailData.period] ?? '');
+      flushSync(() => {
+        const weekday = detailData.weekday ?? detailData.week_day;
+        if (weekday) {
+          setDayOfWeek(WEEKDAY_LABEL[weekday] ?? '');
+        }
+        setPeriod(PERIOD_LABEL[detailData.period] ?? '');
 
-      const placeName = typeof detailData.place === 'string' ? detailData.place : detailData.place.name;
-      const placeId = typeof detailData.place === 'object' ? detailData.place.id : null;
-      setLocation(placeName);
-      if (placeId) {
-        setSelectedPlace({ id: placeId, name: placeName, floor: 0 });
-      }
+        const placeName = typeof detailData.place === 'string' ? detailData.place : detailData.place.name;
+        const placeId = typeof detailData.place === 'object' ? detailData.place.id : null;
+        setLocation(placeName);
+        if (placeId) {
+          setSelectedPlace({ id: placeId, name: placeName, floor: 0 });
+        }
 
-      setReason(detailData.cause ?? '');
-      setSelectedStudents(
-        detailData.students.map((s) => ({
-          id: s.id,
-          studentNumber: s.number,
-          name: s.name,
-        })),
-      );
+        setReason(detailData.cause ?? '');
+        setSelectedStudents(
+          detailData.students.map((s) => ({
+            id: s.id,
+            studentNumber: s.number,
+            name: s.name,
+          })),
+        );
+      });
     }
   }, [isEditMode, detailData]);
 
@@ -83,7 +86,7 @@ export default function FixedMovementFormPage() {
     setPlaceSearchInput('');
   };
 
-  const handleSelectTeam = (teamId: string, teamName: string, teamMembers: any[]) => {
+  const handleSelectTeam = (teamName: string, teamMembers: TeamSearchResponse['members']) => {
     setTeamSearchInput('');
     const newStudents = teamMembers.map(member => ({
       id: member.id,
@@ -283,7 +286,7 @@ export default function FixedMovementFormPage() {
                   {teamResults.slice(0, 5).map((team) => (
                     <S.StudentDropdownItem
                       key={team.id}
-                      onClick={() => handleSelectTeam(team.id, team.name, team.members)}
+                      onClick={() => handleSelectTeam(team.name, team.members)}
                     >
                       {team.name}
                     </S.StudentDropdownItem>

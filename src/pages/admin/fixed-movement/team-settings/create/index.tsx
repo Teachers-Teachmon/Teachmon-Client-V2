@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
@@ -33,26 +34,30 @@ export default function TeamFormPage() {
     if (isEditMode && teamsData) {
       const team = teamsData.find((t) => String(t.id) === id);
       if (team) {
-        setTeamName(team.name);
-        setSelectedStudents(
-          team.members.map((m) => ({
-            studentNumber: Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`),
-            name: m.name,
-          })),
-        );
-        const idMap: Record<number, number> = {};
-        team.members.forEach((m) => {
-          const studentNumber = Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`);
-          idMap[studentNumber] = m.id;
+        flushSync(() => {
+          setTeamName(team.name);
+          setSelectedStudents(
+            team.members.map((m) => ({
+              studentNumber: Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`),
+              name: m.name,
+            })),
+          );
+          const idMap: Record<number, number> = {};
+          team.members.forEach((m) => {
+            const studentNumber = Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`);
+            idMap[studentNumber] = m.id;
+          });
+          setStudentIdMap(idMap);
         });
-        setStudentIdMap(idMap);
       }
     }
-  }, [id, isEditMode, teamsData]);
+  }, [isEditMode, teamsData, id]);
 
   const handleAddStudent = (student: Student) => {
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
-      setSelectedStudents([...selectedStudents, student]);
+      flushSync(() => {
+        setSelectedStudents([...selectedStudents, student]);
+      });
     }
     setSearchInput('');
   };
