@@ -1,4 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
+import { getWeeklyExitHistory } from './manage.api';
 import {
   getStudentSchedule,
   getPlaceSchedule,
@@ -48,5 +49,10 @@ export const manageQuery = {
     queryOptions({
       queryKey: ['manage.scheduleHistory', params],
       queryFn: () => getScheduleHistory(params),
+    }),
+  weeklyExitHistory: () =>
+    queryOptions({
+      queryKey: ['query.weeklyExitHistory'],
+      queryFn: getWeeklyExitHistory,
     }),
 };

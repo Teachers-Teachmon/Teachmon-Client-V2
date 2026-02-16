@@ -40,6 +40,12 @@ export const formatDateDisplay = (dateStr: string): string => {
   const date = new Date(dateStr);
   const days = ['일', '월', '화', '수', '목', '금', '토'];
   return `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
+
+export const formatDateShort = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month}/${day}`;
 };
 
 export const formatSupervisionType = (type: SupervisionType | string): string => {
@@ -50,8 +56,10 @@ export const formatPeriod = (period: PeriodType | string): string => {
   const periodMap: Record<string, string> = {
     SEVEN_PERIOD: '7교시',
     EIGHT_PERIOD: '8교시',
+    EIGHT_AND_NINE_PERIOD: '8~9교시',
     NINE_PERIOD: '9교시',
     TEN_PERIOD: '10교시',
+    TEN_AND_ELEVEN_PERIOD: '10~11교시',
   };
   return periodMap[period] || period;
 };
