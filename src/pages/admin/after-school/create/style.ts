@@ -212,6 +212,7 @@ export const RemoveButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: color 0.2s;
+  z-index: 10;
   
   &:hover {
     color: #EF4444;

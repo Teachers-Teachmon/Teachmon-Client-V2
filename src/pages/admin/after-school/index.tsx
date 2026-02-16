@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/ui/button';
+import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import type { TableColumn } from '@/types/afterSchool';
+import Loading from '@/components/ui/loading';
+import type { TableColumn, AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
-import { WEEKDAYS, MOCK_ADMIN_AFTER_SCHOOL } from '@/constants/admin';
+import { WEEKDAYS, WEEKDAY_MAP } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
+import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
+import { deleteAfterSchoolClass } from '@/services/after-school/afterSchool.api';
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
@@ -19,9 +24,61 @@ export default function AdminAfterSchoolPage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [selectedQuarter, setSelectedQuarter] = useState('1분기');
   const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
-  const [classes, setClasses] = useState<AdminAfterSchoolClass[]>(MOCK_ADMIN_AFTER_SCHOOL);
   const [googleSheetUrl, setGoogleSheetUrl] = useState('');
   const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
+
+  const branch = useMemo(() => {
+    const match = selectedQuarter.match(/\d+/);
+    const value = match ? Number(match[0]) : 1;
+    return Number.isFinite(value) ? value : 1;
+  }, [selectedQuarter]);
+
+  const apiParams: AfterSchoolRequestParams = useMemo(() => ({
+    grade: selectedGrade,
+    branch,
+    week_day: WEEKDAY_MAP[selectedDay],
+    start_period: 8,
+    end_period: 11,
+  }), [selectedGrade, selectedDay, branch]);
+
+  const { data: apiData, isLoading } = useQuery({
+    ...afterSchoolQuery.classes(apiParams),
+  });
+
+  const queryClient = useQueryClient();
+
+  const API_WEEKDAY_TO_UI: Record<string, (typeof WEEKDAYS)[number]> = {
+    '월': '월요일',
+    '화': '화요일',
+    '수': '수요일',
+    '목': '목요일',
+    MON: '월요일',
+    TUE: '화요일',
+    WED: '수요일',
+    THU: '목요일',
+    '월요일': '월요일',
+    '화요일': '화요일',
+    '수요일': '수요일',
+    '목요일': '목요일',
+  };
+
+  const classes = useMemo(() => {
+    if (!apiData) return [];
+    
+    return apiData.map((item): AdminAfterSchoolClass => ({
+      id: item.id.toString(),
+      grade: selectedGrade,
+      day: API_WEEKDAY_TO_UI[item.week_day] ?? (selectedDay as (typeof WEEKDAYS)[number]),
+      period: item.period,
+      teacher: item.teacher.name,
+      teacherId: item.teacher.id,
+      location: item.place.name,
+      placeId: item.place.id,
+      subject: item.name,
+      students: item.students.map(student => `${student.number} ${student.name}`),
+      studentIds: item.students.map(student => student.id ?? 0),
+    }));
+  }, [apiData, selectedGrade, selectedDay]);
 
   const filteredClasses = classes.filter(
     cls => cls.grade === selectedGrade && cls.day === selectedDay
@@ -48,7 +105,7 @@ export default function AdminAfterSchoolPage() {
     if (e) {
       e.stopPropagation();
     }
-    navigate(`/admin/after-school/edit/${classData.id}`);
+    navigate(`/admin/after-school/edit/${classData.id}`, { state: classData });
   };
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
@@ -59,9 +116,15 @@ export default function AdminAfterSchoolPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteTargetId) {
-      setClasses(prev => prev.filter(cls => cls.id !== deleteTargetId));
+      try {
+        await deleteAfterSchoolClass(Number(deleteTargetId));
+        toast.success('방과후가 성공적으로 삭제되었습니다.');
+        queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
+      } catch (error) {
+        toast.error('방과후 삭제에 실패했습니다.');
+      }
     }
     setIsDeleteModalOpen(false);
     setDeleteTargetId(null);
@@ -187,50 +250,56 @@ export default function AdminAfterSchoolPage() {
       />
 
       <S.PageContainer style={{ overflow: isDeleteModalOpen ? 'hidden' : undefined }}>
-        <AdminAfterSchoolHeaderContainer
-          selectedQuarter={selectedQuarter}
-          setSelectedQuarter={setSelectedQuarter}
-          selectedGrade={selectedGrade}
-          setSelectedGrade={setSelectedGrade}
-          googleSheetUrl={googleSheetUrl}
-          setGoogleSheetUrl={setGoogleSheetUrl}
-          handleGoogleSheetSync={handleGoogleSheetSync}
-          handleGoogleSheetUpload={handleGoogleSheetUpload}
-        />
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <AdminAfterSchoolHeaderContainer
+              selectedQuarter={selectedQuarter}
+              setSelectedQuarter={setSelectedQuarter}
+              selectedGrade={selectedGrade}
+              setSelectedGrade={setSelectedGrade}
+              googleSheetUrl={googleSheetUrl}
+              setGoogleSheetUrl={setGoogleSheetUrl}
+              handleGoogleSheetSync={handleGoogleSheetSync}
+              handleGoogleSheetUpload={handleGoogleSheetUpload}
+            />
 
-        <S.DaySelector>
-          <S.NavButton onClick={handlePrevDay}>
-            «
-          </S.NavButton>
-          <S.DayText $active={false} onClick={handlePrevDay}>
-            {prevDay}
-          </S.DayText>
-          <S.DayText $active={true}>
-            {selectedDay}
-          </S.DayText>
-          <S.DayText $active={false} onClick={handleNextDay}>
-            {nextDay}
-          </S.DayText>
-          <S.NavButton onClick={handleNextDay}>
-            »
-          </S.NavButton>
-        </S.DaySelector>
+            <S.DaySelector>
+              <S.NavButton onClick={handlePrevDay}>
+                «
+              </S.NavButton>
+              <S.DayText $active={false} onClick={handlePrevDay}>
+                {prevDay}
+              </S.DayText>
+              <S.DayText $active={true}>
+                {selectedDay}
+              </S.DayText>
+              <S.DayText $active={false} onClick={handleNextDay}>
+                {nextDay}
+              </S.DayText>
+              <S.NavButton onClick={handleNextDay}>
+                »
+              </S.NavButton>
+            </S.DaySelector>
 
-        <S.ContentWrapper>
-          <S.TableWrapper>
-            <TableLayout
-              columns={columns}
-              data={filteredClasses}
-              renderActions={renderActions}
-              actionsHeader=""
-              onRowClick={handleRowClick}
-              />
-          </S.TableWrapper>
+            <S.ContentWrapper>
+              <S.TableWrapper>
+                <TableLayout
+                  columns={columns}
+                  data={filteredClasses}
+                  renderActions={renderActions}
+                  actionsHeader=""
+                  onRowClick={handleRowClick}
+                  />
+              </S.TableWrapper>
 
-          <S.AddButtonWrapper>
-            <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
-          </S.AddButtonWrapper>
-        </S.ContentWrapper>
+              <S.AddButtonWrapper>
+                <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
+              </S.AddButtonWrapper>
+            </S.ContentWrapper>
+          </>
+        )}
       </S.PageContainer>
     </>
   );
