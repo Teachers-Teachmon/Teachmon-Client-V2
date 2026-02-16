@@ -12,8 +12,8 @@ export const Container = styled.div`
     flex-direction: column;
 
     ${mq.mobile} {
-        padding: 20px 16px;
-        overflow-y: scroll;
+        padding: 20px 16px 100px 16px;
+        overflow-y: auto;
     }
 `;
 
@@ -29,7 +29,7 @@ export const ContentWrapper = styled.div`
     ${mq.mobile} {
         grid-template-columns: 1fr;
         gap: 16px;
-        margin-bottom: 16px;
+        margin-bottom: 32px;
         flex: none;
     }
 `;
@@ -292,6 +292,12 @@ export const ButtonWrapper = styled.div`
     gap: 20px;
 
     ${mq.mobile} {
+        position: fixed;
+        bottom: 10%;
+        left: 0;
+        right: 0;
+        padding: 12px 16px;
         gap: 12px;
+        z-index: 10;
     }
 `;
