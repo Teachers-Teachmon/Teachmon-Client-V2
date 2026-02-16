@@ -1,18 +1,21 @@
 import axiosInstance from '@/lib/axiosInstance';
+import type { Student, Place, Team } from '@/types/search';
 
-// Types
-export interface Student {
-  id: number | string; // json-bigint로 큰 숫자는 문자열, 작은 숫자는 number로 처리됨
-  name: string;
-  grade: number;
-  classNumber: number;
-  number: number;
-}
-
-// Student Search API
+// APIs
 export const searchStudents = async (query?: string): Promise<Student[]> => {
-  const response = await axiosInstance.get<Student[]>('/student/search', { 
-    params: { query: query ?? '' } 
-  });
+  const params = query ? { query } : {};
+  const response = await axiosInstance.get<Student[]>('/student/search', { params });
+  return response.data;
+};
+
+export const searchPlaces = async (query?: string): Promise<Place[]> => {
+  const params = query ? { query } : {};
+  const response = await axiosInstance.get<Place[]>('/place/search', { params });
+  return response.data;
+};
+
+export const searchTeams = async (query?: string): Promise<Team[]> => {
+  const params = query ? { query } : {};
+  const response = await axiosInstance.get<Team[]>('/team/search', { params });
   return response.data;
 };
