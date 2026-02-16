@@ -62,7 +62,8 @@ export default function FixedMovementFormPage() {
       setReason(detailData.cause ?? '');
       setSelectedStudents(
         detailData.students.map((s) => ({
-          studentNumber: s.id ?? s.number,
+          id: s.id,
+          studentNumber: s.number,
           name: s.name,
         })),
       );
@@ -82,9 +83,28 @@ export default function FixedMovementFormPage() {
     setPlaceSearchInput('');
   };
 
-  const handleSelectTeam = (teamId: number, teamName: string) => {
+  const handleSelectTeam = (teamId: string, teamName: string, teamMembers: any[]) => {
     setTeamSearchInput('');
-    toast.success(`${teamName} 팀이 선택되었습니다.`);
+    const newStudents = teamMembers.map(member => ({
+      id: member.id,
+      studentNumber: member.number,
+      name: member.name,
+      grade: member.grade,
+      classNumber: member.classNumber,
+    }));
+    const uniqueNewStudents = newStudents.filter(newStudent => 
+      !selectedStudents.find(existing => 
+        (existing.id && existing.id === newStudent.id) || 
+        existing.studentNumber === newStudent.studentNumber
+      )
+    );
+
+    if (uniqueNewStudents.length > 0) {
+      setSelectedStudents([...selectedStudents, ...uniqueNewStudents]);
+      toast.success(`${teamName} 팀의 학생 ${uniqueNewStudents.length}명이 추가되었습니다.`);
+    } else {
+      toast.info(`${teamName} 팀의 모든 학생이 이미 선택되어 있습니다.`);
+    }
   };
 
   const handleRemoveStudent = (studentNumber: number) => {
@@ -117,7 +137,7 @@ export default function FixedMovementFormPage() {
           period: periodEnum,
           place: selectedPlace.id,
           cause: reason,
-          students: selectedStudents.map((s) => s.studentNumber),
+          students: selectedStudents.map((s) => s.id || s.studentNumber),
         },
       });
     } else {
@@ -126,7 +146,7 @@ export default function FixedMovementFormPage() {
         period: periodEnum,
         place_id: selectedPlace.id,
         cause: reason,
-        students: selectedStudents.map((s) => s.studentNumber),
+        students: selectedStudents.map((s) => s.id || s.studentNumber),
       });
     }
   };
@@ -240,15 +260,18 @@ export default function FixedMovementFormPage() {
                 <S.StudentDropdown>
                   {studentResults
                     .filter(student => 
-                      !selectedStudents.find(s => s.studentNumber === student.id)
+                      !selectedStudents.find(s => 
+                        (s.id && s.id === student.id) || 
+                        (!s.id && s.studentNumber === student.number)
+                      )
                     )
                     .slice(0, 5)
                     .map((student) => (
                       <S.StudentDropdownItem 
                         key={student.id}
-                        onClick={() => handleAddStudent({ studentNumber: student.id, name: student.name })}
+                        onClick={() => handleAddStudent({ id: student.id, studentNumber: student.number, name: student.name, grade: student.grade, classNumber: student.classNumber })}
                       >
-                        {student.grade}{student.class}{String(student.number).padStart(2, '0')} {student.name}
+                        {student.grade}{student.classNumber}{student.number < 10 ? `0${student.number}` : student.number} {student.name}
                       </S.StudentDropdownItem>
                     ))
                   }
@@ -260,7 +283,7 @@ export default function FixedMovementFormPage() {
                   {teamResults.slice(0, 5).map((team) => (
                     <S.StudentDropdownItem
                       key={team.id}
-                      onClick={() => handleSelectTeam(team.id, team.name)}
+                      onClick={() => handleSelectTeam(team.id, team.name, team.members)}
                     >
                       {team.name}
                     </S.StudentDropdownItem>
@@ -275,7 +298,7 @@ export default function FixedMovementFormPage() {
               {selectedStudents.map((student) => (
                 <S.StudentCard key={student.studentNumber}>
                   <S.StudentInfo>
-                    <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
+                    <S.StudentNumber>{student.grade && student.classNumber ? `${student.grade}${student.classNumber}${student.studentNumber < 10 ? `0${student.studentNumber}` : student.studentNumber}` : student.studentNumber}</S.StudentNumber>
                     <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
                   <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>

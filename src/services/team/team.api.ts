@@ -11,6 +11,11 @@ export const getTeams = async (): Promise<TeamResponse[]> => {
   return response.data;
 };
 
+export const getTeamById = async (id: string): Promise<TeamResponse> => {
+  const response = await axiosInstance.get<TeamResponse>(`/team/${id}`);
+  return response.data;
+};
+
 export const createTeam = async (
   data: CreateTeamRequest,
 ): Promise<{ message: string }> => {

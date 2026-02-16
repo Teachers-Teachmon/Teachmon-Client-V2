@@ -6,6 +6,8 @@ import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
 import Loading from '@/components/ui/loading';
 import ConfirmModal from '@/components/layout/modal/confirm';
+import StudentListWithOverflow from '@/containers/admin/fixed-movement/table/studentList';
+import DetailModal from '@/containers/admin/fixed-movement/detail-modal';
 import { teamQuery } from '@/services/team/team.query';
 import { useDeleteTeamMutation } from '@/services/team/team.mutation';
 import type { Team } from '@/types/fixedMovement';
@@ -16,6 +18,8 @@ export default function TeamSettingsPage() {
   const { data: rawTeams, isLoading, isError } = useQuery(teamQuery.list());
   const deleteMutation = useDeleteTeamMutation();
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [detailTargetId, setDetailTargetId] = useState<string | null>(null);
+  const [detailTeamData, setDetailTeamData] = useState<any>(null);
 
   const teams: Team[] = (rawTeams ?? []).map((t) => ({
     id: String(t.id),
@@ -37,6 +41,17 @@ export default function TeamSettingsPage() {
   const handleEdit = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
     navigate(`/admin/fixed-movement/team-settings/edit/${id}`);
+  };
+
+  const handleDetail = (row: Team) => {
+    console.log('handleDetail called with row:', row);
+    console.log('rawTeams:', rawTeams);
+    
+    const originalTeam = (rawTeams ?? []).find((t: any) => String(t.id) === row.id);
+    console.log('found originalTeam:', originalTeam);
+    
+    setDetailTeamData(originalTeam || row);
+    setDetailTargetId(row.id);
   };
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
@@ -63,16 +78,10 @@ export default function TeamSettingsPage() {
       header: '학생',
       width: 'auto',
       render: (row) => (
-        <S.StudentList>
-          {row.students.slice(0, 5).map((student, idx) => (
-            <S.StudentTag key={idx}>
-              {student.studentNumber} {student.name}
-            </S.StudentTag>
-          ))}
-          {row.students.length > 5 && (
-            <S.StudentTag>...</S.StudentTag>
-          )}
-        </S.StudentList>
+        <StudentListWithOverflow 
+          students={row.students.map(student => ({ ...student, studentNumber: String(student.studentNumber) }))} 
+          maxVisible={8} 
+        />
       ),
     },
   ];
@@ -106,6 +115,7 @@ export default function TeamSettingsPage() {
           columns={columns}
           data={teams}
           renderActions={renderActions}
+          onRowClick={handleDetail}
         />
       </S.TableWrapper>
       <ConfirmModal
@@ -115,6 +125,15 @@ export default function TeamSettingsPage() {
         title="팀 삭제"
         message="정말 삭제하시겠습니까?"
         confirmText="삭제"
+      />
+      <DetailModal
+        teamId={detailTargetId}
+        isOpen={!!detailTargetId}
+        onClose={() => {
+          setDetailTargetId(null);
+          setDetailTeamData(null);
+        }}
+        teamData={detailTeamData}
       />
     </S.Container>
   );

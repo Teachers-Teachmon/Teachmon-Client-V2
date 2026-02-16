@@ -52,6 +52,7 @@ export const StudentTag = styled.span`
   font-size: ${fontSizes.Small};
   white-space: nowrap;
   flex-shrink: 0;
+  pointer-events: none;
 `;
 
 export const MoreTag = styled.span`
@@ -62,4 +63,5 @@ export const MoreTag = styled.span`
   font-size: ${fontSizes.Small};
   white-space: nowrap;
   flex-shrink: 0;
+  pointer-events: none;
 `;

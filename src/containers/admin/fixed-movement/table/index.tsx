@@ -10,7 +10,7 @@ import { useDeleteFixedMovementMutation } from '@/services/fixed-movement/fixedM
 import { toFixedMovements } from '@/utils/fixedMovementMapper';
 import { getFixedMovementTableColumns } from '@/utils/fixedMovementTableColumns';
 import type { FixedMovement } from '@/types/fixedMovement';
-import FixedMovementDetailModal from '../detail-modal';
+import DetailModal from '../detail-modal';
 import ConfirmModal from '@/components/layout/modal/confirm';
 import * as S from './style';
 
@@ -83,7 +83,7 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
         renderActions={renderActions}
         onRowClick={handleRowClick}
       />
-      <FixedMovementDetailModal 
+      <DetailModal 
         movementId={selectedMovementId}
         isOpen={isModalOpen}
         onClose={handleCloseModal}

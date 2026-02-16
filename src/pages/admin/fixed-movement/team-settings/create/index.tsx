@@ -129,15 +129,18 @@ export default function TeamFormPage() {
                 <S.StudentDropdown>
                   {studentResults
                     .filter(student =>
-                      !selectedStudents.find(s => s.studentNumber === student.id)
+                      !selectedStudents.find(s => 
+                        (studentIdMap[s.studentNumber] && studentIdMap[s.studentNumber] === student.id) || 
+                        (!studentIdMap[s.studentNumber] && s.studentNumber === student.id)
+                      )
                     )
                     .slice(0, 5)
                     .map((student) => (
                       <S.StudentDropdownItem
                         key={student.id}
-                        onClick={() => handleAddStudent({ studentNumber: student.id, name: student.name })}
+                        onClick={() => handleAddStudent({ studentNumber: student.id, name: student.name, grade: student.grade, classNumber: student.classNumber })}
                       >
-                        {student.grade}{student.class}{String(student.number).padStart(2, '0')} {student.name}
+                        {student.grade}{student.classNumber}{student.number < 10 ? `0${student.number}` : student.number} {student.name}
                       </S.StudentDropdownItem>
                     ))
                   }
@@ -151,7 +154,7 @@ export default function TeamFormPage() {
               {selectedStudents.map((student) => (
                 <S.StudentCard key={student.studentNumber}>
                   <S.StudentInfo>
-                    <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
+                    <S.StudentNumber>{student.grade && student.classNumber ? `${student.grade}${student.classNumber}${student.studentNumber < 10 ? `0${student.studentNumber}` : student.studentNumber}` : student.studentNumber}</S.StudentNumber>
                     <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
                   <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>

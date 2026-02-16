@@ -12,7 +12,7 @@ export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
 `;
 
 export const Title = styled.h2`
@@ -43,11 +43,11 @@ export const CloseIcon = styled.span`
 `;
 
 export const Content = styled.div`
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-top: -0.7rem;
+  gap: 1rem;
+  margin-top: -0.5rem;
   max-height: 40vh;
   overflow-y: auto;
 
@@ -69,7 +69,7 @@ export const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const InfoLabel = styled.div`

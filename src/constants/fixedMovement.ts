@@ -43,9 +43,18 @@ export const WEEKDAY_LABEL_TO_API: Record<string, Weekday> = Object.fromEntries(
   Object.entries(WEEKDAY_LABEL).map(([key, value]) => [value, key as Weekday]),
 ) as Record<string, Weekday>;
 
-export const PERIOD_LABEL_TO_API: Record<string, Period> = Object.fromEntries(
-  Object.entries(PERIOD_LABEL).map(([key, value]) => [value, key as Period]),
-) as Record<string, Period>;
+export const PERIOD_LABEL_TO_API: Record<string, Period> = {
+  '1교시': 'ONE_PERIOD',
+  '2교시': 'TWO_PERIOD',
+  '3교시': 'THREE_PERIOD',
+  '4교시': 'FOUR_PERIOD',
+  '5교시': 'FIVE_PERIOD',
+  '6교시': 'SIX_PERIOD',
+  '7교시': 'SEVEN_PERIOD',
+  '8~9교시': 'EIGHT_AND_NINE_PERIOD',
+  '10~11교시': 'TEN_AND_ELEVEN_PERIOD',
+  '8~11교시': 'EIGHT_AND_NINE_PERIOD', // 8~11교시는 8~9교시로 처리 (두 번 호출 필요)
+};
 
 export const PERIOD_OPTIONS = [
   '7교시',

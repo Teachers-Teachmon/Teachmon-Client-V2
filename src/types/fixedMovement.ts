@@ -1,6 +1,9 @@
 export interface Student {
+  id?: number;
   studentNumber: number;
   name: string;
+  grade?: number;
+  classNumber?: number;
 }
 
 export interface FixedMovement {
@@ -78,7 +81,7 @@ export interface UpdateFixedMovementResponse {
 export interface StudentSearchResponse {
   id: number;
   grade: number;
-  class: number;
+  classNumber: number;
   number: number;
   name: string;
 }
