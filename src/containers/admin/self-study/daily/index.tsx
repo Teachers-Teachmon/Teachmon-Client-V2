@@ -1,26 +1,128 @@
 import { useState, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import Calendar from '@/components/ui/calendar';
 import type { CalendarRangeEvent, CalendarEvent } from '@/components/ui/calendar';
 import Button from '@/components/ui/button';
+import Loading from '@/components/ui/loading';
 import { colors } from '@/styles/theme';
 import type { SelfStudySchedule, Grade } from '@/types/selfStudy';
-import { INITIAL_SELF_STUDY_SCHEDULES } from '@/constants/adminSelfStudy';
-import { generateScheduleId, getDatesInRange, getGradeColor, formatGrade, formatPeriods } from '@/utils/selfStudy';
+import { selfStudyQuery } from '@/services/self-study/selfStudy.query';
+import { createAdditionalSelfStudy, deleteAdditionalSelfStudy } from '@/services/self-study/selfStudy.api';
+import { getDatesInRange, getGradeColor, formatGrade, formatPeriods, PERIOD_ENUM_TO_LABEL, PERIOD_LABEL_TO_ENUM } from '@/utils/selfStudy';
 import SidePanel from './side-panel';
 import DetailModal from './detail-modal';
 import * as S from './style';
 
 export default function DailySection() {
+  type NumberGrade = Exclude<Grade, 'all'>;
   const currentDate = new Date();
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [selectedGrade, setSelectedGrade] = useState<Grade>(2);
+  const [selectedGrades, setSelectedGrades] = useState<NumberGrade[]>([2]);
   const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
-  const [schedules, setSchedules] = useState<SelfStudySchedule[]>(INITIAL_SELF_STUDY_SCHEDULES);
   const [selectedSchedule, setSelectedSchedule] = useState<SelfStudySchedule | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data: rawData, isLoading } = useQuery(selfStudyQuery.additional(selectedYear));
+  const queryClient = useQueryClient();
+
+  const schedules: SelfStudySchedule[] = useMemo(() => {
+    if (!rawData) return [];
+    const groupedByDate: Record<
+      string,
+      Record<
+        number,
+        {
+          periods: string[];
+          periodIds: Record<string, number>;
+        }
+      >
+    > = {};
+
+    rawData.forEach((item) => {
+      const date = item.day;
+      const grade = item.grade as number;
+
+      if (!groupedByDate[date]) {
+        groupedByDate[date] = {};
+      }
+
+      if (!groupedByDate[date][grade]) {
+        groupedByDate[date][grade] = {
+          periods: [],
+          periodIds: {},
+        };
+      }
+
+      item.periods.forEach((p) => {
+        const periodLabel = PERIOD_ENUM_TO_LABEL[p.period] ?? p.period;
+        if (!groupedByDate[date][grade].periods.includes(periodLabel)) {
+          groupedByDate[date][grade].periods.push(periodLabel);
+        }
+        groupedByDate[date][grade].periodIds[periodLabel] = p.id;
+      });
+    });
+
+    const result: SelfStudySchedule[] = [];
+
+    Object.entries(groupedByDate).forEach(([date, gradeMap]) => {
+      const dateObj = new Date(date);
+      const gradeNumbers = Object.keys(gradeMap)
+        .map((g) => Number(g))
+        .sort();
+
+      const hasAllGrades =
+        gradeNumbers.length === 3 &&
+        gradeNumbers.every((g) => [1, 2, 3].includes(g));
+      if (hasAllGrades) {
+        const allPeriodsSet = new Set<string>();
+        const periodIds: Record<string, number> = {};
+
+        gradeNumbers.forEach((g) => {
+          gradeMap[g].periods.forEach((period) => {
+            allPeriodsSet.add(period);
+            periodIds[period] = gradeMap[g].periodIds[period];
+          });
+        });
+
+        const sortedPeriods = Array.from(allPeriodsSet).sort(
+          (a, b) => parseInt(a) - parseInt(b),
+        );
+
+        result.push({
+          id: `additional-${date}-all`,
+          date: dateObj,
+          grade: 'all',
+          periods: sortedPeriods,
+          periodIds,
+          startDate: dateObj,
+          endDate: dateObj,
+        });
+      } else {
+        gradeNumbers.forEach((g) => {
+          const data = gradeMap[g];
+          const sortedPeriods = [...data.periods].sort(
+            (a, b) => parseInt(a) - parseInt(b),
+          );
+
+          result.push({
+            id: `additional-${date}-${g}`,
+            date: dateObj,
+            grade: g as Grade,
+            periods: sortedPeriods,
+            periodIds: data.periodIds,
+            startDate: dateObj,
+            endDate: dateObj,
+          });
+        });
+      }
+    });
+
+    return result;
+  }, [rawData]);
 
   const handleMonthChange = (year: number, month: number) => {
     setSelectedYear(year);
@@ -65,20 +167,51 @@ export default function DailySection() {
       return;
     }
 
-    const datesInRange = getDatesInRange(startDate, endDate);
-    const newSchedules: SelfStudySchedule[] = datesInRange.map(date => ({
-      id: generateScheduleId(),
-      date: new Date(date),
-      grade: selectedGrade,
-      periods: [...selectedPeriods],
-      startDate: new Date(startDate),
-      endDate: new Date(endDate),
-    }));
+    const periodEnums = selectedPeriods
+      .map((p) => PERIOD_LABEL_TO_ENUM[p])
+      .filter(Boolean);
 
-    setSchedules(prev => [...prev, ...newSchedules]);
-    setStartDate(null);
-    setEndDate(null);
-    setSelectedPeriods([]);
+    if (periodEnums.length === 0) {
+      toast.error('유효한 교시를 선택해주세요.');
+      return;
+    }
+
+    const datesInRange = getDatesInRange(startDate, endDate);
+
+    if (selectedGrades.length === 0) {
+      toast.error('학년을 선택해주세요.');
+      return;
+    }
+
+    const promises: Promise<unknown>[] = [];
+
+    selectedGrades.forEach((grade) => {
+      datesInRange.forEach((date) => {
+        const day = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(
+          date.getDate(),
+        ).padStart(2, '0')}`;
+
+        promises.push(
+          createAdditionalSelfStudy({
+            day,
+            grade,
+            periods: periodEnums,
+          }),
+        );
+      });
+    });
+
+    Promise.all(promises)
+      .then(() => {
+        toast.success('일별 자습을 추가 설정하였습니다.');
+        queryClient.invalidateQueries({ queryKey: ['selfStudy.additional', selectedYear] });
+        setStartDate(null);
+        setEndDate(null);
+        setSelectedPeriods([]);
+      })
+      .catch(() => {
+        toast.error('일별 자습 추가 설정에 실패했습니다.');
+      });
   };
 
   const handleCancelSelection = () => {
@@ -88,7 +221,30 @@ export default function DailySection() {
   };
 
   const handleDeleteSchedule = (id: string) => {
-    setSchedules(prev => prev.filter(schedule => schedule.id !== id));
+    const schedule = schedules.find((s) => s.id === id);
+    if (!schedule) return;
+
+    const idParts = schedule.id.split('-');
+    const date = `${idParts[1]}-${idParts[2]}-${idParts[3]}`;
+    const deleteIds: number[] = [];
+    rawData?.forEach((item) => {
+      if (item.day === date) {
+        item.periods.forEach((p) => {
+          deleteIds.push(p.id);
+        });
+      }
+    });
+
+    if (deleteIds.length === 0) return;
+
+    Promise.all(deleteIds.map((pid) => deleteAdditionalSelfStudy(pid)))
+      .then(() => {
+        toast.success('일별 자습을 삭제하였습니다.');
+        queryClient.invalidateQueries({ queryKey: ['selfStudy.additional', selectedYear] });
+      })
+      .catch(() => {
+        toast.error('일별 자습 삭제에 실패했습니다.');
+      });
   };
 
   const handleCloseModal = () => {
@@ -141,6 +297,8 @@ export default function DailySection() {
 
   const showPanel = startDate && endDate;
 
+  if (isLoading) return <Loading />;
+
   return (
     <S.Container>
       <S.CalendarWrapper>
@@ -168,8 +326,8 @@ export default function DailySection() {
 
       {showPanel && (
         <SidePanel
-          selectedGrade={selectedGrade}
-          onGradeChange={setSelectedGrade}
+          selectedGrades={selectedGrades}
+          onGradesChange={setSelectedGrades}
           selectedPeriods={selectedPeriods}
           onPeriodToggle={handlePeriodToggle}
           onComplete={handleComplete}
