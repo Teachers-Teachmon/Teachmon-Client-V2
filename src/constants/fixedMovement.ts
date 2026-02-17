@@ -57,7 +57,6 @@ export const PERIOD_LABEL_TO_API: Record<string, Period> = {
 };
 
 export const PERIOD_OPTIONS = [
-  '7교시',
   '8~9교시',
   '10~11교시',
   '8~11교시',
