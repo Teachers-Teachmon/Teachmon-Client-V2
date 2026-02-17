@@ -22,21 +22,7 @@ import {
   type PdfWeekDay,
 } from '@/utils/adminAfterSchoolPdf';
 import { getApiErrorMessage } from '@/utils/error';
-
-const API_WEEKDAY_TO_UI: Record<string, (typeof WEEKDAYS)[number]> = {
-  '월': '월요일',
-  '화': '화요일',
-  '수': '수요일',
-  '목': '목요일',
-  MON: '월요일',
-  TUE: '화요일',
-  WED: '수요일',
-  THU: '목요일',
-  '월요일': '월요일',
-  '화요일': '화요일',
-  '수요일': '수요일',
-  '목요일': '목요일',
-};
+import { API_WEEKDAY_TO_UI } from '@/utils/afterSchool';
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
