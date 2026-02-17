@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import * as S from './style';
-import type { AfterSchoolClass } from '@/types/after-school';
-import { DAYS, ITEMS_PER_PAGE, DAY_MAPPING } from '@/constants/after-school';
+import type { AllAfterSchool, AfterSchoolSearchParams } from '@/types/after-school';
+import { DAYS, ITEMS_PER_PAGE, DAY_TO_ENGLISH } from '@/constants/after-school';
+import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
+import { findCurrentQuarter } from '@/utils/branch';
 
 interface AllClassSectionProps {
   selectedGrade: 1 | 2 | 3;
   onGradeChange: (grade: 1 | 2 | 3) => void;
-  classes: AfterSchoolClass[];
 }
 
 const getInitialDay = () => {
@@ -18,26 +20,49 @@ const getInitialDay = () => {
 export default function AllClassSection({
   selectedGrade,
   onGradeChange,
-  classes
 }: AllClassSectionProps) {
   const [selectedDay, setSelectedDay] = useState(getInitialDay());
   const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
 
+  const { data: branchInfo } = useQuery(afterSchoolQuery.branch());
+
+  // 현재 날짜가 속하는 분기 찾기
+  const currentQuarter = findCurrentQuarter(branchInfo || []);
+
+  const params: AfterSchoolSearchParams = {
+    grade: selectedGrade,
+    week_day: DAY_TO_ENGLISH[DAYS[selectedDay]],
+    start_period: 8,
+    end_period: 11,
+  };
+
+  // 분기 정보가 있으면 params에 포함
+  const paramsWithBranch = currentQuarter ? {
+    ...params,
+    branch: currentQuarter.number,
+  } : params;
+
+  const { data: classes = [] } = useQuery(afterSchoolQuery.all(paramsWithBranch));
+
+  // selectedGrade나 selectedDay가 변경될 때 timeSlotPages 초기화
   useEffect(() => {
-    setTimeSlotPages({});
-  }, [selectedGrade]);
-  
-  const selectedDayKey = DAY_MAPPING[DAYS[selectedDay]];
-  const filteredClasses = classes.filter(cls => cls.day === selectedDayKey);
+    const resetPages = () => {
+      setTimeSlotPages({});
+    };
+    
+    // 다음 렌더링 사이클에서 실행하여 동기 호출 문제 해결
+    const timer = setTimeout(resetPages, 0);
+    
+    return () => clearTimeout(timer);
+  }, [selectedGrade, selectedDay]);
 
-
-  const groupedByTime = filteredClasses.reduce((acc, cls) => {
-    if (!acc[cls.time]) {
-      acc[cls.time] = [];
+  const groupedByTime = classes.reduce((acc, cls) => {
+    if (!acc[cls.period]) {
+      acc[cls.period] = [];
     }
-    acc[cls.time].push(cls);
+    acc[cls.period].push(cls);
     return acc;
-  }, {} as Record<string, AfterSchoolClass[]>);
+  }, {} as Record<string, AllAfterSchool[]>);
 
   const handlePrevDay = () => {
     setSelectedDay(prev => (prev > 0 ? prev - 1 : DAYS.length - 1));
@@ -114,9 +139,9 @@ export default function AllClassSection({
                   <S.ClassList>
                     {displayClasses.map(cls => (
                       <S.ClassCard key={cls.id}>
-                        <S.ClassSubject>{cls.subject}</S.ClassSubject>
-                        <S.ClassInfo>{cls.program}</S.ClassInfo>
-                        <S.TeacherName>{cls.teacher} 선생님</S.TeacherName>
+                        <S.ClassSubject>{cls.name}</S.ClassSubject>
+                        <S.ClassInfo>{cls.place.name}</S.ClassInfo>
+                        <S.TeacherName>{cls.teacher.name} 선생님</S.TeacherName>
                       </S.ClassCard>
                     ))}
                   </S.ClassList>
