@@ -162,3 +162,14 @@ export const StudentInfo = styled.div`
         line-height: 18px;
     }
 `;
+
+export const ButtonWrapper = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 32px;
+    gap: 12px;
+
+    ${mq.mobile} {
+        margin-top: 24px;
+    }
+`;

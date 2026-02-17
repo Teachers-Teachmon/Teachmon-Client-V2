@@ -28,10 +28,16 @@ const axiosInstance = axios.create({
     }],
 });
 
-// Request 인터셉터 - 디버깅용
+// Request 인터셉터
 axiosInstance.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         console.log('Request interceptor - Authorization header:', config.headers?.Authorization ? 'set' : 'not set');
+        
+        // skipLoading이 true가 아니면 로딩 시작
+        if (!config.skipLoading) {
+            useLoadingStore.getState().startLoading();
+        }
+        
         return config;
     },
     (error: AxiosError) => {

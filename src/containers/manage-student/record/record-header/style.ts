@@ -29,6 +29,8 @@ export const DateInputWrapper = styled.div`
 export const SearchInputWrapper = styled.div`
     width: 391px;
     margin-left: auto;
+    display: flex;
+    justify-content: flex-end;
 `;
 
 export const TabGroup = styled.div`
