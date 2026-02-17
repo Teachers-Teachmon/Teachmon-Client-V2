@@ -31,15 +31,17 @@ export const CloseButton = styled.button`
   align-items: center;
   justify-content: center;
 
-  &:hover span {
-    color: ${colors.text};
+  img {
+    width: 24px;
+    height: 24px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    display: block;
   }
-`;
 
-export const CloseIcon = styled.span`
-  font-size: 24px;
-  color: ${colors.primaryGray};
-  transition: color 0.2s;
+  &:hover img {
+    opacity: 1;
+  }
 `;
 
 export const Content = styled.div`

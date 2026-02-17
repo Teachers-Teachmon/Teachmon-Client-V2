@@ -53,13 +53,11 @@ export const PERIOD_LABEL_TO_API: Record<string, Period> = {
   '7교시': 'SEVEN_PERIOD',
   '8~9교시': 'EIGHT_AND_NINE_PERIOD',
   '10~11교시': 'TEN_AND_ELEVEN_PERIOD',
-  '8~11교시': 'EIGHT_AND_NINE_PERIOD', // 8~11교시는 8~9교시로 처리 (두 번 호출 필요)
 };
 
 export const PERIOD_OPTIONS = [
   '8~9교시',
   '10~11교시',
-  '8~11교시',
 ];
 
 export const LOCATION_OPTIONS = [

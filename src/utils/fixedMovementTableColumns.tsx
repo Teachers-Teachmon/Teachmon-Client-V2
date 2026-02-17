@@ -1,6 +1,7 @@
 import { WEEKDAYS } from '@/constants/fixedMovement';
 import type { FixedMovement } from '@/types/fixedMovement';
 import StudentListWithOverflow from '@/containers/admin/fixed-movement/table/studentList';
+import { LocationCell } from '@/containers/admin/fixed-movement/table/style';
 
 export function getFixedMovementTableColumns(): import('@/components/layout/table').TableColumn<FixedMovement>[] {
   return [
@@ -20,7 +21,7 @@ export function getFixedMovementTableColumns(): import('@/components/layout/tabl
       key: 'location',
       header: '장소',
       width: '150px',
-      render: (row) => row.location,
+      render: (row) => <LocationCell>{row.location}</LocationCell>,
     },
     {
       key: 'count',

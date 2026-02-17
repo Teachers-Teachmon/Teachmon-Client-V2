@@ -4,6 +4,7 @@ import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.quer
 import { teamQuery } from '@/services/team/team.query';
 import { PERIOD_LABEL, WEEKDAY_LABEL } from '@/constants/fixedMovement';
 import * as S from './style';
+import closeIcon from '/icons/common/x.svg';
 
 interface DetailModalProps {
   movementId?: string | null;
@@ -34,7 +35,7 @@ export default function DetailModal({
           <S.Header>
             <S.Title>고정 이석 상세 정보</S.Title>
             <S.CloseButton onClick={onClose}>
-              <S.CloseIcon>×</S.CloseIcon>
+                <img src={closeIcon} alt="닫기" />
             </S.CloseButton>
           </S.Header>
           <S.Content>
@@ -81,7 +82,7 @@ export default function DetailModal({
           <S.Header>
             <S.Title>팀 상세 정보</S.Title>
             <S.CloseButton onClick={onClose}>
-              <S.CloseIcon>×</S.CloseIcon>
+                <img src={closeIcon} alt="닫기" />
             </S.CloseButton>
           </S.Header>
           <S.Content>
