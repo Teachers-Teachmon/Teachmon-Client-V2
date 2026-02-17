@@ -119,7 +119,7 @@ export default function AdminAfterSchoolPage() {
   const handleConfirmDelete = async () => {
     if (deleteTargetId) {
       try {
-        await deleteAfterSchoolClass(Number(deleteTargetId));
+        await deleteAfterSchoolClass(deleteTargetId);
         toast.success('방과후가 성공적으로 삭제되었습니다.');
         queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
       } catch (error) {

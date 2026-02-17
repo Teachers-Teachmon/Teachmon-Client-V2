@@ -7,6 +7,7 @@ import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
 import { ADMIN_AFTER_SCHOOL_PERIODS } from '@/constants/admin';
 import { searchQuery as searchApiQuery } from '@/services/search/search.query';
+import { useDebounce } from '@/hooks/useDebounce';
 import { createAfterSchoolClass, updateAfterSchoolClass } from '@/services/after-school/afterSchool.api';
 import { toast } from 'react-toastify';
 import type { StudentSearchResponse, PlaceSearchResponse, TeacherSearchResponse, TeamSearchResponse } from '@/types/search';
@@ -61,24 +62,28 @@ export default function AfterSchoolFormPage() {
   );
   const [searchQuery, setSearchQuery] = useState('');
   const [locationSearchQuery, setLocationSearchQuery] = useState('');
+  const debouncedStudentSearch = useDebounce(searchQuery, 300);
+  const debouncedLocationSearch = useDebounce(locationSearchQuery, 300);
+  const debouncedTeacherSearch = useDebounce(teacherSearchQuery, 300);
+
   const { data: studentsData = [] } = useQuery({
-    ...searchApiQuery.students(searchQuery),
-    enabled: searchQuery.length > 0,
+    ...searchApiQuery.students(debouncedStudentSearch),
+    enabled: debouncedStudentSearch.length > 0,
   }) as { data: StudentSearchResponse[] };
 
   const { data: placesData = [] } = useQuery({
-    ...searchApiQuery.places(locationSearchQuery),
-    enabled: locationSearchQuery.length > 0,
+    ...searchApiQuery.places(debouncedLocationSearch),
+    enabled: debouncedLocationSearch.length > 0,
   }) as { data: PlaceSearchResponse[] };
 
   const { data: teachersData = [] } = useQuery({
-    ...searchApiQuery.teachers(teacherSearchQuery),
-    enabled: teacherSearchQuery.length > 0,
+    ...searchApiQuery.teachers(debouncedTeacherSearch),
+    enabled: debouncedTeacherSearch.length > 0,
   }) as { data: TeacherSearchResponse[] };
 
   const { data: teamsData = [] } = useQuery({
-    ...searchApiQuery.teams(searchQuery),
-    enabled: searchQuery.length > 0 && isTeamMode,
+    ...searchApiQuery.teams(debouncedStudentSearch),
+    enabled: debouncedStudentSearch.length > 0 && isTeamMode,
   }) as { data: TeamSearchResponse[] };
 
   const handleAddStudent = (student: StudentSearchResponse | TeamSearchResponse) => {
@@ -106,9 +111,13 @@ export default function AfterSchoolFormPage() {
 
   const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
     const name = student.name;
-    const number = 'number' in student ? student.number : (student as Student).studentNumber;
+    const baseNumber = 'number' in student ? student.number : (student as Student).studentNumber;
+    const grade = (student as Student).grade ?? (student as StudentSearchResponse).grade;
+    const classNumber = (student as Student).classNumber ?? (student as StudentSearchResponse).classNumber;
+
+    const displayNumber = `${grade}${classNumber}${String(baseNumber).padStart(2, '0')}`;
   
-    return `${number} ${name}`;
+    return `${displayNumber} ${name}`;
   };
 
   const handleRemoveStudent = (studentId: string) => {
@@ -126,32 +135,66 @@ export default function AfterSchoolFormPage() {
     }
 
     try {
+      const currentYear = new Date().getFullYear();
       if (isEditMode) {
+        const mappedPeriod =
+          period === '8~9교시'
+            ? 'EIGHT_AND_NINE_PERIOD'
+            : period === '10~11교시'
+            ? 'TEN_AND_ELEVEN_PERIOD'
+            : 'SEVEN_AND_EIGHT_PERIOD';
+
         const requestData: UpdateAfterSchoolRequest = {
           grade: selectedStudents[0].grade,
           week_day: 'MON',
-          period: period === '8~9교시' ? 'EIGHT_AND_NINE_PERIOD' : period === '10~11교시' ? 'TEN_AND_ELEVEN_PERIOD' : 'SEVEN_AND_EIGHT_PERIOD',
-          after_school_id: Number(id),
+          period: mappedPeriod,
+          year: currentYear,
+          after_school_id: id as string,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
-          students_id: selectedStudents.map(s => s.id as number),
+          students_id: selectedStudents.map((s) => s.id as number),
         };
 
         await updateAfterSchoolClass(requestData);
         toast.success('방과후가 성공적으로 수정되었습니다.');
       } else {
-        const requestData: CreateAfterSchoolRequest = {
+        const baseRequest: Omit<CreateAfterSchoolRequest, 'period'> = {
           grade: selectedStudents[0].grade,
           week_day: 'MON',
-          period: period === '8~9교시' ? 'EIGHT_AND_NINE_PERIOD' : period === '10~11교시' ? 'TEN_AND_ELEVEN_PERIOD' : 'SEVEN_AND_EIGHT_PERIOD',
+          year: currentYear,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
-          students_id: selectedStudents.map(s => s.id as number),
+          students_id: selectedStudents.map((s) => s.id as number),
         };
 
-        await createAfterSchoolClass(requestData);
+        if (period === '8~11교시') {
+          // 백엔드에 8~11 교시가 없다면 8~9, 10~11 두 번 생성
+          await Promise.all([
+            createAfterSchoolClass({
+              ...baseRequest,
+              period: 'EIGHT_AND_NINE_PERIOD',
+            }),
+            createAfterSchoolClass({
+              ...baseRequest,
+              period: 'TEN_AND_ELEVEN_PERIOD',
+            }),
+          ]);
+        } else {
+          const mappedPeriod =
+            period === '8~9교시'
+              ? 'EIGHT_AND_NINE_PERIOD'
+              : period === '10~11교시'
+              ? 'TEN_AND_ELEVEN_PERIOD'
+              : 'SEVEN_AND_EIGHT_PERIOD';
+
+          await createAfterSchoolClass({
+            ...baseRequest,
+            period: mappedPeriod,
+          });
+        }
+
         toast.success('방과후가 성공적으로 생성되었습니다.');
       }
       navigate('/admin/after-school');

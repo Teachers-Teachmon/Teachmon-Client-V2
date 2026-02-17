@@ -32,7 +32,7 @@ export const updateAfterSchoolClass = async (
 };
 
 export const deleteAfterSchoolClass = async (
-  afterSchoolId: number,
+  afterSchoolId: string,
 ): Promise<{ message: string }> => {
   const response = await axiosInstance.delete<{ message: string }>(
     '/afterschool',
