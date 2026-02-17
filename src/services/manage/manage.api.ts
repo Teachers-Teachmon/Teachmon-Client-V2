@@ -14,6 +14,7 @@ import type {
   GetAllFloorsStatusParams,
   GetScheduleHistoryParams,
   ScheduleHistoryRecord,
+    ExitHistoryResponse,
 } from '@/types/manage';
 
 // APIs
@@ -21,12 +22,9 @@ import type {
 // 학년별 학생 전체 스케줄 조회
 export const getStudentSchedule = async (params: GetStudentScheduleParams): Promise<ClassSchedule[]> => {
   const response = await axiosInstance.get<ClassSchedule[]>('/student-schedule', { params });
-export const getStudentSchedule = async (params: GetStudentScheduleParams): Promise<ClassSchedule[]> => {
-  const response = await axiosInstance.get<ClassSchedule[]>('/student-schedule', { params });
   return response.data;
 };
 
-// 학생 스케줄 변경 (조퇴, 이탈로 처리)
 // 학생 스케줄 변경 (조퇴, 이탈로 처리)
 export const updateStudentSchedule = async (data: UpdateStudentScheduleRequest): Promise<MessageResponse> => {
   const { schedule_id, state } = data;
