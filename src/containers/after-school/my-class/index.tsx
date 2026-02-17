@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -75,10 +75,12 @@ export default function MyClassTable() {
     quitMutation.mutate({ after_school_id: String(selectedClassForTerminate.id) });
   };
 
-  const shouldOpenMenuUp = (index: number) => {
-    if (filteredClasses.length <= 6) return false;
-    return index >= 4;
-  };
+  const shouldOpenMenuUp = useMemo(() => {
+    return (index: number) => {
+      if (filteredClasses.length <= 6) return false;
+      return index >= 4;
+    };
+  }, [filteredClasses.length]);
 
   useEffect(() => {
     if (!menuOpenId) {
@@ -96,7 +98,7 @@ export default function MyClassTable() {
     const left = rect.right;
 
     setMenuPosition({ top, left, openUp });
-  }, [filteredClasses, menuOpenId]);
+  }, [filteredClasses, menuOpenId, shouldOpenMenuUp]);
 
   return (
     <S.Wrapper>
