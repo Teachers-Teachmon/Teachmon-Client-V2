@@ -4,7 +4,7 @@ import { searchStudents, searchPlaces, searchTeams, searchTeachers } from './sea
 export const searchQuery = {
   students: (query: string) =>
     queryOptions({
-      queryKey: ['search.students', query],
+      queryKey: ['student.search', query],
       queryFn: () => searchStudents(query),
       enabled: query.length > 0,
     }),

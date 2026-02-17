@@ -1,10 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import Button from '@/components/ui/button';
 import TableLayout from '@/components/layout/table';
 import MovementDetailModal from '@/containers/manage-student/record/movement-detail';
-import type { RecordData, LeaveData, StudentData, RecordTableProps } from '@/types/record';
+
+import { movementQuery } from '@/services/movement/movement.query';
+import { useDeleteLeaveSeatMutation } from '@/services/movement/movement.mutation';
+import { useDeleteEvasionMutation } from '@/services/manage/manage.mutation';
+import { useStudentStatus } from '@/hooks/useStudentStatus';
+import type { RecordTableProps } from '@/types/record';
 import type { StatusType } from '@/components/ui/status';
+import type { StudentState } from '@/types/manage';
+import type { ScheduleHistoryRecord } from '@/types/manage';
 import { useRecordTableColumns } from '@/hooks/useRecordTableColumns';
 import * as S from './style';
 
@@ -12,28 +20,41 @@ export default function RecordTable({
     activeTab,
     movementData,
     leaveData,
-    studentData: initialStudentData,
+    studentData,
+    isLoading = false,
 }: RecordTableProps) {
     const navigate = useNavigate();
     const [selectedStudents, setSelectedStudents] = useState<Set<string>>(new Set());
     const [selectAll, setSelectAll] = useState(false);
-    const [studentData, setStudentData] = useState<StudentData[]>(initialStudentData);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedMovement, setSelectedMovement] = useState<RecordData | null>(null);
+    const [selectedLeaveseatId, setSelectedLeaveseatId] = useState<string | null>(null);
 
-    const handleEdit = (id: string) => {
-        navigate("/manage/movement?edit=true");
-        console.log('수정:', id);
+    const { mutate: deleteLeaveSeat } = useDeleteLeaveSeatMutation();
+    const { mutate: deleteEvasion } = useDeleteEvasionMutation();
+    const { changeStatus } = useStudentStatus();
+
+    // 이석 상세 조회
+    const { data: detailData } = useQuery({
+        ...movementQuery.detail(selectedLeaveseatId!),
+        enabled: isModalOpen && !!selectedLeaveseatId,
+    });
+
+    const handleEdit = (leaveseatId: string) => {
+        navigate(`/manage/movement?edit=true&id=${leaveseatId}`);
     };
 
-    const handleDelete = (id: string) => {
-        console.log('삭제:', id);
+    const handleDelete = (leaveseatId: string) => {
+        deleteLeaveSeat(leaveseatId);
+    };
+
+    const handleDeleteEvasion = (exitId: number) => {
+        deleteEvasion(exitId);
     };
 
     const handleSelectAll = (checked: boolean) => {
         setSelectAll(checked);
         if (checked) {
-            setSelectedStudents(new Set(studentData.map((s) => s.id)));
+            setSelectedStudents(new Set(studentData.map((s) => String(s.student_number))));
         } else {
             setSelectedStudents(new Set());
         }
@@ -50,34 +71,31 @@ export default function RecordTable({
         setSelectAll(newSelected.size === studentData.length);
     };
 
-    const handleMovementRowClick = (data: RecordData) => {
-        setSelectedMovement(data);
+    const handleMovementRowClick = (leaveseatId: string) => {
+        setSelectedLeaveseatId(leaveseatId);
         setIsModalOpen(true);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setSelectedMovement(null);
+        setSelectedLeaveseatId(null);
     };
 
-    const handleStatusChange = (studentId: string, period: string, status: StatusType) => {
-        setStudentData((prevData) =>
-            prevData.map((student) =>
-                student.id === studentId
-                    ? { ...student, [period]: status }
-                    : student
-            )
-        );
+    const handleStatusChange = (studentNumber: number, periodKey: keyof ScheduleHistoryRecord, status: StatusType, currentState?: StudentState | null) => {
+        const student = studentData.find(s => s.student_number === studentNumber);
+        const scheduleId = (student?.[periodKey] as { schedule_id: string } | null)?.schedule_id;
+        if (!scheduleId) return;
+        changeStatus(scheduleId, status, currentState);
     };
 
-    const handleBulkStatusChange = (studentIds: string[], period: string, status: StatusType) => {
-        setStudentData((prevData) =>
-            prevData.map((student) =>
-                studentIds.includes(student.id)
-                    ? { ...student, [period]: status }
-                    : student
-            )
-        );
+    const handleBulkStatusChange = (studentNumbers: number[], periodKey: keyof ScheduleHistoryRecord, status: StatusType) => {
+        if (status === '취소') return;
+
+        studentNumbers.forEach(studentNumber => {
+            const student = studentData.find(s => s.student_number === studentNumber);
+            const scheduleId = (student?.[periodKey] as { schedule_id: string } | null)?.schedule_id;
+            if (scheduleId) changeStatus(scheduleId, status);
+        });
     };
 
     const { movementColumns, leaveColumns, studentColumns } = useRecordTableColumns({
@@ -89,13 +107,13 @@ export default function RecordTable({
         onBulkStatusChange: handleBulkStatusChange,
     });
 
-    const renderMovementActions = (row: RecordData) => (
+    const renderMovementActions = (row: typeof movementData[0]) => (
         <S.ActionButtons>
             <Button 
                 text="수정" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleEdit(row.id);
+                    handleEdit(row.leaveseat_id);
                 }} 
                 variant="confirm" 
             />
@@ -103,20 +121,20 @@ export default function RecordTable({
                 text="삭제" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleDelete(row.id);
+                    handleDelete(row.leaveseat_id);
                 }} 
                 variant="delete" 
             />
         </S.ActionButtons>
     );
 
-    const renderLeaveActions = (row: LeaveData) => (
+    const renderLeaveActions = (row: typeof leaveData[0]) => (
         <S.ActionButtons>
             <Button 
-                text="삭제" 
+                text="이탈삭제" 
                 onClick={(e) => {
                     e?.stopPropagation();
-                    handleDelete(row.id);
+                    handleDeleteEvasion(row.exit_id);
                 }} 
                 variant="delete" 
             />
@@ -130,7 +148,9 @@ export default function RecordTable({
                     columns={movementColumns}
                     data={movementData}
                     renderActions={renderMovementActions}
-                    onRowClick={handleMovementRowClick}
+                    onRowClick={(row) => handleMovementRowClick(row.leaveseat_id)}
+                    getRowId={(row) => String(row.leaveseat_id)}
+                    isLoading={isLoading}
                 />
             )}
             {activeTab === 'leave' && (
@@ -138,6 +158,8 @@ export default function RecordTable({
                     columns={leaveColumns}
                     data={leaveData}
                     renderActions={renderLeaveActions}
+                    getRowId={(row) => String(row.exit_id)}
+                    isLoading={isLoading}
                 />
             )}
             {activeTab === 'student' && (
@@ -145,17 +167,19 @@ export default function RecordTable({
                     columns={studentColumns}
                     data={studentData}
                     renderActions={() => <></>}
+                    getRowId={(row) => String(row.student_number)}
+                    isLoading={isLoading}
                 />
             )}
-            {selectedMovement && (
+            {detailData && (
                 <MovementDetailModal
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
                     data={{
-                        location: selectedMovement.location,
-                        teacher: selectedMovement.teacher,
-                        reason: selectedMovement.reason || '',
-                        students: selectedMovement.students,
+                        location: detailData.place.name,
+                        teacher: detailData.teacher,
+                        reason: detailData.cause,
+                        students: detailData.students,
                     }}
                 />
             )}

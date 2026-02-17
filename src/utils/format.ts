@@ -1,4 +1,6 @@
-import type { ExchangeStatus, PeriodType, SupervisionType } from '@/types/supervision';
+
+import type { Student } from '@/services/search/search.api';
+import type { ExchangeStatus, PeriodType, SupervisionType } from '@/types/home';
 
 export const formatDate = (dateStr: string): string => {
   const date = new Date(dateStr);
@@ -16,6 +18,29 @@ export const formatDateFull = (dateStr: string): string => {
   const weekdays = ['일', '월', '화', '수', '목', '금', '토'];
   const weekday = weekdays[date.getDay()];
   return `${month}월 ${day}일 ${weekday}요일`;
+};
+
+// 학생 정보를 "학년반번호 이름" 형식으로 변환
+export const formatStudent = (student: Student) => {
+    return `${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')} ${student.name}`;
+};
+
+
+/**
+ * 오늘 날짜를 YYYY-MM-DD 형식으로 반환
+ */
+export const getTodayISO = (): string => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+/**
+ * YYYY-MM-DD를 "M월 D일 (요일)" 형식으로 변환
+ */
+export const formatDateDisplay = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  return `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
 };
 
 export const formatDateShort = (dateStr: string): string => {

@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { colors } from '@/styles/theme';
+import { colors, zIndex } from '@/styles/theme';
 import { mq } from '@/styles/media';
 
 export const Container = styled.div`
@@ -41,7 +41,6 @@ export const Title = styled.h2`
 
 export const FloorTabs = styled.div`
   border-radius: 4px;
-  overflow: hidden;
   display: flex;
   box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
   gap: 0;
@@ -59,6 +58,7 @@ export const FloorTab = styled.button<{ $isSelected: boolean }>`
   color: ${(props) => props.$isSelected ? colors.primary : colors.primaryGray};
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
 
   &:hover {
     border-color: ${colors.primary};
@@ -67,4 +67,22 @@ export const FloorTab = styled.button<{ $isSelected: boolean }>`
   ${mq.mobile}{
     width: 60px;
   }
+`;
+
+export const Badge = styled.div`
+  position: absolute;
+  top: -8px;
+  right: -4px;
+  z-index: ${zIndex.dropdown};
+  width: 20px;
+  height: 20px;
+  background: #FF4444;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Paperlogy', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #FFFFFF;
 `;

@@ -22,15 +22,7 @@ export default function AdminMain() {
     const createBranchMutation = useCreateBranchMutation();
 
     const handleDelete = (id: number) => {
-        deleteExitHistoryMutation.mutate(id, {
-            onSuccess: () => {
-                toast.success('이탈 기록이 삭제되었습니다.');
-            },
-            onError: (error) => {
-                console.error('삭제 실패:', error);
-                toast.error('삭제에 실패했습니다. 다시 시도해주세요.');
-            }
-        });
+        deleteExitHistoryMutation.mutate(id);
     };
 
     const handleCreateBranch = (quarter: number, startDate: string, endDate: string, afterSchoolEndDate?: string) => {
