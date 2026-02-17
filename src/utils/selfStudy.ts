@@ -1,6 +1,18 @@
 import { colors } from '@/styles/theme';
 import type { Grade, SelfStudyPeriod, SelfStudyWeekDay } from '@/types/selfStudy';
 
+export const PERIOD_ENUM_TO_LABEL: Record<SelfStudyPeriod, string> = {
+  ONE_PERIOD: '1교시',
+  TWO_PERIOD: '2교시',
+  THREE_PERIOD: '3교시',
+  FOUR_PERIOD: '4교시',
+  FIVE_PERIOD: '5교시',
+  SIX_PERIOD: '6교시',
+  SEVEN_PERIOD: '7교시',
+  EIGHT_AND_NINE_PERIOD: '8~9교시',
+  TEN_AND_ELEVEN_PERIOD: '10~11교시',
+};
+
 export type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu';
 export const DAY_ORDER: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu'];
 
@@ -35,6 +47,10 @@ export const API_TO_PERIOD: Record<SelfStudyPeriod, string> = {
   EIGHT_AND_NINE_PERIOD: '8~9교시',
   TEN_AND_ELEVEN_PERIOD: '10~11교시',
 };
+
+export const PERIOD_LABEL_TO_ENUM: Record<string, SelfStudyPeriod> = Object.fromEntries(
+  Object.entries(PERIOD_ENUM_TO_LABEL).map(([key, value]) => [value, key as SelfStudyPeriod]),
+) as Record<string, SelfStudyPeriod>;
 
 export const generateScheduleId = (): string => {
   return `schedule-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -77,31 +93,48 @@ export const formatGrade = (grade: Grade): string => {
 export const formatPeriods = (periods: string[]): string => {
   if (periods.length === 0) return '';
   
-  const periodNumbers = periods
-    .map(p => parseInt(p.replace('교시', '')))
-    .sort((a, b) => a - b);
+  // 모든 교시를 개별 숫자로 변환
+  const allPeriodNumbers: number[] = [];
   
-  if (periodNumbers.length === 1) {
-    return `${periodNumbers[0]}교시`;
+  periods.forEach(p => {
+    if (p.includes('~')) {
+      // "8~9교시" 형식이면 8, 9로 분리
+      const numbers = p.replace('교시', '').split('~').map(n => parseInt(n.trim()));
+      allPeriodNumbers.push(...numbers);
+    } else {
+      // "7교시" 형식이면 7로 변환
+      const number = parseInt(p.replace('교시', ''));
+      allPeriodNumbers.push(number);
+    }
+  });
+  
+  // 중복 제거하고 정렬
+  const uniquePeriods = [...new Set(allPeriodNumbers)].sort((a, b) => a - b);
+  
+  if (uniquePeriods.length === 1) {
+    return `${uniquePeriods[0]}교시`;
   }
   
+  // 연속된 교시들을 범위로 병합
   const ranges: string[] = [];
-  let start = periodNumbers[0];
-  let end = periodNumbers[0];
+  let start = uniquePeriods[0];
+  let end = uniquePeriods[0];
   
-  for (let i = 1; i < periodNumbers.length; i++) {
-    if (periodNumbers[i] === end + 1) {
-      end = periodNumbers[i];
+  for (let i = 1; i < uniquePeriods.length; i++) {
+    if (uniquePeriods[i] === end + 1) {
+      end = uniquePeriods[i];
     } else {
       if (start === end) {
         ranges.push(`${start}교시`);
       } else {
         ranges.push(`${start}~${end}교시`);
       }
-      start = periodNumbers[i];
-      end = periodNumbers[i];
+      start = uniquePeriods[i];
+      end = uniquePeriods[i];
     }
   }
+  
+  // 마지막 범위 추가
   if (start === end) {
     ranges.push(`${start}교시`);
   } else {
