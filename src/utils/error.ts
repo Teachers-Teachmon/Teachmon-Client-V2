@@ -50,3 +50,13 @@ export const getErrorMessage = (error: unknown, fallback = DEFAULT_ERROR_MESSAGE
 
   return fallback;
 };
+
+export const showErrorToast = (error: unknown, fallback = DEFAULT_ERROR_MESSAGE): void => {
+  const message = getErrorMessage(error, fallback);
+  if (message) {
+    toast.error(message);
+  }
+};
+
+// Alias for backward compatibility
+export const getApiErrorMessage = getErrorMessage;
