@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -8,8 +8,7 @@ import type { MyAfterSchool } from '@/types/after-school';
 import { MENU_OPTIONS } from '@/constants/after-school';
 import { colors } from '@/styles/theme';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
-import { quitAfterSchool } from '@/services/after-school/afterSchool.api';
-import { toast } from 'react-toastify';
+import { useQuitAfterSchoolMutation } from '@/services/after-school/afterSchool.mutation';
 
 export default function MyClassTable() {
   const navigate = useNavigate();
@@ -18,9 +17,16 @@ export default function MyClassTable() {
   const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<MyAfterSchool | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+
+  const quitMutation = useQuitAfterSchoolMutation({
+  onSuccess: () => {
+    setIsTerminateModalOpen(false);
+    setSelectedClassForTerminate(null);
+    queryClient.invalidateQueries({ queryKey: ['afterSchool', 'my', selectedGrade] });
+  },
+});
   const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
-  const [isQuitSubmitting, setIsQuitSubmitting] = useState(false);
 
   const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.my(selectedGrade));
 
@@ -63,34 +69,18 @@ export default function MyClassTable() {
     }
   };
 
-  const handleTerminateConfirm = async () => {
+  const handleTerminateConfirm = () => {
     if (!selectedClassForTerminate?.id) return;
 
-    setIsQuitSubmitting(true);
-    try {
-      await quitAfterSchool({ after_school_id: String(selectedClassForTerminate.id) });
-      toast.success('방과후를 종료했습니다.');
-      setIsTerminateModalOpen(false);
-      setSelectedClassForTerminate(null);
-      queryClient.invalidateQueries({ queryKey: ['afterSchool', 'my', selectedGrade] });
-    } catch (error: unknown) {
-      const message =
-        typeof error === 'object' &&
-        error !== null &&
-        'response' in error &&
-        typeof (error as any).response?.data?.message === 'string'
-          ? (error as any).response.data.message
-          : '방과후 종료에 실패했습니다.';
-      toast.error(message);
-    } finally {
-      setIsQuitSubmitting(false);
-    }
+    quitMutation.mutate({ after_school_id: String(selectedClassForTerminate.id) });
   };
 
-  const shouldOpenMenuUp = (index: number) => {
-    if (filteredClasses.length <= 6) return false;
-    return index >= 4;
-  };
+  const shouldOpenMenuUp = useMemo(() => {
+    return (index: number) => {
+      if (filteredClasses.length <= 6) return false;
+      return index >= 4;
+    };
+  }, [filteredClasses.length]);
 
   useEffect(() => {
     if (!menuOpenId) {
@@ -108,12 +98,12 @@ export default function MyClassTable() {
     const left = rect.right;
 
     setMenuPosition({ top, left, openUp });
-  }, [filteredClasses, menuOpenId]);
+  }, [filteredClasses, menuOpenId, shouldOpenMenuUp]);
 
   return (
     <S.Wrapper>
       <S.TitleSection>
-        <S.Title>나의 방과후({isLoading ? '...' : filteredClasses.length})</S.Title>
+        <S.Title>나의 방과후({filteredClasses.length})</S.Title>
         <S.GradeTabs>
                   <S.GradeTab $active={selectedGrade === 1} onClick={() => setSelectedGrade(1)}>1학년</S.GradeTab>
                   <S.GradeTab $active={selectedGrade === 2} onClick={() => setSelectedGrade(2)}>2학년</S.GradeTab>
@@ -122,9 +112,10 @@ export default function MyClassTable() {
       </S.TitleSection>
 
       <S.Container>
-        {filteredClasses.length > 0 ? (
+        {isLoading ? (
+          <S.LoadingText>로딩 중...</S.LoadingText>
+        ) : filteredClasses.length > 0 ? (
           <>
-            {/* 모바일용 카드 리스트 */}
             <S.MobileCardList>
               {filteredClasses.map((cls) => (
                 <S.MobileCard key={cls.id}>
@@ -218,7 +209,7 @@ export default function MyClassTable() {
           </div>
         }
         cancelText="취소"
-        confirmText={isQuitSubmitting ? '처리중...' : '종료'}
+        confirmText={quitMutation.isPending ? '처리중...' : '종료'}
       />
     </S.Wrapper>
   );

@@ -1,33 +1,31 @@
 import Dropdown from '@/components/ui/input/dropdown';
-import TextInput from '@/components/ui/input/text-input';
+import Button from '@/components/ui/button';
 import * as S from '@/pages/admin/after-school/style';
 
 interface Props {
+  quarterItems: string[];
   selectedQuarter: string;
   setSelectedQuarter: (q: string) => void;
   selectedGrade: 1 | 2 | 3;
   setSelectedGrade: (g: 1 | 2 | 3) => void;
-  googleSheetUrl: string;
-  setGoogleSheetUrl: (url: string) => void;
-  handleGoogleSheetSync: () => void;
-  handleGoogleSheetUpload: () => void;
+  handlePdfDownload: () => void;
+  isPdfLoading: boolean;
 }
 
 const AdminAfterSchoolHeaderContainer = ({
+  quarterItems,
   selectedQuarter,
   setSelectedQuarter,
   selectedGrade,
   setSelectedGrade,
-  googleSheetUrl,
-  setGoogleSheetUrl,
-  handleGoogleSheetSync,
-  handleGoogleSheetUpload,
+  handlePdfDownload,
+  isPdfLoading,
 }: Props) => (
   <S.Header>
     <S.LeftSection>
       <S.QuarterDropdown>
         <Dropdown
-          items={['1분기', '2분기', '3분기', '4분기']}
+          items={quarterItems}
           value={selectedQuarter}
           onChange={setSelectedQuarter}
           placeholder="분기 선택"
@@ -40,13 +38,13 @@ const AdminAfterSchoolHeaderContainer = ({
       </S.GradeTabs>
     </S.LeftSection>
     <S.HeaderButtons>
-      <TextInput
-        placeholder="구글스프레드시트"
-        value={googleSheetUrl}
-        onChange={(e) => setGoogleSheetUrl(e.target.value)}
+      <Button
+        text="PDF 다운로드"
+        variant="confirm"
+        width="150px"
+        onClick={handlePdfDownload}
+        isLoading={isPdfLoading}
       />
-      <S.GoogleSheetActionButton onClick={handleGoogleSheetSync}>시트 동기화</S.GoogleSheetActionButton>
-      <S.GoogleSheetActionButton onClick={handleGoogleSheetUpload}>시트 업로드</S.GoogleSheetActionButton>
     </S.HeaderButtons>
   </S.Header>
 );

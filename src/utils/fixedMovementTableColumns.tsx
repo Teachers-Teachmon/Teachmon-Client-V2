@@ -1,6 +1,7 @@
 import { WEEKDAYS } from '@/constants/fixedMovement';
 import type { FixedMovement } from '@/types/fixedMovement';
 import StudentListWithOverflow from '@/containers/admin/fixed-movement/table/studentList';
+import { LocationCell } from '@/containers/admin/fixed-movement/table/style';
 
 export function getFixedMovementTableColumns(): import('@/components/layout/table').TableColumn<FixedMovement>[] {
   return [
@@ -20,20 +21,20 @@ export function getFixedMovementTableColumns(): import('@/components/layout/tabl
       key: 'location',
       header: '장소',
       width: '150px',
-      render: (row) => row.location,
+      render: (row) => <LocationCell>{row.location}</LocationCell>,
     },
     {
       key: 'count',
       header: '인원',
       width: '80px',
-      render: (row) => `${row.students.length}명`,
+      render: (row) => `${row.personnel}명`,
     },
     {
       key: 'students',
       header: '학생',
       width: '1fr',
       render: (row) => (
-        <StudentListWithOverflow students={row.students} maxVisible={5} />
+        <StudentListWithOverflow students={row.students.map(student => ({ ...student, studentNumber: String(student.studentNumber) }))} maxVisible={5} />
       ),
     },
   ];

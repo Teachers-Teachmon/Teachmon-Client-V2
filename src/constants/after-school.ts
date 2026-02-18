@@ -7,15 +7,13 @@ export const DAY_MAPPING: Record<string, string> = {
     '화요일': '화',
     '수요일': '수',
     '목요일': '목',
-    '금요일': '금',
 };
 
-export const DAY_TO_ENGLISH: Record<string, 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI'> = {
+export const DAY_TO_ENGLISH: Record<string, 'MON' | 'TUE' | 'WED' | 'THU' > = {
     '월요일': 'MON',
     '화요일': 'TUE',
     '수요일': 'WED',
     '목요일': 'THU',
-    '금요일': 'FRI',
 };
 
 export const ITEMS_PER_PAGE = 4;

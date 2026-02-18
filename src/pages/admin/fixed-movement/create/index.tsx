@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
-import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
-import { WEEKDAYS, PERIOD_OPTIONS, LOCATION_OPTIONS, MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
-import type { Student } from '@/types/fixedMovement';
+import { WEEKDAYS, PERIOD_OPTIONS, WEEKDAY_LABEL_TO_API, PERIOD_LABEL_TO_API, WEEKDAY_LABEL, PERIOD_LABEL } from '@/constants/fixedMovement';
+import { useCreateFixedMovementMutation, useUpdateFixedMovementMutation } from '@/services/fixed-movement/fixedMovement.mutation';
+import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
+import { searchQuery } from '@/services/search/search.query';
+import { useDebounce } from '@/hooks/useDebounce';
+import type { Student, PlaceSearchResponse, TeamSearchResponse } from '@/types/fixedMovement';
 import * as S from './style';
 
 
@@ -13,43 +19,95 @@ export default function FixedMovementFormPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditMode = !!id;
+  const createMutation = useCreateFixedMovementMutation();
+  const updateMutation = useUpdateFixedMovementMutation();
+
+  const { data: detailData } = useQuery(fixedMovementQuery.detail(id));
   
   const [dayOfWeek, setDayOfWeek] = useState<string>('');
   const [period, setPeriod] = useState<string>('');
   const [location, setLocation] = useState<string>('');
+  const [selectedPlace, setSelectedPlace] = useState<PlaceSearchResponse | null>(null);
   const [reason, setReason] = useState<string>('');
   const [isTeamMode, setIsTeamMode] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+  const [placeSearchInput, setPlaceSearchInput] = useState('');
+  const [teamSearchInput, setTeamSearchInput] = useState('');
+
+  const debouncedSearch = useDebounce(searchInput, 300);
+  const debouncedPlaceSearch = useDebounce(placeSearchInput, 300);
+  const debouncedTeamSearch = useDebounce(teamSearchInput, 300);
+
+  const { data: studentResults = [] } = useQuery(searchQuery.students(debouncedSearch));
+  const { data: placeResults = [] } = useQuery(searchQuery.places(debouncedPlaceSearch));
+  const { data: teamResults = [] } = useQuery(searchQuery.teams(debouncedTeamSearch));
 
   const dayOptions = Object.values(WEEKDAYS);
-  
-  const mockStudents: Student[] = [
-    { studentNumber: 1401, name: '김동욱' },
-    { studentNumber: 1402, name: '김동욱' },
-    { studentNumber: 1403, name: '김동욱' },
-    { studentNumber: 1404, name: '김동욱' },
-    { studentNumber: 1405, name: '김동욱' },
-  ];
 
   useEffect(() => {
-    if (isEditMode) {
-      const movement = MOCK_FIXED_MOVEMENTS.find(m => m.id === id);
-      if (movement) {
-        setDayOfWeek(WEEKDAYS[movement.day as keyof typeof WEEKDAYS]);
-        setPeriod(movement.period);
-        setLocation(movement.location);
-        setReason(movement.reason);
-        setSelectedStudents(movement.students);
-      }
+    if (isEditMode && detailData) {
+      flushSync(() => {
+        const weekday = detailData.weekday ?? detailData.week_day;
+        if (weekday) {
+          setDayOfWeek(WEEKDAY_LABEL[weekday] ?? '');
+        }
+        setPeriod(PERIOD_LABEL[detailData.period] ?? '');
+
+        const placeName = typeof detailData.place === 'string' ? detailData.place : detailData.place.name;
+        const placeId = typeof detailData.place === 'object' ? detailData.place.id : null;
+        setLocation(placeName);
+        if (placeId) {
+          setSelectedPlace({ id: placeId, name: placeName, floor: 0 });
+        }
+
+        setReason(detailData.cause ?? '');
+        setSelectedStudents(
+          detailData.students.map((s) => ({
+            id: s.id,
+            studentNumber: s.number,
+            name: s.name,
+          })),
+        );
+      });
     }
-  }, [id, isEditMode]);
+  }, [isEditMode, detailData]);
 
   const handleAddStudent = (student: Student) => {
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
       setSelectedStudents([...selectedStudents, student]);
     }
-    setSearchQuery('');
+    setSearchInput('');
+  };
+
+  const handleSelectPlace = (place: PlaceSearchResponse) => {
+    setSelectedPlace(place);
+    setLocation(place.name);
+    setPlaceSearchInput('');
+  };
+
+  const handleSelectTeam = (teamName: string, teamMembers: TeamSearchResponse['members']) => {
+    setTeamSearchInput('');
+    const newStudents = teamMembers.map(member => ({
+      id: member.id,
+      studentNumber: member.number,
+      name: member.name,
+      grade: member.grade,
+      classNumber: member.classNumber,
+    }));
+    const uniqueNewStudents = newStudents.filter(newStudent => 
+      !selectedStudents.find(existing => 
+        (existing.id && existing.id === newStudent.id) || 
+        existing.studentNumber === newStudent.studentNumber
+      )
+    );
+
+    if (uniqueNewStudents.length > 0) {
+      setSelectedStudents([...selectedStudents, ...uniqueNewStudents]);
+      toast.success(`${teamName} 팀의 학생 ${uniqueNewStudents.length}명이 추가되었습니다.`);
+    } else {
+      toast.info(`${teamName} 팀의 모든 학생이 이미 선택되어 있습니다.`);
+    }
   };
 
   const handleRemoveStudent = (studentNumber: number) => {
@@ -61,16 +119,39 @@ export default function FixedMovementFormPage() {
   };
 
   const handleSubmit = () => {
-    console.log({
-      id: isEditMode ? id : undefined,
-      dayOfWeek,
-      period,
-      location,
-      reason,
-      isTeamMode,
-      students: selectedStudents,
-    });
-    navigate('/admin/fixed-movement');
+    const weekDay = WEEKDAY_LABEL_TO_API[dayOfWeek];
+    const periodEnum = PERIOD_LABEL_TO_API[period];
+
+    if (!weekDay || !periodEnum || !selectedPlace || !reason) {
+      toast.error('모든 항목을 입력해주세요.');
+      return;
+    }
+
+    if (selectedStudents.length === 0) {
+      toast.error('학생을 1명 이상 선택해주세요.');
+      return;
+    }
+
+    if (isEditMode && id) {
+      updateMutation.mutate({
+        id,
+        data: {
+          week_day: weekDay,
+          period: periodEnum,
+          place: selectedPlace.id,
+          cause: reason,
+          students: selectedStudents.map((s) => s.id || s.studentNumber),
+        },
+      });
+    } else {
+      createMutation.mutate({
+        week_day: weekDay,
+        period: periodEnum,
+        place_id: selectedPlace.id,
+        cause: reason,
+        students: selectedStudents.map((s) => s.id || s.studentNumber),
+      });
+    }
   };
 
   return (
@@ -101,12 +182,38 @@ export default function FixedMovementFormPage() {
 
           <S.FormSection>
             <S.SectionTitle>장소</S.SectionTitle>
-            <SearchDropdown
-              placeholder="장소"
-              items={LOCATION_OPTIONS}
-              value={location}
-              onChange={setLocation}
-            />
+            <S.DropdownWrapper>
+              <TextInput
+                placeholder="장소를 검색해주세요"
+                value={placeSearchInput || location}
+                onChange={(e) => {
+                  setPlaceSearchInput(e.target.value);
+                  if (!e.target.value) {
+                    setSelectedPlace(null);
+                    setLocation('');
+                  }
+                }}
+                leftIcon={
+                  <img
+                    src="/icons/common/search.svg"
+                    alt="search"
+                    style={{ width: '20px', height: '20px' }}
+                  />
+                }
+              />
+              {placeSearchInput && placeResults.length > 0 && (
+                <S.StudentDropdown>
+                  {placeResults.slice(0, 5).map((place) => (
+                    <S.StudentDropdownItem
+                      key={place.id}
+                      onClick={() => handleSelectPlace(place)}
+                    >
+                      {place.name} ({place.floor}층)
+                    </S.StudentDropdownItem>
+                  ))}
+                </S.StudentDropdown>
+              )}
+            </S.DropdownWrapper>
           </S.FormSection>
 
           <S.FormSection>
@@ -134,9 +241,15 @@ export default function FixedMovementFormPage() {
 
             <S.DropdownWrapper>
               <TextInput
-                placeholder="학생을 입력해주세요"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={isTeamMode ? "팀을 검색해주세요" : "학생을 검색해주세요"}
+                value={isTeamMode ? teamSearchInput : searchInput}
+                onChange={(e) => {
+                  if (isTeamMode) {
+                    setTeamSearchInput(e.target.value);
+                  } else {
+                    setSearchInput(e.target.value);
+                  }
+                }}
                 leftIcon={
                   <img 
                     src="/icons/common/search.svg" 
@@ -146,25 +259,38 @@ export default function FixedMovementFormPage() {
                 }
               />
 
-              {searchQuery && (
+              {!isTeamMode && searchInput && studentResults.length > 0 && (
                 <S.StudentDropdown>
-                  {mockStudents
+                  {studentResults
                     .filter(student => 
-                      `${student.studentNumber} ${student.name}`.includes(searchQuery)
+                      !selectedStudents.find(s => 
+                        (s.id && s.id === student.id) || 
+                        (!s.id && s.studentNumber === student.number)
+                      )
                     )
-                    .filter(student => 
-                      !selectedStudents.find(s => s.studentNumber === student.studentNumber)
-                    )
-                    .slice(0, 3)
+                    .slice(0, 5)
                     .map((student) => (
                       <S.StudentDropdownItem 
-                        key={student.studentNumber}
-                        onClick={() => handleAddStudent(student)}
+                        key={student.id}
+                        onClick={() => handleAddStudent({ id: student.id, studentNumber: student.number, name: student.name, grade: student.grade, classNumber: student.classNumber })}
                       >
-                        {student.studentNumber} {student.name}
+                        {student.grade}{student.classNumber}{student.number < 10 ? `0${student.number}` : student.number} {student.name}
                       </S.StudentDropdownItem>
                     ))
                   }
+                </S.StudentDropdown>
+              )}
+
+              {isTeamMode && teamSearchInput && teamResults.length > 0 && (
+                <S.StudentDropdown>
+                  {teamResults.slice(0, 5).map((team) => (
+                    <S.StudentDropdownItem
+                      key={team.id}
+                      onClick={() => handleSelectTeam(team.name, team.members)}
+                    >
+                      {team.name}
+                    </S.StudentDropdownItem>
+                  ))}
                 </S.StudentDropdown>
               )}
             </S.DropdownWrapper>
@@ -175,7 +301,7 @@ export default function FixedMovementFormPage() {
               {selectedStudents.map((student) => (
                 <S.StudentCard key={student.studentNumber}>
                   <S.StudentInfo>
-                    <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
+                    <S.StudentNumber>{student.grade && student.classNumber ? `${student.grade}${student.classNumber}${student.studentNumber < 10 ? `0${student.studentNumber}` : student.studentNumber}` : student.studentNumber}</S.StudentNumber>
                     <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
                   <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>

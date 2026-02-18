@@ -1,5 +1,44 @@
 import axiosInstance from '@/lib/axiosInstance';
 import type { AffordableReinforcement, PlaceSearchResult } from '@/types/afterSchool';
+import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/afterSchool';
+
+export const getAfterSchoolClasses = async (
+  params: AfterSchoolRequestParams,
+): Promise<AfterSchoolResponse[]> => {
+  const response = await axiosInstance.get<AfterSchoolResponse[]>(
+    '/afterschool',
+    { params },
+  );
+  return response.data;
+};
+
+export const createAfterSchoolClass = async (
+  data: CreateAfterSchoolRequest,
+): Promise<{ message: string }> => {
+  const response = await axiosInstance.post<{ message: string }>(
+    '/afterschool',
+    data,
+  );
+  return response.data;
+};
+
+export const updateAfterSchoolClass = async (
+  data: UpdateAfterSchoolRequest,
+): Promise<{ message: string }> => {
+  const response = await axiosInstance.patch<{ message: string }>(
+    '/afterschool',
+    data,
+  );
+  return response.data;
+};
+
+export const deleteAfterSchoolClass = async (
+  afterSchoolId: number,
+): Promise<{ message: string }> => {
+  const response = await axiosInstance.delete<{ message: string }>(
+    '/afterschool',
+    { data: { after_school_id: afterSchoolId } },
+  );
 import type {
   TodayAfterSchool,
   MyAfterSchool,
@@ -55,9 +94,18 @@ export const getAllAfterSchool = async (params: AfterSchoolSearchParams): Promis
   return response.data;
 };
 
+export const getBranchInfo = async (): Promise<{
+  number: number;
+  start_day: string;
+  end_day: string;
+}[]> => {
+  const response = await axiosInstance.get('/branch');
+  return response.data;
+};
+
 export const createAfterSchoolBusinessTrip = async (data: {
   day: string;
-  after_school_id: string;
+  afterschool_id: string;
 }): Promise<unknown> => {
   const response = await axiosInstance.post('/afterschool/business-trip', data);
   return response.data;

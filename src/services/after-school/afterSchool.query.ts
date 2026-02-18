@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import type { AffordableReinforcement, PlaceSearchResult } from '@/types/afterSchool';
 import { fetchAffordableReinforcement, searchPlace } from './afterSchool.api';
+import { getAfterSchoolClasses } from './afterSchool.api';
+import type { AfterSchoolRequestParams, AfterSchoolResponse } from '@/types/afterSchool';
+import { queryOptions } from '@tanstack/react-query';
+import { getMyTodayAfterSchool, getMyAfterSchool, getAllAfterSchool, getBranchInfo } from './afterSchool.api';
+import type { AfterSchoolSearchParams } from '@/types/after-school';
 
 export const afterSchoolQueryKeys = {
   all: ['afterSchool'] as const,
@@ -30,11 +35,13 @@ export const usePlaceSearchQuery = (query: string) =>
     queryFn: () => searchPlace(query),
     enabled: query.trim().length > 0,
   });
-import { queryOptions } from '@tanstack/react-query';
-import { getMyTodayAfterSchool, getMyAfterSchool, getAllAfterSchool } from './afterSchool.api';
-import type { AfterSchoolSearchParams } from '@/types/after-school';
 
 export const afterSchoolQuery = {
+  classes: (params: AfterSchoolRequestParams) => ({
+    queryKey: ['afterSchool', 'classes', params],
+    queryFn: () => getAfterSchoolClasses(params),
+    select: (data: AfterSchoolResponse[]) => data,
+  }),
   // 나의 오늘 방과후
   myToday: () =>
     queryOptions({
@@ -55,5 +62,12 @@ export const afterSchoolQuery = {
       queryKey: ['afterSchool', 'all', params],
       queryFn: () => getAllAfterSchool(params),
       enabled: !!params.grade,
+    }),
+
+  // 분기 정보
+  branch: () =>
+    queryOptions({
+      queryKey: ['afterSchool', 'branch'],
+      queryFn: getBranchInfo,
     }),
 };

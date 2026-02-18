@@ -1,7 +1,31 @@
 // 관리자 페이지 관련 상수
 
+import type { ForbiddenDay } from '@/services/user-management/user-management.api';
+
 // 요일 목록
 export const WEEKDAYS = ['월요일', '화요일', '수요일', '목요일'] as const;
+
+// API 요일 형식을 한글로 변환
+export const DAY_MAP: Record<ForbiddenDay, string> = {
+  MON: '월요일',
+  TUE: '화요일',
+  WED: '수요일',
+  THU: '목요일',
+  FRI: '금요일',
+  SAT: '토요일',
+  SUN: '일요일',
+};
+
+// 한글 요일을 API 형식으로 변환
+export const REVERSE_DAY_MAP: Record<string, ForbiddenDay> = {
+  '월요일': 'MON',
+  '화요일': 'TUE',
+  '수요일': 'WED',
+  '목요일': 'THU',
+  '금요일': 'FRI',
+  '토요일': 'SAT',
+  '일요일': 'SUN',
+};
 
 // 사용자 역할
 export const USER_ROLES = {
@@ -22,70 +46,5 @@ export const SORT_ORDER = {
 } as const;
 
 
-export const ADMIN_AFTER_SCHOOL_PERIODS = ['7교시', '8~9교시', '10~11교시'] as const;
+export const ADMIN_AFTER_SCHOOL_PERIODS = ['8~9교시', '10~11교시'] as const;
 export const SMILE_OPTIONS = ['객체지향 프로그래밍', '파이썬을 이용한 문제해결', '스프링 수업'] as const;
-
-import type { AdminAfterSchoolClass } from '@/types/afterSchool';
-
-export const MOCK_ADMIN_AFTER_SCHOOL: AdminAfterSchoolClass[] = [
-  {
-    id: '1',
-    grade: 1,
-    day: '월요일',
-    period: '8~9교시',
-    teacher: '자수만',
-    location: '객체지향 프로그래밍',
-    subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
-  },
-  {
-    id: '2',
-    grade: 1,
-    day: '월요일',
-    period: '8~9교시',
-    teacher: '자수만',
-    location: '파이썬을 이용한 문제해결',
-    subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
-  },
-  {
-    id: '3',
-    grade: 1,
-    day: '월요일',
-    period: '8~9교시',
-    teacher: '자수만',
-    location: '스프링 수업',
-    subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
-  },
-  {
-    id: '4',
-    grade: 1,
-    day: '월요일',
-    period: '8~9교시',
-    teacher: '자수만',
-    location: '1학년 1반',
-    subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
-  },
-  {
-    id: '5',
-    grade: 1,
-    day: '월요일',
-    period: '8~9교시',
-    teacher: '자수만',
-    location: '1학년 2반',
-    subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
-  },
-  {
-    id: '6',
-    grade: 1,
-    day: '월요일',
-    period: '8~9교시',
-    teacher: '자수만',
-    location: '음악실',
-    subject: '정보자신감/기타 과학영 방기 참가 JAVA',
-    students: ['1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈', '1410 윤도훈'],
-  },
-];

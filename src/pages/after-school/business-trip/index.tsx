@@ -1,13 +1,12 @@
 import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import Calendar from '@/components/ui/calendar';
-import type { CalendarEvent } from '@/components/ui/calendar';
-import Button from '@/components/ui/button';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import { toast } from 'react-toastify';
+import Calendar from '@/components/ui/calendar';
+import Button from '@/components/ui/button';
 import * as S from './style';
-import { createAfterSchoolBusinessTrip } from '@/services/after-school/afterSchool.api';
+import { useBusinessTripMutation } from '@/services/after-school/afterSchool.mutation';
 import type { MyAfterSchool } from '@/types/after-school';
+import type { CalendarEvent } from '@/types/calendar';
 
 export default function BusinessTripPage() {
   const navigate = useNavigate();
@@ -20,7 +19,13 @@ export default function BusinessTripPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const businessTripMutation = useBusinessTripMutation({
+  onSuccess: () => {
+    setIsModalOpen(false);
+    setIsSecondModalOpen(true);
+  },
+});
 
   const businessTripEvents: CalendarEvent[] = useMemo(() => {
     if (!classData) return [];
@@ -57,29 +62,10 @@ export default function BusinessTripPage() {
 
     const day = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
 
-    setIsSubmitting(true);
-    createAfterSchoolBusinessTrip({
+    businessTripMutation.mutate({
       day,
-      after_school_id: String(classData.id),
-    })
-      .then(() => {
-        toast.success('출장이 완료되었습니다.');
-        setIsModalOpen(false);
-        setIsSecondModalOpen(true);
-      })
-      .catch((error: unknown) => {
-        const message =
-          typeof error === 'object' &&
-          error !== null &&
-          'response' in error &&
-          typeof (error as any).response?.data?.message === 'string'
-            ? (error as any).response.data.message
-            : '출장 처리에 실패했습니다.';
-        toast.error(message);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+      afterschool_id: BigInt(classData.id).toString(),
+    });
   };
 
   const handleSecondModalConfirm = () => {
@@ -149,7 +135,7 @@ export default function BusinessTripPage() {
           </S.ModalMessage>
         }
         cancelText="취소"
-        confirmText={isSubmitting ? '처리중...' : '완료'}
+        confirmText={businessTripMutation.isPending ? '처리중...' : '완료'}
       />
 
       <ConfirmModal

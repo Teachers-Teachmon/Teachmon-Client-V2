@@ -1,4 +1,4 @@
-import type { ExchangeDetailContentProps } from '@/types/home';
+import type { ExchangeDetailContentProps } from '@/types/supervision';
 import { formatDateFull, formatSupervisionType } from '@/utils/format';
 import Button from '@/components/ui/button';
 import * as S from './style';
