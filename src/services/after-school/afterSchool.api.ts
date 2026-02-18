@@ -1,6 +1,12 @@
 import axiosInstance from '@/lib/axiosInstance';
 import type { AffordableReinforcement, PlaceSearchResult } from '@/types/afterSchool';
 import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/afterSchool';
+import type {
+  TodayAfterSchool,
+  MyAfterSchool,
+  AllAfterSchool,
+  AfterSchoolSearchParams,
+} from '@/types/after-school';
 
 export const getAfterSchoolClasses = async (
   params: AfterSchoolRequestParams,
@@ -39,12 +45,8 @@ export const deleteAfterSchoolClass = async (
     '/afterschool',
     { data: { after_school_id: afterSchoolId } },
   );
-import type {
-  TodayAfterSchool,
-  MyAfterSchool,
-  AllAfterSchool,
-  AfterSchoolSearchParams,
-} from '@/types/after-school';
+  return response.data;
+};
 
 export interface FetchAffordableReinforcementParams {
   month: number;
