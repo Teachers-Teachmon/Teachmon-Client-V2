@@ -6,18 +6,19 @@ import TextInput from '@/components/ui/input/text-input';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Button from '@/components/ui/button';
 import { ADMIN_AFTER_SCHOOL_PERIODS } from '@/constants/admin';
-import { searchQuery as searchApiQuery } from '@/services/search/search.query';
+import { searchQuery } from '@/services/search/search.query';
 import { useDebounce } from '@/hooks/useDebounce';
 import { createAfterSchoolClass, updateAfterSchoolClass } from '@/services/after-school/afterSchool.api';
 import { toast } from 'react-toastify';
 import type { StudentSearchResponse, PlaceSearchResponse, TeacherSearchResponse, TeamSearchResponse } from '@/types/search';
 import type { CreateAfterSchoolRequest, UpdateAfterSchoolRequest, AdminAfterSchoolClass } from '@/types/afterSchool';
+import { WEEKDAY_MAP } from '@/constants/admin';
 import * as S from './style';
 
 
 
 interface Student {
-  id?: number | string;
+  id?: string;
   studentNumber: number;
   name: string;
   grade: number;
@@ -35,6 +36,7 @@ export default function AfterSchoolFormPage() {
   const routerLocation = useLocation();
   const isEditMode = !!id;
   const editData = routerLocation.state as AdminAfterSchoolClass | null;
+  const createData = routerLocation.state as { selectedDay: string } | null;
   
   const [teacher, setTeacher] = useState<Teacher | null>(
     isEditMode && editData ? { id: editData.teacherId, name: editData.teacher } : null
@@ -47,49 +49,49 @@ export default function AfterSchoolFormPage() {
   const [subject, setSubject] = useState<string>(editData?.subject || '');
   const [isTeamMode, setIsTeamMode] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>(
-    editData?.students.map((s, idx) => {
+    isEditMode && editData ? editData.students.map((s, idx) => {
       const parts = s.split(' ');
       const studentNumber = parseInt(parts[0]) || 0;
       const name = parts.slice(1).join(' ');
       return {
-        id: editData.studentIds?.[idx] ?? 0,
+        id: (editData.studentIds?.[idx] ?? 0).toString(),
         studentNumber,
         name,
         grade: editData.grade,
         classNumber: 1,
       };
-    }) || []
+    }) : []
   );
-  const [searchQuery, setSearchQuery] = useState('');
+  const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [locationSearchQuery, setLocationSearchQuery] = useState('');
-  const debouncedStudentSearch = useDebounce(searchQuery, 300);
+  const debouncedStudentSearch = useDebounce(studentSearchQuery, 300);
   const debouncedLocationSearch = useDebounce(locationSearchQuery, 300);
   const debouncedTeacherSearch = useDebounce(teacherSearchQuery, 300);
 
   const { data: studentsData = [] } = useQuery({
-    ...searchApiQuery.students(debouncedStudentSearch),
+    ...searchQuery.students(debouncedStudentSearch),
     enabled: debouncedStudentSearch.length > 0,
   }) as { data: StudentSearchResponse[] };
 
   const { data: placesData = [] } = useQuery({
-    ...searchApiQuery.places(debouncedLocationSearch),
+    ...searchQuery.places(debouncedLocationSearch),
     enabled: debouncedLocationSearch.length > 0,
   }) as { data: PlaceSearchResponse[] };
 
   const { data: teachersData = [] } = useQuery({
-    ...searchApiQuery.teachers(debouncedTeacherSearch),
+    ...searchQuery.teachers(debouncedTeacherSearch),
     enabled: debouncedTeacherSearch.length > 0,
   }) as { data: TeacherSearchResponse[] };
 
   const { data: teamsData = [] } = useQuery({
-    ...searchApiQuery.teams(debouncedStudentSearch),
+    ...searchQuery.teams(debouncedStudentSearch),
     enabled: debouncedStudentSearch.length > 0 && isTeamMode,
   }) as { data: TeamSearchResponse[] };
 
   const handleAddStudent = (student: StudentSearchResponse | TeamSearchResponse) => {
     if ('members' in student) {
       const newStudents: Student[] = student.members.map(member => ({
-        id: member.id,
+        id: member.id.toString(),
         studentNumber: member.number,
         name: member.name,
         grade: member.grade,
@@ -98,7 +100,7 @@ export default function AfterSchoolFormPage() {
       setSelectedStudents([...selectedStudents, ...newStudents]);
     } else {
       const newStudent: Student = {
-        id: student.id,
+        id: student.id.toString(),
         studentNumber: student.number,
         name: student.name,
         grade: student.grade,
@@ -106,7 +108,7 @@ export default function AfterSchoolFormPage() {
       };
       setSelectedStudents([...selectedStudents, newStudent]);
     }
-    setSearchQuery('');
+    setStudentSearchQuery('');
   };
 
   const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
@@ -146,14 +148,14 @@ export default function AfterSchoolFormPage() {
 
         const requestData: UpdateAfterSchoolRequest = {
           grade: selectedStudents[0].grade,
-          week_day: 'MON',
+          week_day: createData?.selectedDay ? WEEKDAY_MAP[createData.selectedDay as keyof typeof WEEKDAY_MAP] : 'MON',
           period: mappedPeriod,
           year: currentYear,
           after_school_id: id as string,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
-          students_id: selectedStudents.map((s) => s.id as number),
+          students_id: selectedStudents.map((s) => parseInt(s.id || '0')),
         };
 
         await updateAfterSchoolClass(requestData);
@@ -161,12 +163,12 @@ export default function AfterSchoolFormPage() {
       } else {
         const baseRequest: Omit<CreateAfterSchoolRequest, 'period'> = {
           grade: selectedStudents[0].grade,
-          week_day: 'MON',
+          week_day: createData?.selectedDay ? WEEKDAY_MAP[createData.selectedDay as keyof typeof WEEKDAY_MAP] : 'MON',
           year: currentYear,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
-          students_id: selectedStudents.map((s) => s.id as number),
+          students_id: selectedStudents.map((s) => parseInt(s.id || '0')),
         };
 
         if (period === '8~11교시') {
@@ -277,8 +279,8 @@ export default function AfterSchoolFormPage() {
             <S.DropdownWrapper>
               <TextInput
                 placeholder="학생을 입력해주세요"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={studentSearchQuery}
+                onChange={(e) => setStudentSearchQuery(e.target.value)}
                 leftIcon={
                   <img 
                     src="/icons/common/search.svg" 
@@ -288,7 +290,7 @@ export default function AfterSchoolFormPage() {
                 }
               />
 
-              {searchQuery && (
+              {studentSearchQuery && (
                 <S.StudentDropdown>
                   {isTeamMode ? (
                     teamsData
@@ -327,7 +329,7 @@ export default function AfterSchoolFormPage() {
           {selectedStudents.length > 0 && (
             <S.StudentGrid>
               {selectedStudents.map((student) => (
-                <S.StudentCard key={student.id || student.studentNumber}>
+                <S.StudentCard key={`${student.id || student.studentNumber}-${student.name}-${student.grade}`}>
                   <S.StudentInfo>
                     <S.StudentNumber>{formatStudentDisplay(student).split(' ')[0]}</S.StudentNumber>
                     <S.StudentName>{formatStudentDisplay(student).split(' ').slice(1).join(' ')}</S.StudentName>

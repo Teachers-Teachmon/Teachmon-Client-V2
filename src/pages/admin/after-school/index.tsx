@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import Loading from '@/components/ui/loading';
 import type { TableColumn, AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
 import { WEEKDAYS, WEEKDAY_MAP } from '@/constants/admin';
@@ -14,16 +13,26 @@ import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 import { deleteAfterSchoolClass } from '@/services/after-school/afterSchool.api';
+import { API_WEEKDAY_TO_UI } from '@/utils/afterSchool';
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
-  const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
+  const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(() => {
+    const saved = localStorage.getItem('adminAfterSchoolGrade');
+    return saved ? Number(saved) as 1 | 2 | 3 : 1;
+  });
   const [selectedClass, setSelectedClass] = useState<AdminAfterSchoolClass | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const [selectedQuarter, setSelectedQuarter] = useState('1분기');
-  const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
+  const [selectedQuarter, setSelectedQuarter] = useState(() => {
+    const saved = localStorage.getItem('adminAfterSchoolQuarter');
+    return saved || '1분기';
+  });
+  const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(() => {
+    const saved = localStorage.getItem('adminAfterSchoolDay');
+    return saved && WEEKDAYS.includes(saved as any) ? saved as (typeof WEEKDAYS)[number] : WEEKDAYS[0];
+  });
   const [googleSheetUrl, setGoogleSheetUrl] = useState('');
   const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
 
@@ -32,6 +41,17 @@ export default function AdminAfterSchoolPage() {
     const value = match ? Number(match[0]) : 1;
     return Number.isFinite(value) ? value : 1;
   }, [selectedQuarter]);
+  useEffect(() => {
+    localStorage.setItem('adminAfterSchoolGrade', selectedGrade.toString());
+  }, [selectedGrade]);
+
+  useEffect(() => {
+    localStorage.setItem('adminAfterSchoolQuarter', selectedQuarter);
+  }, [selectedQuarter]);
+
+  useEffect(() => {
+    localStorage.setItem('adminAfterSchoolDay', selectedDay);
+  }, [selectedDay]);
 
   const apiParams: AfterSchoolRequestParams = useMemo(() => ({
     grade: selectedGrade,
@@ -41,26 +61,11 @@ export default function AdminAfterSchoolPage() {
     end_period: 11,
   }), [selectedGrade, selectedDay, branch]);
 
-  const { data: apiData, isLoading } = useQuery({
+  const { data: apiData } = useQuery({
     ...afterSchoolQuery.classes(apiParams),
   });
 
   const queryClient = useQueryClient();
-
-  const API_WEEKDAY_TO_UI: Record<string, (typeof WEEKDAYS)[number]> = {
-    '월': '월요일',
-    '화': '화요일',
-    '수': '수요일',
-    '목': '목요일',
-    MON: '월요일',
-    TUE: '화요일',
-    WED: '수요일',
-    THU: '목요일',
-    '월요일': '월요일',
-    '화요일': '화요일',
-    '수요일': '수요일',
-    '목요일': '목요일',
-  };
 
   const classes = useMemo(() => {
     if (!apiData) return [];
@@ -131,7 +136,11 @@ export default function AdminAfterSchoolPage() {
   };
 
   const handleAdd = () => {
-    navigate('/admin/after-school/create');
+    navigate('/admin/after-school/create', { 
+      state: { 
+        selectedDay: selectedDay 
+      } 
+    });
   };
 
   const handleRowClick = (classData: AdminAfterSchoolClass) => {
@@ -250,20 +259,17 @@ export default function AdminAfterSchoolPage() {
       />
 
       <S.PageContainer style={{ overflow: isDeleteModalOpen ? 'hidden' : undefined }}>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <>
-            <AdminAfterSchoolHeaderContainer
-              selectedQuarter={selectedQuarter}
-              setSelectedQuarter={setSelectedQuarter}
-              selectedGrade={selectedGrade}
-              setSelectedGrade={setSelectedGrade}
-              googleSheetUrl={googleSheetUrl}
-              setGoogleSheetUrl={setGoogleSheetUrl}
-              handleGoogleSheetSync={handleGoogleSheetSync}
-              handleGoogleSheetUpload={handleGoogleSheetUpload}
-            />
+        <>
+          <AdminAfterSchoolHeaderContainer
+            selectedQuarter={selectedQuarter}
+            setSelectedQuarter={setSelectedQuarter}
+            selectedGrade={selectedGrade}
+            setSelectedGrade={setSelectedGrade}
+            googleSheetUrl={googleSheetUrl}
+            setGoogleSheetUrl={setGoogleSheetUrl}
+            handleGoogleSheetSync={handleGoogleSheetSync}
+            handleGoogleSheetUpload={handleGoogleSheetUpload}
+          />
 
             <S.DaySelector>
               <S.NavButton onClick={handlePrevDay}>
@@ -298,8 +304,7 @@ export default function AdminAfterSchoolPage() {
                 <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
               </S.AddButtonWrapper>
             </S.ContentWrapper>
-          </>
-        )}
+        </>
       </S.PageContainer>
     </>
   );

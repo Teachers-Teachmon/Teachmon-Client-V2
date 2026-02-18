@@ -8,7 +8,6 @@ export const WEEKDAY_MAP = {
   '화요일': 'TUE', 
   '수요일': 'WED',
   '목요일': 'THU',
-  '금요일': 'FRI',
 } as const;
 
 // 사용자 역할
