@@ -291,10 +291,12 @@ export default function AfterSchoolFormPage() {
                 <S.StudentDropdown>
                   {isTeamMode ? (
                     teamsData
-                      .filter((team: TeamSearchResponse) =>
-                        !selectedStudents.find(s => s.id?.toString().includes(team.id))
-                      )
-                      .slice(0, 3)
+                      .filter((team: TeamSearchResponse) => {
+                        const teamMemberIds = new Set(team.members.map((member) => member.id.toString()));
+                        return !team.members.every((member) =>
+                          selectedStudents.some((selected) => selected.id === member.id.toString())
+                        ) && teamMemberIds.size > 0;
+                      })
                       .map((team: TeamSearchResponse) => (
                         <S.StudentDropdownItem
                           key={team.id}
@@ -306,9 +308,8 @@ export default function AfterSchoolFormPage() {
                   ) : (
                     studentsData
                       .filter((student: StudentSearchResponse) =>
-                        !selectedStudents.find(s => s.studentNumber === student.number)
+                        !selectedStudents.find((s) => s.id === student.id.toString())
                       )
-                      .slice(0, 3)
                       .map((student: StudentSearchResponse) => (
                         <S.StudentDropdownItem
                           key={student.id}
