@@ -4,6 +4,7 @@ import { reissueToken } from '@/services/auth/auth.api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLoadingStore } from '@/stores/useLoadingStore';
+import { showErrorToast } from '@/utils/error';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
@@ -80,6 +81,10 @@ axiosInstance.interceptors.response.use(
         
         if (!error.config?.skipLoading) {
             useLoadingStore.getState().stopLoading();
+        }
+
+        if (!error.config?.skipErrorToast) {
+            showErrorToast(error);
         }
 
         return Promise.reject(error);

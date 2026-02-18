@@ -1,6 +1,21 @@
 import type { CalendarEvent } from '@/types/calendar';
 import type { BusinessTripSchedule, MakeupSchedule } from '@/types/admin';
 
+const parseLocalDate = (date: string): Date => {
+  const [year, month, day] = date.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
+export const transformBusinessTripDatesToCalendarEvents = (dates: string[]): CalendarEvent[] => {
+  return dates.map((date, index) => ({
+    id: `business-trip-${date}-${index}`,
+    date: parseLocalDate(date),
+    label: '출장 가능',
+    bgColor: '#0085FF0D',
+    textColor: '#0085FF',
+  }));
+};
+
 export const transformBusinessTripToCalendarEvents = (
   data: BusinessTripSchedule[]
 ): CalendarEvent[] => {
@@ -28,7 +43,7 @@ export const transformBusinessTripToCalendarEvents = (
 
     return {
       id: `business-trip-${item.day}-${item.startPeriod}-${index}`,
-      date: new Date(item.day),
+      date: parseLocalDate(item.day),
       label,
       bgColor,
       textColor,
@@ -63,7 +78,7 @@ export const transformMakeupToCalendarEvents = (
 
     return {
       id: `makeup-${item.day}-${item.startPeriod}-${index}`,
-      date: new Date(item.day),
+      date: parseLocalDate(item.day),
       label,
       bgColor,
       textColor,
