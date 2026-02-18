@@ -1,14 +1,34 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
 import TableLayout, { type TableColumn } from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import { MOCK_TEAMS } from '@/constants/fixedMovement';
-import type { Team } from '@/types/fixedMovement';
+import Loading from '@/components/ui/loading';
+import ConfirmModal from '@/components/layout/modal/confirm';
+import StudentListWithOverflow from '@/containers/admin/fixed-movement/table/studentList';
+import DetailModal from '@/containers/admin/fixed-movement/detail-modal';
+import { teamQuery } from '@/services/team/team.query';
+import { useDeleteTeamMutation } from '@/services/team/team.mutation';
+import type { Team, TeamResponse } from '@/types/fixedMovement';
 import * as S from './style';
 
 export default function TeamSettingsPage() {
   const navigate = useNavigate();
-  const [teams, setTeams] = useState<Team[]>(MOCK_TEAMS);
+  const { data: rawTeams, isLoading, isError } = useQuery(teamQuery.list());
+  const deleteMutation = useDeleteTeamMutation();
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const [detailTargetId, setDetailTargetId] = useState<string | null>(null);
+  const [detailTeamData, setDetailTeamData] = useState<TeamResponse | Team | null>(null);
+
+  const teams: Team[] = (rawTeams ?? []).map((t: TeamResponse) => ({
+    id: String(t.id),
+    name: t.name,
+    students: t.members.map((m) => ({
+      studentNumber: Number(`${m.grade}${String(m.classNumber).padStart(1, '0')}${String(m.number).padStart(2, '0')}`),
+      name: m.name,
+    })),
+  }));
 
   const handleBack = () => {
     navigate('/admin/fixed-movement');
@@ -23,9 +43,23 @@ export default function TeamSettingsPage() {
     navigate(`/admin/fixed-movement/team-settings/edit/${id}`);
   };
 
+  const handleDetail = (row: Team) => {
+    const originalTeam = (rawTeams ?? []).find((t: any) => String(t.id) === row.id);
+    
+    setDetailTeamData(originalTeam || row);
+    setDetailTargetId(row.id);
+  };
+
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    setTeams(teams.filter(t => t.id !== id));
+    setDeleteTargetId(id);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteTargetId) {
+      deleteMutation.mutate({ id: deleteTargetId });
+      setDeleteTargetId(null);
+    }
   };
 
   const columns: TableColumn<Team>[] = [
@@ -40,16 +74,10 @@ export default function TeamSettingsPage() {
       header: '학생',
       width: 'auto',
       render: (row) => (
-        <S.StudentList>
-          {row.students.slice(0, 5).map((student, idx) => (
-            <S.StudentTag key={idx}>
-              {student.studentNumber} {student.name}
-            </S.StudentTag>
-          ))}
-          {row.students.length > 5 && (
-            <S.StudentTag>...</S.StudentTag>
-          )}
-        </S.StudentList>
+        <StudentListWithOverflow 
+          students={row.students.map(student => ({ ...student, studentNumber: String(student.studentNumber) }))} 
+          maxVisible={8} 
+        />
       ),
     },
   ];
@@ -60,6 +88,11 @@ export default function TeamSettingsPage() {
       <Button text="삭제" variant="delete" width="100px" onClick={(e) => handleDelete(row.id, e)} />
     </S.ActionCell>
   );
+
+  if (isLoading) return <Loading />;
+  if (isError) {
+    toast.error('팀 목록을 불러오는데 실패했습니다.');
+  }
 
   return (
     <S.Container>
@@ -78,8 +111,26 @@ export default function TeamSettingsPage() {
           columns={columns}
           data={teams}
           renderActions={renderActions}
+          onRowClick={handleDetail}
         />
       </S.TableWrapper>
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleConfirmDelete}
+        title="팀 삭제"
+        message="정말 삭제하시겠습니까?"
+        confirmText="삭제"
+      />
+      <DetailModal
+        teamId={detailTargetId}
+        isOpen={!!detailTargetId}
+        onClose={() => {
+          setDetailTargetId(null);
+          setDetailTeamData(null);
+        }}
+        teamData={detailTeamData}
+      />
     </S.Container>
   );
 }

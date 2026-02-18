@@ -128,3 +128,10 @@ export const DateInfo = styled.p`
     display: none;
   }
 `;
+
+export const LoadingText = styled.p`
+  font-size: ${fontSizes.Body};
+  color: ${colors.n03};
+  text-align: center;
+  padding: 2rem;
+`;

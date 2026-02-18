@@ -6,7 +6,7 @@ export const SidePanel = styled.div`
   width: 280px;
   background: ${colors.background};
   border-radius: ${radius.lg};
-  padding: 1.5rem;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;

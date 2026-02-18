@@ -1,60 +1,111 @@
-import type { FixedMovement } from '@/types/fixedMovement';
-import { WEEKDAYS } from '@/constants/fixedMovement';
 import Modal from '@/components/layout/modal';
+import { useQuery } from '@tanstack/react-query';
+import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
+import { teamQuery } from '@/services/team/team.query';
+import { PERIOD_LABEL, WEEKDAY_LABEL } from '@/constants/fixedMovement';
 import * as S from './style';
+import closeIcon from '/icons/common/x.svg';
 
-interface FixedMovementDetailModalProps {
-  movement: FixedMovement | null;
+interface DetailModalProps {
+  movementId?: string | null;
+  teamId?: string | null;
   isOpen: boolean;
   onClose: () => void;
+  teamData?: any;
 }
 
-export default function FixedMovementDetailModal({ 
-  movement, 
+export default function DetailModal({ 
+  movementId,
+  teamId, 
   isOpen, 
-  onClose 
-}: FixedMovementDetailModalProps) {
-  if (!movement) return null;
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} padding="0">
-      <S.Container>
-        <S.Header>
-          <S.Title>{movement.location}</S.Title>
-          <S.CloseButton onClick={onClose}>
-            <S.CloseIcon>✕</S.CloseIcon>
-          </S.CloseButton>
-        </S.Header>
-
-        <S.Content>
-          <S.InfoSection>
-            <S.InfoLabel>요일</S.InfoLabel>
-            <S.InfoValue>{WEEKDAYS[movement.day as keyof typeof WEEKDAYS]}</S.InfoValue>
-          </S.InfoSection>
-
-          <S.InfoSection>
-            <S.InfoLabel>교시</S.InfoLabel>
-            <S.InfoValue>{movement.period}</S.InfoValue>
-          </S.InfoSection>
-
-          <S.InfoSection>
-            <S.InfoLabel>사유</S.InfoLabel>
-            <S.InfoValue>{movement.reason}</S.InfoValue>
-          </S.InfoSection>
-
-          <S.InfoSection>
-            <S.InfoLabel>학생 {movement.students.length}명</S.InfoLabel>
-            <S.StudentGrid>
-              {movement.students.map((student, idx) => (
-                <S.StudentCard key={idx}>
-                  <S.StudentNumber>{student.studentNumber}</S.StudentNumber>
-                  <S.StudentName>{student.name}</S.StudentName>
-                </S.StudentCard>
-              ))}
-            </S.StudentGrid>
-          </S.InfoSection>
-        </S.Content>
-      </S.Container>
-    </Modal>
+  onClose,
+  teamData
+}: DetailModalProps) {
+  const { data: movementData } = useQuery(
+    fixedMovementQuery.detail(movementId || undefined)
   );
+
+  const { data: fetchedTeamData } = useQuery(
+    teamQuery.detail(teamId || undefined)
+  );
+  if (movementId && movementData) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} padding="0">
+        <S.Container>
+          <S.Header>
+            <S.Title>고정 이석 상세 정보</S.Title>
+            <S.CloseButton onClick={onClose}>
+                <img src={closeIcon} alt="닫기" />
+            </S.CloseButton>
+          </S.Header>
+          <S.Content>
+            <S.InfoSection>
+              <S.InfoLabel>요일</S.InfoLabel>
+              <S.InfoValue>{WEEKDAY_LABEL[(movementData.weekday || movementData.week_day) as keyof typeof WEEKDAY_LABEL]}</S.InfoValue>
+            </S.InfoSection>
+            <S.InfoSection>
+              <S.InfoLabel>시간</S.InfoLabel>
+              <S.InfoValue>{PERIOD_LABEL[movementData.period as keyof typeof PERIOD_LABEL]}</S.InfoValue>
+            </S.InfoSection>
+            <S.InfoSection>
+              <S.InfoLabel>장소</S.InfoLabel>
+              <S.InfoValue>
+                {typeof movementData.place === 'string' ? movementData.place : movementData.place?.name}
+              </S.InfoValue>
+            </S.InfoSection>
+            <S.InfoSection>
+              <S.InfoLabel>사유</S.InfoLabel>
+              <S.InfoValue>{movementData.cause}</S.InfoValue>
+            </S.InfoSection>
+            <S.InfoSection>
+              <S.InfoLabel>학생 {movementData.students?.length || 0}명</S.InfoLabel>
+              <S.StudentGrid>
+                {movementData.students?.map((student: any, idx: number) => (
+                  <S.StudentCard key={idx}>
+                    <S.StudentNumber>{student.number}</S.StudentNumber>
+                    <S.StudentName>{student.name}</S.StudentName>
+                  </S.StudentCard>
+                ))}
+              </S.StudentGrid>
+            </S.InfoSection>
+          </S.Content>
+        </S.Container>
+      </Modal>
+    );
+  }
+  const displayTeamData = teamData || fetchedTeamData;
+  
+  if (teamId && displayTeamData) {
+    return (
+      <Modal isOpen={isOpen} onClose={onClose} padding="0">
+        <S.Container>
+          <S.Header>
+            <S.Title>팀 상세 정보</S.Title>
+            <S.CloseButton onClick={onClose}>
+                <img src={closeIcon} alt="닫기" />
+            </S.CloseButton>
+          </S.Header>
+          <S.Content>
+            <S.InfoSection>
+              <S.InfoLabel>팀 이름</S.InfoLabel>
+              <S.InfoValue>{displayTeamData.name}</S.InfoValue>
+            </S.InfoSection>
+            <S.InfoSection>
+              <S.InfoLabel>학생 {displayTeamData.members?.length || 0}명</S.InfoLabel>
+              <S.StudentGrid>
+                {displayTeamData.members?.map((member: any, idx: number) => (
+                  <S.StudentCard key={idx}>
+                    <S.StudentNumber>{member.grade}{member.classNumber}{member.number < 10 ? `0${member.number}` : member.number}</S.StudentNumber>
+                    <S.StudentName>{member.name}</S.StudentName>
+                  </S.StudentCard>
+                ))}
+              </S.StudentGrid>
+            </S.InfoSection>
+          </S.Content>
+        </S.Container>
+      </Modal>
+    );
+  }
+
+  return null;
 }

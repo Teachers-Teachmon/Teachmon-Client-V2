@@ -6,15 +6,13 @@ export const Container = styled.div`
   border-radius: ${radius.lg};
   width: 600px;
   max-width: 90vw;
-  max-height: 80vh;
-  overflow-y: auto;
 `;
 
 export const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
 `;
 
 export const Title = styled.h2`
@@ -33,40 +31,57 @@ export const CloseButton = styled.button`
   align-items: center;
   justify-content: center;
 
-  &:hover span {
-    color: ${colors.text};
+  img {
+    width: 24px;
+    height: 24px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    display: block;
+  }
+
+  &:hover img {
+    opacity: 1;
   }
 `;
 
-export const CloseIcon = styled.span`
-  font-size: 24px;
-  color: ${colors.primaryGray};
-  transition: color 0.2s;
-`;
-
 export const Content = styled.div`
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  margin-top: -0.7rem;
+  gap: 1rem;
+  margin-top: -0.5rem;
+  max-height: 40vh;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: ${colors.n03};
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
 `;
 
 export const InfoSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 `;
 
 export const InfoLabel = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 600;
   color: ${colors.primary};
 `;
 
 export const InfoValue = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 500;
   color: ${colors.text};
 `;
@@ -87,13 +102,13 @@ export const StudentCard = styled.div`
 `;
 
 export const StudentNumber = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 600;
   color: ${colors.text};
 `;
 
 export const StudentName = styled.div`
-  font-size: ${fontSizes.Medium};
+  font-size: ${fontSizes.Body};
   font-weight: 500;
   color: ${colors.text};
 `;

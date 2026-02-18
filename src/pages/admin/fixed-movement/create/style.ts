@@ -141,11 +141,30 @@ export const StudentDropdown = styled.div`
   top: 100%;
   left: 0;
   width: 100%;
+  max-height: 180px;
+  overflow-y: auto;
   background-color: ${colors.background};
   border-radius: ${radius.sm};
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ${colors.n01};
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${colors.n03};
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${colors.primaryGray};
+  }
 `;
 
 export const StudentDropdownItem = styled.div`
