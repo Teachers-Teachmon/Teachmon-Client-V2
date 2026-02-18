@@ -30,6 +30,10 @@ interface Teacher {
   name: string;
 }
 
+const mapSinglePeriod = (period: string): 'EIGHT_AND_NINE_PERIOD' | 'TEN_AND_ELEVEN_PERIOD' => {
+  return period === '10~11교시' ? 'TEN_AND_ELEVEN_PERIOD' : 'EIGHT_AND_NINE_PERIOD';
+};
+
 export default function AfterSchoolFormPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -67,6 +71,9 @@ export default function AfterSchoolFormPage() {
   const debouncedStudentSearch = useDebounce(studentSearchQuery, 300);
   const debouncedLocationSearch = useDebounce(locationSearchQuery, 300);
   const debouncedTeacherSearch = useDebounce(teacherSearchQuery, 300);
+  const periodOptions = isEditMode
+    ? ADMIN_AFTER_SCHOOL_PERIODS.filter((value) => value !== '8~11교시')
+    : ADMIN_AFTER_SCHOOL_PERIODS;
 
   const { data: studentsData = [] } = useQuery({
     ...searchQuery.students(debouncedStudentSearch),
@@ -139,12 +146,7 @@ export default function AfterSchoolFormPage() {
     try {
       const currentYear = new Date().getFullYear();
       if (isEditMode) {
-        const mappedPeriod =
-          period === '8~9교시'
-            ? 'EIGHT_AND_NINE_PERIOD'
-            : period === '10~11교시'
-            ? 'TEN_AND_ELEVEN_PERIOD'
-            : 'SEVEN_AND_EIGHT_PERIOD';
+        const mappedPeriod = mapSinglePeriod(period);
 
         const requestData: UpdateAfterSchoolRequest = {
           grade: selectedStudents[0].grade,
@@ -184,12 +186,7 @@ export default function AfterSchoolFormPage() {
             }),
           ]);
         } else {
-          const mappedPeriod =
-            period === '8~9교시'
-              ? 'EIGHT_AND_NINE_PERIOD'
-              : period === '10~11교시'
-              ? 'TEN_AND_ELEVEN_PERIOD'
-              : 'SEVEN_AND_EIGHT_PERIOD';
+          const mappedPeriod = mapSinglePeriod(period);
 
           await createAfterSchoolClass({
             ...baseRequest,
@@ -200,7 +197,7 @@ export default function AfterSchoolFormPage() {
         toast.success('방과후가 성공적으로 생성되었습니다.');
       }
       navigate('/admin/after-school');
-    } catch (error) {
+    } catch {
       toast.error(isEditMode ? '방과후 수정에 실패했습니다.' : '방과후 생성에 실패했습니다.');
     }
   };
@@ -246,7 +243,7 @@ export default function AfterSchoolFormPage() {
             <S.SectionTitle>교시</S.SectionTitle>
             <Dropdown
               placeholder="교시 선택"
-              items={[...ADMIN_AFTER_SCHOOL_PERIODS]}
+              items={[...periodOptions]}
               value={period}
               onChange={setPeriod}
               customWidth="100%"
