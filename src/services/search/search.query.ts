@@ -30,3 +30,30 @@ export const searchQuery = {
       enabled: query.length > 0,
     }),
 };
+
+export const placeQuery = {
+  search: (query: string) =>
+    queryOptions({
+      queryKey: ['search.places', query],
+      queryFn: () => searchPlaces(query),
+      enabled: query.length > 0,
+    }),
+};
+
+export const studentQuery = {
+  search: (query: string) =>
+    queryOptions({
+      queryKey: ['student.search', query],
+      queryFn: () => searchStudents(query),
+      enabled: query.length > 0,
+    }),
+};
+
+export const teamQuery = {
+  search: (query: string) =>
+    queryOptions({
+      queryKey: ['search.teams', query],
+      queryFn: () => searchTeams(query),
+      enabled: query.length > 0,
+    }),
+};

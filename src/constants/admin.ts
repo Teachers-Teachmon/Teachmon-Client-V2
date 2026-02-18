@@ -24,6 +24,13 @@ export const REVERSE_DAY_MAP: Record<string, ForbiddenDay> = {
   '목요일': 'THU',
 } as const;
 
+export const WEEKDAY_MAP: Record<string, ForbiddenDay> = {
+  '월요일': 'MON',
+  '화요일': 'TUE',
+  '수요일': 'WED',
+  '목요일': 'THU',
+} as const;
+
 // 사용자 역할
 export const USER_ROLES = {
   ADMIN: '관리자',
@@ -45,3 +52,4 @@ export const SORT_ORDER = {
 
 export const ADMIN_AFTER_SCHOOL_PERIODS = ['8~9교시', '10~11교시'] as const;
 export const SMILE_OPTIONS = ['객체지향 프로그래밍', '파이썬을 이용한 문제해결', '스프링 수업'] as const;
+export const QUARTER_ITEMS = ['1분기', '2분기', '3분기'] as const;

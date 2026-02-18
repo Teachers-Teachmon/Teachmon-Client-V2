@@ -5,9 +5,10 @@ import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
+import Loading from '@/components/ui/loading';
 import type { AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
-import { WEEKDAYS, REVERSE_DAY_MAP } from '@/constants/admin';
+import { WEEKDAYS, REVERSE_DAY_MAP, QUARTER_ITEMS } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
@@ -35,6 +36,7 @@ export default function AdminAfterSchoolPage() {
     const saved = localStorage.getItem('adminAfterSchoolDay');
     return saved && WEEKDAYS.includes(saved as any) ? saved as (typeof WEEKDAYS)[number] : WEEKDAYS[0];
   });
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
   const { columns } = useAfterSchoolColumns() as unknown as { columns: TableColumn<AdminAfterSchoolClass>[] };
   const branch = useMemo(() => {
     const match = selectedQuarter.match(/\d+/);
@@ -50,7 +52,7 @@ export default function AdminAfterSchoolPage() {
     end_period: 11,
   }), [selectedGrade, selectedDay, branch]);
 
-  const { data: apiData } = useQuery({
+  const { data: apiData, isLoading } = useQuery({
     ...afterSchoolQuery.classes(apiParams),
   });
 
@@ -178,61 +180,7 @@ export default function AdminAfterSchoolPage() {
       setIsPdfLoading(false);
     }
   };
-
-  const renderStudents = (students: string[]) => {
-    const displayStudents = students.slice(0, maxStudentsToShow);
-    const hasMore = students.length > maxStudentsToShow;
-    return (
-      <S.StudentList>
-        {displayStudents.map((student, idx) => (
-          <S.StudentBadge key={idx}>{student}</S.StudentBadge>
-        ))}
-        {hasMore && <S.MoreBadge>...</S.MoreBadge>}
-      </S.StudentList>
-    );
-  };
-
-  const columns: TableColumn<AdminAfterSchoolClass>[] = [
-    {
-      key: 'teacher',
-      header: '담당교사',
-      width: '120px',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.NoWrapCell>{row.teacher}</S.NoWrapCell>
-      ),
-    },
-    {
-      key: 'period',
-      header: '교시',
-      width: '100px',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.NoWrapCell>{row.period}</S.NoWrapCell>
-      ),
-    },
-    {
-      key: 'location',
-      header: '장소이름',
-      width: 'auto',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.WrapCell>{row.location}</S.WrapCell>
-      ),
-    },
-    {
-      key: 'subject',
-      header: '이름',
-      width: 'auto',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.WrapCell>{row.subject}</S.WrapCell>
-      ),
-    },
-    {
-      key: 'students',
-      header: '학생',
-      width: 'auto',
-      render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
-    },
-  ];
-
+  
   const handlePrevDay = () => {
     const currentIndex = WEEKDAYS.indexOf(selectedDay);
     const prevIndex = currentIndex === 0 ? WEEKDAYS.length - 1 : currentIndex - 1;
@@ -282,7 +230,7 @@ export default function AdminAfterSchoolPage() {
         ) : (
           <>
             <AdminAfterSchoolHeaderContainer
-              quarterItems={quarterItems}
+              quarterItems={[...QUARTER_ITEMS]}
               selectedQuarter={selectedQuarter}
               setSelectedQuarter={setSelectedQuarter}
               selectedGrade={selectedGrade}
@@ -324,7 +272,8 @@ export default function AdminAfterSchoolPage() {
                 <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
               </S.AddButtonWrapper>
             </S.ContentWrapper>
-        </>
+          </>
+        )}
       </S.PageContainer>
     </>
   );
