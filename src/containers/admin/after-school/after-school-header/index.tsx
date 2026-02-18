@@ -1,5 +1,4 @@
 import Dropdown from '@/components/ui/input/dropdown';
-import TextInput from '@/components/ui/input/text-input';
 import * as S from '@/pages/admin/after-school/style';
 
 interface Props {
@@ -7,10 +6,6 @@ interface Props {
   setSelectedQuarter: (q: string) => void;
   selectedGrade: 1 | 2 | 3;
   setSelectedGrade: (g: 1 | 2 | 3) => void;
-  googleSheetUrl: string;
-  setGoogleSheetUrl: (url: string) => void;
-  handleGoogleSheetSync: () => void;
-  handleGoogleSheetUpload: () => void;
 }
 
 const AdminAfterSchoolHeaderContainer = ({
@@ -18,10 +13,6 @@ const AdminAfterSchoolHeaderContainer = ({
   setSelectedQuarter,
   selectedGrade,
   setSelectedGrade,
-  googleSheetUrl,
-  setGoogleSheetUrl,
-  handleGoogleSheetSync,
-  handleGoogleSheetUpload,
 }: Props) => (
   <S.Header>
     <S.LeftSection>

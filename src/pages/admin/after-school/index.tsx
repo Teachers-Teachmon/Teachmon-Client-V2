@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import type { TableColumn, AfterSchoolRequestParams } from '@/types/afterSchool';
+import type { AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
 import { WEEKDAYS, WEEKDAY_MAP } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
@@ -14,6 +14,8 @@ import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 import { deleteAfterSchoolClass } from '@/services/after-school/afterSchool.api';
 import { API_WEEKDAY_TO_UI } from '@/utils/afterSchool';
+import { useAfterSchoolColumns } from '@/hooks/useAfterSchoolColumns';
+import type { TableColumn } from '@/components/layout/table';
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
@@ -33,25 +35,12 @@ export default function AdminAfterSchoolPage() {
     const saved = localStorage.getItem('adminAfterSchoolDay');
     return saved && WEEKDAYS.includes(saved as any) ? saved as (typeof WEEKDAYS)[number] : WEEKDAYS[0];
   });
-  const [googleSheetUrl, setGoogleSheetUrl] = useState('');
-  const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
-
+  const { columns } = useAfterSchoolColumns() as unknown as { columns: TableColumn<AdminAfterSchoolClass>[] };
   const branch = useMemo(() => {
     const match = selectedQuarter.match(/\d+/);
     const value = match ? Number(match[0]) : 1;
     return Number.isFinite(value) ? value : 1;
   }, [selectedQuarter]);
-  useEffect(() => {
-    localStorage.setItem('adminAfterSchoolGrade', selectedGrade.toString());
-  }, [selectedGrade]);
-
-  useEffect(() => {
-    localStorage.setItem('adminAfterSchoolQuarter', selectedQuarter);
-  }, [selectedQuarter]);
-
-  useEffect(() => {
-    localStorage.setItem('adminAfterSchoolDay', selectedDay);
-  }, [selectedDay]);
 
   const apiParams: AfterSchoolRequestParams = useMemo(() => ({
     grade: selectedGrade,
@@ -90,21 +79,16 @@ export default function AdminAfterSchoolPage() {
   );
 
   useEffect(() => {
-    const handleResize = () => {
-      const width = window.innerWidth;
-      if (width < 1200) {
-        setMaxStudentsToShow(1);
-      } else if (width < 1600) {
-        setMaxStudentsToShow(2);
-      } else {
-        setMaxStudentsToShow(3);
-      }
-    };
+    localStorage.setItem('adminAfterSchoolGrade', selectedGrade.toString());
+  }, [selectedGrade]);
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  useEffect(() => {
+    localStorage.setItem('adminAfterSchoolQuarter', selectedQuarter);
+  }, [selectedQuarter]);
+
+  useEffect(() => {
+    localStorage.setItem('adminAfterSchoolDay', selectedDay);
+  }, [selectedDay]);
 
   const handleEdit = (classData: AdminAfterSchoolClass, e?: React.MouseEvent) => {
     if (e) {
@@ -153,67 +137,6 @@ export default function AdminAfterSchoolPage() {
     setSelectedClass(null);
   };
 
-  const handleGoogleSheetSync = () => {
-    console.log('시트 동기화:', googleSheetUrl);
-  };
-
-  const handleGoogleSheetUpload = () => {
-    console.log('시트 업로드:', googleSheetUrl);
-  };
-
-  const renderStudents = (students: string[]) => {
-    const displayStudents = students.slice(0, maxStudentsToShow);
-    const hasMore = students.length > maxStudentsToShow;
-    return (
-      <S.StudentList>
-        {displayStudents.map((student, idx) => (
-          <S.StudentBadge key={idx}>{student}</S.StudentBadge>
-        ))}
-        {hasMore && <S.MoreBadge>...</S.MoreBadge>}
-      </S.StudentList>
-    );
-  };
-
-  const columns: TableColumn<AdminAfterSchoolClass>[] = [
-    {
-      key: 'teacher',
-      header: '담당교사',
-      width: '120px',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.NoWrapCell>{row.teacher}</S.NoWrapCell>
-      ),
-    },
-    {
-      key: 'period',
-      header: '교시',
-      width: '100px',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.NoWrapCell>{row.period}</S.NoWrapCell>
-      ),
-    },
-    {
-      key: 'location',
-      header: '장소이름',
-      width: 'auto',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.WrapCell>{row.location}</S.WrapCell>
-      ),
-    },
-    {
-      key: 'subject',
-      header: '이름',
-      width: 'auto',
-      render: (row: AdminAfterSchoolClass) => (
-        <S.WrapCell>{row.subject}</S.WrapCell>
-      ),
-    },
-    {
-      key: 'students',
-      header: '학생',
-      width: 'auto',
-      render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
-    },
-  ];
 
   const handlePrevDay = () => {
     const currentIndex = WEEKDAYS.indexOf(selectedDay);
@@ -265,10 +188,6 @@ export default function AdminAfterSchoolPage() {
             setSelectedQuarter={setSelectedQuarter}
             selectedGrade={selectedGrade}
             setSelectedGrade={setSelectedGrade}
-            googleSheetUrl={googleSheetUrl}
-            setGoogleSheetUrl={setGoogleSheetUrl}
-            handleGoogleSheetSync={handleGoogleSheetSync}
-            handleGoogleSheetUpload={handleGoogleSheetUpload}
           />
 
             <S.DaySelector>
