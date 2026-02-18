@@ -4,17 +4,19 @@ import type { Grade } from '@/types/selfStudy';
 import { PERIODS } from '@/constants/adminSelfStudy';
 import * as S from './style';
 
+type NumberGrade = Exclude<Grade, 'all'>;
+
 interface SidePanelProps {
-  selectedGrade: Grade;
-  onGradeChange: (grade: Grade) => void;
+  selectedGrades: NumberGrade[];
+  onGradesChange: (grades: NumberGrade[]) => void;
   selectedPeriods: string[];
   onPeriodToggle: (period: string) => void;
   onComplete: () => void;
 }
 
 export default function SidePanel({
-  selectedGrade,
-  onGradeChange,
+  selectedGrades,
+  onGradesChange,
   selectedPeriods,
   onPeriodToggle,
   onComplete,
@@ -44,26 +46,51 @@ export default function SidePanel({
         <S.SectionTitle>학년</S.SectionTitle>
         <S.GradeTabsContainer>
           <S.GradeTab 
-            $active={selectedGrade === 1} 
-            onClick={() => onGradeChange(1)}
+            $active={selectedGrades.includes(1)} 
+            onClick={() => {
+              const has = selectedGrades.includes(1);
+              const next = has
+                ? selectedGrades.filter((g) => g !== 1)
+                : [...selectedGrades, 1 as NumberGrade];
+              onGradesChange(next);
+            }}
           >
             1학년
           </S.GradeTab>
           <S.GradeTab 
-            $active={selectedGrade === 2} 
-            onClick={() => onGradeChange(2)}
+            $active={selectedGrades.includes(2)} 
+            onClick={() => {
+              const has = selectedGrades.includes(2);
+              const next = has
+                ? selectedGrades.filter((g) => g !== 2)
+                : [...selectedGrades, 2 as NumberGrade];
+              onGradesChange(next);
+            }}
           >
             2학년
           </S.GradeTab>
           <S.GradeTab 
-            $active={selectedGrade === 3} 
-            onClick={() => onGradeChange(3)}
+            $active={selectedGrades.includes(3)} 
+            onClick={() => {
+              const has = selectedGrades.includes(3);
+              const next = has
+                ? selectedGrades.filter((g) => g !== 3)
+                : [...selectedGrades, 3 as NumberGrade];
+              onGradesChange(next);
+            }}
           >
             3학년
           </S.GradeTab>
           <S.GradeTab 
-            $active={selectedGrade === 'all'} 
-            onClick={() => onGradeChange('all')}
+            $active={([1, 2, 3] as NumberGrade[]).every((g) => selectedGrades.includes(g))}
+            onClick={() => {
+              const allSelected = ([1, 2, 3] as NumberGrade[]).every((g) => selectedGrades.includes(g));
+              if (allSelected) {
+                onGradesChange([]);
+              } else {
+                onGradesChange([1, 2, 3] as NumberGrade[]);
+              }
+            }}
           >
             전체
           </S.GradeTab>
