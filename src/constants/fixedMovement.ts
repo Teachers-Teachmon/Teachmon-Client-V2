@@ -1,4 +1,4 @@
-import type { FixedMovement, Team } from '@/types/fixedMovement';
+import type { FixedMovement, Team, Weekday, Period } from '@/types/fixedMovement';
 
 export const WEEKDAYS = {
   mon: '월',
@@ -7,11 +7,57 @@ export const WEEKDAYS = {
   thu: '목',
 } as const;
 
+export const WEEKDAY_API_TO_KEY: Record<Weekday, keyof typeof WEEKDAYS> = {
+  MON: 'mon',
+  TUE: 'tue',
+  WED: 'wed',
+  THU: 'thu',
+  FRI: 'mon',
+  SAT: 'mon',
+  SUN: 'mon',
+} as const;
+
+export const WEEKDAY_LABEL: Record<Weekday, string> = {
+  MON: '월',
+  TUE: '화',
+  WED: '수',
+  THU: '목',
+  FRI: '금',
+  SAT: '토',
+  SUN: '일',
+} as const;
+
+export const PERIOD_LABEL: Record<Period, string> = {
+  ONE_PERIOD: '1교시',
+  TWO_PERIOD: '2교시',
+  THREE_PERIOD: '3교시',
+  FOUR_PERIOD: '4교시',
+  FIVE_PERIOD: '5교시',
+  SIX_PERIOD: '6교시',
+  SEVEN_PERIOD: '7교시',
+  EIGHT_AND_NINE_PERIOD: '8~9교시',
+  TEN_AND_ELEVEN_PERIOD: '10~11교시',
+} as const;
+
+export const WEEKDAY_LABEL_TO_API: Record<string, Weekday> = Object.fromEntries(
+  Object.entries(WEEKDAY_LABEL).map(([key, value]) => [value, key as Weekday]),
+) as Record<string, Weekday>;
+
+export const PERIOD_LABEL_TO_API: Record<string, Period> = {
+  '1교시': 'ONE_PERIOD',
+  '2교시': 'TWO_PERIOD',
+  '3교시': 'THREE_PERIOD',
+  '4교시': 'FOUR_PERIOD',
+  '5교시': 'FIVE_PERIOD',
+  '6교시': 'SIX_PERIOD',
+  '7교시': 'SEVEN_PERIOD',
+  '8~9교시': 'EIGHT_AND_NINE_PERIOD',
+  '10~11교시': 'TEN_AND_ELEVEN_PERIOD',
+};
+
 export const PERIOD_OPTIONS = [
-  '7교시',
   '8~9교시',
   '10~11교시',
-  '8~11교시',
 ];
 
 export const LOCATION_OPTIONS = [
@@ -28,7 +74,7 @@ export const MOCK_FIXED_MOVEMENTS: FixedMovement[] = [
     day: ['mon', 'tue', 'wed', 'thu'][i % 4],
     period: PERIOD_OPTIONS[i % PERIOD_OPTIONS.length],
     location: LOCATION_OPTIONS[i % LOCATION_OPTIONS.length],
-    reason: `테스트 데이터 ${i + 1}`,
+    personnel: (i % 7) + 1,
     students: Array.from({ length: (i % 7) + 1 }).map((_, j) => ({
       studentNumber: 1400 + j,
       name: `학생${j + 1}`,

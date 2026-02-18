@@ -1,29 +1,25 @@
 import { queryOptions } from '@tanstack/react-query';
 import { searchStudents, searchPlaces, searchTeams } from './search.api';
 
-export const studentQuery = {
-  search: (query?: string) =>
+export const searchQuery = {
+  students: (query: string) =>
     queryOptions({
       queryKey: ['student.search', query],
       queryFn: () => searchStudents(query),
-      enabled: !!query && query.length > 0,
+      enabled: query.length > 0,
     }),
-};
 
-export const placeQuery = {
-  search: (query?: string) =>
+  places: (query: string) =>
     queryOptions({
-      queryKey: ['place.search', query],
+      queryKey: ['search.places', query],
       queryFn: () => searchPlaces(query),
-      enabled: !!query && query.length > 0,
+      enabled: query.length > 0,
     }),
-};
 
-export const teamQuery = {
-  search: (query?: string) =>
+  teams: (query: string) =>
     queryOptions({
-      queryKey: ['team.search', query],
+      queryKey: ['search.teams', query],
       queryFn: () => searchTeams(query),
-      enabled: !!query && query.length > 0,
+      enabled: query.length > 0,
     }),
 };
