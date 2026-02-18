@@ -285,9 +285,9 @@ export const NoWrapCell = styled.span`
 `;
 
 export const WrapCell = styled.span`
-  word-wrap: break-word;
-  word-break: break-word;
   white-space: normal;
-  display: inline-block;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  display: block;
+  width: 100%;
 `;
-

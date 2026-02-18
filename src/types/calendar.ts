@@ -5,7 +5,7 @@ export interface CalendarEvent {
   bgColor: string
   textColor: string
   teacherId?: number
-  supervisionType?: 'self_study' | 'leave_seat'
+  supervisionType?: 'self_study' | 'leave_seat' | 'makeup'
 }
 
 export interface CalendarRangeEvent {

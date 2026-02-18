@@ -1,27 +1,30 @@
-export interface Student {
-  id: number;
-  name: string;
+export interface StudentSearchResponse {
+  id: number | string;
   grade: number;
   classNumber: number;
   number: number;
+  name: string;
 }
 
-export interface Place {
+export interface PlaceSearchResponse {
   id: number;
   name: string;
   floor: number;
 }
 
-export interface TeamMember {
+export interface TeacherSearchResponse {
   id: number;
-  number: number;
   name: string;
-  grade: number;
-  classNumber: number;
 }
 
-export interface Team {
-  id: number;
+export interface TeamSearchResponse {
+  id: string;
   name: string;
-  members: TeamMember[];
+  members: {
+    id: number;
+    number: number;
+    name: string;
+    grade: number;
+    classNumber: number;
+  }[];
 }

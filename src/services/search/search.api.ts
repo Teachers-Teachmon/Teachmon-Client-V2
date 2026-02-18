@@ -3,7 +3,8 @@ import type {
   StudentSearchResponse,
   PlaceSearchResponse,
   TeamSearchResponse,
-} from '@/types/fixedMovement';
+  TeacherSearchResponse,
+} from '@/types/search';
 
 export const searchStudents = async (query: string): Promise<StudentSearchResponse[]> => {
   const response = await axiosInstance.get<StudentSearchResponse[]>('/student/search', {
@@ -21,6 +22,13 @@ export const searchPlaces = async (query: string): Promise<PlaceSearchResponse[]
 
 export const searchTeams = async (query: string): Promise<TeamSearchResponse[]> => {
   const response = await axiosInstance.get<TeamSearchResponse[]>('/team/search', {
+    params: { query },
+  });
+  return response.data;
+};
+
+export const searchTeachers = async (query: string): Promise<TeacherSearchResponse[]> => {
+  const response = await axiosInstance.get<TeacherSearchResponse[]>('/teacher/search', {
     params: { query },
   });
   return response.data;

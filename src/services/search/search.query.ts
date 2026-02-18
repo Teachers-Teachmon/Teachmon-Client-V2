@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { searchStudents, searchPlaces, searchTeams } from './search.api';
+import { searchStudents, searchPlaces, searchTeams, searchTeachers } from './search.api';
 
 export const searchQuery = {
   students: (query: string) =>
@@ -13,6 +13,13 @@ export const searchQuery = {
     queryOptions({
       queryKey: ['search.places', query],
       queryFn: () => searchPlaces(query),
+      enabled: query.length > 0,
+    }),
+
+  teachers: (query: string) =>
+    queryOptions({
+      queryKey: ['search.teachers', query],
+      queryFn: () => searchTeachers(query),
       enabled: query.length > 0,
     }),
 

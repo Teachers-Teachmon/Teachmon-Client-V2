@@ -1,14 +1,28 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/ui/button';
+import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import type { TableColumn } from '@/types/afterSchool';
+import Loading from '@/components/ui/loading';
+import type { TableColumn, AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
-import { WEEKDAYS, MOCK_ADMIN_AFTER_SCHOOL } from '@/constants/admin';
+import { WEEKDAYS, REVERSE_DAY_MAP } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
+import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
+import { deleteAfterSchoolClass, getAfterSchoolClasses } from '@/services/after-school/afterSchool.api';
+import {
+  createAdminAfterSchoolPrintHtml,
+  openAdminAfterSchoolLoadingWindow,
+  renderAdminAfterSchoolPrintWindow,
+  type PdfScheduleCell,
+  type PdfWeekDay,
+} from '@/utils/adminAfterSchoolPdf';
+import { getApiErrorMessage } from '@/utils/error';
+import { API_WEEKDAY_TO_UI } from '@/utils/afterSchool';
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();
@@ -19,9 +33,54 @@ export default function AdminAfterSchoolPage() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [selectedQuarter, setSelectedQuarter] = useState('1분기');
   const [selectedDay, setSelectedDay] = useState<(typeof WEEKDAYS)[number]>(WEEKDAYS[0]);
-  const [classes, setClasses] = useState<AdminAfterSchoolClass[]>(MOCK_ADMIN_AFTER_SCHOOL);
-  const [googleSheetUrl, setGoogleSheetUrl] = useState('');
   const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
+  const [isPdfLoading, setIsPdfLoading] = useState(false);
+
+  const quarterItems = ['1분기', '2분기', '3분기', '4분기'];
+
+  const PDF_WEEK_DAYS: PdfWeekDay[] = ['MON', 'TUE', 'WED', 'THU'];
+  const PDF_SLOTS = [
+    { startPeriod: 8 as const, endPeriod: 9 as const },
+    { startPeriod: 10 as const, endPeriod: 11 as const },
+  ];
+
+  const branch = useMemo(() => {
+    const match = selectedQuarter.match(/\d+/);
+    const value = match ? Number(match[0]) : 1;
+    return Number.isFinite(value) ? value : 1;
+  }, [selectedQuarter]);
+
+  const apiParams: AfterSchoolRequestParams = useMemo(() => ({
+    grade: selectedGrade,
+    branch,
+    week_day: REVERSE_DAY_MAP[selectedDay],
+    start_period: 8,
+    end_period: 11,
+  }), [selectedGrade, selectedDay, branch]);
+
+  const { data: apiData, isLoading } = useQuery({
+    ...afterSchoolQuery.classes(apiParams),
+  });
+
+  const queryClient = useQueryClient();
+
+  const classes = useMemo(() => {
+    if (!apiData) return [];
+    
+    return apiData.map((item): AdminAfterSchoolClass => ({
+      id: item.id.toString(),
+      grade: selectedGrade,
+      day: API_WEEKDAY_TO_UI[item.week_day] ?? (selectedDay as (typeof WEEKDAYS)[number]),
+      period: item.period,
+      teacher: item.teacher.name,
+      teacherId: item.teacher.id,
+      location: item.place.name,
+      placeId: item.place.id,
+      subject: item.name,
+      students: item.students.map(student => `${student.number} ${student.name}`),
+      studentIds: item.students.map(student => student.id ?? 0),
+    }));
+  }, [apiData, selectedGrade, selectedDay]);
 
   const filteredClasses = classes.filter(
     cls => cls.grade === selectedGrade && cls.day === selectedDay
@@ -48,7 +107,7 @@ export default function AdminAfterSchoolPage() {
     if (e) {
       e.stopPropagation();
     }
-    navigate(`/admin/after-school/edit/${classData.id}`);
+    navigate(`/admin/after-school/edit/${classData.id}`, { state: classData });
   };
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
@@ -59,9 +118,15 @@ export default function AdminAfterSchoolPage() {
     setIsDeleteModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (deleteTargetId) {
-      setClasses(prev => prev.filter(cls => cls.id !== deleteTargetId));
+      try {
+        await deleteAfterSchoolClass(Number(deleteTargetId));
+        toast.success('방과후가 성공적으로 삭제되었습니다.');
+        queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
+      } catch {
+        toast.error('방과후 삭제에 실패했습니다.');
+      }
     }
     setIsDeleteModalOpen(false);
     setDeleteTargetId(null);
@@ -81,12 +146,46 @@ export default function AdminAfterSchoolPage() {
     setSelectedClass(null);
   };
 
-  const handleGoogleSheetSync = () => {
-    console.log('시트 동기화:', googleSheetUrl);
-  };
+  const handlePdfDownload = async () => {
+    const printWindow = openAdminAfterSchoolLoadingWindow();
+    if (!printWindow) {
+      toast.error('팝업이 차단되어 PDF 창을 열 수 없습니다. 팝업 차단을 해제해주세요.');
+      return;
+    }
 
-  const handleGoogleSheetUpload = () => {
-    console.log('시트 업로드:', googleSheetUrl);
+    setIsPdfLoading(true);
+
+    try {
+      const requests = PDF_WEEK_DAYS.flatMap((weekDay) =>
+        PDF_SLOTS.map(async (slot): Promise<PdfScheduleCell> => {
+          const items = await getAfterSchoolClasses({
+            grade: selectedGrade,
+            branch,
+            week_day: weekDay,
+            start_period: slot.startPeriod,
+            end_period: slot.endPeriod,
+          });
+          return {
+            weekDay,
+            slot,
+            items,
+          };
+        })
+      );
+
+      const schedule = await Promise.all(requests);
+      const html = createAdminAfterSchoolPrintHtml({
+        grade: selectedGrade,
+        branch,
+        schedule,
+      });
+      renderAdminAfterSchoolPrintWindow(printWindow, html);
+    } catch (error) {
+      printWindow.close();
+      toast.error(getApiErrorMessage(error, 'PDF 생성에 실패했습니다.'));
+    } finally {
+      setIsPdfLoading(false);
+    }
   };
 
   const renderStudents = (students: string[]) => {
@@ -187,50 +286,55 @@ export default function AdminAfterSchoolPage() {
       />
 
       <S.PageContainer style={{ overflow: isDeleteModalOpen ? 'hidden' : undefined }}>
-        <AdminAfterSchoolHeaderContainer
-          selectedQuarter={selectedQuarter}
-          setSelectedQuarter={setSelectedQuarter}
-          selectedGrade={selectedGrade}
-          setSelectedGrade={setSelectedGrade}
-          googleSheetUrl={googleSheetUrl}
-          setGoogleSheetUrl={setGoogleSheetUrl}
-          handleGoogleSheetSync={handleGoogleSheetSync}
-          handleGoogleSheetUpload={handleGoogleSheetUpload}
-        />
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <AdminAfterSchoolHeaderContainer
+              quarterItems={quarterItems}
+              selectedQuarter={selectedQuarter}
+              setSelectedQuarter={setSelectedQuarter}
+              selectedGrade={selectedGrade}
+              setSelectedGrade={setSelectedGrade}
+              handlePdfDownload={handlePdfDownload}
+              isPdfLoading={isPdfLoading}
+            />
 
-        <S.DaySelector>
-          <S.NavButton onClick={handlePrevDay}>
-            «
-          </S.NavButton>
-          <S.DayText $active={false} onClick={handlePrevDay}>
-            {prevDay}
-          </S.DayText>
-          <S.DayText $active={true}>
-            {selectedDay}
-          </S.DayText>
-          <S.DayText $active={false} onClick={handleNextDay}>
-            {nextDay}
-          </S.DayText>
-          <S.NavButton onClick={handleNextDay}>
-            »
-          </S.NavButton>
-        </S.DaySelector>
+            <S.DaySelector>
+              <S.NavButton onClick={handlePrevDay}>
+                «
+              </S.NavButton>
+              <S.DayText $active={false} onClick={handlePrevDay}>
+                {prevDay}
+              </S.DayText>
+              <S.DayText $active={true}>
+                {selectedDay}
+              </S.DayText>
+              <S.DayText $active={false} onClick={handleNextDay}>
+                {nextDay}
+              </S.DayText>
+              <S.NavButton onClick={handleNextDay}>
+                »
+              </S.NavButton>
+            </S.DaySelector>
 
-        <S.ContentWrapper>
-          <S.TableWrapper>
-            <TableLayout
-              columns={columns}
-              data={filteredClasses}
-              renderActions={renderActions}
-              actionsHeader=""
-              onRowClick={handleRowClick}
-              />
-          </S.TableWrapper>
+            <S.ContentWrapper>
+              <S.TableWrapper>
+                <TableLayout
+                  columns={columns}
+                  data={filteredClasses}
+                  renderActions={renderActions}
+                  actionsHeader=""
+                  onRowClick={handleRowClick}
+                  />
+              </S.TableWrapper>
 
-          <S.AddButtonWrapper>
-            <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
-          </S.AddButtonWrapper>
-        </S.ContentWrapper>
+              <S.AddButtonWrapper>
+                <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
+              </S.AddButtonWrapper>
+            </S.ContentWrapper>
+          </>
+        )}
       </S.PageContainer>
     </>
   );
