@@ -48,7 +48,7 @@ export const transformAffordableToCalendarEvents = (
             label,
             bgColor,
             textColor,
-            supervisionType: 'makeup',
-        };
+            supervisionType: 'makeup' as const,
+        } satisfies CalendarEvent;
     });
 };

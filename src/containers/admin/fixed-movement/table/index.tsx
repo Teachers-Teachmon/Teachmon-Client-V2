@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import TableLayout, { type TableColumn } from '@/components/layout/table';
+import { useQuery } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
-import { MOCK_FIXED_MOVEMENTS } from '@/constants/fixedMovement';
+import Loading from '@/components/ui/loading';
+import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
+import { useDeleteFixedMovementMutation } from '@/services/fixed-movement/fixedMovement.mutation';
+import { toFixedMovements } from '@/utils/fixedMovementMapper';
 import { getFixedMovementTableColumns } from '@/utils/fixedMovementTableColumns';
 import type { FixedMovement } from '@/types/fixedMovement';
-import FixedMovementDetailModal from '../detail-modal';
+import DetailModal from '../detail-modal';
+import ConfirmModal from '@/components/layout/modal/confirm';
 import * as S from './style';
 
 interface FixedMovementTableProps {
@@ -14,9 +20,12 @@ interface FixedMovementTableProps {
 
 export default function FixedMovementTable({ searchQuery }: FixedMovementTableProps) {
   const navigate = useNavigate();
-  const [movements, setMovements] = useState<FixedMovement[]>(MOCK_FIXED_MOVEMENTS);
-  const [selectedMovement, setSelectedMovement] = useState<FixedMovement | null>(null);
+  const { data: rawData, isLoading, isError } = useQuery(fixedMovementQuery.list());
+  const deleteMutation = useDeleteFixedMovementMutation();
+  const movements = rawData ? toFixedMovements(rawData) : [];
+  const [selectedMovementId, setSelectedMovementId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const handleEdit = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
@@ -25,17 +34,24 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    setMovements(movements.filter(m => m.id !== id));
+    setDeleteTargetId(id);
+  };
+
+  const handleConfirmDelete = () => {
+    if (deleteTargetId) {
+      deleteMutation.mutate(deleteTargetId);
+      setDeleteTargetId(null);
+    }
   };
 
   const handleRowClick = (movement: FixedMovement) => {
-    setSelectedMovement(movement);
+    setSelectedMovementId(movement.id);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedMovement(null);
+    setSelectedMovementId(null);
   };
 
   const filteredMovements = movements.filter(
@@ -53,6 +69,12 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
     </S.ActionCell>
   );
 
+  if (isLoading) return <Loading />;
+  if (isError) {
+    toast.error('데이터를 불러오는데 실패했습니다.');
+    return <S.TableWrapper />;
+  }
+
   return (
     <S.TableWrapper>
       <TableLayout 
@@ -61,10 +83,18 @@ export default function FixedMovementTable({ searchQuery }: FixedMovementTablePr
         renderActions={renderActions}
         onRowClick={handleRowClick}
       />
-      <FixedMovementDetailModal 
-        movement={selectedMovement}
+      <DetailModal 
+        movementId={selectedMovementId}
         isOpen={isModalOpen}
         onClose={handleCloseModal}
+      />
+      <ConfirmModal
+        isOpen={!!deleteTargetId}
+        onClose={() => setDeleteTargetId(null)}
+        onConfirm={handleConfirmDelete}
+        title="고정 이석 삭제"
+        message="정말 삭제하시겠습니까?"
+        confirmText="삭제"
       />
     </S.TableWrapper>
   );

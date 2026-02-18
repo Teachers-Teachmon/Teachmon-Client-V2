@@ -21,6 +21,13 @@ export const ActionCell = styled.div`
   flex-shrink: 0;
 `;
 
+export const LocationCell = styled.div`
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export const StudentListContainer = styled.div<{ $isMobile?: boolean }>`
   width: 100%;
   overflow: ${({ $isMobile }) => ($isMobile ? 'visible' : 'hidden')};
@@ -52,6 +59,7 @@ export const StudentTag = styled.span`
   font-size: ${fontSizes.Small};
   white-space: nowrap;
   flex-shrink: 0;
+  pointer-events: none;
 `;
 
 export const MoreTag = styled.span`
@@ -62,4 +70,5 @@ export const MoreTag = styled.span`
   font-size: ${fontSizes.Small};
   white-space: nowrap;
   flex-shrink: 0;
+  pointer-events: none;
 `;

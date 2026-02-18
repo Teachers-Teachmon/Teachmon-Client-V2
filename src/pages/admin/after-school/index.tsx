@@ -7,7 +7,7 @@ import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
 import type { AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
-import { WEEKDAYS, WEEKDAY_MAP } from '@/constants/admin';
+import { WEEKDAYS, REVERSE_DAY_MAP } from '@/constants/admin';
 import type { AdminAfterSchoolClass } from '@/types/afterSchool';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
@@ -45,7 +45,7 @@ export default function AdminAfterSchoolPage() {
   const apiParams: AfterSchoolRequestParams = useMemo(() => ({
     grade: selectedGrade,
     branch,
-    week_day: WEEKDAY_MAP[selectedDay],
+    week_day: REVERSE_DAY_MAP[selectedDay],
     start_period: 8,
     end_period: 11,
   }), [selectedGrade, selectedDay, branch]);
@@ -111,7 +111,7 @@ export default function AdminAfterSchoolPage() {
         await deleteAfterSchoolClass(deleteTargetId);
         toast.success('방과후가 성공적으로 삭제되었습니다.');
         queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
-      } catch (error) {
+      } catch {
         toast.error('방과후 삭제에 실패했습니다.');
       }
     }
@@ -137,6 +137,101 @@ export default function AdminAfterSchoolPage() {
     setSelectedClass(null);
   };
 
+  const handlePdfDownload = async () => {
+    const printWindow = openAdminAfterSchoolLoadingWindow();
+    if (!printWindow) {
+      toast.error('팝업이 차단되어 PDF 창을 열 수 없습니다. 팝업 차단을 해제해주세요.');
+      return;
+    }
+
+    setIsPdfLoading(true);
+
+    try {
+      const requests = PDF_WEEK_DAYS.flatMap((weekDay) =>
+        PDF_SLOTS.map(async (slot): Promise<PdfScheduleCell> => {
+          const items = await getAfterSchoolClasses({
+            grade: selectedGrade,
+            branch,
+            week_day: weekDay,
+            start_period: slot.startPeriod,
+            end_period: slot.endPeriod,
+          });
+          return {
+            weekDay,
+            slot,
+            items,
+          };
+        })
+      );
+
+      const schedule = await Promise.all(requests);
+      const html = createAdminAfterSchoolPrintHtml({
+        grade: selectedGrade,
+        branch,
+        schedule,
+      });
+      renderAdminAfterSchoolPrintWindow(printWindow, html);
+    } catch (error) {
+      printWindow.close();
+      toast.error(getApiErrorMessage(error, 'PDF 생성에 실패했습니다.'));
+    } finally {
+      setIsPdfLoading(false);
+    }
+  };
+
+  const renderStudents = (students: string[]) => {
+    const displayStudents = students.slice(0, maxStudentsToShow);
+    const hasMore = students.length > maxStudentsToShow;
+    return (
+      <S.StudentList>
+        {displayStudents.map((student, idx) => (
+          <S.StudentBadge key={idx}>{student}</S.StudentBadge>
+        ))}
+        {hasMore && <S.MoreBadge>...</S.MoreBadge>}
+      </S.StudentList>
+    );
+  };
+
+  const columns: TableColumn<AdminAfterSchoolClass>[] = [
+    {
+      key: 'teacher',
+      header: '담당교사',
+      width: '120px',
+      render: (row: AdminAfterSchoolClass) => (
+        <S.NoWrapCell>{row.teacher}</S.NoWrapCell>
+      ),
+    },
+    {
+      key: 'period',
+      header: '교시',
+      width: '100px',
+      render: (row: AdminAfterSchoolClass) => (
+        <S.NoWrapCell>{row.period}</S.NoWrapCell>
+      ),
+    },
+    {
+      key: 'location',
+      header: '장소이름',
+      width: 'auto',
+      render: (row: AdminAfterSchoolClass) => (
+        <S.WrapCell>{row.location}</S.WrapCell>
+      ),
+    },
+    {
+      key: 'subject',
+      header: '이름',
+      width: 'auto',
+      render: (row: AdminAfterSchoolClass) => (
+        <S.WrapCell>{row.subject}</S.WrapCell>
+      ),
+    },
+    {
+      key: 'students',
+      header: '학생',
+      width: 'auto',
+      render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
+    },
+  ];
 
   const handlePrevDay = () => {
     const currentIndex = WEEKDAYS.indexOf(selectedDay);
@@ -182,13 +277,19 @@ export default function AdminAfterSchoolPage() {
       />
 
       <S.PageContainer style={{ overflow: isDeleteModalOpen ? 'hidden' : undefined }}>
-        <>
-          <AdminAfterSchoolHeaderContainer
-            selectedQuarter={selectedQuarter}
-            setSelectedQuarter={setSelectedQuarter}
-            selectedGrade={selectedGrade}
-            setSelectedGrade={setSelectedGrade}
-          />
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            <AdminAfterSchoolHeaderContainer
+              quarterItems={quarterItems}
+              selectedQuarter={selectedQuarter}
+              setSelectedQuarter={setSelectedQuarter}
+              selectedGrade={selectedGrade}
+              setSelectedGrade={setSelectedGrade}
+              handlePdfDownload={handlePdfDownload}
+              isPdfLoading={isPdfLoading}
+            />
 
             <S.DaySelector>
               <S.NavButton onClick={handlePrevDay}>

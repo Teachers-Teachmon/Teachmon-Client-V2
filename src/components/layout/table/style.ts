@@ -64,7 +64,7 @@ export const TableHeader = styled.th`
         padding-left: 40px;
     }
 
-    & :last-child {
+    &:last-child {
         padding-right: 40px;
     }
 `;
@@ -78,7 +78,6 @@ export const TableCell = styled.td`
     min-height: 72px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    overflow: hidden;
 
     &:first-of-type {
         padding-left: 40px;

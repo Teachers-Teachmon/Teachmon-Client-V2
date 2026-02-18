@@ -282,8 +282,8 @@ export default function AfterSchoolFormPage() {
                 value={studentSearchQuery}
                 onChange={(e) => setStudentSearchQuery(e.target.value)}
                 leftIcon={
-                  <img 
-                    src="/icons/common/search.svg" 
+                  <img
+                    src="/icons/common/search.svg"
                     alt="search"
                     style={{ width: '20px', height: '20px' }}
                   />
@@ -294,12 +294,12 @@ export default function AfterSchoolFormPage() {
                 <S.StudentDropdown>
                   {isTeamMode ? (
                     teamsData
-                      .filter((team: TeamSearchResponse) => 
+                      .filter((team: TeamSearchResponse) =>
                         !selectedStudents.find(s => s.id?.toString().includes(team.id))
                       )
                       .slice(0, 3)
                       .map((team: TeamSearchResponse) => (
-                        <S.StudentDropdownItem 
+                        <S.StudentDropdownItem
                           key={team.id}
                           onClick={() => handleAddStudent(team)}
                         >
@@ -308,12 +308,12 @@ export default function AfterSchoolFormPage() {
                       ))
                   ) : (
                     studentsData
-                      .filter((student: StudentSearchResponse) => 
+                      .filter((student: StudentSearchResponse) =>
                         !selectedStudents.find(s => s.studentNumber === student.number)
                       )
                       .slice(0, 3)
                       .map((student: StudentSearchResponse) => (
-                        <S.StudentDropdownItem 
+                        <S.StudentDropdownItem
                           key={student.id}
                           onClick={() => handleAddStudent(student)}
                         >

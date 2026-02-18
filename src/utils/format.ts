@@ -1,3 +1,5 @@
+
+import type { Student } from '@/services/search/search.api';
 import type { ExchangeStatus, PeriodType, SupervisionType } from '@/types/home';
 
 export const formatDate = (dateStr: string): string => {
@@ -18,6 +20,36 @@ export const formatDateFull = (dateStr: string): string => {
   return `${month}월 ${day}일 ${weekday}요일`;
 };
 
+// 학생 정보를 "학년반번호 이름" 형식으로 변환
+export const formatStudent = (student: Student) => {
+    return `${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')} ${student.name}`;
+};
+
+
+/**
+ * 오늘 날짜를 YYYY-MM-DD 형식으로 반환
+ */
+export const getTodayISO = (): string => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+/**
+ * YYYY-MM-DD를 "M월 D일 (요일)" 형식으로 변환
+ */
+export const formatDateDisplay = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
+  return `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
+};
+
+export const formatDateShort = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${month}/${day}`;
+};
+
 export const formatSupervisionType = (type: SupervisionType | string): string => {
   return type === 'self_study' ? '자습감독' : '이석감독';
 };
@@ -25,9 +57,8 @@ export const formatSupervisionType = (type: SupervisionType | string): string =>
 export const formatPeriod = (period: PeriodType | string): string => {
   const periodMap: Record<string, string> = {
     SEVEN_PERIOD: '7교시',
-    EIGHT_PERIOD: '8교시',
-    NINE_PERIOD: '9교시',
-    TEN_PERIOD: '10교시',
+    EIGHT_AND_NINE_PERIOD: '8~9교시',
+    TEN_AND_ELEVNE_PERIOD: '10~11교시',
   };
   return periodMap[period] || period;
 };
@@ -37,9 +68,9 @@ export const getStatusStyle = (status: ExchangeStatus): ExchangeStatus => {
 };
 
 export const getDisplayName = (
-  teacherId: number,
+  teacherId: number | string,
   teacherName: string,
-  currentTeacherId: number
+  currentTeacherId: number | string
 ): string => {
-  return teacherId === currentTeacherId ? '(나)' : `${teacherName} 선생님`;
+  return String(teacherId) === String(currentTeacherId) ? '(나)' : `${teacherName} 선생님`;
 };

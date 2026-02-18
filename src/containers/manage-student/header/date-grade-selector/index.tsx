@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import DatePeriodSelector from '../modal/date-period-selector';
+import DatePeriodSelector from '../../modal/date-period-selector';
 import * as S from './style';
 
 interface HeaderLeftProps {
-    selectedDate: string;
+    selectedDate: string; // 표시용 (M월 D일 (요일))
+    selectedDateISO: string; // API용 (YYYY-MM-DD)
     selectedPeriod: string;
     selectedGrade: number;
     onGradeChange: (grade: number) => void;
     onDatePeriodChange?: (date: string, period: string) => void;
 }
 
-export default function HeaderLeft({ selectedDate, selectedPeriod, selectedGrade, onGradeChange, onDatePeriodChange }: HeaderLeftProps) {
+export default function DateGradeSelector({ selectedDate, selectedDateISO, selectedPeriod, selectedGrade, onGradeChange, onDatePeriodChange }: HeaderLeftProps) {
     const grades = [1, 2, 3];
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -41,7 +42,7 @@ export default function HeaderLeft({ selectedDate, selectedPeriod, selectedGrade
             <DatePeriodSelector
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                currentDate={selectedDate}
+                currentDate={selectedDateISO}
                 currentPeriod={selectedPeriod}
                 onConfirm={handleDatePeriodConfirm}
             />

@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { keyframes } from "@emotion/react";
+import { zIndex } from "@/styles/theme";
 
 export default function Loading(){
     return(
@@ -10,7 +11,7 @@ export default function Loading(){
 }
 
 const Container = styled.div`
-    z-index: 30;
+    z-index: ${zIndex.modal + 100};
     position: fixed;
     top: 0;
     left: 0;
@@ -20,7 +21,6 @@ const Container = styled.div`
     justify-content: center;
     align-items: center;
     pointer-events: none;
-    background-color: rgba(0, 0, 0, 0.3);
 `
 const rotate = keyframes`
     0% {

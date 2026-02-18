@@ -1,28 +1,18 @@
 import { useState } from 'react';
 import Modal from '@/components/layout/modal';
 import Button from '@/components/ui/button';
+import DateInput from '@/components/ui/input/date';
 import { useDevice } from '@/hooks/useDevice';
+import { PERIODS } from '@/constants/manage';
 import * as S from './style';
 
 interface DatePeriodSelectorProps {
     isOpen: boolean;
     onClose: () => void;
-    currentDate: string;
+    currentDate: string; // YYYY-MM-DD 형식
     currentPeriod: string;
     onConfirm: (date: string, period: string) => void;
 }
-
-const PERIODS = [
-    '1교시',
-    '2교시',
-    '3교시',
-    '4교시',
-    '5교시',
-    '6교시',
-    '7교시',
-    '8-9교시',
-    '10-11교시',
-];
 
 export default function DatePeriodSelector({
     isOpen,
@@ -33,37 +23,35 @@ export default function DatePeriodSelector({
 }: DatePeriodSelectorProps) {
     const [selectedDate, setSelectedDate] = useState(currentDate);
     const [selectedPeriod, setSelectedPeriod] = useState(currentPeriod);
+    const [wasOpen, setWasOpen] = useState(false);
     const { isMobile } = useDevice();
+
+    // 모달이 열릴 때(false→true) 현재값으로 초기화
+    if (isOpen && !wasOpen) {
+        setSelectedDate(currentDate);
+        setSelectedPeriod(currentPeriod);
+        setWasOpen(true);
+    }
+    if (!isOpen && wasOpen) {
+        setWasOpen(false);
+    }
 
     const handleConfirm = () => {
         onConfirm(selectedDate, selectedPeriod);
         onClose();
     };
 
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const date = new Date(e.target.value);
-        const days = ['일', '월', '화', '수', '목', '금', '토'];
-        const formatted = `${date.getMonth() + 1}월 ${date.getDate()}일 (${days[date.getDay()]})`;
-        setSelectedDate(formatted);
-    };
-
-    const handleDateInputClick = (e: React.MouseEvent<HTMLInputElement>) => {
-        e.currentTarget.showPicker();
-    };
-
     return (
         <Modal isOpen={isOpen} onClose={onClose} padding={isMobile ? "24px 20px" : "60px"}>
             <S.Container>
                 <S.Title>날짜 및 교시 선택</S.Title>
-                
+ 
                 <S.Section>
                     <S.Label>날짜</S.Label>
-                    <S.DateInput 
-                        type="date" 
-                        onChange={handleDateChange}
-                        onClick={handleDateInputClick}
+                    <DateInput
+                        value={selectedDate}
+                        onChange={setSelectedDate}
                     />
-                    <S.SelectedText>{selectedDate}</S.SelectedText>
                 </S.Section>
 
                 <S.Section>

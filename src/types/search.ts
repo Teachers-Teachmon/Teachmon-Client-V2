@@ -1,5 +1,3 @@
-
-
 export interface StudentSearchResponse {
   id: number | string;
   grade: number;

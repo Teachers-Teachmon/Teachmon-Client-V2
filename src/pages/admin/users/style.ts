@@ -35,6 +35,7 @@ export const SearchIcon = styled.img`
   height: 24px;
   z-index: 1;
 `;
+
 export const AddButton = styled.button`
   position: absolute;
   bottom: 80px;
@@ -82,4 +83,22 @@ export const AddButton = styled.button`
   &:hover {
     background: ${colors.primary100};
   }
+`;
+
+export const EmptyState = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: ${fontSizes.H4};
+  color: ${colors.n03};
+`;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  font-size: ${fontSizes.H4};
+  color: ${colors.n03};
 `;
