@@ -205,8 +205,6 @@ export default function AfterSchoolFormPage() {
   return (
     <S.Container>
       <S.Content>
-        <S.Title>{isEditMode ? '방과후 수정' : '방과후 추가'}</S.Title>
-
         <S.Form>
           <S.FormSection>
             <S.SectionTitle>담당 교사</S.SectionTitle>
