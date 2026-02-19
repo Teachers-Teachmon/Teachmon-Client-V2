@@ -2,20 +2,19 @@ import type { CalendarEvent } from '@/types/calendar';
 import type { AffordableReinforcement } from '@/types/afterSchool.ts';
 import { WEEKDAYS } from '@/constants/admin';
 
-// API 요일 형식을 UI 요일 형식으로 변환
 export const API_WEEKDAY_TO_UI: Record<string, (typeof WEEKDAYS)[number]> = {
-  '월': '월요일',
-  '화': '화요일',
-  '수': '수요일',
-  '목': '목요일',
-  MON: '월요일',
-  TUE: '화요일',
-  WED: '수요일',
-  THU: '목요일',
-  '월요일': '월요일',
-  '화요일': '화요일',
-  '수요일': '수요일',
-  '목요일': '목요일',
+    '월': '월요일',
+    '화': '화요일',
+    '수': '수요일',
+    '목': '목요일',
+    'MON': '월요일',
+    'TUE': '화요일',
+    'WED': '수요일',
+    'THU': '목요일',
+    '월요일': '월요일',
+    '화요일': '화요일',
+    '수요일': '수요일',
+    '목요일': '목요일',
 };
 
 export const transformAffordableToCalendarEvents = (

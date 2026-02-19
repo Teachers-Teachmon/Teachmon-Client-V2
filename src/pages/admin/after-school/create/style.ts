@@ -7,6 +7,7 @@ export const Container = styled.div`
   flex-direction: column;
   height: 100vh;
   background-color: ${colors.background};
+  overflow: hidden;
 
   ${mq.mobile} {
     height: 90vh;
@@ -15,10 +16,12 @@ export const Container = styled.div`
 
 export const Content = styled.div`
   flex: 1;
-  padding: 3rem 3rem 0 3rem;
+  padding: 2rem 3rem 0 3rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow: hidden;
+  min-height: 0;
 
   ${mq.mobile} {
     padding: 2rem 2rem 0 2rem;
@@ -42,11 +45,10 @@ export const Form = styled.div`
   width: 100%;
   max-width: 800px;
   flex: 1;
-  min-height: 600px;
-  max-height: calc(100vh - 220px);
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
   background-color: ${colors.background};
   padding: 2rem;
   border-radius: ${radius.lg};
@@ -135,7 +137,6 @@ export const ToggleCircle = styled.div<{ $active: boolean }>`
 export const StudentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  margin-top: 1rem;
 `;
 
 export const DropdownWrapper = styled.div`
@@ -176,9 +177,10 @@ export const StudentCard = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 1rem;
-  background-color: transparent;
+  background-color: ${colors.background};
   border: 1px solid ${colors.n02};
-  transition: border-color 0.2s;
+  border-radius: ${radius.sm};
+  transition: all 0.2s;
 `;
 
 export const StudentInfo = styled.div`
@@ -224,4 +226,5 @@ export const ButtonRow = styled.div`
   justify-content: center;
   gap: 1rem;
   padding: 1.5rem 3rem;
+  flex-shrink: 0;
 `;

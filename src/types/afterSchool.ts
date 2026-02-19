@@ -69,6 +69,7 @@ export interface CreateAfterSchoolRequest {
   grade: number;
   week_day: string;
   period: string;
+  year: number;
   teacher_id: number;
   place_id: number;
   name: string;
@@ -79,7 +80,8 @@ export interface UpdateAfterSchoolRequest {
   grade: number;
   week_day: string;
   period: string;
-  after_school_id: number;
+  year: number;
+  after_school_id: string;
   teacher_id: number;
   place_id: number;
   name: string;
