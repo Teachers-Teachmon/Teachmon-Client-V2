@@ -1,3 +1,5 @@
+import { ADMIN_AFTER_SCHOOL_PERIODS } from './common';
+
 // Period (교시)
 export type Period = 
   | 'EIGHT_AND_NINE_PERIOD'
@@ -11,11 +13,11 @@ export type Reason =
   | 'AFTER_SCHOOL'
   | 'SELF_STUDY';
 
-// Period 옵션
+// Period 옵션 - common에서 가져온 값 사용
 export const PERIOD_OPTIONS: { label: string; value: Period }[] = [
-  { label: '8~9교시', value: 'EIGHT_AND_NINE_PERIOD' },
-  { label: '10~11교시', value: 'TEN_AND_ELEVEN_PERIOD' },
-  { label: '8~11교시', value: 'EIGHT_TO_ELEVEN_PERIOD' },
+  { label: ADMIN_AFTER_SCHOOL_PERIODS[0], value: 'EIGHT_AND_NINE_PERIOD' },
+  { label: ADMIN_AFTER_SCHOOL_PERIODS[1], value: 'TEN_AND_ELEVEN_PERIOD' },
+  { label: ADMIN_AFTER_SCHOOL_PERIODS[2], value: 'EIGHT_TO_ELEVEN_PERIOD' },
 ];
 
 // Reason 옵션

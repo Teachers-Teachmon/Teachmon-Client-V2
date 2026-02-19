@@ -1,6 +1,6 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type { AffordableReinforcement, PlaceSearchResult } from '@/types/afterSchool';
-import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/afterSchool';
+import type { AffordableReinforcement } from '@/types/after-school';
+import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/after-school';
 import type {
   TodayAfterSchool,
   MyAfterSchool,
@@ -57,11 +57,6 @@ export const fetchAffordableReinforcement = async (
   params: FetchAffordableReinforcementParams
 ): Promise<AffordableReinforcement[]> => {
   const { data } = await axiosInstance.get('/afterschool/reinforcement/affordable', { params });
-  return data;
-};
-
-export const searchPlace = async (query: string): Promise<PlaceSearchResult[]> => {
-  const { data } = await axiosInstance.get('/place/search', { params: { query } });
   return data;
 };
 

@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
 import { teamQuery } from '@/services/team/team.query';
 import { PERIOD_LABEL, WEEKDAY_LABEL } from '@/constants/fixedMovement';
+import type { TeamResponse } from '@/types/fixedMovement';
 import * as S from './style';
 import closeIcon from '/icons/common/x.svg';
 
@@ -11,7 +12,7 @@ interface DetailModalProps {
   teamId?: string | null;
   isOpen: boolean;
   onClose: () => void;
-  teamData?: any;
+  teamData?: TeamResponse;
 }
 
 export default function DetailModal({ 
@@ -60,7 +61,7 @@ export default function DetailModal({
             <S.InfoSection>
               <S.InfoLabel>학생 {movementData.students?.length || 0}명</S.InfoLabel>
               <S.StudentGrid>
-                {movementData.students?.map((student: any, idx: number) => (
+                {movementData.students?.map((student, idx: number) => (
                   <S.StudentCard key={idx}>
                     <S.StudentNumber>{student.number}</S.StudentNumber>
                     <S.StudentName>{student.name}</S.StudentName>
@@ -93,7 +94,7 @@ export default function DetailModal({
             <S.InfoSection>
               <S.InfoLabel>학생 {displayTeamData.members?.length || 0}명</S.InfoLabel>
               <S.StudentGrid>
-                {displayTeamData.members?.map((member: any, idx: number) => (
+                {displayTeamData.members?.map((member, idx: number) => (
                   <S.StudentCard key={idx}>
                     <S.StudentNumber>{member.grade}{member.classNumber}{member.number < 10 ? `0${member.number}` : member.number}</S.StudentNumber>
                     <S.StudentName>{member.name}</S.StudentName>

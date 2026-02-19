@@ -7,7 +7,7 @@ export const useCreateLeaveSeatMutation = () => {
 
   return useMutation({
     mutationFn: createLeaveSeat,
-    onSuccess: (data) => {
+    onSuccess: (data: { message: string }) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['movement.list'] });
     },
@@ -23,7 +23,7 @@ export const useUpdateLeaveSeatMutation = () => {
   return useMutation({
     mutationFn: ({ leaveseatId, data }: { leaveseatId: string; data: Parameters<typeof updateLeaveSeat>[1] }) =>
       updateLeaveSeat(leaveseatId, data),
-    onSuccess: (data, variables) => {
+    onSuccess: (data: { message: string }, variables) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['movement.list'] });
       queryClient.invalidateQueries({ queryKey: ['movement.detail', variables.leaveseatId] });
@@ -39,7 +39,7 @@ export const useDeleteLeaveSeatMutation = () => {
 
   return useMutation({
     mutationFn: deleteLeaveSeat,
-    onSuccess: (data) => {
+    onSuccess: (data: { message: string }) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['movement.list'] });
     },

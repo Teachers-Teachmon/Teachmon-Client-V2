@@ -143,7 +143,12 @@ export default function TeamFormPage() {
                     .map((student) => (
                       <S.StudentDropdownItem
                         key={student.id}
-                        onClick={() => handleAddStudent({ studentNumber: student.id, name: student.name, grade: student.grade, classNumber: student.classNumber })}
+                        onClick={() => handleAddStudent({ 
+                          studentNumber: typeof student.id === 'number' ? student.id : parseInt(String(student.id)), 
+                          name: student.name, 
+                          grade: student.grade, 
+                          classNumber: student.classNumber 
+                        })}
                       >
                         {student.grade}{student.classNumber}{student.number < 10 ? `0${student.number}` : student.number} {student.name}
                       </S.StudentDropdownItem>

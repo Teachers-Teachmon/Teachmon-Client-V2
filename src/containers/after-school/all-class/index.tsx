@@ -24,7 +24,7 @@ export default function AllClassSection({
   const [selectedDay, setSelectedDay] = useState(getInitialDay());
   const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
 
-  const { data: branchInfo } = useQuery(afterSchoolQuery.branch());
+  const { data: branchInfo, isLoading: isBranchLoading } = useQuery(afterSchoolQuery.branch());
 
   // 현재 날짜가 속하는 분기 찾기
   const currentQuarter = findCurrentQuarter(branchInfo || []);
@@ -42,7 +42,10 @@ export default function AllClassSection({
     branch: currentQuarter.number,
   } : params;
 
-  const { data: classes = [] } = useQuery(afterSchoolQuery.all(paramsWithBranch));
+  const { data: classes = [] } = useQuery({
+    ...afterSchoolQuery.all(paramsWithBranch),
+    enabled: !isBranchLoading && !!params.grade && !!params.week_day,
+  });
 
   // selectedGrade나 selectedDay가 변경될 때 timeSlotPages 초기화
   useEffect(() => {
@@ -56,13 +59,13 @@ export default function AllClassSection({
     return () => clearTimeout(timer);
   }, [selectedGrade, selectedDay]);
 
-  const groupedByTime = classes.reduce((acc, cls) => {
+  const groupedByTime = classes.reduce<Record<string, AllAfterSchool[]>>((acc, cls) => {
     if (!acc[cls.period]) {
       acc[cls.period] = [];
     }
     acc[cls.period].push(cls);
     return acc;
-  }, {} as Record<string, AllAfterSchool[]>);
+  }, {});
 
   const handlePrevDay = () => {
     setSelectedDay(prev => (prev > 0 ? prev - 1 : DAYS.length - 1));

@@ -4,9 +4,9 @@ import { toast } from 'react-toastify';
 const DEFAULT_ERROR_MESSAGE = '요청 처리 중 오류가 발생했습니다.';
 
 type ErrorResponse = {
-  message?: unknown;
-  error?: unknown;
-  detail?: unknown;
+  message?: string;
+  error?: string;
+  detail?: string;
 };
 
 const getMessageFromResponse = (data: unknown): string | null => {
@@ -17,9 +17,9 @@ const getMessageFromResponse = (data: unknown): string | null => {
     return trimmed.length > 0 ? trimmed : null;
   }
 
-  if (typeof data === 'object') {
-    const { message, error, detail } = data as ErrorResponse;
-    const firstValid = [message, error, detail].find(
+  if (typeof data === 'object' && data !== null) {
+    const response = data as ErrorResponse;
+    const firstValid = [response.message, response.error, response.detail].find(
       (value): value is string => typeof value === 'string' && value.trim().length > 0
     );
     return firstValid ?? null;

@@ -1,11 +1,7 @@
 import { colors } from '@/styles/theme';
 import * as S from './style';
 
-interface LegendPopupProps {
-    onClose: () => void;
-}
-
-export default function LegendPopup({ onClose: _onClose }: LegendPopupProps) {
+export default function LegendPopup() {
     const legends = [
         { label: '방과후 : ', color: colors.background },
         { label: '이석 : ', color: colors.movement },

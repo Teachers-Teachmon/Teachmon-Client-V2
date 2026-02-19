@@ -16,7 +16,7 @@ export default function MyClassTable() {
   const [isTerminateModalOpen, setIsTerminateModalOpen] = useState(false);
   const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<MyAfterSchool | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
-  const [menuOpenId, setMenuOpenId] = useState<string | null>(null);
+  const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
 
   const quitMutation = useQuitAfterSchoolMutation({
   onSuccess: () => {
@@ -25,7 +25,7 @@ export default function MyClassTable() {
     queryClient.invalidateQueries({ queryKey: ['afterSchool', 'my', selectedGrade] });
   },
 });
-  const menuButtonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const menuButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
 
   const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.my(selectedGrade));
@@ -45,7 +45,7 @@ export default function MyClassTable() {
     };
   }, [menuOpenId]);
 
-  const handleMenuToggle = (e: React.MouseEvent, id: string) => {
+  const handleMenuToggle = (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     if (menuOpenId === id) {
       setMenuOpenId(null);

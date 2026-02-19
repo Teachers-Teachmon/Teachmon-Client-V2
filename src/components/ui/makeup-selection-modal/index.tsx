@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/button';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Modal from '@/components/layout/modal';
-import type { PlaceSearchResult } from '@/types/afterSchool';
+import type { PlaceSearchResult } from '@/types/after-school';
 import * as S from './style';
 
 interface MakeupSelectionModalProps {

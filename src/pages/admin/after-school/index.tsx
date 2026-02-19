@@ -5,17 +5,32 @@ import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import type { AfterSchoolRequestParams } from '@/types/afterSchool';
+import type { AfterSchoolRequestParams } from '@/types/after-school';
 import * as S from './style';
 import { WEEKDAYS, REVERSE_DAY_MAP, QUARTER_ITEMS } from '@/constants/admin';
-import type { AdminAfterSchoolClass } from '@/types/afterSchool';
+import type { AdminAfterSchoolClass } from '@/types/after-school';
 import { useNavigate } from 'react-router-dom';
 import AfterSchoolDetailModal from '@/containers/admin/after-school/detail-modal';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
-import { deleteAfterSchoolClass } from '@/services/after-school/afterSchool.api';
+import { deleteAfterSchoolClass, getAfterSchoolClasses } from '@/services/after-school/afterSchool.api';
 import { API_WEEKDAY_TO_UI } from '@/utils/afterSchool';
 import { useAfterSchoolColumns } from '@/hooks/useAfterSchoolColumns';
 import type { TableColumn } from '@/components/layout/table';
+import {
+  openAdminAfterSchoolLoadingWindow,
+  createAdminAfterSchoolPrintHtml,
+  renderAdminAfterSchoolPrintWindow,
+  type PdfWeekDay,
+  type PdfSlot,
+  type PdfScheduleCell,
+} from '@/utils/adminAfterSchoolPdf';
+import { getApiErrorMessage } from '@/utils/error';
+
+const PDF_WEEK_DAYS: PdfWeekDay[] = ['MON', 'TUE', 'WED', 'THU'];
+const PDF_SLOTS: PdfSlot[] = [
+  { startPeriod: 8, endPeriod: 9 },
+  { startPeriod: 10, endPeriod: 11 },
+];
 
 export default function AdminAfterSchoolPage() {
   const navigate = useNavigate();

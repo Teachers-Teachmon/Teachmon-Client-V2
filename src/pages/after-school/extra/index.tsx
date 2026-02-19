@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import Calendar from '@/components/ui/calendar';
 import MakeupSelectionModal from '@/components/ui/makeup-selection-modal';
-import type { PlaceSearchResult } from '@/types/afterSchool';
+import type { PlaceSearchResult } from '@/types/after-school';
 import type { MyAfterSchool } from '@/types/after-school';
-import { usePlaceSearchQuery } from '@/services/after-school/afterSchool.query';
+import { placeQuery as placeSearchQuery } from '@/services/search/search.query';
 import { useRequestReinforcementMutation } from '@/services/after-school/afterSchool.mutation';
 import { toast } from 'react-toastify';
 import * as S from './style';
@@ -24,7 +25,7 @@ export default function AfterSchoolExtraPage() {
     const [placeQuery, setPlaceQuery] = useState('');
     const [selectedPlace, setSelectedPlace] = useState<PlaceSearchResult | null>(null);
 
-    const { data: placeResults } = usePlaceSearchQuery(placeQuery);
+    const { data: placeResults = [] } = useQuery(placeSearchQuery.search(placeQuery));
     const { mutateAsync: requestReinforcement } = useRequestReinforcementMutation();
 
     useEffect(() => {

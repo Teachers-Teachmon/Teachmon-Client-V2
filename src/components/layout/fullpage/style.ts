@@ -31,6 +31,9 @@ export const FullPageWrapper = styled.div<FullPageWrapperProps>`
         ${props => props.hasHeader && `
           display: block;
         `}
+        .fp-right{
+          display:none;
+        }
   }
 
   /* fullpage.js 워터마크 숨기기 */
@@ -47,4 +50,5 @@ export const FullPageWrapper = styled.div<FullPageWrapperProps>`
   #fp-nav {
     display: none !important;
   }
+}
 `;

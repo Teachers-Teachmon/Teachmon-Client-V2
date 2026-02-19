@@ -1,4 +1,4 @@
-import type { AfterSchoolResponse } from '@/types/afterSchool';
+import type { AfterSchoolResponse } from '@/types/after-school';
 
 export type PdfWeekDay = 'MON' | 'TUE' | 'WED' | 'THU';
 export type PdfSlot = { startPeriod: 8 | 10; endPeriod: 9 | 11 };

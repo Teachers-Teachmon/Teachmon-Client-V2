@@ -62,8 +62,8 @@ export function MakeupSelectionContent({
 
       <S.SelectionContainer>
         {[
-          { label: '8~9교시 보강', value: '8~9' },
-          { label: '10~11교시 보강', value: '10~11' },
+          { label: '8~9교시 보강', value: '8~9' as const },
+          { label: '10~11교시 보강', value: '10~11' as const },
         ].map(({ label, value }) => {
           const isAvailable = availableMakeupPeriods.includes(value);
           const isSelected = selectedMakeupPeriods.includes(value);

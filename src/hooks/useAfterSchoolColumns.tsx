@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import type { TableColumn } from '@/components/layout/table/index';
-import type { AdminAfterSchoolClass } from '@/types/afterSchool';
+import type { AdminAfterSchoolClass } from '@/types/after-school';
 
 export const useAfterSchoolColumns = (): { columns: TableColumn<AdminAfterSchoolClass>[] } => {
   const [maxStudentsToShow, setMaxStudentsToShow] = useState(3);
@@ -120,7 +120,7 @@ export const useAfterSchoolColumns = (): { columns: TableColumn<AdminAfterSchool
       width: 'auto',
       render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
     },
-  ], [maxStudentsToShow]);
+  ], [maxStudentsToShow, renderStudents]);
 
   return { columns };
 };

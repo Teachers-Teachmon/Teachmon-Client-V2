@@ -1,9 +1,18 @@
 import type { CalendarEvent } from '@/types/calendar';
 import type { BusinessTripSchedule, MakeupSchedule } from '@/types/admin';
+import {
+  parseLocalDate,
+  formatDateString,
+  formatDateKorean,
+  transformPeriodScheduleToCalendarEvent,
+} from './common';
 
-const parseLocalDate = (date: string): Date => {
-  const [year, month, day] = date.split('-').map(Number);
-  return new Date(year, month - 1, day);
+// 공통 함수 재export
+export { parseLocalDate, formatDateString, formatDateKorean };
+
+// Date 객체를 받아서 포맷하는 함수 (modal에서 사용)
+export const formatDate = (date: Date): string => {
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 };
 
 export const transformBusinessTripDatesToCalendarEvents = (dates: string[]): CalendarEvent[] => {
@@ -19,80 +28,33 @@ export const transformBusinessTripDatesToCalendarEvents = (dates: string[]): Cal
 export const transformBusinessTripToCalendarEvents = (
   data: BusinessTripSchedule[]
 ): CalendarEvent[] => {
-  return data.map((item, index) => {
-    const is89 = item.startPeriod === 8 && item.endPeriod === 9;
-    const is1011 = item.startPeriod === 10 && item.endPeriod === 11;
-
-    let label = '';
-    let bgColor = '';
-    let textColor = '';
-
-    if (is89) {
-      label = '8~9교시 보강';
-      bgColor = '#0085FF0D';
-      textColor = '#0085FF';
-    } else if (is1011) {
-      label = '10~11교시 보강';
-      bgColor = '#D8CCFF';
-      textColor = '#7D55FF';
-    } else {
-      label = `${item.startPeriod}~${item.endPeriod}교시 보강`;
-      bgColor = '#F3F4F6';
-      textColor = '#374151';
-    }
-
-    return {
-      id: `business-trip-${item.day}-${item.startPeriod}-${index}`,
-      date: parseLocalDate(item.day),
-      label,
-      bgColor,
-      textColor,
-    };
-  });
+  return data.map((item, index) => 
+    transformPeriodScheduleToCalendarEvent(
+      {
+        day: item.day,
+        startPeriod: item.startPeriod,
+        endPeriod: item.endPeriod,
+      },
+      index,
+      'business-trip',
+      '보강'
+    )
+  );
 };
 
 export const transformMakeupToCalendarEvents = (
   data: MakeupSchedule[]
 ): CalendarEvent[] => {
-  return data.map((item, index) => {
-    const is89 = item.startPeriod === 8 && item.endPeriod === 9;
-    const is1011 = item.startPeriod === 10 && item.endPeriod === 11;
-
-    let label = '';
-    let bgColor = '';
-    let textColor = '';
-
-    if (is89) {
-      label = '8~9교시 보강';
-      bgColor = '#0085FF0D';
-      textColor = '#0085FF';
-    } else if (is1011) {
-      label = '10~11교시 보강';
-      bgColor = '#D8CCFF';
-      textColor = '#7D55FF';
-    } else {
-      label = `${item.startPeriod}~${item.endPeriod}교시 보강`;
-      bgColor = '#F3F4F6';
-      textColor = '#374151';
-    }
-
-    return {
-      id: `makeup-${item.day}-${item.startPeriod}-${index}`,
-      date: parseLocalDate(item.day),
-      label,
-      bgColor,
-      textColor,
-    };
-  });
-};
-
-export const formatDate = (date: Date): string => {
-  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
-};
-
-export const formatDateString = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return data.map((item, index) => 
+    transformPeriodScheduleToCalendarEvent(
+      {
+        day: item.day,
+        startPeriod: item.startPeriod,
+        endPeriod: item.endPeriod,
+      },
+      index,
+      'makeup',
+      '보강'
+    )
+  );
 };

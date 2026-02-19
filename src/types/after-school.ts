@@ -1,78 +1,112 @@
-// 공통 Place 타입
-export interface Place {
-  id: string;
-  name: string;
+// AfterSchool 관련 타입
+// 공통 타입은 common.ts에서 import
+
+import type { Teacher, Student, Place } from './common';
+
+export interface AffordableReinforcement {
+    day: string;
+    start_period: number;
+    end_period: number;
 }
 
-// GET /afterschool/me/today 응답
-export interface TodayAfterSchool {
-  id: string;
-  branch: number;
-  name: string;
-  place: Place;
-  grade: number;
-  period: string;
-  day: string;
+export interface PlaceSearchResult {
+    id: string | number;
+    name: string;
+    floor: number;
 }
 
-// GET /afterschool/me?grade= 응답
-export interface MyAfterSchool {
-  id: string;
-  week_day: string;
-  period: string;
-  name: string;
-  place: Place;
-  reinforcement_count: number;
-}
-
-// GET /afterschool 응답
-export interface AllAfterSchool {
-  id: string;
-  week_day: string;
-  period: string;
-  name: string;
-  teacher: {
+export interface AdminAfterSchoolClass {
     id: string;
-    name: string;
-  };
+    grade: 1 | 2 | 3;
+    day: string;
+    period: string;
+    teacher: string;
+    teacherId: number;
+    location: string;
+    placeId: number;
+    subject: string;
+    students: string[];
+    studentIds: number[];
+}
+
+export interface TableColumn<T> {
+  key: string;
+  header: string | React.ReactNode;
+  width?: string;
+  render?: (row: T) => React.ReactNode;
+}
+
+// 공통 타입 재export
+export type { Teacher, Student, Place };
+
+export interface AfterSchoolResponse {
+  id: number;
+  week_day: string;
+  period: string;
+  name: string;
+  teacher: Teacher;
   place: Place;
-  students: {
-    number: number;
-    name: string;
-  }[];
+  students: Student[];
 }
 
-// GET /afterschool 쿼리 파라미터
-export interface AfterSchoolSearchParams {
-  grade: number;
+export interface AfterSchoolRequestParams {
+  grade?: number;
   branch?: number;
-  week_day: 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI';
-  start_period: number;
-  end_period: number;
+  week_day?: string;
+  start_period?: number;
+  end_period?: number;
 }
 
-// 기존 호환용 (다른 곳에서 사용 중일 수 있음)
-export interface AfterSchoolClass {
-  id: string;
-  grade: 1 | 2 | 3;
-  subject: string;
-  teacher: string;
-  day: '월' | '화' | '수' | '목' | '금';
-  time: string;
-  quarter: 1 | 2 | 3;
-  program: string;
+export interface CreateAfterSchoolRequest {
+  grade: number;
+  week_day: string;
+  period: string;
+  year: number;
+  teacher_id: number;
+  place_id: number;
+  name: string;
+  students_id: number[];
 }
 
-export interface TodayClass {
-  id: string;
-  quarter: 1 | 2 | 3;
-  subject: string;
-  teacher: string;
-  program: string;
-  date: string;
+export interface UpdateAfterSchoolRequest {
+  grade: number;
+  week_day: string;
+  period: string;
+  year: number;
+  after_school_id: string;
+  teacher_id: number;
+  place_id: number;
+  name: string;
+  students_id: number[];
 }
 
-export interface TimeSlot {
-  time: string;
-  classes: AfterSchoolClass[];
+// 전체 방과후 조회용 타입
+export interface AllAfterSchool {
+  id: number;
+  week_day: string;
+  period: string;
+  name: string;
+  teacher: Teacher;
+  place: Place;
+  students: Student[];
+}
+
+// 나의 방과후 조회용 타입
+export interface MyAfterSchool {
+  id: number;
+  week_day: string;
+  period: string;
+  name: string;
+  teacher: Teacher;
+  place: Place;
+  students: Student[];
+}
+
+// 방과후 검색 파라미터 타입
+export interface AfterSchoolSearchParams {
+  grade?: number;
+  branch?: number;
+  week_day?: string;
+  start_period?: number;
+  end_period?: number;
 }

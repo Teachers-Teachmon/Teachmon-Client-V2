@@ -129,7 +129,7 @@ export default function TeamSettingsPage() {
           setDetailTargetId(null);
           setDetailTeamData(null);
         }}
-        teamData={detailTeamData}
+        teamData={detailTeamData ?? undefined}
       />
     </S.Container>
   );

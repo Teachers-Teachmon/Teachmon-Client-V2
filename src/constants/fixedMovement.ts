@@ -1,4 +1,10 @@
 import type { FixedMovement, Team, Weekday, Period } from '@/types/fixedMovement';
+import {
+  WEEKDAY_API_TO_SHORT,
+  PERIOD_API_TO_LABEL,
+  PERIOD_LABEL_TO_API as COMMON_PERIOD_LABEL_TO_API,
+  AFTER_SCHOOL_PERIODS,
+} from './common';
 
 export const WEEKDAYS = {
   mon: '월',
@@ -17,48 +23,32 @@ export const WEEKDAY_API_TO_KEY: Record<Weekday, keyof typeof WEEKDAYS> = {
   SUN: 'mon',
 } as const;
 
-export const WEEKDAY_LABEL: Record<Weekday, string> = {
-  MON: '월',
-  TUE: '화',
-  WED: '수',
-  THU: '목',
-  FRI: '금',
-  SAT: '토',
-  SUN: '일',
-} as const;
+// 요일 라벨 - common에서 가져옴
+export const WEEKDAY_LABEL = WEEKDAY_API_TO_SHORT;
 
-export const PERIOD_LABEL: Record<Period, string> = {
-  ONE_PERIOD: '1교시',
-  TWO_PERIOD: '2교시',
-  THREE_PERIOD: '3교시',
-  FOUR_PERIOD: '4교시',
-  FIVE_PERIOD: '5교시',
-  SIX_PERIOD: '6교시',
-  SEVEN_PERIOD: '7교시',
-  EIGHT_AND_NINE_PERIOD: '8~9교시',
-  TEN_AND_ELEVEN_PERIOD: '10~11교시',
-} as const;
+// 교시 라벨 - common에서 가져옴
+export const PERIOD_LABEL = PERIOD_API_TO_LABEL;
 
+// 요일 라벨을 API로 변환
 export const WEEKDAY_LABEL_TO_API: Record<string, Weekday> = Object.fromEntries(
   Object.entries(WEEKDAY_LABEL).map(([key, value]) => [value, key as Weekday]),
 ) as Record<string, Weekday>;
 
+// 교시 라벨을 API로 변환 - common에서 가져와서 Period 타입으로 변환
 export const PERIOD_LABEL_TO_API: Record<string, Period> = {
-  '1교시': 'ONE_PERIOD',
-  '2교시': 'TWO_PERIOD',
-  '3교시': 'THREE_PERIOD',
-  '4교시': 'FOUR_PERIOD',
-  '5교시': 'FIVE_PERIOD',
-  '6교시': 'SIX_PERIOD',
-  '7교시': 'SEVEN_PERIOD',
-  '8~9교시': 'EIGHT_AND_NINE_PERIOD',
-  '10~11교시': 'TEN_AND_ELEVEN_PERIOD',
+  '1교시': COMMON_PERIOD_LABEL_TO_API['1교시'] as Period,
+  '2교시': COMMON_PERIOD_LABEL_TO_API['2교시'] as Period,
+  '3교시': COMMON_PERIOD_LABEL_TO_API['3교시'] as Period,
+  '4교시': COMMON_PERIOD_LABEL_TO_API['4교시'] as Period,
+  '5교시': COMMON_PERIOD_LABEL_TO_API['5교시'] as Period,
+  '6교시': COMMON_PERIOD_LABEL_TO_API['6교시'] as Period,
+  '7교시': COMMON_PERIOD_LABEL_TO_API['7교시'] as Period,
+  '8~9교시': COMMON_PERIOD_LABEL_TO_API['8~9교시'] as Period,
+  '10~11교시': COMMON_PERIOD_LABEL_TO_API['10~11교시'] as Period,
 };
 
-export const PERIOD_OPTIONS = [
-  '8~9교시',
-  '10~11교시',
-];
+// 교시 옵션 - common에서 가져옴
+export const PERIOD_OPTIONS = AFTER_SCHOOL_PERIODS;
 
 export const LOCATION_OPTIONS = [
   '베드실7',

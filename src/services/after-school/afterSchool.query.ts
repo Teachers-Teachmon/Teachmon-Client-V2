@@ -1,86 +1,62 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getMyTodayAfterSchool, getMyAfterSchool, getAllAfterSchool, getBranchInfo, getAfterSchoolClasses } from './afterSchool.api';
+import {
+  getMyTodayAfterSchool,
+  getMyAfterSchool,
+  getAllAfterSchool,
+  getBranchInfo,
+  getAfterSchoolClasses,
+  fetchAffordableReinforcement,
+} from './afterSchool.api';
 import type { AfterSchoolSearchParams } from '@/types/after-school';
-import type { AfterSchoolRequestParams } from '@/types/afterSchool';
+import type { AfterSchoolRequestParams } from '@/types/after-school';
 
 export const afterSchoolQuery = {
+  // 방과후 수업 목록
   classes: (params: AfterSchoolRequestParams) =>
     queryOptions({
-      queryKey: ['afterSchool', 'classes', params],
+      queryKey: ['afterSchool.classes', params],
       queryFn: () => getAfterSchoolClasses(params),
       enabled: !!params.grade,
     }),
 
-import { useQuery } from '@tanstack/react-query';
-import type { AffordableReinforcement, PlaceSearchResult } from '@/types/afterSchool';
-import { fetchAffordableReinforcement, searchPlace } from './afterSchool.api';
-import { getAfterSchoolClasses } from './afterSchool.api';
-import type { AfterSchoolRequestParams, AfterSchoolResponse } from '@/types/afterSchool';
-import { queryOptions } from '@tanstack/react-query';
-import { getMyTodayAfterSchool, getMyAfterSchool, getAllAfterSchool, getBranchInfo } from './afterSchool.api';
-import type { AfterSchoolSearchParams } from '@/types/after-school';
-
-export const afterSchoolQueryKeys = {
-  all: ['afterSchool'] as const,
-  affordable: (month: number, afterschoolid: string | number) =>
-    [...afterSchoolQueryKeys.all, 'affordable', month, String(afterschoolid)] as const,
-  placeSearch: (query: string) =>
-    [...afterSchoolQueryKeys.all, 'placeSearch', query] as const,
-};
-
-export const useAffordableReinforcementQuery = (
-  month: number,
-  afterschoolid?: string | number
-) =>
-  useQuery<AffordableReinforcement[]>({
-    queryKey: afterSchoolQueryKeys.affordable(month, afterschoolid ?? ''),
-    queryFn: () =>
-      fetchAffordableReinforcement({
-        month,
-        afterschoolid: afterschoolid ?? '',
-      }),
-    enabled: !!afterschoolid,
-  });
-
-export const usePlaceSearchQuery = (query: string) =>
-  useQuery<PlaceSearchResult[]>({
-    queryKey: afterSchoolQueryKeys.placeSearch(query),
-    queryFn: () => searchPlace(query),
-    enabled: query.trim().length > 0,
-  });
-
-export const afterSchoolQuery = {
-  classes: (params: AfterSchoolRequestParams) => ({
-    queryKey: ['afterSchool', 'classes', params],
-    queryFn: () => getAfterSchoolClasses(params),
-    select: (data: AfterSchoolResponse[]) => data,
-  }),
   // 나의 오늘 방과후
   myToday: () =>
     queryOptions({
-      queryKey: ['afterSchool', 'myToday'],
+      queryKey: ['afterSchool.myToday'],
       queryFn: getMyTodayAfterSchool,
     }),
 
   // 나의 방과후 (학년별)
   my: (grade: number) =>
     queryOptions({
-      queryKey: ['afterSchool', 'my', grade],
+      queryKey: ['afterSchool.my', grade],
       queryFn: () => getMyAfterSchool(grade),
     }),
 
   // 전체 방과후 (필터링)
   all: (params: AfterSchoolSearchParams) =>
     queryOptions({
-      queryKey: ['afterSchool', 'all', params],
+      queryKey: ['afterSchool.all', params],
       queryFn: () => getAllAfterSchool(params),
-      enabled: !!params.grade,
+      enabled: !!params.grade && !!params.week_day && !!params.start_period && !!params.end_period,
     }),
 
   // 분기 정보
   branch: () =>
     queryOptions({
-      queryKey: ['afterSchool', 'branch'],
+      queryKey: ['afterSchool.branch'],
       queryFn: getBranchInfo,
+    }),
+
+  // 보강 가능한 시간
+  affordableReinforcement: (month: number, afterschoolid?: string | number) =>
+    queryOptions({
+      queryKey: ['afterSchool.affordableReinforcement', month, String(afterschoolid ?? '')],
+      queryFn: () =>
+        fetchAffordableReinforcement({
+          month,
+          afterschoolid: afterschoolid ?? '',
+        }),
+      enabled: !!afterschoolid,
     }),
 };

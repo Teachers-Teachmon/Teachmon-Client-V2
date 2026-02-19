@@ -28,7 +28,7 @@ export const useSupervision = () => {
     const [exchangeRequest, setExchangeRequest] = useState<ExchangeRequest | null>(null);
     const [exchangeIds, setExchangeIds] = useState<{ requestorId: string; changeId: string } | null>(null);
     const user = useUserStore((state) => state.user);
-    const currentTeacherId = user?.id ?? CURRENT_TEACHER_ID;
+    const currentTeacherId = user?.id ? Number(user.id) : CURRENT_TEACHER_ID;
 
     const { data: supervisionDays } = useSupervisionSearchQuery(month, queryParam);
     const { mutate: requestExchange } = useRequestSupervisionExchangeMutation();

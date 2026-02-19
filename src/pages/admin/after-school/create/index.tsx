@@ -11,7 +11,7 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { createAfterSchoolClass, updateAfterSchoolClass } from '@/services/after-school/afterSchool.api';
 import { toast } from 'react-toastify';
 import type { StudentSearchResponse, PlaceSearchResponse, TeacherSearchResponse, TeamSearchResponse } from '@/types/search';
-import type { CreateAfterSchoolRequest, UpdateAfterSchoolRequest, AdminAfterSchoolClass } from '@/types/afterSchool';
+import type { CreateAfterSchoolRequest, UpdateAfterSchoolRequest, AdminAfterSchoolClass } from '@/types/after-school';
 import { WEEKDAY_MAP } from '@/constants/admin';
 import * as S from './style';
 
