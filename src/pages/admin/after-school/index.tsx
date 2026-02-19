@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import AdminAfterSchoolHeaderContainer from '@/containers/admin/after-school/after-school-header';
 import TableLayout from '@/components/layout/table';
 import ConfirmModal from '@/components/layout/modal/confirm';
-import Loading from '@/components/ui/loading';
 import type { AfterSchoolRequestParams } from '@/types/afterSchool';
 import * as S from './style';
 import { WEEKDAYS, REVERSE_DAY_MAP, QUARTER_ITEMS } from '@/constants/admin';
@@ -52,7 +51,7 @@ export default function AdminAfterSchoolPage() {
     end_period: 11,
   }), [selectedGrade, selectedDay, branch]);
 
-  const { data: apiData, isLoading } = useQuery({
+  const { data: apiData } = useQuery({
     ...afterSchoolQuery.classes(apiParams),
   });
 
@@ -225,55 +224,49 @@ export default function AdminAfterSchoolPage() {
       />
 
       <S.PageContainer style={{ overflow: isDeleteModalOpen ? 'hidden' : undefined }}>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <>
-            <AdminAfterSchoolHeaderContainer
-              quarterItems={[...QUARTER_ITEMS]}
-              selectedQuarter={selectedQuarter}
-              setSelectedQuarter={setSelectedQuarter}
-              selectedGrade={selectedGrade}
-              setSelectedGrade={setSelectedGrade}
-              handlePdfDownload={handlePdfDownload}
-              isPdfLoading={isPdfLoading}
-            />
+        <AdminAfterSchoolHeaderContainer
+          quarterItems={[...QUARTER_ITEMS]}
+          selectedQuarter={selectedQuarter}
+          setSelectedQuarter={setSelectedQuarter}
+          selectedGrade={selectedGrade}
+          setSelectedGrade={setSelectedGrade}
+          handlePdfDownload={handlePdfDownload}
+          isPdfLoading={isPdfLoading}
+        />
 
-            <S.DaySelector>
-              <S.NavButton onClick={handlePrevDay}>
-                «
-              </S.NavButton>
-              <S.DayText $active={false} onClick={handlePrevDay}>
-                {prevDay}
-              </S.DayText>
-              <S.DayText $active={true}>
-                {selectedDay}
-              </S.DayText>
-              <S.DayText $active={false} onClick={handleNextDay}>
-                {nextDay}
-              </S.DayText>
-              <S.NavButton onClick={handleNextDay}>
-                »
-              </S.NavButton>
-            </S.DaySelector>
+        <S.DaySelector>
+          <S.NavButton onClick={handlePrevDay}>
+            «
+          </S.NavButton>
+          <S.DayText $active={false} onClick={handlePrevDay}>
+            {prevDay}
+          </S.DayText>
+          <S.DayText $active={true}>
+            {selectedDay}
+          </S.DayText>
+          <S.DayText $active={false} onClick={handleNextDay}>
+            {nextDay}
+          </S.DayText>
+          <S.NavButton onClick={handleNextDay}>
+            »
+          </S.NavButton>
+        </S.DaySelector>
 
-            <S.ContentWrapper>
-              <S.TableWrapper>
-                <TableLayout
-                  columns={columns}
-                  data={filteredClasses}
-                  renderActions={renderActions}
-                  actionsHeader=""
-                  onRowClick={handleRowClick}
-                  />
-              </S.TableWrapper>
+        <S.ContentWrapper>
+          <S.TableWrapper>
+            <TableLayout
+              columns={columns}
+              data={filteredClasses}
+              renderActions={renderActions}
+              actionsHeader=""
+              onRowClick={handleRowClick}
+              />
+          </S.TableWrapper>
 
-              <S.AddButtonWrapper>
-                <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
-              </S.AddButtonWrapper>
-            </S.ContentWrapper>
-          </>
-        )}
+          <S.AddButtonWrapper>
+            <Button text="+ 추가" variant="confirm" width="200px" onClick={handleAdd} />
+          </S.AddButtonWrapper>
+        </S.ContentWrapper>
       </S.PageContainer>
     </>
   );
