@@ -1,10 +1,7 @@
-import { useMemo } from 'react';
 import Calendar from '@/components/ui/calendar';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
-import { transformBusinessTripToCalendarEvents, transformMakeupToCalendarEvents } from '@/utils/admin';
 import type { AfterSchoolTeacher } from '@/types/admin';
 import type { CalendarEvent } from '@/types/calendar';
-import { SAMPLE_TEACHERS, SAMPLE_TRIP_SCHEDULES, SAMPLE_MAKEUP_SCHEDULES } from './data';
 import * as S from './style';
 
 type Mode = 'select' | 'select-makeup';
@@ -14,9 +11,14 @@ interface BusinessTripSectionProps {
   month: number;
   onMonthChange: (year: number, month: number) => void;
   selectedTeacher?: AfterSchoolTeacher;
+  teacherOptions: AfterSchoolTeacher[];
+  teacherSearchQuery: string;
+  onTeacherSearchChange: (value: string) => void;
   onTeacherSelect: (teacher: AfterSchoolTeacher) => void;
   onTripEventClick: (event: CalendarEvent) => void;
   onMakeupDateClick: (date: Date) => void;
+  tripEvents: CalendarEvent[];
+  makeupEvents: CalendarEvent[];
   mode: Mode;
 }
 
@@ -25,20 +27,16 @@ export default function BusinessTripSection({
   month,
   onMonthChange,
   selectedTeacher,
+  teacherOptions,
+  teacherSearchQuery,
+  onTeacherSearchChange,
   onTeacherSelect,
   onTripEventClick,
   onMakeupDateClick,
+  tripEvents,
+  makeupEvents,
   mode,
 }: BusinessTripSectionProps) {
-  const tripEvents = useMemo(() => {
-    if (!selectedTeacher) return [];
-    return transformBusinessTripToCalendarEvents(SAMPLE_TRIP_SCHEDULES);
-  }, [selectedTeacher]);
-
-  const makeupEvents = useMemo(() => {
-    return transformMakeupToCalendarEvents(SAMPLE_MAKEUP_SCHEDULES);
-  }, []);
-
   if (mode === 'select-makeup') {
     return (
       <S.Container>
@@ -66,10 +64,13 @@ export default function BusinessTripSection({
         <S.DropdownWrapper>
           <SearchDropdown<AfterSchoolTeacher>
             placeholder="이름을 입력해주세요"
-            items={SAMPLE_TEACHERS}
+            items={teacherOptions}
             value={selectedTeacher}
             onChange={onTeacherSelect}
+            searchQuery={teacherSearchQuery}
+            onSearchChange={onTeacherSearchChange}
             renderItem={(item) => item.name}
+            getItemKey={(item) => item.id}
             customWidth="250px"
           />
         </S.DropdownWrapper>

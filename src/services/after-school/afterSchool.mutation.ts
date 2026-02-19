@@ -1,6 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
+import { requestReinforcement } from './afterSchool.api';
 import { quitAfterSchool, createAfterSchoolBusinessTrip } from './afterSchool.api';
 import { toast } from 'react-toastify';
+
+export const useRequestReinforcementMutation = () =>
+  useMutation({
+    mutationFn: requestReinforcement,
+  });
 
 export const useQuitAfterSchoolMutation = (options?: {
   onSuccess?: () => void;

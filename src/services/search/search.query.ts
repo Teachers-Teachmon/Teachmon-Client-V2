@@ -1,6 +1,8 @@
 import { queryOptions } from '@tanstack/react-query';
 import { searchStudents, searchPlaces, searchTeams, searchTeachers } from './search.api';
 
+const normalizeQuery = (query?: string) => query ?? '';
+
 export const searchQuery = {
   students: (query: string) =>
     queryOptions({
@@ -56,4 +58,14 @@ export const teamQuery = {
       queryFn: () => searchTeams(query),
       enabled: query.length > 0,
     }),
+export const studentQuery = {
+  search: (query?: string) => searchQuery.students(normalizeQuery(query)),
+};
+
+export const placeQuery = {
+  search: (query?: string) => searchQuery.places(normalizeQuery(query)),
+};
+
+export const teamQuery = {
+  search: (query?: string) => searchQuery.teams(normalizeQuery(query)),
 };
