@@ -2,6 +2,7 @@
 export type StudentState = 
   | 'LEAVE_SEAT'
   | 'AFTER_SCHOOL'
+  | 'AFTER_SCHOOL_REINFORCEMENT'
   | 'SELF_STUDY'
   | 'ADDITIONAL_SELF_STUDY'
   | 'EARLY_LEAVE'

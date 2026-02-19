@@ -27,6 +27,8 @@ export const mapStateToStatus = (state: StudentState | null): StatusType | undef
     switch (state) {
         case 'AFTER_SCHOOL':
             return STATUS_TYPES.AFTER_SCHOOL;
+        case 'AFTER_SCHOOL_REINFORCEMENT':
+            return STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT;
         case 'SELF_STUDY':
         case 'ADDITIONAL_SELF_STUDY':
             return STATUS_TYPES.SELF_STUDY;
@@ -72,6 +74,12 @@ export const getStudentStateInfo = (state?: StudentState | null): StudentStateIn
                 label: STATUS_TYPES.AFTER_SCHOOL,
                 color: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL].textColor,
                 backgroundColor: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL].background,
+            };
+        case 'AFTER_SCHOOL_REINFORCEMENT':
+            return {
+                label: STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT,
+                color: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT].textColor,
+                backgroundColor: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT].background,
             };
         case 'SELF_STUDY':
         case 'ADDITIONAL_SELF_STUDY':

@@ -3,6 +3,7 @@ import { colors } from '@/styles/theme';
 // 상태 타입
 export const STATUS_TYPES = {
   AFTER_SCHOOL: '방과후',
+  AFTER_SCHOOL_REINFORCEMENT: '방과후 보강',
   SELF_STUDY: '자습',
   LEAVE_SEAT: '이석',
   EARLY_LEAVE: '조퇴',
@@ -22,6 +23,11 @@ export const STATUS_CONFIG: Record<StatusType, {
   textColor: string;
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
+    background: '#ECF3FD',
+    dotColor: colors.primary,
+    textColor: colors.primary,
+  },
+  [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
     background: '#ECF3FD',
     dotColor: colors.primary,
     textColor: colors.primary,
