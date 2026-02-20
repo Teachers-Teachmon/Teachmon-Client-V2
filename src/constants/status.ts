@@ -23,52 +23,52 @@ export const STATUS_CONFIG: Record<StatusType, {
   textColor: string;
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
-    background: '#ECF3FD',
+    background: '#FFFFFF', // 흰색
     dotColor: colors.primary,
     textColor: colors.primary,
   },
   [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
-    background: '#ECF3FD',
+    background: '#FFFFFF', // 흰색
     dotColor: colors.primary,
     textColor: colors.primary,
   },
   [STATUS_TYPES.SELF_STUDY]: {
-    background: '#ECFDF3',
+    background: '#84FFC7', // 더 진한 초록색 (기존: #ECFDF3)
     dotColor: '#14BA6D',
     textColor: '#037847',
   },
   [STATUS_TYPES.LEAVE_SEAT]: {
-    background: '#F0ECFD',
+    background: '#CCBCFF', // 연한 보라색
     dotColor: '#6A1EC1',
     textColor: '#6A1EC1',
   },
   [STATUS_TYPES.EARLY_LEAVE]: {
-    background: '#FFF6E4',
+    background: '#FFD699', // 더 진한 주황색 (기존: #FFF6E4)
     dotColor: '#FF9000',
     textColor: '#FF9000',
   },
   [STATUS_TYPES.ABSENT]: {
-    background: '#FDF0EC',
+    background: '#FFBAA8', // 더 진한 연한 빨강 (기존: #FDF0EC)
     dotColor: colors.subcolor,
     textColor: colors.subcolor,
   },
   [STATUS_TYPES.DROPOUT]: {
-    background: '#FFEBEA',
+    background: '#F87067', // 더 진한 빨간색 (기존: #FFEBEA)
     dotColor: colors.exit,
     textColor: colors.exit,
   },
   [STATUS_TYPES.CANCEL]: {
-    background: '#F5F5F5',
+    background: '#D1D5DB', // 더 진한 회색 (기존: #F5F5F5)
     dotColor: '#9CA4BA',
     textColor: '#9CA4BA',
   },
   [STATUS_TYPES.ADMIN]: {
-    background: '#FFF2F1',
+    background: '#FFBAA8', // 더 진한 연한 빨강 (기존: #FFF2F1)
     dotColor: colors.subcolor,
     textColor: colors.subcolor,
   },
   [STATUS_TYPES.NORMAL]: {
-    background: '#ECF3FD',
+    background: '#FFFFFF', // 흰색
     dotColor: colors.primary,
     textColor: colors.primary,
   },
