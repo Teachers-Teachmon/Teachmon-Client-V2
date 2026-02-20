@@ -3,14 +3,22 @@ import { LANDING_CARDS, LANDING_CARD_ANCHORS } from '@/constants/landing';
 import type { CardData } from '@/types/landing';
 import * as S from './style';
 
-const MainLanding: React.FC = () => {
+interface MainLandingProps {
+  onLoginClick?: () => void;
+}
+
+const MainLanding: React.FC<MainLandingProps> = ({ onLoginClick }) => {
   const cards: CardData[] = LANDING_CARDS.map((card, index) => ({
     ...card,
     onClick: () => window.fullpage_api?.moveTo(LANDING_CARD_ANCHORS[index]),
   }));
 
   const handleLogin = () => {
-    window.location.href = '/login';
+    if (onLoginClick) {
+      onLoginClick();
+    } else {
+      window.location.href = '/login';
+    }
   };
 
   const handleVideo = () => {
@@ -20,6 +28,8 @@ const MainLanding: React.FC = () => {
 
   return (
     <S.MainContainer>
+      <S.BackgroundImage src="/assets/redToBlue.svg" alt="" />
+      
       <S.HeroSection>
         <S.HeroContent>
           <S.Subtitle>선생님들의 일을 보다 더 쉽게, 더 편리하게</S.Subtitle>
@@ -55,7 +65,6 @@ const MainLanding: React.FC = () => {
           </S.Card>
         ))}
       </S.CardsSection>
-      <S.BackgroundOverlay />
     </S.MainContainer>
   );
 };
