@@ -7,12 +7,8 @@ export const useCreateLeaveSeatMutation = () => {
 
   return useMutation({
     mutationFn: createLeaveSeat,
-    onSuccess: (data: { message: string }) => {
-      toast.success(data.message);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movement.list'] });
-    },
-    onError: () => {
-      toast.error('이석 작성에 실패했습니다.');
     },
   });
 };
@@ -23,13 +19,9 @@ export const useUpdateLeaveSeatMutation = () => {
   return useMutation({
     mutationFn: ({ leaveseatId, data }: { leaveseatId: string; data: Parameters<typeof updateLeaveSeat>[1] }) =>
       updateLeaveSeat(leaveseatId, data),
-    onSuccess: (data: { message: string }, variables) => {
-      toast.success(data.message);
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['movement.list'] });
       queryClient.invalidateQueries({ queryKey: ['movement.detail', variables.leaveseatId] });
-    },
-    onError: () => {
-      toast.error('이석 수정에 실패했습니다.');
     },
   });
 };
@@ -39,12 +31,9 @@ export const useDeleteLeaveSeatMutation = () => {
 
   return useMutation({
     mutationFn: deleteLeaveSeat,
-    onSuccess: (data: { message: string }) => {
-      toast.success(data.message);
+    onSuccess: () => {
+      toast.success('이석이 삭제되었습니다.');
       queryClient.invalidateQueries({ queryKey: ['movement.list'] });
-    },
-    onError: () => {
-      toast.error('이석 삭제에 실패했습니다.');
     },
   });
 };

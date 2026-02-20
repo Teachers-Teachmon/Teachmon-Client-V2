@@ -94,8 +94,8 @@ export default function Map({ selectedFloor, highlightedPlace, placesData, selec
                                     {elements.map((el: FloorElement) => {
                                         const placeData = placesData?.find(p => p.place_name === el.name);
                                         const isHighlighted = highlightedPlace === el.name && el.name !== '' && el.name !== 'X';
-                                        // 모든 상태에 대해 색상 표시
-                                        const stateInfo = placeData?.state ? getStudentStateInfo(placeData.state) : null;
+                                        // 모든 상태에 대해 색상 표시 (지도용 진한 색상 사용)
+                                        const stateInfo = placeData?.state ? getStudentStateInfo(placeData.state, true) : null;
                                         
                                         return (
                                             <S.Element

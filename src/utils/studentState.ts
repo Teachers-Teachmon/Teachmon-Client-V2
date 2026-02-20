@@ -45,48 +45,52 @@ export const mapStateToStatus = (state: StudentState | null): StatusType | undef
     }
 };
 
-export const getStudentStateInfo = (state?: StudentState | null): StudentStateInfo | null => {
+export const getStudentStateInfo = (state?: StudentState | null, useMapColors = false): StudentStateInfo | null => {
     if (!state) return null;
+
+    const getBackgroundColor = (statusType: StatusType) => {
+        return useMapColors ? STATUS_CONFIG[statusType].mapBackground : STATUS_CONFIG[statusType].background;
+    };
 
     switch (state) {
         case 'LEAVE_SEAT':
             return {
                 label: STATUS_TYPES.LEAVE_SEAT,
                 color: STATUS_CONFIG[STATUS_TYPES.LEAVE_SEAT].textColor,
-                backgroundColor: STATUS_CONFIG[STATUS_TYPES.LEAVE_SEAT].background,
+                backgroundColor: getBackgroundColor(STATUS_TYPES.LEAVE_SEAT),
             };
         case 'AWAY':
         case 'EARLY_LEAVE':
             return {
                 label: STATUS_TYPES.EARLY_LEAVE,
                 color: STATUS_CONFIG[STATUS_TYPES.EARLY_LEAVE].textColor,
-                backgroundColor: STATUS_CONFIG[STATUS_TYPES.EARLY_LEAVE].background,
+                backgroundColor: getBackgroundColor(STATUS_TYPES.EARLY_LEAVE),
             };
         case 'EXIT':
         case 'EVASION':
             return {
                 label: STATUS_TYPES.DROPOUT,
                 color: STATUS_CONFIG[STATUS_TYPES.DROPOUT].textColor,
-                backgroundColor: STATUS_CONFIG[STATUS_TYPES.DROPOUT].background,
+                backgroundColor: getBackgroundColor(STATUS_TYPES.DROPOUT),
             };
         case 'AFTER_SCHOOL':
             return {
                 label: STATUS_TYPES.AFTER_SCHOOL,
                 color: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL].textColor,
-                backgroundColor: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL].background,
+                backgroundColor: getBackgroundColor(STATUS_TYPES.AFTER_SCHOOL),
             };
         case 'AFTER_SCHOOL_REINFORCEMENT':
             return {
                 label: STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT,
                 color: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT].textColor,
-                backgroundColor: STATUS_CONFIG[STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT].background,
+                backgroundColor: getBackgroundColor(STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT),
             };
         case 'SELF_STUDY':
         case 'ADDITIONAL_SELF_STUDY':
             return {
                 label: STATUS_TYPES.SELF_STUDY,
                 color: STATUS_CONFIG[STATUS_TYPES.SELF_STUDY].textColor,
-                backgroundColor: STATUS_CONFIG[STATUS_TYPES.SELF_STUDY].background,
+                backgroundColor: getBackgroundColor(STATUS_TYPES.SELF_STUDY),
             };
         default:
             return null;
