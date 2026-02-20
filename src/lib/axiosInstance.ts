@@ -12,7 +12,7 @@ const JSONbigNative = JSONbig({ useNativeBigInt: false, storeAsString: true });
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
-    timeout: 10000,
+    timeout: 100000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -71,7 +71,15 @@ axiosInstance.interceptors.response.use(
                 // 원래 요청 재시도 (기본 헤더가 이미 업데이트되어 있음)
                 return axiosInstance(originalRequest);
             } catch (reissueError) {
-                // 토큰 재발급 실패 시 로그아웃 처리 (toast 없이)
+                // 로딩 상태 강제 초기화
+                const loadingStore = useLoadingStore.getState();
+                loadingStore.stopLoading();
+                // 혹시 모를 중첩 로딩을 위해 완전히 초기화
+                while (loadingStore.isLoading) {
+                    loadingStore.stopLoading();
+                }
+                
+                // 토큰 재발급 실패 시 로그아웃 처리 (에러 알림 없이)
                 useAuthStore.getState().clearAuth();
                 useUserStore.getState().clearUser();
                 
@@ -88,7 +96,8 @@ axiosInstance.interceptors.response.use(
             useLoadingStore.getState().stopLoading();
         }
 
-        if (!error.config?.skipErrorToast) {
+        // 401/403 에러는 에러 토스트 표시하지 않음 (토큰 만료)
+        if (!error.config?.skipErrorToast && error.response?.status !== 401 && error.response?.status !== 403) {
             showErrorToast(error);
         }
 
