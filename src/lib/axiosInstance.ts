@@ -12,7 +12,7 @@ const JSONbigNative = JSONbig({ useNativeBigInt: false, storeAsString: true });
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,
-    timeout: 10000,
+    timeout: 100000,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -61,17 +61,27 @@ axiosInstance.interceptors.response.use(
         if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
             originalRequest._retry = true;
 
+            // 원래 요청의 로딩 상태 먼저 정리
+            if (!originalRequest.skipLoading) {
+                useLoadingStore.getState().stopLoading();
+            }
+
             try {
-                // 토큰 재발급 요청
+                // 토큰 재발급 요청 (skipLoading: true로 로딩바 영향 없음)
                 const { access_token } = await reissueToken();
                 
                 // 새 토큰을 메모리에 저장 (자동으로 axios 기본 헤더도 업데이트됨)
                 useAuthStore.getState().setAccessToken(access_token);
 
-                // 원래 요청 재시도 (기본 헤더가 이미 업데이트되어 있음)
+                // 원래 요청의 헤더에 새 토큰 적용
+                if (originalRequest.headers) {
+                    originalRequest.headers.Authorization = `Bearer ${access_token}`;
+                }
+
+                // 원래 요청 재시도 (새로운 로딩 사이클 시작)
                 return axiosInstance(originalRequest);
             } catch (reissueError) {
-                // 토큰 재발급 실패 시 로그아웃 처리 (toast 없이)
+                // 토큰 재발급 실패 시 로그아웃 처리 (에러 알림 없이)
                 useAuthStore.getState().clearAuth();
                 useUserStore.getState().clearUser();
                 
@@ -88,7 +98,8 @@ axiosInstance.interceptors.response.use(
             useLoadingStore.getState().stopLoading();
         }
 
-        if (!error.config?.skipErrorToast) {
+        // 401/403 에러는 에러 토스트 표시하지 않음 (토큰 만료)
+        if (!error.config?.skipErrorToast && error.response?.status !== 401 && error.response?.status !== 403) {
             showErrorToast(error);
         }
 

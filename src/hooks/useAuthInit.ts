@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useUserStore } from '@/stores/useUserStore';
+import { useLoadingStore } from '@/stores/useLoadingStore';
 import { reissueToken } from '@/services/auth/auth.api';
 
 export const useAuthInit = () => {
@@ -15,6 +16,12 @@ export const useAuthInit = () => {
         setAccessToken(access_token);
         setInitialized(true);
       } catch (error) {
+        // 로딩 상태 강제 초기화
+        const loadingStore = useLoadingStore.getState();
+        while (loadingStore.isLoading) {
+          loadingStore.stopLoading();
+        }
+        
         // 리프레시 토큰이 없거나 만료된 경우 로그아웃 처리
         clearAuth();
         clearUser();
