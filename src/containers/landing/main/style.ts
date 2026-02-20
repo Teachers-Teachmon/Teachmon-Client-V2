@@ -3,10 +3,12 @@ import { mq } from '@/styles/media';
 
 export const MainContainer = styled.div`
   width: 100%;
+  height: calc(100vh - 80px);
   position: relative;
   display: flex;
   align-items: center;
   flex-direction: column;
+  justify-content: space-between;
   overflow: hidden;
   ${mq.mobile}{
     gap: 20px;
@@ -16,12 +18,13 @@ export const MainContainer = styled.div`
 export const HeroSection = styled.div`
   width: calc(100% - 280px);
   z-index: 1;
-  height: 55%;
+  flex: 0 0 auto;
+  height: 54%;
   position: relative;
   display: flex;
   align-items: center;
   padding: 40px;
-  border-radius: 0 0 150px 12px ;
+  border-radius: 0 0 150px 12px;
   background: 
     linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.83) 37.67%, rgba(0, 0, 0, 0.10) 100%),
     url('/assets/mainBg.svg');
@@ -31,27 +34,26 @@ export const HeroSection = styled.div`
   ${mq.mobile} {
     width: 90%;
     height: auto;
+    min-height: 300px;
     padding: 40px 20px 30px 20px;
     border-radius: 0 0 8px 8px;
   }
 `;
 
-export const BackgroundOverlay = styled.div`
-  width: 100%;
-  height: 100%;
+export const BackgroundImage = styled.img`
   position: absolute;
   top: 5%;
   left: 0;
-  background-image: url('/assets/redToBlue.svg');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
+  width: 100%;
+  height: 95%;
+  object-fit: cover;
+  object-position: center;
   z-index: 0;
+  pointer-events: none;
+  
   ${mq.mobile}{
     top: 20%;
-    width:100%;
     height: 50%;
-    background-size: cover;
   }
 `;
 export const HeroContent = styled.div`
@@ -60,10 +62,10 @@ export const HeroContent = styled.div`
   color: #ffffff;
   max-width: 650px;
   display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex: 1;
-    gap: 24px;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  gap: 24px;
 
   ${mq.mobile} {
     max-width: 100%;
@@ -170,21 +172,22 @@ export const ButtonLabel = styled.span`
 
 export const CardsSection = styled.div`
   width: 100%;
-  height: 45%;
-  padding: 40px 140px;
+  flex: 0 0 auto;
+  height: 46%;
+  padding: 20px 140px 40px 140px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
   align-items: center;
-  background: #ffffff;
+  background: transparent;
   position: relative;
 
   ${mq.mobile} {
     width: 90%;
-    padding: 0;
+    padding: 0 0 20px 0;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    height: 30%;
+    height: auto;
     align-items: start;
   }
 `;

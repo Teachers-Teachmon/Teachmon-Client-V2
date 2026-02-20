@@ -17,12 +17,31 @@ const LandingPage: React.FC = () => {
   const [currentSection, setCurrentSection] = useState(0);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
+  // 섹션 변경 핸들러
+  const handleSectionChange = (sectionIndex: number) => {
+    setCurrentSection(sectionIndex);
+  };
+
+  // 네비게이션 핸들러
+  const handleNavigate = (anchor: string) => {
+    moveToSection(anchor);
+  };
+
+  // 로그인 모달 핸들러
+  const handleLoginClick = () => {
+    setIsLoginModalOpen(true);
+  };
+
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
+
   // 섹션 정의
   const sections: FullPageSection[] = [
     {
       id: 'main',
       anchor: 'main',
-      content: <MainLanding />,
+      content: <MainLanding onLoginClick={handleLoginClick} />,
       backgroundColor: '#ffffff',
     },
     {
@@ -44,8 +63,8 @@ const LandingPage: React.FC = () => {
       backgroundColor: '#ffffff',
     },
     {
-      id: 'ExplainLanding',
-      anchor: 'ExplainLanding',
+      id: 'method',
+      anchor: 'method',
       content: <ExplainLanding />,
       backgroundColor: '#ffffff',
     },
@@ -56,25 +75,6 @@ const LandingPage: React.FC = () => {
       backgroundColor: '#efefef',
     },
   ];
-
-  // 섹션 변경 핸들러
-  const handleSectionChange = (sectionIndex: number) => {
-    setCurrentSection(sectionIndex);
-  };
-
-  // 네비게이션 핸들러
-  const handleNavigate = (anchor: string) => {
-    moveToSection(anchor);
-  };
-
-  // 로그인 모달 핸들러
-  const handleLoginClick = () => {
-    setIsLoginModalOpen(true);
-  };
-
-  const handleCloseLoginModal = () => {
-    setIsLoginModalOpen(false);
-  };
 
   return (
     <Container>

@@ -50,6 +50,7 @@ const FullPageLayout: React.FC<FullPageLayoutProps> = ({
     });
 
     setFpInstance(instance);
+    window.fullpage_api = instance;
 
     return () => {
       if (instance) {
@@ -58,6 +59,7 @@ const FullPageLayout: React.FC<FullPageLayoutProps> = ({
       if (fpInstance) {
         fpInstance.destroy('all');
       }
+      window.fullpage_api = null;
     };
   }, []);
 
