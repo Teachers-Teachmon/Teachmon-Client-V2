@@ -1,13 +1,8 @@
 import axiosInstance from '@/lib/axiosInstance';
+import type { TeacherAPI, UserRoleAPI } from '@/types/admin';
 
 // Types
-export interface Teacher {
-  teacher_id: string; // json-bigint로 큰 숫자를 문자열로 처리
-  role: 'ADMIN' | 'TEACHER';
-  name: string;
-  email: string;
-  supervision_count: number;
-}
+export type Teacher = TeacherAPI;
 
 export interface Student {
   id: number | string; // json-bigint로 큰 숫자는 문자열, 작은 숫자는 number로 처리됨
@@ -18,14 +13,14 @@ export interface Student {
 }
 
 export interface CreateTeacherRequest {
-  role: 'ADMIN' | 'TEACHER';
+  role: UserRoleAPI;
   name: string;
   email: string;
 }
 
 export interface UpdateTeacherRequest {
   teacher_id: string;
-  role?: 'ADMIN' | 'TEACHER';
+  role?: UserRoleAPI;
   name?: string;
 }
 

@@ -191,6 +191,7 @@ export const CLASSES: readonly ClassNumber[] = [1, 2, 3, 4] as const;
 export const USER_ROLES = {
   ADMIN: '관리자',
   NORMAL: '일반',
+  VIEWER: '뷰어',
 } as const;
 
 // ============================================

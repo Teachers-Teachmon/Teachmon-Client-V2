@@ -11,7 +11,7 @@ import { studentQuery } from '@/services/search/search.query';
 import { useSetForbiddenDatesMutation } from '@/services/user-management/user-management.mutation';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { ForbiddenDay } from '@/services/user-management/user-management.api';
-import type { Teacher } from '@/containers/admin/users/teachers';
+import type { Teacher } from '@/types/admin';
 import * as S from './style';
 
 type TabType = '선생님' | '학생';
