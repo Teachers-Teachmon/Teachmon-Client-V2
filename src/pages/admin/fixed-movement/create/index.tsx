@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
@@ -21,6 +21,7 @@ export default function FixedMovementFormPage() {
   const isEditMode = !!id;
   const createMutation = useCreateFixedMovementMutation();
   const updateMutation = useUpdateFixedMovementMutation();
+  const queryClient = useQueryClient();
 
   const { data: detailData } = useQuery(fixedMovementQuery.detail(id));
   
@@ -144,13 +145,38 @@ export default function FixedMovementFormPage() {
         },
       });
     } else {
-      createMutation.mutate({
-        week_day: weekDay,
-        period: periodEnum,
-        place_id: selectedPlace.id,
-        cause: reason,
-        students: selectedStudents.map((s) => s.id || s.studentNumber),
-      });
+      if (period === '8~11교시') {
+        Promise.all([
+          createMutation.mutateAsync({
+            week_day: weekDay,
+            period: 'EIGHT_AND_NINE_PERIOD',
+            place_id: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          }),
+          createMutation.mutateAsync({
+            week_day: weekDay,
+            period: 'TEN_AND_ELEVEN_PERIOD',
+            place_id: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          }),
+        ]).then(() => {
+          toast.success('고정 이석이 성공적으로 생성되었습니다.');
+          queryClient.invalidateQueries({ queryKey: ['fixedMovement.list'] });
+          navigate('/admin/fixed-movement');
+        }).catch(() => {
+          toast.error('고정 이석 생성에 실패했습니다.');
+        });
+      } else {
+        createMutation.mutate({
+          week_day: weekDay,
+          period: periodEnum,
+          place_id: selectedPlace.id,
+          cause: reason,
+          students: selectedStudents.map((s) => s.id || s.studentNumber),
+        });
+      }
     }
   };
 
@@ -273,7 +299,7 @@ export default function FixedMovementFormPage() {
                       <S.StudentDropdownItem 
                         key={student.id}
                         onClick={() => handleAddStudent({ 
-                          id: student.id, 
+                          id: typeof student.id === 'string' ? parseInt(student.id, 10) : student.id, 
                           studentNumber: student.number, 
                           name: student.name, 
                           grade: student.grade, 
