@@ -67,6 +67,20 @@ export default function AllClassSection({
     return acc;
   }, {});
 
+  // Debug: Log the actual period values
+  console.log('All periods:', Object.keys(groupedByTime));
+
+  // Get sorted time slots: 8-9 comes before 10-11
+  const sortedTimeSlots = Object.keys(groupedByTime).sort((a, b) => {
+    const getTimeOrder = (time: string) => {
+      // Handle different formats: "8-9", "8~9", "8~9교시", "8-9교시", etc.
+      if (time.includes('8') && (time.includes('9') || time.includes('-9') || time.includes('~9'))) return 0;
+      if (time.includes('10') && (time.includes('11') || time.includes('-11') || time.includes('~11'))) return 1;
+      return 2; // fallback for other time slots
+    };
+    return getTimeOrder(a) - getTimeOrder(b);
+  });
+
   const handlePrevDay = () => {
     setSelectedDay(prev => (prev > 0 ? prev - 1 : DAYS.length - 1));
   };
@@ -112,8 +126,9 @@ export default function AllClassSection({
         </S.DayNavigation>
 
         <S.TimeSlotList>
-          {Object.keys(groupedByTime).length > 0 ? (
-            Object.entries(groupedByTime).map(([time, timeClasses]) => {
+          {sortedTimeSlots.length > 0 ? (
+            sortedTimeSlots.map((time) => {
+              const timeClasses = groupedByTime[time];
               const currentPage = timeSlotPages[time] || 0;
               const totalPages = Math.ceil(timeClasses.length / ITEMS_PER_PAGE);
               const startIndex = currentPage * ITEMS_PER_PAGE;
