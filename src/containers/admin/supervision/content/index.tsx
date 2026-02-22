@@ -23,6 +23,7 @@ import {
   isSameDay,
 } from './utils';
 import * as S from './style';
+import { LEGENDS } from '@/constants/supervision';
 
 type ViewMode = 'default' | 'count' | 'edit';
 type SortOrder = 'asc' | 'desc';
@@ -474,7 +475,8 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
           onMonthChange={handleMonthChange}
           events={events}
           showYear={true}
-          showLegend={false}
+          showLegend={true}
+          legends={LEGENDS}
           showMobilePopover={viewMode !== 'edit'}
           onEventClick={viewMode === 'edit' ? handleEventClick : undefined}
           onDateClick={viewMode === 'edit' ? handleDateClick : undefined}
