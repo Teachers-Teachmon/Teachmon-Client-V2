@@ -93,7 +93,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
         thisWeekSunday.setHours(23, 59, 59, 999); // 일요일 끝까지
         
         if (selectedDateObj > thisWeekSunday) {
-            toast.warning('다음 주 이후의 이석 작성은 불가능합니다.');
+            toast.warning('이번주 이후의 이석 작성은 불가능합니다.');
             return;
         }
 
