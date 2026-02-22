@@ -55,14 +55,17 @@ export default function AfterSchoolFormPage() {
   const [selectedStudents, setSelectedStudents] = useState<Student[]>(
     isEditMode && editData ? editData.students.map((s, idx) => {
       const parts = s.split(' ');
-      const studentNumber = parseInt(parts[0]) || 0;
+      const fullStudentNumber = parseInt(parts[0]) || 0;
       const name = parts.slice(1).join(' ');
+      const studentStr = fullStudentNumber.toString();
+      const classNum = studentStr.length >= 5 ? parseInt(studentStr.substring(1, 2)) : 0;
+      const studentNumber = studentStr.length >= 5 ? parseInt(studentStr.substring(2)) : parseInt(studentStr);
       return {
         id: (editData.studentIds?.[idx] ?? 0).toString(),
         studentNumber,
         name,
         grade: editData.grade,
-        classNumber: 1,
+        classNumber: classNum,
       };
     }) : []
   );
@@ -124,7 +127,7 @@ export default function AfterSchoolFormPage() {
     const grade = (student as Student).grade ?? (student as StudentSearchResponse).grade;
     const classNumber = (student as Student).classNumber ?? (student as StudentSearchResponse).classNumber;
 
-    const displayNumber = `${grade}${classNumber}${String(baseNumber).padStart(2, '0')}`;
+    const displayNumber = `${baseNumber.toString().padStart(4, '0')}`;
   
     return `${displayNumber} ${name}`;
   };
