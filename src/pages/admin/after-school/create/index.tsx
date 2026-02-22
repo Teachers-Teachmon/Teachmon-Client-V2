@@ -136,6 +136,36 @@ export default function AfterSchoolFormPage() {
     setSelectedStudents(selectedStudents.filter(s => s.id !== studentId));
   };
 
+  /**
+   * 학생/팀 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && studentSearchQuery) {
+      e.preventDefault();
+      
+      if (isTeamMode && teamsData.length > 0) {
+        const filteredTeams = teamsData.filter((team: TeamSearchResponse) => {
+          const teamMemberIds = new Set(team.members.map((member) => member.id.toString()));
+          return !team.members.every((member) =>
+            selectedStudents.some((selected) => selected.id === member.id.toString())
+          ) && teamMemberIds.size > 0;
+        });
+        
+        if (filteredTeams.length > 0) {
+          handleAddStudent(filteredTeams[0]);
+        }
+      } else if (!isTeamMode && studentsData.length > 0) {
+        const filteredStudents = studentsData.filter((student: StudentSearchResponse) =>
+          !selectedStudents.find((s) => s.id === student.id.toString())
+        );
+        
+        if (filteredStudents.length > 0) {
+          handleAddStudent(filteredStudents[0]);
+        }
+      }
+    }
+  };
+
   const handleCancel = () => {
     navigate('/admin/after-school');
   };
@@ -210,7 +240,10 @@ export default function AfterSchoolFormPage() {
       <S.Content>
         <S.Form>
           <S.FormSection>
-            <S.SectionTitle>담당 교사</S.SectionTitle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <S.SectionTitle>담당 교사</S.SectionTitle>
+              <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            </div>
             <SearchDropdown
               placeholder="교사"
               items={teachersData.map((t: TeacherSearchResponse) => t.name)}
@@ -226,7 +259,10 @@ export default function AfterSchoolFormPage() {
 
 
           <S.FormSection>
-            <S.SectionTitle>장소</S.SectionTitle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <S.SectionTitle>장소</S.SectionTitle>
+              <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            </div>
             <SearchDropdown
               placeholder="장소"
               items={placesData.map((p: PlaceSearchResponse) => p.name)}
@@ -262,7 +298,10 @@ export default function AfterSchoolFormPage() {
 
           <S.FormSection>
             <S.ToggleRow>
-              <S.SectionTitle>학생</S.SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <S.SectionTitle>학생</S.SectionTitle>
+                <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+              </div>
               <S.ToggleContent>
                 <S.SectionTitle>팀</S.SectionTitle>
                 <S.Toggle
@@ -279,6 +318,7 @@ export default function AfterSchoolFormPage() {
                 placeholder="학생을 입력해주세요"
                 value={studentSearchQuery}
                 onChange={(e) => setStudentSearchQuery(e.target.value)}
+                onKeyDown={handleStudentEnterKeyPress}
                 leftIcon={
                   <img
                     src="/icons/common/search.svg"

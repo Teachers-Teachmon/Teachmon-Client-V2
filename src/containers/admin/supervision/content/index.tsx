@@ -494,6 +494,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
               customWidth="100%"
               noResultText={isSearchingTeachers ? '검색 중입니다...' : '검색 결과가 없습니다'}
             />
+            <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
             <S.EditTitle>자습/이석 선택</S.EditTitle>
             <Dropdown
               placeholder="자습/이석 선택"
