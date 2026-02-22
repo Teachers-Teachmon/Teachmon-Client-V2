@@ -30,7 +30,13 @@ export default function MyClassTable() {
 
   const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.my(selectedGrade));
 
+  // Fetch data for all grades to get total count
+  const { data: grade1Classes = [] } = useQuery(afterSchoolQuery.my(1));
+  const { data: grade2Classes = [] } = useQuery(afterSchoolQuery.my(2));
+  const { data: grade3Classes = [] } = useQuery(afterSchoolQuery.my(3));
+
   const filteredClasses = classes;
+  const totalCount = grade1Classes.length + grade2Classes.length + grade3Classes.length;
 
   useEffect(() => {
     if (!menuOpenId) return;
@@ -103,7 +109,7 @@ export default function MyClassTable() {
   return (
     <S.Wrapper>
       <S.TitleSection>
-        <S.Title>나의 방과후({filteredClasses.length})</S.Title>
+        <S.Title>나의 방과후({totalCount})</S.Title>
         <S.GradeTabs>
                   <S.GradeTab $active={selectedGrade === 1} onClick={() => setSelectedGrade(1)}>1학년</S.GradeTab>
                   <S.GradeTab $active={selectedGrade === 2} onClick={() => setSelectedGrade(2)}>2학년</S.GradeTab>
