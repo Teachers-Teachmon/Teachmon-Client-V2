@@ -25,10 +25,11 @@ export const useAdminSupervisionQuery = (month: number, query = '') =>
     enabled: month > 0,
   });
 
-export const useSupervisionRankQuery = (query = '', order: 'asc' | 'desc' = 'asc') =>
+export const useSupervisionRankQuery = (query = '', order: 'asc' | 'desc' = 'asc', enabled = true) =>
   useQuery<SupervisionRank[]>({
     queryKey: adminSupervisionQueryKeys.rank(query, order),
     queryFn: () => fetchSupervisionRank({ query, order }),
+    enabled,
   });
 
 export const useTeacherSearchQuery = (query: string, enabled = true) =>

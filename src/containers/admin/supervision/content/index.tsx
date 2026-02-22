@@ -24,12 +24,13 @@ import {
 } from './utils';
 import * as S from './style';
 
-type ViewMode = 'default' | 'count' | 'edit';
+type ViewMode = 'default' | 'edit';
 type SortOrder = 'asc' | 'desc';
 
 interface AdminSupervisionContentProps {
   viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
+  isCountOpen: boolean;
+  onCountOpenChange: (open: boolean) => void;
 }
 
 interface TeacherOption {
@@ -79,7 +80,7 @@ const getAssignmentsFromEvents = (events: CalendarEvent[]) => {
 };
 
 const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminSupervisionContentProps>(function AdminSupervisionContent(
-  { viewMode, onViewModeChange },
+  { viewMode, isCountOpen, onCountOpenChange },
   ref,
 ) {
   const currentDate = new Date();
@@ -104,12 +105,17 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
 
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
+  const isEditMode = viewMode === 'edit';
 
   const { data: supervisionDays } = useAdminSupervisionQuery(month, '');
-  const { data: supervisionRanks } = useSupervisionRankQuery(debouncedRankQuery, sortOrder);
+  const { data: supervisionRanks, refetch: refetchSupervisionRanks } = useSupervisionRankQuery(
+    debouncedRankQuery,
+    sortOrder,
+    false,
+  );
   const { data: searchedTeachers, isFetching: isSearchingTeachers } = useTeacherSearchQuery(
     debouncedTeacherSearchQuery,
-    viewMode === 'edit',
+    isEditMode,
   );
   const createScheduleMutation = useCreateSupervisionScheduleMutation();
   const updateScheduleMutation = useUpdateSupervisionScheduleMutation();
@@ -130,13 +136,13 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   }, [baseEvents, currentMonthKey]);
 
   useEffect(() => {
-    if (viewMode === 'edit') {
+    if (isEditMode) {
       setEvents(draftEventsByMonth[currentMonthKey] ?? baseEvents);
       return;
     }
 
     setEvents(baseEvents);
-  }, [baseEvents, currentMonthKey, draftEventsByMonth, viewMode]);
+  }, [baseEvents, currentMonthKey, draftEventsByMonth, isEditMode]);
 
   const selectedEvent = selectedEventId ? events.find((event) => event.id === selectedEventId) ?? null : null;
   const selectedEventType = selectedEvent ? getEventType(selectedEvent) : null;
@@ -193,13 +199,13 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   const handleCloseCountPanel = () => {
     setIsClosing(true);
     setTimeout(() => {
-      onViewModeChange('default');
+      onCountOpenChange(false);
       setIsClosing(false);
     }, 300);
   };
 
   const handleEventClick = (event: CalendarEvent, anchorRect?: DOMRect) => {
-    if (viewMode !== 'edit') return;
+    if (!isEditMode) return;
     const eventType = getEventType(event);
     setSelectedEventId(event.id);
     setSelectedTeacher(event.teacherId ? { id: event.teacherId, label: event.label } : null);
@@ -213,7 +219,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   };
 
   const handleDateClick = (date: Date, _dayInfo: DayInfo, anchorRect?: DOMRect) => {
-    if (viewMode !== 'edit') return;
+    if (!isEditMode) return;
     const availableTypes = getAvailableTypesForDate(events, date);
     if (availableTypes.length === 0) {
       handleClearSelection();
@@ -371,26 +377,31 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   }), [saveChanges]);
 
   useEffect(() => {
-    if (viewMode !== 'edit') {
+    if (!isEditMode) {
       handleClearSelection();
       setDraftEventsByMonth({});
     }
-    if (viewMode !== 'count') {
+    if (!isCountOpen) {
       setIsClosing(false);
     }
-  }, [viewMode]);
+  }, [isCountOpen, isEditMode]);
 
   useEffect(() => {
-    if (viewMode !== 'count') return;
+    if (!isCountOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [viewMode]);
+  }, [isCountOpen]);
 
   useEffect(() => {
-    if (viewMode !== 'edit') return;
+    if (!isCountOpen) return;
+    void refetchSupervisionRanks();
+  }, [debouncedRankQuery, isCountOpen, refetchSupervisionRanks, sortOrder]);
+
+  useEffect(() => {
+    if (!isEditMode) return;
     if (!editAnchor) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -415,11 +426,11 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
     };
-  }, [viewMode, editAnchor]);
+  }, [isEditMode, editAnchor]);
 
   return (
     <S.ContentWrapper>
-      {viewMode === 'count' && (
+      {isCountOpen && (
         <S.SidePanel $isClosing={isClosing}>
           <S.SidePanelHeader>
             <S.CloseButton onClick={handleCloseCountPanel}>
@@ -467,7 +478,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
         </S.SidePanel>
       )}
 
-      <S.CalendarWrapper $hasSidePanel={viewMode === 'count'} ref={calendarWrapperRef}>
+      <S.CalendarWrapper $hasSidePanel={isCountOpen} ref={calendarWrapperRef}>
         <Calendar
           year={year}
           month={month}
@@ -475,11 +486,11 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
           events={events}
           showYear={true}
           showLegend={false}
-          showMobilePopover={viewMode !== 'edit'}
-          onEventClick={viewMode === 'edit' ? handleEventClick : undefined}
-          onDateClick={viewMode === 'edit' ? handleDateClick : undefined}
+          showMobilePopover={!isEditMode}
+          onEventClick={isEditMode ? handleEventClick : undefined}
+          onDateClick={isEditMode ? handleDateClick : undefined}
         />
-        {viewMode === 'edit' && editAnchor && (
+        {isEditMode && editAnchor && (
           <S.FloatingEditor ref={editorRef} $top={editAnchor.top} $left={editAnchor.left}>
             <SearchDropdown
               placeholder="이름을 입력해주세요"
