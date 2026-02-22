@@ -45,7 +45,7 @@ export const StyledInput = styled.input`
   outline: none;
   background: transparent;
   color: ${colors.text};
-  padding: 5px 10px;
+  padding: 10px;
   width: 100%;
   cursor: pointer;
 
