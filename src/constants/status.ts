@@ -23,14 +23,14 @@ export const STATUS_CONFIG: Record<StatusType, {
   textColor: string;
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
-    background: '#ECF3FD',
-    dotColor: colors.primary,
-    textColor: colors.primary,
+    background: '#FFFFFF',
+    dotColor: '#eaeaea',
+    textColor: '#eaeaea',
   },
   [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
-    background: '#ECF3FD',
-    dotColor: colors.primary,
-    textColor: colors.primary,
+    background: '#FFFFFF',
+    dotColor: '#eaeaea',
+    textColor: '#eaeaea',
   },
   [STATUS_TYPES.SELF_STUDY]: {
     background: '#ECFDF3',
