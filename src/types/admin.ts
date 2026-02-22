@@ -25,6 +25,7 @@ export interface SupervisionCount {
   name: string;
   selfStudy: number;
   leaveSeat: number;
+  seventhPeriod: number;
   total: number;
 }
 
