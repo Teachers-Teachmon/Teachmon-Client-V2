@@ -31,7 +31,7 @@ export default function RecordTable({
 
     const { mutate: deleteLeaveSeat } = useDeleteLeaveSeatMutation();
     const { mutate: deleteEvasion } = useDeleteEvasionMutation();
-    const { changeStatus } = useStudentStatus();
+    const { changeStatus, changeBulkStatus } = useStudentStatus();
 
     // 이석 상세 조회
     const { data: detailData } = useQuery({
@@ -89,13 +89,23 @@ export default function RecordTable({
     };
 
     const handleBulkStatusChange = (studentNumbers: number[], periodKey: keyof ScheduleHistoryRecord, status: StatusType) => {
-        if (status === '취소') return;
+        const scheduleData = studentNumbers
+            .map(studentNumber => {
+                const student = studentData.find(s => s.student_number === studentNumber);
+                const periodData = student?.[periodKey] as { schedule_id: string; state: StudentState } | null;
+                if (!periodData?.schedule_id) return null;
+                
+                return {
+                    scheduleId: periodData.schedule_id,
+                    status,
+                    currentState: periodData.state,
+                };
+            })
+            .filter((data) => data !== null) as Array<{ scheduleId: string; status: StatusType; currentState?: StudentState }>;
 
-        studentNumbers.forEach(studentNumber => {
-            const student = studentData.find(s => s.student_number === studentNumber);
-            const scheduleId = (student?.[periodKey] as { schedule_id: string } | null)?.schedule_id;
-            if (scheduleId) changeStatus(scheduleId, status);
-        });
+        if (scheduleData.length > 0) {
+            changeBulkStatus(scheduleData);
+        }
     };
 
     const { movementColumns, leaveColumns, studentColumns } = useRecordTableColumns({
