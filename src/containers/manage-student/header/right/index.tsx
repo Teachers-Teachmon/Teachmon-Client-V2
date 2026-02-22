@@ -42,6 +42,17 @@ export default function HeaderRight({
         enabled: isMapEnabled && debouncedSearchQuery.length > 0,
     });
 
+    /**
+     * 장소 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+     */
+    const handlePlaceEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && searchQuery && searchResults.length > 0) {
+            e.preventDefault();
+            onSelectPlace(searchResults[0]);
+            setSearchQuery('');
+        }
+    };
+
     if (isMobile) {
         return (
             <>
@@ -89,6 +100,7 @@ export default function HeaderRight({
                             placeholder="장소 검색"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyDown={handlePlaceEnterKeyPress}
                         />
                     </S.SearchInputWrapper>
 
@@ -98,7 +110,10 @@ export default function HeaderRight({
                             {searchResults.map((place, index) => (
                                 <S.SearchResultItem
                                     key={index}
-                                    onClick={() => onSelectPlace(place)}
+                                    onClick={() => {
+                                        onSelectPlace(place);
+                                        setSearchQuery('');
+                                    }}
                                 >
                                     <S.PlaceName>{place.name}</S.PlaceName>
                                     <S.FloorBadge>{place.floor}층</S.FloorBadge>

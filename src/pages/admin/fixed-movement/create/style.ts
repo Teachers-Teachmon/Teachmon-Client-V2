@@ -66,6 +66,14 @@ export const SectionTitle = styled.h3`
   margin: 0;
 `;
 
+export const EnterHint = styled.span`
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  color: ${colors.error};
+  margin-left: 8px;
+`;
+
 export const InputRow = styled.div`
   display: flex;
   gap: 1rem;
