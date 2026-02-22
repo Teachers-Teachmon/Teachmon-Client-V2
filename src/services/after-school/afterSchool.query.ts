@@ -5,11 +5,8 @@ import {
   getMyAfterSchool,
   getAllAfterSchool,
   getBranchInfo,
-  getAfterSchoolClasses,
-  fetchAffordableReinforcement,
 } from './afterSchool.api';
-import type { AfterSchoolSearchParams } from '@/types/after-school';
-import type { AfterSchoolRequestParams } from '@/types/after-school';
+import type { AfterSchoolSearchParams, AfterSchoolRequestParams } from '@/types/after-school';
 
 export const afterSchoolQuery = {
   // 방과후 수업 목록
@@ -44,17 +41,5 @@ export const afterSchoolQuery = {
     queryOptions({
       queryKey: ['afterSchool.branch'],
       queryFn: getBranchInfo,
-    }),
-
-  // 보강 가능한 시간
-  affordableReinforcement: (month: number, afterschoolid?: string | number) =>
-    queryOptions({
-      queryKey: ['afterSchool.affordableReinforcement', month, String(afterschoolid ?? '')],
-      queryFn: () =>
-        fetchAffordableReinforcement({
-          month,
-          afterschoolid: afterschoolid ?? '',
-        }),
-      enabled: !!afterschoolid,
     }),
 };
