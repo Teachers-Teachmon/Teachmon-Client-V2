@@ -44,10 +44,10 @@ export const SKILL_FEATURES: import('@/types/landing').SkillFeature[] = [
   {
     title: '자습관리',
     description:
-      'AI를 활용하여 선생님들의 일정과 학교 일정을 반영한 자습 감독 자동 배정 기능입니다.\n필요한 경우, 자습 감독 관리 선생님께서 수동으로 수정할 수도 있습니다.',
+      '학생들의 상태를 보고 어떤 학생들을 관리해야할질 알 수 있습니다. 학교도면을 활용하여 위치를 기반으로도 알 수 있어 학생들의 상태를 바로 확인할 수 있습니다.',
     images: [
       { src: '/assets/manage.svg', position: 'left' },
-      { src: '/assets/record.svg', position: 'right' },
+      { src: '/assets/manage2.svg', position: 'right' },
     ],
   },
   {

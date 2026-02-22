@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import Button from '@/components/ui/button';
 import TableLayout from '@/components/layout/table';
 import MovementDetailModal from '@/containers/manage-student/record/movement-detail';
+import ConfirmModal from '@/components/layout/modal/confirm';
 
 import { movementQuery } from '@/services/movement/movement.query';
 import { useDeleteLeaveSeatMutation } from '@/services/movement/movement.mutation';
@@ -28,10 +29,15 @@ export default function RecordTable({
     const [selectAll, setSelectAll] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedLeaveseatId, setSelectedLeaveseatId] = useState<string | null>(null);
+    const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ isOpen: boolean; type: 'movement' | 'evasion'; id: string | number | null }>({
+        isOpen: false,
+        type: 'movement',
+        id: null,
+    });
 
     const { mutate: deleteLeaveSeat } = useDeleteLeaveSeatMutation();
     const { mutate: deleteEvasion } = useDeleteEvasionMutation();
-    const { changeStatus } = useStudentStatus();
+    const { changeStatus, changeBulkStatus } = useStudentStatus();
 
     // 이석 상세 조회
     const { data: detailData } = useQuery({
@@ -44,11 +50,33 @@ export default function RecordTable({
     };
 
     const handleDelete = (leaveseatId: string) => {
-        deleteLeaveSeat(leaveseatId);
+        setDeleteConfirmModal({ isOpen: true, type: 'movement', id: leaveseatId });
     };
 
-    const handleDeleteEvasion = (exitId: number) => {
-        deleteEvasion(exitId);
+    const handleDeleteEvasion = (exitId: number | string) => {
+        console.log('handleDeleteEvasion called with exitId:', exitId, 'type:', typeof exitId);
+        setDeleteConfirmModal({ isOpen: true, type: 'evasion', id: exitId });
+    };
+
+    const handleConfirmDelete = () => {
+        const { type, id } = deleteConfirmModal;
+        console.log('handleConfirmDelete called:', { type, id, idType: typeof id });
+        
+        if (type === 'movement' && typeof id === 'string') {
+            console.log('Calling deleteLeaveSeat with id:', id);
+            deleteLeaveSeat(id);
+        } else if (type === 'evasion' && id !== null) {
+            // id를 그대로 전달 (number 또는 string)
+            console.log('Calling deleteEvasion with id:', id);
+            deleteEvasion(id as number | string);
+        }
+        
+        // 모달 닫기
+        setDeleteConfirmModal({ isOpen: false, type: 'movement', id: null });
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteConfirmModal({ isOpen: false, type: 'movement', id: null });
     };
 
     const handleSelectAll = (checked: boolean) => {
@@ -89,13 +117,23 @@ export default function RecordTable({
     };
 
     const handleBulkStatusChange = (studentNumbers: number[], periodKey: keyof ScheduleHistoryRecord, status: StatusType) => {
-        if (status === '취소') return;
+        const scheduleData = studentNumbers
+            .map(studentNumber => {
+                const student = studentData.find(s => s.student_number === studentNumber);
+                const periodData = student?.[periodKey] as { schedule_id: string; state: StudentState } | null;
+                if (!periodData?.schedule_id) return null;
+                
+                return {
+                    scheduleId: periodData.schedule_id,
+                    status,
+                    currentState: periodData.state,
+                };
+            })
+            .filter((data) => data !== null) as Array<{ scheduleId: string; status: StatusType; currentState?: StudentState }>;
 
-        studentNumbers.forEach(studentNumber => {
-            const student = studentData.find(s => s.student_number === studentNumber);
-            const scheduleId = (student?.[periodKey] as { schedule_id: string } | null)?.schedule_id;
-            if (scheduleId) changeStatus(scheduleId, status);
-        });
+        if (scheduleData.length > 0) {
+            changeBulkStatus(scheduleData);
+        }
     };
 
     const { movementColumns, leaveColumns, studentColumns } = useRecordTableColumns({
@@ -183,6 +221,15 @@ export default function RecordTable({
                     }}
                 />
             )}
+            <ConfirmModal
+                isOpen={deleteConfirmModal.isOpen}
+                onClose={handleCancelDelete}
+                onConfirm={handleConfirmDelete}
+                title={deleteConfirmModal.type === 'movement' ? '이석 삭제' : '이탈 삭제'}
+                message={deleteConfirmModal.type === 'movement' ? '이석 기록을 삭제하시겠습니까?' : '이탈 기록을 삭제하시겠습니까?'}
+                cancelText="취소"
+                confirmText="삭제"
+            />
         </>
     );
 }

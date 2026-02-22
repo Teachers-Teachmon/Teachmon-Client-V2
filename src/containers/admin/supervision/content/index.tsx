@@ -25,12 +25,13 @@ import {
 import * as S from './style';
 import { LEGENDS } from '@/constants/supervision';
 
-type ViewMode = 'default' | 'count' | 'edit';
+type ViewMode = 'default' | 'edit';
 type SortOrder = 'asc' | 'desc';
 
 interface AdminSupervisionContentProps {
   viewMode: ViewMode;
-  onViewModeChange: (mode: ViewMode) => void;
+  isCountOpen: boolean;
+  onCountOpenChange: (open: boolean) => void;
 }
 
 interface TeacherOption {
@@ -94,7 +95,7 @@ const getAssignmentsFromEvents = (events: CalendarEvent[]) => {
 };
 
 const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminSupervisionContentProps>(function AdminSupervisionContent(
-  { viewMode, onViewModeChange },
+  { viewMode, isCountOpen, onCountOpenChange },
   ref,
 ) {
   const currentDate = new Date();
@@ -119,12 +120,17 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
 
   const calendarWrapperRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
+  const isEditMode = viewMode === 'edit';
 
   const { data: supervisionDays } = useAdminSupervisionQuery(month, '');
-  const { data: supervisionRanks } = useSupervisionRankQuery(debouncedRankQuery, sortOrder);
+  const { data: supervisionRanks, refetch: refetchSupervisionRanks } = useSupervisionRankQuery(
+    debouncedRankQuery,
+    sortOrder,
+    false,
+  );
   const { data: searchedTeachers, isFetching: isSearchingTeachers } = useTeacherSearchQuery(
     debouncedTeacherSearchQuery,
-    viewMode === 'edit',
+    isEditMode,
   );
   const createScheduleMutation = useCreateSupervisionScheduleMutation();
   const updateScheduleMutation = useUpdateSupervisionScheduleMutation();
@@ -145,13 +151,13 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   }, [baseEvents, currentMonthKey]);
 
   useEffect(() => {
-    if (viewMode === 'edit') {
+    if (isEditMode) {
       setEvents(draftEventsByMonth[currentMonthKey] ?? baseEvents);
       return;
     }
 
     setEvents(baseEvents);
-  }, [baseEvents, currentMonthKey, draftEventsByMonth, viewMode]);
+  }, [baseEvents, currentMonthKey, draftEventsByMonth, isEditMode]);
 
   const selectedEvent = selectedEventId ? events.find((event) => event.id === selectedEventId) ?? null : null;
   const selectedEventType = selectedEvent ? getEventType(selectedEvent) : null;
@@ -185,6 +191,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
       name: item.name,
       selfStudy: item.self_study_supervision_count,
       leaveSeat: item.leave_seat_supervision_count,
+      seventhPeriod: item.seventh_period_supervision_count,
       total: item.total_supervision_count,
     }));
   }, [supervisionRanks]);
@@ -208,13 +215,13 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   const handleCloseCountPanel = () => {
     setIsClosing(true);
     setTimeout(() => {
-      onViewModeChange('default');
+      onCountOpenChange(false);
       setIsClosing(false);
     }, 300);
   };
 
   const handleEventClick = (event: CalendarEvent, anchorRect?: DOMRect) => {
-    if (viewMode !== 'edit') return;
+    if (!isEditMode) return;
     const eventType = getEventType(event);
     if (!eventType) return;
     setSelectedEventId(event.id);
@@ -228,7 +235,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   };
 
   const handleDateClick = (date: Date, _dayInfo: DayInfo, anchorRect?: DOMRect) => {
-    if (viewMode !== 'edit') return;
+    if (!isEditMode) return;
     const availableTypes = getAvailableTypesForDate(events, date);
     if (availableTypes.length === 0) {
       handleClearSelection();
@@ -387,26 +394,31 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   }), [saveChanges]);
 
   useEffect(() => {
-    if (viewMode !== 'edit') {
+    if (!isEditMode) {
       handleClearSelection();
       setDraftEventsByMonth({});
     }
-    if (viewMode !== 'count') {
+    if (!isCountOpen) {
       setIsClosing(false);
     }
-  }, [viewMode]);
+  }, [isCountOpen, isEditMode]);
 
   useEffect(() => {
-    if (viewMode !== 'count') return;
+    if (!isCountOpen) return;
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = previousOverflow;
     };
-  }, [viewMode]);
+  }, [isCountOpen]);
 
   useEffect(() => {
-    if (viewMode !== 'edit') return;
+    if (!isCountOpen) return;
+    void refetchSupervisionRanks();
+  }, [debouncedRankQuery, isCountOpen, refetchSupervisionRanks, sortOrder]);
+
+  useEffect(() => {
+    if (!isEditMode) return;
     if (!editAnchor) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -431,11 +443,11 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
       document.removeEventListener('mousedown', handlePointerDown);
       document.removeEventListener('touchstart', handlePointerDown);
     };
-  }, [viewMode, editAnchor]);
+  }, [isEditMode, editAnchor]);
 
   return (
     <S.ContentWrapper>
-      {viewMode === 'count' && (
+      {isCountOpen && (
         <S.SidePanel $isClosing={isClosing}>
           <S.SidePanelHeader>
             <S.CloseButton onClick={handleCloseCountPanel}>
@@ -463,27 +475,29 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
             </S.SortButtons>
           </S.SearchContainer>
           <S.TableHeader>
-            <S.TableCell $width="50px">순위</S.TableCell>
-            <S.TableCell $width="80px">이름</S.TableCell>
-            <S.TableCell $width="60px">자습감독</S.TableCell>
-            <S.TableCell $width="60px">이석감독</S.TableCell>
-            <S.TableCell $width="50px">합계</S.TableCell>
+            <S.TableCell $width="44px">순위</S.TableCell>
+            <S.TableCell $width="68px">이름</S.TableCell>
+            <S.TableCell $width="52px">자습</S.TableCell>
+            <S.TableCell $width="52px">이석</S.TableCell>
+            <S.TableCell $width="52px">7교시</S.TableCell>
+            <S.TableCell $width="46px">합계</S.TableCell>
           </S.TableHeader>
           <S.TableBody>
             {filteredCounts.map((item, index) => (
               <S.TableRow key={index}>
-                <S.TableCell $width="50px">{item.rank}위</S.TableCell>
-                <S.TableCell $width="80px">{item.name}</S.TableCell>
-                <S.TableCell $width="60px">{item.selfStudy}회</S.TableCell>
-                <S.TableCell $width="60px">{item.leaveSeat}회</S.TableCell>
-                <S.TableCell $width="50px">{item.total}회</S.TableCell>
+                <S.TableCell $width="44px">{item.rank}위</S.TableCell>
+                <S.TableCell $width="68px">{item.name}</S.TableCell>
+                <S.TableCell $width="52px">{item.selfStudy}회</S.TableCell>
+                <S.TableCell $width="52px">{item.leaveSeat}회</S.TableCell>
+                <S.TableCell $width="52px">{item.seventhPeriod}회</S.TableCell>
+                <S.TableCell $width="46px">{item.total}회</S.TableCell>
               </S.TableRow>
             ))}
           </S.TableBody>
         </S.SidePanel>
       )}
 
-      <S.CalendarWrapper $hasSidePanel={viewMode === 'count'} ref={calendarWrapperRef}>
+      <S.CalendarWrapper $hasSidePanel={isCountOpen} ref={calendarWrapperRef}>
         <Calendar
           year={year}
           month={month}
@@ -496,7 +510,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
           onEventClick={viewMode === 'edit' ? handleEventClick : undefined}
           onDateClick={viewMode === 'edit' ? handleDateClick : undefined}
         />
-        {viewMode === 'edit' && editAnchor && (
+        {isEditMode && editAnchor && (
           <S.FloatingEditor ref={editorRef} $top={editAnchor.top} $left={editAnchor.left}>
             <SearchDropdown
               placeholder="이름을 입력해주세요"
@@ -511,7 +525,8 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
               customWidth="100%"
               noResultText={isSearchingTeachers ? '검색 중입니다...' : '검색 결과가 없습니다'}
             />
-            <S.EditTitle>자습/이석/7교시 선택</S.EditTitle>
+            <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            <S.EditTitle>자습/이석 선택</S.EditTitle>
             <Dropdown
               placeholder="감독 타입 선택"
               items={availableTypeLabels}

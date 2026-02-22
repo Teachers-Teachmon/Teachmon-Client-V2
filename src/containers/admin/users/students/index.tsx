@@ -1,6 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
+import ConfirmModal from '@/components/layout/modal/confirm';
 
 import { useStudentColumns } from '@/hooks/useStudentUserManageColumns';
 import { useActionMenu } from '@/hooks/useActionMenu';
@@ -33,6 +34,11 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localStudents, setLocalStudents] = useState<Student[]>([]);
   const tableWrapperRef = useRef<HTMLDivElement>(null);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ isOpen: boolean; studentId: string | null; studentName: string }>({
+    isOpen: false,
+    studentId: null,
+    studentName: '',
+  });
 
   const { mutate: createStudent } = useCreateStudentMutation();
   const { mutate: updateStudent } = useUpdateStudentMutation();
@@ -124,6 +130,19 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
   };
 
   const handleDelete = (studentId: string) => {
+    const student = students.find(s => s.id === studentId);
+    setDeleteConfirmModal({
+      isOpen: true,
+      studentId,
+      studentName: student?.name || '',
+    });
+    setOpenMenuId(null);
+  };
+
+  const handleConfirmDelete = () => {
+    const studentId = deleteConfirmModal.studentId;
+    if (!studentId) return;
+
     // 새로 추가된 학생인 경우 로컬에서만 삭제
     if (studentId.startsWith('new-')) {
       setLocalStudents(prev => prev.filter(s => s.id !== studentId));
@@ -132,7 +151,7 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
         newSet.delete(studentId);
         return newSet;
       });
-      setOpenMenuId(null);
+      setDeleteConfirmModal({ isOpen: false, studentId: null, studentName: '' });
       return;
     }
 
@@ -145,10 +164,14 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
             newSet.delete(studentId);
             return newSet;
           });
-          setOpenMenuId(null);
+          setDeleteConfirmModal({ isOpen: false, studentId: null, studentName: '' });
         },
       }
     );
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmModal({ isOpen: false, studentId: null, studentName: '' });
   };
 
   const handleAdd = () => {
@@ -229,6 +252,15 @@ export default function Students({ studentsData, isLoading = false }: StudentsPr
         <img src="/icons/common/plusBlue.svg" alt="추가" />
         <span>추가</span>
       </PageS.AddButton>
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="학생 삭제"
+        message={`${deleteConfirmModal.studentName} 학생을 삭제하시겠습니까?`}
+        cancelText="취소"
+        confirmText="삭제"
+      />
     </>
   );
 }

@@ -11,7 +11,7 @@ import { studentQuery } from '@/services/search/search.query';
 import { useSetForbiddenDatesMutation } from '@/services/user-management/user-management.mutation';
 import { useDebounce } from '@/hooks/useDebounce';
 import type { ForbiddenDay } from '@/services/user-management/user-management.api';
-import type { Teacher } from '@/containers/admin/users/teachers';
+import type { Teacher } from '@/types/admin';
 import * as S from './style';
 
 type TabType = '선생님' | '학생';
@@ -25,16 +25,17 @@ export default function AdminUsersPage() {
   const debouncedQuery = useDebounce(searchQuery, 150);
 
   // API 데이터 조회
-  const { data: teachersData, isLoading: isTeachersLoading } = useQuery(
-    userManagementQuery.teachers(activeTab === TAB_TYPES.TEACHER ? debouncedQuery : undefined)
-  );
+  const { data: teachersData, isLoading: isTeachersLoading } = useQuery({
+    ...userManagementQuery.teachers(debouncedQuery),
+    enabled: activeTab === TAB_TYPES.TEACHER,
+  });
   const { data: forbiddenDatesData } = useQuery({
     ...userManagementQuery.forbiddenDates(selectedTeacher?.id || ''),
     enabled: !!selectedTeacher,
   });
   const { data: studentsData, isLoading: isStudentsLoading } = useQuery({
-    ...studentQuery.search(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : ''),
-    enabled: activeTab === TAB_TYPES.STUDENT && debouncedQuery.length > 0,
+    ...studentQuery.search(debouncedQuery),
+    enabled: activeTab === TAB_TYPES.STUDENT,
   });
   const { mutate: setForbiddenDates } = useSetForbiddenDatesMutation();
 

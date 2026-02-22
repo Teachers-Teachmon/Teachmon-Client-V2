@@ -12,6 +12,7 @@ export const STATUS_TYPES = {
   CANCEL: '취소',
   ADMIN: '관리자',
   NORMAL: '일반',
+  VIEWER: '뷰어',
 } as const;
 
 export type StatusType = typeof STATUS_TYPES[keyof typeof STATUS_TYPES];
@@ -23,14 +24,14 @@ export const STATUS_CONFIG: Record<StatusType, {
   textColor: string;
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
-    background: '#ECF3FD',
-    dotColor: colors.primary,
-    textColor: colors.primary,
+    background: '#FFFFFF',
+    dotColor: '#eaeaea',
+    textColor: '#eaeaea',
   },
   [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
-    background: '#ECF3FD',
-    dotColor: colors.primary,
-    textColor: colors.primary,
+    background: '#FFFFFF',
+    dotColor: '#eaeaea',
+    textColor: '#eaeaea',
   },
   [STATUS_TYPES.SELF_STUDY]: {
     background: '#ECFDF3',
@@ -71,5 +72,10 @@ export const STATUS_CONFIG: Record<StatusType, {
     background: '#ECF3FD',
     dotColor: colors.primary,
     textColor: colors.primary,
+  },
+  [STATUS_TYPES.VIEWER]: {
+    background: '#F5F5F5',
+    dotColor: '#9CA4BA',
+    textColor: '#9CA4BA',
   },
 };

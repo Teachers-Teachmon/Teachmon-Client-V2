@@ -49,7 +49,7 @@ export const useStudentStatus = () => {
         },
     });
 
-    const changeStatus = (scheduleId: string, status: StatusType, currentState?: StudentState | null) => {        
+    const changeStatus = (scheduleId: string, status: StatusType, currentState?: StudentState | null, silent = false) => {        
         if (status === '취소' && currentState) {
             cancelMutation.mutate({ scheduleId, state: currentState });
         } else {
@@ -60,5 +60,30 @@ export const useStudentStatus = () => {
         }
     };
 
-    return { changeStatus };
+    const changeBulkStatus = async (
+        scheduleData: Array<{ scheduleId: string; status: StatusType; currentState?: StudentState }>
+    ) => {
+        const promises = scheduleData.map(({ scheduleId, status, currentState }) => {
+            if (status === '취소' && currentState) {
+                return cancelStudentSchedule(scheduleId, currentState);
+            } else {
+                const newState = mapStatusToState(status);
+                if (newState) {
+                    return updateStudentSchedule({ schedule_id: scheduleId, state: newState });
+                }
+            }
+            return Promise.resolve();
+        });
+
+        try {
+            await Promise.all(promises);
+            toast.success(`${scheduleData.length}명의 상태가 변경되었습니다.`);
+            invalidateAll();
+        } catch (error) {
+            console.error('Bulk update error:', error);
+            toast.error('일부 상태 변경에 실패했습니다.');
+        }
+    };
+
+    return { changeStatus, changeBulkStatus };
 };
