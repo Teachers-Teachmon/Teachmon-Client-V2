@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
+import type { ChangeEvent } from 'react';
 import TextInput from '@/components/ui/input/text-input';
 import Button from '@/components/ui/button';
 import { searchQuery } from '@/services/search/search.query';
@@ -110,7 +111,7 @@ export default function TeamFormPage() {
             <TextInput
               placeholder="팀 이름을 입력해주세요"
               value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => setTeamName(e.target.value)}
             />
           </S.FormSection>
 
@@ -120,7 +121,7 @@ export default function TeamFormPage() {
               <TextInput
                 placeholder="학생을 검색해주세요"
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
                 leftIcon={
                   <img
                     src="/icons/common/search.svg"
