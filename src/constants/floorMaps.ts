@@ -12,6 +12,7 @@ export interface FloorElement {
 export const ALL_PLACES = [
   // 1층
   { name: "응용프로그래밍화면구현실", floor: 1 },
+  { name: "강당", floor: 1 },
   { name: "학습준비실", floor: 1 },
   { name: "과학실", floor: 1 },
   { name: "과학준비실", floor: 1 },
@@ -94,6 +95,7 @@ export const ALL_PLACES = [
 
 export const FLOOR_1_ELEMENTS: FloorElement[] = [
   { id: 1, name: "응용프로그래밍화면구현실", x: 23, y: 13, width: 7, height: 6, whether: true },
+  { id: 42, name: "강당", x: -2, y: 10, width: 10, height: 80, whether: true },
   { id: 2, name: "학습준비실", x: 30, y: 13, width: 3, height: 6, whether: true },
   { id: 3, name: "과학실", x: 33, y: 13, width: 8, height: 6, whether: true },
   { id: 4, name: "과학준비실", x: 41, y: 13, width: 3, height: 6, whether: true },

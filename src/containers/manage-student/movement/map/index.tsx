@@ -66,7 +66,7 @@ export default function MovementMap({ onBack, formData }: MovementMapProps) {
         if (placeName && placeName !== '' && placeName !== 'X' && !occupiedPlaces.has(placeName)) {
             try {
                 // 장소 검색 API로 실제 place_id 획득
-                const places = await searchPlaces(placeName);
+                const places = await searchPlaces(placeName, true);
                 const place = places.find(p => p.name === placeName);
                 
                 if (!place) {

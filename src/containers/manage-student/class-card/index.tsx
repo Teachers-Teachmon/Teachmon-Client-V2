@@ -63,18 +63,18 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                                 key={student.id}
                                 $stateColor={displayColor}
                                 $stateBgColor={displayBgColor}
-                                $hasState={!!student.state}
+                                $hasState={!!student.state && !isAfterSchool}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    // state가 있을 때만 선택 가능
-                                    if (student.state) {
+                                    // state가 있고 방과후가 아닐 때만 선택 가능
+                                    if (student.state && !isAfterSchool) {
                                         onStudentSelect(student.id);
                                     }
                                 }}
                             >
                                 <S.StudentNumber>{String(student.number).slice(-2)}</S.StudentNumber>
                                 <S.StudentName>{student.name}</S.StudentName>
-                                {selectedStudentId === student.id && student.state && (
+                                {selectedStudentId === student.id && student.state && !isAfterSchool && (
                                     <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
                                         {getStatusOptions(student).map((status, index) => (
                                             <S.StatusBadgeWrapper 

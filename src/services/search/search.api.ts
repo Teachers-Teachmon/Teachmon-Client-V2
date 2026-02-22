@@ -13,9 +13,10 @@ export const searchStudents = async (query: string): Promise<StudentSearchRespon
   return response.data;
 };
 
-export const searchPlaces = async (query: string): Promise<PlaceSearchResponse[]> => {
+export const searchPlaces = async (query: string, skipLoading = false): Promise<PlaceSearchResponse[]> => {
   const response = await axiosInstance.get<PlaceSearchResponse[]>('/place/search', {
     params: { query },
+    skipLoading,
   });
   return response.data;
 };

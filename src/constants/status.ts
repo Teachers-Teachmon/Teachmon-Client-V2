@@ -22,56 +22,67 @@ export const STATUS_CONFIG: Record<StatusType, {
   background: string;
   dotColor: string;
   textColor: string;
+  mapBackground: string; // 지도 전용 배경색
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
     background: '#FFFFFF',
     dotColor: '#eaeaea',
     textColor: '#eaeaea',
+    mapBackground: '#FFFFFF', // 흰색
   },
   [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
     background: '#FFFFFF',
     dotColor: '#eaeaea',
     textColor: '#eaeaea',
+    mapBackground: '#FFFFFF', // 흰색
   },
   [STATUS_TYPES.SELF_STUDY]: {
     background: '#ECFDF3',
     dotColor: '#14BA6D',
     textColor: '#037847',
+    mapBackground: '#84FFC7', // 진한 초록색
   },
   [STATUS_TYPES.LEAVE_SEAT]: {
     background: '#F0ECFD',
     dotColor: '#6A1EC1',
     textColor: '#6A1EC1',
+    mapBackground: '#CCBCFF', // 연한 보라색
   },
   [STATUS_TYPES.EARLY_LEAVE]: {
     background: '#FFF6E4',
     dotColor: '#FF9000',
     textColor: '#FF9000',
+    mapBackground: '#FFD699', // 진한 주황색
   },
   [STATUS_TYPES.ABSENT]: {
     background: '#FDF0EC',
     dotColor: colors.subcolor,
     textColor: colors.subcolor,
+    mapBackground: '#FFBAA8', // 진한 연한 빨강
   },
   [STATUS_TYPES.DROPOUT]: {
     background: '#FFEBEA',
     dotColor: colors.exit,
     textColor: colors.exit,
+    mapBackground: '#F87067', // 진한 빨간색
   },
   [STATUS_TYPES.CANCEL]: {
     background: '#F5F5F5',
     dotColor: '#9CA4BA',
     textColor: '#9CA4BA',
+    mapBackground: '#D1D5DB', // 진한 회색
   },
   [STATUS_TYPES.ADMIN]: {
     background: '#FFF2F1',
     dotColor: colors.subcolor,
     textColor: colors.subcolor,
+    mapBackground: '#FFBAA8', // 진한 연한 빨강
   },
   [STATUS_TYPES.NORMAL]: {
     background: '#ECF3FD',
     dotColor: colors.primary,
     textColor: colors.primary,
+    mapBackground: '#FFFFFF', // 흰색
   },
   [STATUS_TYPES.VIEWER]: {
     background: '#F5F5F5',
