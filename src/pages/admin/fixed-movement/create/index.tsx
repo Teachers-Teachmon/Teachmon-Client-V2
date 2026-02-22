@@ -114,6 +114,54 @@ export default function FixedMovementFormPage() {
     setSelectedStudents(selectedStudents.filter(s => s.studentNumber !== studentNumber));
   };
 
+  /**
+   * 학생 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchInput && studentResults.length > 0) {
+      e.preventDefault();
+      
+      const filteredResults = studentResults.filter(student => 
+        !selectedStudents.find(s => 
+          (s.id && s.id === student.id) || 
+          (!s.id && s.studentNumber === student.number)
+        )
+      );
+      
+      if (filteredResults.length > 0) {
+        const student = filteredResults[0];
+        handleAddStudent({ 
+          id: student.id as number, 
+          studentNumber: student.number, 
+          name: student.name, 
+          grade: student.grade, 
+          classNumber: student.classNumber 
+        });
+      }
+    }
+  };
+
+  /**
+   * 팀 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handleTeamEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && teamSearchInput && teamResults.length > 0) {
+      e.preventDefault();
+      const team = teamResults[0];
+      handleSelectTeam(team.name, team.members);
+    }
+  };
+
+  /**
+   * 장소 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handlePlaceEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && placeSearchInput && placeResults.length > 0) {
+      e.preventDefault();
+      handleSelectPlace(placeResults[0]);
+    }
+  };
+
   const handleCancel = () => {
     navigate('/admin/fixed-movement');
   };
@@ -181,7 +229,10 @@ export default function FixedMovementFormPage() {
           </S.FormSection>
 
           <S.FormSection>
-            <S.SectionTitle>장소</S.SectionTitle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <S.SectionTitle>장소</S.SectionTitle>
+              <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            </div>
             <S.DropdownWrapper>
               <TextInput
                 placeholder="장소를 검색해주세요"
@@ -193,6 +244,7 @@ export default function FixedMovementFormPage() {
                     setLocation('');
                   }
                 }}
+                onKeyDown={handlePlaceEnterKeyPress}
                 leftIcon={
                   <img
                     src="/icons/common/search.svg"
@@ -227,7 +279,10 @@ export default function FixedMovementFormPage() {
 
           <S.FormSection>
             <S.ToggleRow>
-              <S.SectionTitle>학생</S.SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <S.SectionTitle>학생</S.SectionTitle>
+                <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+              </div>
               <S.ToggleContent>
                 <S.SectionTitle>팀</S.SectionTitle>
                 <S.Toggle
@@ -250,6 +305,7 @@ export default function FixedMovementFormPage() {
                     setSearchInput(e.target.value);
                   }
                 }}
+                onKeyDown={isTeamMode ? handleTeamEnterKeyPress : handleStudentEnterKeyPress}
                 leftIcon={
                   <img 
                     src="/icons/common/search.svg" 
@@ -273,7 +329,7 @@ export default function FixedMovementFormPage() {
                       <S.StudentDropdownItem 
                         key={student.id}
                         onClick={() => handleAddStudent({ 
-                          id: student.id, 
+                          id: student.id as number, 
                           studentNumber: student.number, 
                           name: student.name, 
                           grade: student.grade, 

@@ -147,6 +147,14 @@ export const StudentHeader = styled.div`
     gap: 20px;
 `;
 
+export const EnterHint = styled.span`
+    font-family: 'Paperlogy', sans-serif;
+    font-weight: 400;
+    font-size: 13px;
+    color: ${colors.error};
+    margin-left: 8px;
+`;
+
 export const TeamToggle = styled.div`
     display: flex;
     align-items: center;

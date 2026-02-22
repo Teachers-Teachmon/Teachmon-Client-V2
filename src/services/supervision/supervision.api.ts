@@ -27,6 +27,7 @@ export interface SupervisionRankResponse {
   name: string;
   self_study_supervision_count: number;
   leave_seat_supervision_count: number;
+  seventh_period_supervision_count: number;
   total_supervision_count: number;
 }
 

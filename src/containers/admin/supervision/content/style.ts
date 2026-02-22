@@ -168,8 +168,16 @@ export const EditTitle = styled.h3`
   color: ${colors.text};
 `;
 
+export const EnterHint = styled.span`
+  font-family: 'Paperlogy', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  color: ${colors.error};
+  margin-top: 4px;
+`;
+
 export const FloatingEditor = styled.div<{ $top: number; $left: number }>`
-  position: absolute;
+  position: fixed;
   top: ${({ $top }) => `${$top}px`};
   left: ${({ $left }) => `${$left}px`};
   width: ${SUPERVISION_EDITOR_WIDTH}px;
@@ -182,7 +190,7 @@ export const FloatingEditor = styled.div<{ $top: number; $left: number }>`
   border-radius: ${radius.sm};
   background: ${colors.background};
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  z-index: 20;
+  z-index: 120;
 
   ${mq.mobile} {
     position: fixed;

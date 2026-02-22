@@ -6,7 +6,7 @@
 
 export type ExchangeStatus = 'PENDING' | 'REJECTED' | 'ACCEPTED' | 'CHECKED';
 
-export type SupervisionType = 'self_study' | 'leave_seat' | 'makeup';
+export type SupervisionType = 'self_study' | 'leave_seat' | 'seventh_period' | 'makeup';
 
 // ============================================
 // 교시 관련 공통 타입

@@ -12,6 +12,7 @@ export const STATUS_TYPES = {
   CANCEL: '취소',
   ADMIN: '관리자',
   NORMAL: '일반',
+  VIEWER: '뷰어',
 } as const;
 
 export type StatusType = typeof STATUS_TYPES[keyof typeof STATUS_TYPES];
@@ -24,15 +25,15 @@ export const STATUS_CONFIG: Record<StatusType, {
   mapBackground: string; // 지도 전용 배경색
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
-    background: '#ECF3FD',
-    dotColor: colors.primary,
-    textColor: colors.primary,
+    background: '#FFFFFF',
+    dotColor: '#eaeaea',
+    textColor: '#eaeaea',
     mapBackground: '#FFFFFF', // 흰색
   },
   [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
-    background: '#ECF3FD',
-    dotColor: colors.primary,
-    textColor: colors.primary,
+    background: '#FFFFFF',
+    dotColor: '#eaeaea',
+    textColor: '#eaeaea',
     mapBackground: '#FFFFFF', // 흰색
   },
   [STATUS_TYPES.SELF_STUDY]: {
@@ -82,5 +83,10 @@ export const STATUS_CONFIG: Record<StatusType, {
     dotColor: colors.primary,
     textColor: colors.primary,
     mapBackground: '#FFFFFF', // 흰색
+  },
+  [STATUS_TYPES.VIEWER]: {
+    background: '#F5F5F5',
+    dotColor: '#9CA4BA',
+    textColor: '#9CA4BA',
   },
 };

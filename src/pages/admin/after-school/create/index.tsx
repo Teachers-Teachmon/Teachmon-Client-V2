@@ -55,14 +55,17 @@ export default function AfterSchoolFormPage() {
   const [selectedStudents, setSelectedStudents] = useState<Student[]>(
     isEditMode && editData ? editData.students.map((s, idx) => {
       const parts = s.split(' ');
-      const studentNumber = parseInt(parts[0]) || 0;
+      const fullStudentNumber = parseInt(parts[0]) || 0;
       const name = parts.slice(1).join(' ');
+      const studentStr = fullStudentNumber.toString();
+      const classNum = studentStr.length >= 5 ? parseInt(studentStr.substring(1, 2)) : 0;
+      const studentNumber = studentStr.length >= 5 ? parseInt(studentStr.substring(2)) : parseInt(studentStr);
       return {
         id: (editData.studentIds?.[idx] ?? 0).toString(),
         studentNumber,
         name,
         grade: editData.grade,
-        classNumber: 1,
+        classNumber: classNum,
       };
     }) : []
   );
@@ -124,13 +127,43 @@ export default function AfterSchoolFormPage() {
     const grade = (student as Student).grade ?? (student as StudentSearchResponse).grade;
     const classNumber = (student as Student).classNumber ?? (student as StudentSearchResponse).classNumber;
 
-    const displayNumber = `${grade}${classNumber}${String(baseNumber).padStart(2, '0')}`;
+    const displayNumber = `${baseNumber.toString().padStart(4, '0')}`;
   
     return `${displayNumber} ${name}`;
   };
 
   const handleRemoveStudent = (studentId: string) => {
     setSelectedStudents(selectedStudents.filter(s => s.id !== studentId));
+  };
+
+  /**
+   * 학생/팀 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && studentSearchQuery) {
+      e.preventDefault();
+      
+      if (isTeamMode && teamsData.length > 0) {
+        const filteredTeams = teamsData.filter((team: TeamSearchResponse) => {
+          const teamMemberIds = new Set(team.members.map((member) => member.id.toString()));
+          return !team.members.every((member) =>
+            selectedStudents.some((selected) => selected.id === member.id.toString())
+          ) && teamMemberIds.size > 0;
+        });
+        
+        if (filteredTeams.length > 0) {
+          handleAddStudent(filteredTeams[0]);
+        }
+      } else if (!isTeamMode && studentsData.length > 0) {
+        const filteredStudents = studentsData.filter((student: StudentSearchResponse) =>
+          !selectedStudents.find((s) => s.id === student.id.toString())
+        );
+        
+        if (filteredStudents.length > 0) {
+          handleAddStudent(filteredStudents[0]);
+        }
+      }
+    }
   };
 
   const handleCancel = () => {
@@ -207,7 +240,10 @@ export default function AfterSchoolFormPage() {
       <S.Content>
         <S.Form>
           <S.FormSection>
-            <S.SectionTitle>담당 교사</S.SectionTitle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <S.SectionTitle>담당 교사</S.SectionTitle>
+              <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            </div>
             <SearchDropdown
               placeholder="교사"
               items={teachersData.map((t: TeacherSearchResponse) => t.name)}
@@ -223,7 +259,10 @@ export default function AfterSchoolFormPage() {
 
 
           <S.FormSection>
-            <S.SectionTitle>장소</S.SectionTitle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <S.SectionTitle>장소</S.SectionTitle>
+              <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            </div>
             <SearchDropdown
               placeholder="장소"
               items={placesData.map((p: PlaceSearchResponse) => p.name)}
@@ -259,7 +298,10 @@ export default function AfterSchoolFormPage() {
 
           <S.FormSection>
             <S.ToggleRow>
-              <S.SectionTitle>학생</S.SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <S.SectionTitle>학생</S.SectionTitle>
+                <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+              </div>
               <S.ToggleContent>
                 <S.SectionTitle>팀</S.SectionTitle>
                 <S.Toggle
@@ -276,6 +318,7 @@ export default function AfterSchoolFormPage() {
                 placeholder="학생을 입력해주세요"
                 value={studentSearchQuery}
                 onChange={(e) => setStudentSearchQuery(e.target.value)}
+                onKeyDown={handleStudentEnterKeyPress}
                 leftIcon={
                   <img
                     src="/icons/common/search.svg"

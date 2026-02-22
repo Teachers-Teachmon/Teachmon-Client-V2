@@ -48,6 +48,7 @@ export interface SupervisionSchedulePayload {
   day: string;
   self_study_supervision_teacher_id: number | null;
   leave_seat_supervision_teacher_id: number | null;
+  seventh_period_supervision_teacher_id: number | null;
 }
 
 export const createSupervisionSchedule = async (payload: SupervisionSchedulePayload) => {

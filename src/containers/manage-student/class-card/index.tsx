@@ -55,16 +55,8 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                 ) : (
                     students.map((student) => {
                         const stateInfo = getStudentStateInfo(student.state);
-                        const isAfterSchool = student.state === 'AFTER_SCHOOL' || student.state === 'AFTER_SCHOOL_REINFORCEMENT';
-                        
-                        // AFTER_SCHOOL이면 흰색, state가 null이면 회색으로 표시
-                        let displayColor = stateInfo?.color || '#9CA4BA';
-                        let displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
-                        
-                        if (isAfterSchool) {
-                            displayColor = '#eaeaea';
-                            displayBgColor = '#FFFFFF';
-                        }
+                        const displayColor = stateInfo?.color || '#9CA4BA';
+                        const displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
                         
                         return (
                             <S.StudentCard 
