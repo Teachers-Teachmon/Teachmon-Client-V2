@@ -6,7 +6,7 @@ import SearchDropdown from '@/components/ui/input/dropdown/search';
 import TextInput from '@/components/ui/input/text-input';
 import type { CalendarEvent, DayInfo } from '@/types/calendar';
 import type { SupervisionCount } from '@/types/admin';
-import { SUPERVISION_LABEL_TO_TYPE, SUPERVISION_TYPE_LABELS, SUPERVISION_TYPE_STYLES, type SupervisionType } from '@/constants/adminSupervision';
+import { SUPERVISION_LABEL_TO_TYPE, SUPERVISION_TYPE_LABELS, SUPERVISION_TYPE_STYLES, type AdminSupervisionType } from '@/constants/adminSupervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAdminSupervisionQuery, useSupervisionRankQuery, useTeacherSearchQuery } from '@/services/admin/supervision/adminSupervision.query';
@@ -230,8 +230,8 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
     }
   };
 
-  const handleTeacherSelect = (teacher: TeacherOption) => {
-    setSelectedTeacher(teacher);
+  const handleTeacherSelect = (teacher: TeacherOption | undefined) => {
+    setSelectedTeacher(teacher ?? null);
     setSelectedType('');
   };
 
@@ -273,7 +273,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
         }
 
         if (otherEvent && event.id === otherEvent.id) {
-          const fallbackType: SupervisionType = selectedEventType ?? 'self_study';
+          const fallbackType: AdminSupervisionType = selectedEventType ?? 'self_study';
           const fallbackStyle = SUPERVISION_TYPE_STYLES[fallbackType];
           return {
             ...event,
@@ -485,7 +485,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
               placeholder="이름을 입력해주세요"
               searchPlaceholder="선생님 검색"
               items={filteredTeacherOptions}
-              value={selectedTeacher}
+              value={selectedTeacher ?? undefined}
               onChange={handleTeacherSelect}
               searchQuery={teacherSearchQuery}
               onSearchChange={setTeacherSearchQuery}

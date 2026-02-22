@@ -35,14 +35,18 @@ export default function AuthProvider({ children }: AuthProviderProps) {
           toast.success("이미 로그인한 계정으로 이동합니다.")
           navigate('/main', { replace: true });
         }
-      } catch (error: any) {
-        // 401 또는 403 에러만 인증 실패로 간주
-        if (error?.response?.status === 401 || error?.response?.status === 403) {
-          clearAuth();
-          clearUser();
-        }
-        // 500 등 다른 에러는 토큰을 유지하고 앱은 계속 실행
-      } finally {
+      } catch (error: unknown) {
+          const err = error as {
+            response?: {
+              status?: number;
+            };
+          };
+
+          if (err.response?.status === 401 || err.response?.status === 403) {
+            clearAuth();
+            clearUser();
+          }
+        } finally {
         setIsInitialized(true);
       }
     };

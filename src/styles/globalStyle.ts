@@ -97,5 +97,9 @@ export const globalStyles = css`
     font-family: 'Paperlogy', sans-serif;
     background-color: ${colors.background};
     color: ${colors.text};
+
+    #fp-nav{
+      display: none !important;
+    }
   }
 `

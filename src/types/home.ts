@@ -1,26 +1,17 @@
-export type ExchangeStatus = 'PENDING' | 'REJECTED' | 'ACCEPTED';
+// Home 페이지 관련 타입
+// 공통 타입은 common.ts에서 import
 
-export type SupervisionType = 'self_study' | 'leave_seat';
+export {
+  type ExchangeStatus,
+  type SupervisionType,
+  type Teacher,
+  type ExchangeParty,
+  type ExchangeRequest,
+  type ExitStudent,
+  type ExchangeDetailContentProps,
+} from './common';
 
-export interface Teacher {
-  id: number;
-  name: string;
-}
-
-export interface ExchangeParty {
-  teacher: Teacher;
-  day: string;
-  type: SupervisionType;
-}
-
-export interface ExchangeRequest {
-  id: number;
-  requestor: ExchangeParty;
-  responser: ExchangeParty;
-  status: ExchangeStatus;
-  reason?: string;
-}
-
+// Home 페이지 전용 PeriodType (7~11교시만)
 export type PeriodType =
   | 'SEVEN_PERIOD'
   | 'EIGHT_PERIOD'
@@ -29,22 +20,4 @@ export type PeriodType =
   | 'TEN_PERIOD'
   | 'TEN_AND_ELEVEN_PERIOD';
 
-export interface ExitStudent {
-  exit_id: number;
-  day: string;
-  teacher: string;
-  number: number;
-  name: string;
-  period: PeriodType;
-}
-
-export interface ExchangeDetailContentProps {
-  exchange: ExchangeRequest;
-  currentTeacherId: number;
-  onClose: () => void;
-  onAccept?: () => void;
-  onReject?: () => void;
-  onReasonChange?: (value: string) => void;
-  onSubmit?: () => void;
-}
 

@@ -5,9 +5,6 @@ import 'fullpage.js/dist/fullpage.css';
 import { FullPageWrapper } from './style';
 import type { FullPageLayoutProps, FullPageSection } from '@/types/fullpage';
 
-// fullpage_api 전역 선언
-declare const fullpage_api: any;
-
 const FullPageLayout: React.FC<FullPageLayoutProps> = ({
   sections,
   licenseKey = 'OPEN-SOURCE-GPLV3-LICENSE',
@@ -19,7 +16,6 @@ const FullPageLayout: React.FC<FullPageLayoutProps> = ({
   hasHeader = false,
   onLeave,
   onSectionChange,
-  customOptions = {},
 }) => {
   const [fpInstance, setFpInstance] = useState<any>(null);
   const isScrolling = useRef(false);
@@ -30,12 +26,13 @@ const FullPageLayout: React.FC<FullPageLayoutProps> = ({
       .filter(Boolean);
 
     const instance = new fullpage('#fullpage', {
-      licenseKey: 'OPEN-SOURCE-GPLV3-LICENSE',
-      autoScrolling: true,
-      navigation: false,
-      credits: false,
+      licenseKey,
+      autoScrolling,
+      navigation,
+      credits,
       anchors,
-      scrollingSpeed: 700,
+      scrollingSpeed,
+      fitToSection,
       onLeave: (origin: any, destination: any, direction: string) => {
         if (isScrolling.current) {
           return false;
@@ -86,31 +83,3 @@ const FullPageLayout: React.FC<FullPageLayoutProps> = ({
 
 export default FullPageLayout;
 export type { FullPageSection };
-
-// 헬퍼 함수: 섹션으로 이동
-export const moveToSection = (anchor: string | number) => {
-  if (window.fullpage_api) {
-    window.fullpage_api.moveTo(anchor);
-  }
-};
-
-// 헬퍼 함수: 다음 섹션으로 이동
-export const moveToNextSection = () => {
-  if (window.fullpage_api) {
-    window.fullpage_api.moveSectionDown();
-  }
-};
-
-// 헬퍼 함수: 이전 섹션으로 이동
-export const moveToPrevSection = () => {
-  if (window.fullpage_api) {
-    window.fullpage_api.moveSectionUp();
-  }
-};
-
-// 전역 타입 선언
-declare global {
-  interface Window {
-    fullpage_api: any;
-  }
-}

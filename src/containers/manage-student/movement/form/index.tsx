@@ -8,7 +8,7 @@ import Button from '@/components/ui/button';
 import { PERIOD_OPTIONS, type Period, type MovementFormData } from '@/constants/movement';
 import { studentQuery, teamQuery } from '@/services/search/search.query';
 import { useDebounce } from '@/hooks/useDebounce';
-import type { Student, Team } from '@/types/search';
+import type { StudentSearchResponse, TeamSearchResponse } from '@/types/search';
 import type { LeaveSeatDetail } from '@/types/movement';
 import * as S from './style';
 import { getTodayDate } from '@/utils/period';
@@ -117,18 +117,18 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
      * - 학생 모드: 선택한 학생을 리스트에 추가
      * - 검색어 초기화
      */
-    const handleSelectResult = (result: Student | Team) => {
+    const handleSelectResult = (result: StudentSearchResponse | TeamSearchResponse) => {
         if (isTeamMode) {
-            const team = result as Team;
+            const team = result as TeamSearchResponse;
             const newMembers = team.members
-                .filter(m => !selectedStudents.some(s => s.id === m.id))
-                .map(m => ({
+                .filter((m) => !selectedStudents.some(s => s.id === m.id))
+                .map((m) => ({
                     id: m.id,
                     display: formatStudent(m),
                 }));
             setSelectedStudents([...selectedStudents, ...newMembers]);
         } else {
-            setSelectedStudents([...selectedStudents, { id: result.id, display: formatStudent(result as Student) }]);
+            setSelectedStudents([...selectedStudents, { id: result.id as number, display: formatStudent(result as StudentSearchResponse) }]);
         }
         setStudentSearch('');
     };
@@ -208,7 +208,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                             {studentSearch && searchResults.length > 0 && (
                                 <S.StudentDropdown>
                                     {searchResults
-                                        .filter((result: Student | Team) => {
+                                        .filter((result: StudentSearchResponse | TeamSearchResponse) => {
                                             if (isTeamMode) {
                                                 // 팀은 중복 체크 안 함 (멤버가 이미 추가되어 있을 수 있음)
                                                 return true;
@@ -216,10 +216,10 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                                             return !selectedStudents.some(s => s.id === result.id);
                                         })
                                         .slice(0, 3)
-                                        .map((result: Student | Team) => {
+                                        .map((result: StudentSearchResponse | TeamSearchResponse) => {
                                             const displayText = isTeamMode 
-                                                ? (result as Team).name 
-                                                : formatStudent(result as Student);
+                                                ? (result as TeamSearchResponse).name 
+                                                : formatStudent(result as StudentSearchResponse);
                                             return (
                                                 <S.StudentDropdownItem 
                                                     key={result.id}

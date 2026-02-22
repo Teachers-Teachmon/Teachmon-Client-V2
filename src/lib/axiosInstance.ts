@@ -4,6 +4,7 @@ import { reissueToken } from '@/services/auth/auth.api';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { useLoadingStore } from '@/stores/useLoadingStore';
+import { showErrorToast } from '@/utils/error';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
@@ -56,8 +57,8 @@ axiosInstance.interceptors.response.use(
     async (error: AxiosError) => {
         const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-        // 401 에러이고 재시도하지 않은 경우
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // 401 또는 403 에러이고 재시도하지 않은 경우
+        if ((error.response?.status === 401 || error.response?.status === 403) && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
@@ -70,16 +71,25 @@ axiosInstance.interceptors.response.use(
                 // 원래 요청 재시도 (기본 헤더가 이미 업데이트되어 있음)
                 return axiosInstance(originalRequest);
             } catch (reissueError) {
-                // 토큰 재발급 실패 시 로그아웃 처리
+                // 토큰 재발급 실패 시 로그아웃 처리 (toast 없이)
                 useAuthStore.getState().clearAuth();
                 useUserStore.getState().clearUser();
-                window.location.href = '/';
+                
+                // 현재 페이지가 루트가 아닐 때만 리다이렉트
+                if (window.location.pathname !== '/') {
+                    window.location.href = '/';
+                }
+                
                 return Promise.reject(reissueError);
             }
         }
         
         if (!error.config?.skipLoading) {
             useLoadingStore.getState().stopLoading();
+        }
+
+        if (!error.config?.skipErrorToast) {
+            showErrorToast(error);
         }
 
         return Promise.reject(error);

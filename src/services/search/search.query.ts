@@ -6,9 +6,9 @@ const hasQuery = (query?: string) => Boolean(query && query.length > 0);
 export const searchQuery = {
   students: (query?: string) =>
     queryOptions({
-      queryKey: ['student.search', query],
-      queryFn: () => searchStudents(query ?? ''),
-      enabled: hasQuery(query),
+      queryKey: ['search.students', query],
+      queryFn: () => searchStudents(query),
+      enabled: query.length > 0,
     }),
 
   places: (query?: string) =>
@@ -31,16 +31,4 @@ export const searchQuery = {
       queryFn: () => searchTeams(query ?? ''),
       enabled: hasQuery(query),
     }),
-};
-
-export const studentQuery = {
-  search: searchQuery.students,
-};
-
-export const placeQuery = {
-  search: searchQuery.places,
-};
-
-export const teamQuery = {
-  search: searchQuery.teams,
 };

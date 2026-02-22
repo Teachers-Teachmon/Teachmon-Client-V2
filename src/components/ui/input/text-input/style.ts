@@ -11,6 +11,7 @@ export const InputWrapper = styled.div`
 export const Label = styled.label`
   font-size: 0.875rem;
   font-weight: 500;
+  font-family: 'Paperlogy', sans-serif;
   color: ${colors.n04};
 `
 
@@ -50,6 +51,7 @@ export const StyledInput = styled.input<{
   height: ${props => props.$height || '3rem'};
   padding: ${props => props.$hasLeftIcon ? '0.75rem 1rem 0.75rem 3rem' : props.$padding || '0.75rem 1rem'};
   font-size: ${props => props.$fontSize || '1rem'};
+  font-family: 'Paperlogy', sans-serif;
   border: 1px solid ${props => props.$hasError ? '#ef4444' : colors.n03};
   border-radius: ${props => props.$borderRadius || '0.5rem'};
   outline: none;
@@ -58,6 +60,7 @@ export const StyledInput = styled.input<{
   
   &::placeholder {
     color: ${colors.n03};
+    font-family: 'Paperlogy', sans-serif;
   }
   
   &:focus {
@@ -73,10 +76,12 @@ export const StyledInput = styled.input<{
 
 export const ErrorMessage = styled.span`
   font-size: 0.75rem;
+  font-family: 'Paperlogy', sans-serif;
   color: #ef4444;
 `
 
 export const HelperText = styled.span`
   font-size: 0.75rem;
+  font-family: 'Paperlogy', sans-serif;
   color: #6b7280;
 `

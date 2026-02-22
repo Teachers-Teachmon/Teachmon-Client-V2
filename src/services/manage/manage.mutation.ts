@@ -7,7 +7,7 @@ export const useUpdateStudentScheduleMutation = () => {
 
   return useMutation({
     mutationFn: updateStudentSchedule,
-    onSuccess: (data) => {
+    onSuccess: (data: { message: string }) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['manage.studentSchedule'] });
       queryClient.invalidateQueries({ queryKey: ['manage.placeSchedule'] });
@@ -24,7 +24,7 @@ export const useDeleteEvasionMutation = () => {
 
   return useMutation({
     mutationFn: deleteEvasionRecord,
-    onSuccess: (data) => {
+    onSuccess: (data: { message: string }) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['manage.dailyEvasion'] });
     },
@@ -39,7 +39,7 @@ export const useDeleteExitHistoryMutation = () => {
 
   return useMutation({
     mutationFn: deleteEvasionRecord,
-    onSuccess: (data) => {
+    onSuccess: (data: { message: string }) => {
       toast.success(data.message);
       queryClient.invalidateQueries({ queryKey: ['manage.weeklyExitHistory'] });
     },

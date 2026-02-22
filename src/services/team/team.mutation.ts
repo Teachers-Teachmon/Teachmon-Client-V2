@@ -9,8 +9,8 @@ export const useCreateTeamMutation = () => {
 
   return useMutation({
     mutationFn: createTeam,
-    onSuccess: ({ message }) => {
-      toast.success(message || '팀을 생성하였습니다.');
+    onSuccess: (data: { message?: string }) => {
+      toast.success(data.message || '팀을 생성하였습니다.');
       queryClient.invalidateQueries({ queryKey: ['team.list'] });
       navigate('/admin/fixed-movement/team-settings');
     },
@@ -26,8 +26,8 @@ export const useUpdateTeamMutation = () => {
 
   return useMutation({
     mutationFn: updateTeam,
-    onSuccess: ({ message }) => {
-      toast.success(message || '팀을 수정하였습니다.');
+    onSuccess: (data: { message?: string }) => {
+      toast.success(data.message || '팀을 수정하였습니다.');
       queryClient.invalidateQueries({ queryKey: ['team.list'] });
       navigate('/admin/fixed-movement/team-settings');
     },
@@ -42,8 +42,8 @@ export const useDeleteTeamMutation = () => {
 
   return useMutation({
     mutationFn: deleteTeam,
-    onSuccess: ({ message }) => {
-      toast.success(message || '팀을 삭제하였습니다.');
+    onSuccess: (data: { message?: string }) => {
+      toast.success(data.message || '팀을 삭제하였습니다.');
       queryClient.invalidateQueries({ queryKey: ['team.list'] });
     },
     onError: () => {

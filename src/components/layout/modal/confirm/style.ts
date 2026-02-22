@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { mq } from "@/styles/media";
 
 export const Container = styled.div`
   display: flex;

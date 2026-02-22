@@ -1,3 +1,5 @@
+import type { SupervisionType } from './common';
+
 export interface CalendarEvent {
   id: string
   date: Date
@@ -5,7 +7,7 @@ export interface CalendarEvent {
   bgColor: string
   textColor: string
   teacherId?: number
-  supervisionType?: 'self_study' | 'leave_seat' | 'makeup'
+  supervisionType?: SupervisionType
 }
 
 export interface CalendarRangeEvent {
@@ -59,7 +61,7 @@ export interface CalendarProps {
   showMobilePopover?: boolean
   selectable?: boolean
   exchangeMode?: boolean
-  currentTeacherId?: number
+  currentTeacherId?: number | string
   selectedMyEvent?: CalendarEvent | null
   onMyEventSelect?: (event: CalendarEvent) => void
   onTargetEventSelect?: (event: CalendarEvent) => void

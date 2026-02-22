@@ -4,7 +4,7 @@ import Button from '@/components/ui/button';
 
 import { useStudentColumns } from '@/hooks/useStudentUserManageColumns';
 import { useActionMenu } from '@/hooks/useActionMenu';
-import type { Student as ApiStudent } from '@/services/search/search.api';
+import type { StudentSearchResponse } from '@/types/search';
 import { 
   useCreateStudentMutation, 
   useUpdateStudentMutation, 
@@ -23,7 +23,7 @@ export interface Student {
 }
 
 interface StudentsProps {
-  studentsData: ApiStudent[];
+  studentsData: StudentSearchResponse[];
   isLoading?: boolean;
 }
 

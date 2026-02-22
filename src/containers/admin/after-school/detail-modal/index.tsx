@@ -1,4 +1,4 @@
-import type { AdminAfterSchoolClass } from '@/types/afterSchool';
+import type { AdminAfterSchoolClass } from '@/types/after-school';
 import Modal from '@/components/layout/modal';
 import * as S from './style';
 

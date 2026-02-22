@@ -95,7 +95,7 @@ export default function Calendar({
       updatePopoverPosition(rect)
     }
     if (exchangeMode) {
-      if (event.teacherId === currentTeacherId) {
+      if (String(event.teacherId) === String(currentTeacherId)) {
         onMyEventSelect?.(event)
       } else {
         onTargetEventSelect?.(event)
@@ -175,7 +175,7 @@ export default function Calendar({
                   <S.DayNumber dayType={dayType} isCurrentMonth={isCurrentMonth}>{date.getDate()}</S.DayNumber>
                   <S.EventList>
                     {dayEvents.map((event) => {
-                      const isMyEvent = event.teacherId === currentTeacherId
+                      const isMyEvent = String(event.teacherId) === String(currentTeacherId)
                       let isDisabled = false
 
                       if (exchangeMode) {

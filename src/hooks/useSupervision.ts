@@ -28,7 +28,8 @@ export const useSupervision = () => {
     const [exchangeRequest, setExchangeRequest] = useState<ExchangeRequest | null>(null);
     const [exchangeIds, setExchangeIds] = useState<{ requestorId: string; changeId: string } | null>(null);
     const user = useUserStore((state) => state.user);
-    const currentTeacherId = user?.id ?? CURRENT_TEACHER_ID;
+    // BigInt 값이므로 string으로 유지
+    const currentTeacherId = user?.id ? String(user.id) : String(CURRENT_TEACHER_ID);
 
     const { data: supervisionDays } = useSupervisionSearchQuery(month, queryParam);
     const { mutate: requestExchange } = useRequestSupervisionExchangeMutation();
@@ -41,7 +42,13 @@ export const useSupervision = () => {
     const events = useMemo(() => {
         if (!showMyOnly) return baseEvents;
         if (!currentTeacherId) return baseEvents;
-        return baseEvents.filter((event) => event.teacherId === currentTeacherId);
+        
+        const filtered = baseEvents.filter((event) => {
+            const matches = String(event.teacherId) === currentTeacherId;
+            console.log(`Comparing ${event.teacherId} (${typeof event.teacherId}) === ${currentTeacherId} (${typeof currentTeacherId}): ${matches}`);
+            return matches;
+        });
+        return filtered;
     }, [baseEvents, showMyOnly, currentTeacherId]);
 
     const parseSupervisionId = (eventId: string) => {

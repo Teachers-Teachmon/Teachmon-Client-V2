@@ -32,9 +32,10 @@ export default function AdminUsersPage() {
     ...userManagementQuery.forbiddenDates(selectedTeacher?.id || ''),
     enabled: !!selectedTeacher,
   });
-  const { data: studentsData, isLoading: isStudentsLoading } = useQuery(
-    studentQuery.search(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : undefined)
-  );
+  const { data: studentsData, isLoading: isStudentsLoading } = useQuery({
+    ...studentQuery.search(activeTab === TAB_TYPES.STUDENT ? debouncedQuery : ''),
+    enabled: activeTab === TAB_TYPES.STUDENT && debouncedQuery.length > 0,
+  });
   const { mutate: setForbiddenDates } = useSetForbiddenDatesMutation();
 
   const handleOpenForbiddenDates = (teacher: Teacher) => {

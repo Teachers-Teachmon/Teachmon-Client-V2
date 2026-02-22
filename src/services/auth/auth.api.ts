@@ -20,7 +20,9 @@ export const sendAuthCode = async (code: string): Promise<AuthCodeResponse> => {
 };
 
 export const reissueToken = async (): Promise<ReissueTokenResponse> => {
-  const response = await axiosInstance.post<ReissueTokenResponse>('/auth/reissue');
+  const response = await axiosInstance.post<ReissueTokenResponse>('/auth/reissue', {}, {
+    skipErrorToast: true, // 리이슈 실패 시 toast 표시 안함
+  });
   return response.data;
 };
 

@@ -1,5 +1,6 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/afterSchool';
+import type { AffordableReinforcement } from '@/types/after-school';
+import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/after-school';
 import type {
   TodayAfterSchool,
   MyAfterSchool,
@@ -38,7 +39,7 @@ export const updateAfterSchoolClass = async (
 };
 
 export const deleteAfterSchoolClass = async (
-  afterSchoolId: number,
+  afterSchoolId: string,
 ): Promise<{ message: string }> => {
   const response = await axiosInstance.delete<{ message: string }>(
     '/afterschool',

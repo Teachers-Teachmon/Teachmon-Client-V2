@@ -2,7 +2,7 @@ import Button from '@/components/ui/button';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import { formatDate } from '@/utils/admin';
 import type { AfterSchoolTeacher } from '@/types/admin';
-import { LOCATION_OPTIONS } from '../data';
+import type { PlaceSearchItem } from '@/services/admin/afterSchool/adminAfterSchool.api';
 import * as S from './style';
 
 interface TripCompleteContentProps {
@@ -30,11 +30,14 @@ export function TripCompleteContent({ selectedTripDate, onConfirm }: TripComplet
 
 interface MakeupSelectionContentProps {
   selectedMakeupDate: Date | null;
-  availableMakeupPeriods: string[];
-  selectedMakeupPeriods: string[];
-  selectedLocation: string;
-  onTogglePeriod: (period: string) => void;
-  onLocationChange: (value: string) => void;
+  availableMakeupPeriods: ('8~9' | '10~11')[];
+  selectedMakeupPeriods: ('8~9' | '10~11')[];
+  selectedPlace: PlaceSearchItem | null;
+  placeItems: PlaceSearchItem[];
+  placeQuery: string;
+  onPlaceQueryChange: (value: string) => void;
+  onPlaceChange: (place: PlaceSearchItem) => void;
+  onTogglePeriod: (period: '8~9' | '10~11') => void;
   onCancel: () => void;
   onConfirm: () => void;
 }
@@ -43,9 +46,12 @@ export function MakeupSelectionContent({
   selectedMakeupDate,
   availableMakeupPeriods,
   selectedMakeupPeriods,
-  selectedLocation,
+  selectedPlace,
+  placeItems,
+  placeQuery,
+  onPlaceQueryChange,
+  onPlaceChange,
   onTogglePeriod,
-  onLocationChange,
   onCancel,
   onConfirm,
 }: MakeupSelectionContentProps) {
@@ -56,8 +62,8 @@ export function MakeupSelectionContent({
 
       <S.SelectionContainer>
         {[
-          { label: '8~9교시 보강', value: '8~9' },
-          { label: '10~11교시 보강', value: '10~11' },
+          { label: '8~9교시 보강', value: '8~9' as const },
+          { label: '10~11교시 보강', value: '10~11' as const },
         ].map(({ label, value }) => {
           const isAvailable = availableMakeupPeriods.includes(value);
           const isSelected = selectedMakeupPeriods.includes(value);
@@ -82,10 +88,14 @@ export function MakeupSelectionContent({
       <S.DropdownSection>
         <S.DropdownLabel>장소</S.DropdownLabel>
         <SearchDropdown
-          items={LOCATION_OPTIONS}
+          items={placeItems}
           placeholder="장소"
-          value={selectedLocation}
-          onChange={onLocationChange}
+          value={selectedPlace ?? undefined}
+          searchQuery={placeQuery}
+          onSearchChange={onPlaceQueryChange}
+          onChange={onPlaceChange}
+          renderItem={(item) => `${item.name} (${item.floor}층)`}
+          getItemKey={(item) => item.id}
         />
       </S.DropdownSection>
 

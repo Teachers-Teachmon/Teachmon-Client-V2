@@ -7,15 +7,17 @@ import {
   SUPERVISION_TYPE_OPTIONS,
   SUPERVISION_TYPE_STYLES,
   SUPERVISION_TYPE_VALUES,
-  type SupervisionType,
+  type AdminSupervisionType,
 } from '@/constants/adminSupervision';
 
 export const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
-export const getEventType = (event: CalendarEvent): SupervisionType | null => {
-  if (event.supervisionType) return event.supervisionType;
-  const match = (Object.entries(SUPERVISION_TYPE_STYLES) as Array<[SupervisionType, { bgColor: string; textColor: string }]>)
+export const getEventType = (event: CalendarEvent): AdminSupervisionType | null => {
+  if (event.supervisionType && (event.supervisionType === 'self_study' || event.supervisionType === 'leave_seat')) {
+    return event.supervisionType;
+  }
+  const match = (Object.entries(SUPERVISION_TYPE_STYLES) as Array<[AdminSupervisionType, { bgColor: string; textColor: string }]>)
     .find(([, style]) => style.bgColor === event.bgColor && style.textColor === event.textColor);
   return match?.[0] ?? null;
 };
@@ -28,7 +30,7 @@ export const getExistingTypesForDate = (
   return events
     .filter((event) => isSameDay(event.date, date) && event.id !== excludeEventId)
     .map(getEventType)
-    .filter((type): type is SupervisionType => !!type);
+    .filter((type): type is AdminSupervisionType => !!type);
 };
 
 export const getAvailableTypesForDate = (

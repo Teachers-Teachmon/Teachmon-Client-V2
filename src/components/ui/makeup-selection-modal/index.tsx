@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/button';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
 import Modal from '@/components/layout/modal';
+import type { PlaceSearchResult } from '@/types/after-school';
 import * as S from './style';
 
 interface MakeupSelectionModalProps {
@@ -9,7 +10,12 @@ interface MakeupSelectionModalProps {
     onClose: () => void;
     date: Date | null;
     availablePeriods: string[];
-    onComplete: (data: { periods: string[]; location: string }) => void;
+    placeItems: PlaceSearchResult[];
+    placeQuery: string;
+    onPlaceQueryChange: (value: string) => void;
+    selectedPlace: PlaceSearchResult | null;
+    onPlaceChange: (place: PlaceSearchResult) => void;
+    onComplete: (data: { periods: string[]; place: PlaceSearchResult }) => void;
 }
 
 export default function MakeupSelectionModal({
@@ -17,10 +23,14 @@ export default function MakeupSelectionModal({
     onClose,
     date,
     availablePeriods,
+    placeItems,
+    placeQuery,
+    onPlaceQueryChange,
+    selectedPlace,
+    onPlaceChange,
     onComplete,
 }: MakeupSelectionModalProps) {
     const [selectedPeriods, setSelectedPeriods] = useState<string[]>([]);
-    const [location, setLocation] = useState<string>('');
 
     if (!date) return null;
 
@@ -35,8 +45,8 @@ export default function MakeupSelectionModal({
     };
 
     const handleComplete = () => {
-        if (selectedPeriods.length > 0 && location) {
-            onComplete({ periods: selectedPeriods, location });
+        if (selectedPeriods.length > 0 && selectedPlace) {
+            onComplete({ periods: selectedPeriods, place: selectedPlace });
             onClose();
         } else {
             alert('보강 시간과 장소를 선택해주세요.');
@@ -71,10 +81,14 @@ export default function MakeupSelectionModal({
                 <S.DropdownContainer>
                     <S.Label>장소</S.Label>
                     <SearchDropdown
-                        items={['1학년 1반', '1학년 2반', '음악실', '미술실']}
+                        items={placeItems}
                         placeholder="장소 선택"
-                        value={location}
-                        onChange={setLocation}
+                        value={selectedPlace ?? undefined}
+                        searchQuery={placeQuery}
+                        onSearchChange={onPlaceQueryChange}
+                        onChange={onPlaceChange}
+                        renderItem={(item) => `${item.name} (${item.floor}층)`}
+                        getItemKey={(item) => item.id}
                     />
                 </S.DropdownContainer>
 

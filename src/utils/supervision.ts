@@ -1,13 +1,13 @@
 import type { CalendarEvent } from '@/types/calendar';
 import type { SupervisionDay } from '@/types/supervision';
 import { SELF_STUDY_COLORS, LEAVE_SEAT_COLORS } from '@/constants/supervision';
+import { parseLocalDate } from './common';
 
 export const convertToCalendarEvents = (data: SupervisionDay[]): CalendarEvent[] => {
     const events: CalendarEvent[] = [];
 
     data.forEach((item) => {
-        const [year, month, day] = item.day.split('-').map(Number);
-        const date = new Date(year, month - 1, day);
+        const date = parseLocalDate(item.day);
 
         if (item.self_study_supervision) {
             events.push({
