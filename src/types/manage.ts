@@ -65,7 +65,7 @@ export interface PlaceStatus {
 }
 
 export interface EvasionRecord {
-  exit_id: number;
+  exit_id: number | string; // 큰 숫자는 문자열로 올 수 있음
   day: string;
   teacher: string;
   number: number;
