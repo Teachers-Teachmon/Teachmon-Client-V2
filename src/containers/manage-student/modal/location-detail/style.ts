@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
 import { mq } from '@/styles/media';
+import type { StudentState } from '@/types/manage';
+import { getStudentStateInfo } from '@/utils/studentState';
 
 export const ModalContainer = styled.div`
   display: flex;
@@ -149,18 +151,12 @@ export const StudentCard = styled.div<{ $state?: string | null }>`
   width: 100%;
   height: 81px;
   background: ${({ $state }) => {
-    if ($state === 'SELF_STUDY'|| $state === 'ADDITIONAL_SELF_STUDY') return '#ECFDF3'; // 자습 - 초록
-    if ($state === 'LEAVE_SEAT') return '#F0ECFD'; // 이석 - 보라
-    if ($state === 'AWAY' || $state === 'EARLY_LEAVE') return '#FFF6E4'; // 조퇴 - 주황
-    if ($state === 'EXIT' || $state === 'EVASION') return '#FFEBEA'; // 이탈 - 빨강
-    return colors.background;
+    const stateInfo = getStudentStateInfo($state as StudentState);
+    return stateInfo?.backgroundColor || colors.background;
   }};
   border: 1px solid ${({ $state }) => {
-    if ($state === 'SELF_STUDY' || $state === 'ADDITIONAL_SELF_STUDY') return '#14BA6D'; // 자습
-    if ($state === 'LEAVE_SEAT') return '#6A1EC1'; // 이석
-    if ($state === 'AWAY' || $state === 'EARLY_LEAVE') return '#FF9000'; // 조퇴
-    if ($state === 'EXIT' || $state === 'EVASION') return '#FF938C'; // 이탈
-    return '#F5F5F5';
+    const stateInfo = getStudentStateInfo($state as StudentState);
+    return stateInfo?.color || '#F5F5F5';
   }};
   display: flex;
   align-items: center;
