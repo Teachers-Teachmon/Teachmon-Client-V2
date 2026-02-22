@@ -40,7 +40,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                 </S.Header>
                 <S.InfoSection>
                     <S.StudentCount>학생 {students.length}명</S.StudentCount>
-                    <S.HintText>* 결석한 학생이 있다면 클릭해서 상태를 바꿔주세요</S.HintText>
+                    <S.HintText>* 이탈이나 조퇴를한 학생이 있다면 클릭해서 상태를 바꿔주세요</S.HintText>
                 </S.InfoSection>
                 <S.StudentsGrid>
                     {isLoading ? (
