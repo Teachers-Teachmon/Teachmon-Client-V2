@@ -3,9 +3,7 @@ import StatusBadge, { type StatusType } from '@/components/ui/status';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import { USER_ROLES } from '@/constants/admin';
-import type { Teacher } from '../containers/admin/users/teachers/index';
-
-type UserRole = '관리자' | '일반';
+import type { Teacher, UserRole } from '@/types/admin';
 
 interface UseTeacherColumnsProps {
   editingIds: Set<string>;
@@ -27,7 +25,7 @@ export function useTeacherColumns({
         editingIds.has(row.id) ? (
           <div style={{ width: '100%' }}>
             <Dropdown
-              items={[USER_ROLES.ADMIN, USER_ROLES.NORMAL]}
+              items={[USER_ROLES.ADMIN, USER_ROLES.NORMAL, USER_ROLES.VIEWER]}
               value={editingTeacher?.id === row.id ? editingTeacher.role : row.role}
               onChange={(value) => {
                 const updatedTeacher = editingTeacher?.id === row.id 
@@ -71,7 +69,7 @@ export function useTeacherColumns({
       header: '이메일',
       width: '320px',
       render: (row) =>
-        editingIds.has(row.id) && row.id.startsWith('new-') ? (
+        editingIds.has(row.id) && String(row.id).startsWith('new-') ? (
           <div style={{ width: '100%', maxWidth: '250px' }}>
             <TextInput
               value={editingTeacher?.id === row.id ? editingTeacher.email : row.email}
