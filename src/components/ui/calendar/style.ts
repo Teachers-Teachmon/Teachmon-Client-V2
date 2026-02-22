@@ -6,7 +6,7 @@ import { mq } from '@/styles/media'
 export const CalendarContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
   width: 100%;
   height: 100%;
   flex: 1;
@@ -21,7 +21,7 @@ export const CalendarContainer = styled.div`
 export const YearTitle = styled.h2`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 400;
-  font-size: 24px;
+  font-size: 18px;
   color: ${colors.n04};
   text-align: center;
   margin: 0;
@@ -35,7 +35,7 @@ export const HeaderRow = styled.div`
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 24px;
+  gap: 10px;
   width: 100%;
   position: relative;
 
@@ -47,7 +47,7 @@ export const HeaderRow = styled.div`
 
 export const MonthNavigation = styled.div`
   display: flex;
-  gap: 50px;
+  gap: 24px;
   align-items: center;
   justify-content: center;
 
@@ -248,7 +248,7 @@ export const WeekDay = styled.div<{
   background: ${colors.background};
   border: 1px solid #E8E8E8;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 16px;
 
   color: ${({ dayType }) => {
     switch (dayType) {
@@ -283,7 +283,7 @@ export const DaysGrid = styled.div`
   --calendar-row-height: calc(100% / var(--calendar-rows));
 
   ${mq.mobile} {
-    --calendar-row-height: 4.6rem;
+    --calendar-row-height: 6.8rem;
     height: calc(var(--calendar-rows) * var(--calendar-row-height));
     flex: 0 0 auto;
   }
@@ -323,7 +323,7 @@ export const DayNumber = styled.span<{
 }>`
   font-family: 'Paperlogy', sans-serif;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 18px;
   opacity: ${({ isCurrentMonth }) => (isCurrentMonth ? 1 : 0.4)};
 
   color: ${({ dayType, isCurrentMonth }) => {
@@ -347,23 +347,29 @@ export const EventList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-top: auto;
+  margin-top: 8px;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
   max-height: 100%;
 
   ${mq.mobile} {
-    gap: 2px;
+    overflow: hidden;
+    gap: 1px;
   }
 `
 
 export const EventTag = styled.span<{ bgColor: string; textColor: string; clickable?: boolean; isSelected?: boolean; isDisabled?: boolean }>`
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   max-width: 100%;
+  min-height: 24px;
   padding: 4px 8px;
   border-radius: ${radius.sm};
   font-family: 'Paperlogy', sans-serif;
   font-weight: 500;
   font-size: 14px;
+  line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -382,9 +388,65 @@ export const EventTag = styled.span<{ bgColor: string; textColor: string; clicka
   }
 
   ${mq.mobile} {
-    padding: 2px 6px;
-    font-size: 11px;
+    min-height: 0;
+    padding: 2px 5px;
+    font-size: 10px;
   }
+`
+
+export const EventSplitRow = styled.div`
+  display: flex;
+  gap: 4px;
+  width: 100%;
+`
+
+export const EventHalfTag = styled(EventTag)`
+  flex: 1;
+  min-width: 0;
+`
+
+export const EventPlaceholder = styled.span`
+  flex: 1;
+  min-width: 0;
+`
+
+export const DesktopEventGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  ${mq.mobile} {
+    display: none;
+  }
+`
+
+export const MobileEventGroup = styled.div`
+  display: none;
+
+  ${mq.mobile} {
+    display: block;
+    width: 100%;
+  }
+`
+
+export const MobileTripleRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 2px;
+  width: 100%;
+`
+
+export const MobileThirdTag = styled(EventTag)`
+  min-height: 0;
+  width: 100%;
+  padding: 2px 4px;
+  font-size: 9px;
+`
+
+export const MobileThirdPlaceholder = styled.span`
+  width: 100%;
+  min-height: 16px;
 `
 
 export const RangeEventOverlay = styled.div<{

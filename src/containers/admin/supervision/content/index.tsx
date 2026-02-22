@@ -23,6 +23,7 @@ import {
   isSameDay,
 } from './utils';
 import * as S from './style';
+import { LEGENDS } from '@/constants/supervision';
 
 type ViewMode = 'default' | 'edit';
 type SortOrder = 'asc' | 'desc';
@@ -52,26 +53,40 @@ const formatDay = (date: Date): string => {
 const getMonthKey = (year: number, month: number): string => `${year}-${String(month).padStart(2, '0')}`;
 
 const isSameTeacherAssignment = (
-  a: { selfStudyTeacherId: number | null; leaveSeatTeacherId: number | null },
-  b: { selfStudyTeacherId: number | null; leaveSeatTeacherId: number | null },
-) => a.selfStudyTeacherId === b.selfStudyTeacherId && a.leaveSeatTeacherId === b.leaveSeatTeacherId;
+  a: { selfStudyTeacherId: number | null; leaveSeatTeacherId: number | null; seventhPeriodTeacherId: number | null },
+  b: { selfStudyTeacherId: number | null; leaveSeatTeacherId: number | null; seventhPeriodTeacherId: number | null },
+) =>
+  a.selfStudyTeacherId === b.selfStudyTeacherId &&
+  a.leaveSeatTeacherId === b.leaveSeatTeacherId &&
+  a.seventhPeriodTeacherId === b.seventhPeriodTeacherId;
 
-const hasAnyAssignment = (assignment: { selfStudyTeacherId: number | null; leaveSeatTeacherId: number | null }) =>
-  assignment.selfStudyTeacherId !== null || assignment.leaveSeatTeacherId !== null;
+const hasAnyAssignment = (assignment: {
+  selfStudyTeacherId: number | null;
+  leaveSeatTeacherId: number | null;
+  seventhPeriodTeacherId: number | null;
+}) =>
+  assignment.selfStudyTeacherId !== null ||
+  assignment.leaveSeatTeacherId !== null ||
+  assignment.seventhPeriodTeacherId !== null;
 
 const getAssignmentsFromEvents = (events: CalendarEvent[]) => {
-  const assignments = new Map<string, { selfStudyTeacherId: number | null; leaveSeatTeacherId: number | null }>();
+  const assignments = new Map<
+    string,
+    { selfStudyTeacherId: number | null; leaveSeatTeacherId: number | null; seventhPeriodTeacherId: number | null }
+  >();
 
   events.forEach((event) => {
     const type = getEventType(event);
     if (!type) return;
     const day = formatDay(event.date);
-    const current = assignments.get(day) ?? { selfStudyTeacherId: null, leaveSeatTeacherId: null };
+    const current = assignments.get(day) ?? { selfStudyTeacherId: null, leaveSeatTeacherId: null, seventhPeriodTeacherId: null };
     const teacherId = event.teacherId ?? null;
     if (type === 'self_study') {
       current.selfStudyTeacherId = teacherId;
-    } else {
+    } else if (type === 'leave_seat') {
       current.leaveSeatTeacherId = teacherId;
+    } else {
+      current.seventhPeriodTeacherId = teacherId;
     }
     assignments.set(day, current);
   });
@@ -164,7 +179,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
 
     const remoteOptions = (searchedTeachers ?? []).map((teacher) => ({
       id: teacher.id,
-      label: `${teacher.name} 선생님`,
+      label: teacher.name,
     }));
 
     return remoteOptions;
@@ -208,14 +223,14 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
   const handleEventClick = (event: CalendarEvent, anchorRect?: DOMRect) => {
     if (!isEditMode) return;
     const eventType = getEventType(event);
+    if (!eventType) return;
     setSelectedEventId(event.id);
     setSelectedTeacher(event.teacherId ? { id: event.teacherId, label: event.label } : null);
     setSelectedType(eventType ? SUPERVISION_TYPE_LABELS[eventType] : '');
     setSelectedDate(event.date);
     setTeacherSearchQuery('');
-    if (anchorRect && calendarWrapperRef.current) {
-      const wrapperRect = calendarWrapperRef.current.getBoundingClientRect();
-      setEditAnchor(getEditorAnchor(wrapperRect, anchorRect));
+    if (anchorRect) {
+      setEditAnchor(getEditorAnchor(anchorRect));
     }
   };
 
@@ -231,9 +246,8 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
     setSelectedType('');
     setSelectedDate(date);
     setTeacherSearchQuery('');
-    if (anchorRect && calendarWrapperRef.current) {
-      const wrapperRect = calendarWrapperRef.current.getBoundingClientRect();
-      setEditAnchor(getEditorAnchor(wrapperRect, anchorRect));
+    if (anchorRect) {
+      setEditAnchor(getEditorAnchor(anchorRect));
     }
   };
 
@@ -340,8 +354,8 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
       const targetDays = new Set<string>([...baseByDay.keys(), ...currentByDay.keys()]);
 
       for (const day of targetDays) {
-        const before = baseByDay.get(day) ?? { selfStudyTeacherId: null, leaveSeatTeacherId: null };
-        const after = currentByDay.get(day) ?? { selfStudyTeacherId: null, leaveSeatTeacherId: null };
+        const before = baseByDay.get(day) ?? { selfStudyTeacherId: null, leaveSeatTeacherId: null, seventhPeriodTeacherId: null };
+        const after = currentByDay.get(day) ?? { selfStudyTeacherId: null, leaveSeatTeacherId: null, seventhPeriodTeacherId: null };
 
         if (isSameTeacherAssignment(before, after)) continue;
 
@@ -350,6 +364,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
             day,
             self_study_supervision_teacher_id: after.selfStudyTeacherId,
             leave_seat_supervision_teacher_id: after.leaveSeatTeacherId,
+            seventh_period_supervision_teacher_id: after.seventhPeriodTeacherId,
           });
           continue;
         }
@@ -366,6 +381,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
           day,
           self_study_supervision_teacher_id: after.selfStudyTeacherId,
           leave_seat_supervision_teacher_id: after.leaveSeatTeacherId,
+          seventh_period_supervision_teacher_id: after.seventhPeriodTeacherId,
         });
       }
     }
@@ -488,10 +504,11 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
           onMonthChange={handleMonthChange}
           events={events}
           showYear={true}
-          showLegend={false}
-          showMobilePopover={!isEditMode}
-          onEventClick={isEditMode ? handleEventClick : undefined}
-          onDateClick={isEditMode ? handleDateClick : undefined}
+          showLegend={true}
+          legends={LEGENDS}
+          showMobilePopover={viewMode !== 'edit'}
+          onEventClick={viewMode === 'edit' ? handleEventClick : undefined}
+          onDateClick={viewMode === 'edit' ? handleDateClick : undefined}
         />
         {isEditMode && editAnchor && (
           <S.FloatingEditor ref={editorRef} $top={editAnchor.top} $left={editAnchor.left}>
@@ -511,7 +528,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
             <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
             <S.EditTitle>자습/이석 선택</S.EditTitle>
             <Dropdown
-              placeholder="자습/이석 선택"
+              placeholder="감독 타입 선택"
               items={availableTypeLabels}
               value={selectedType}
               onChange={handleTypeSelect}
