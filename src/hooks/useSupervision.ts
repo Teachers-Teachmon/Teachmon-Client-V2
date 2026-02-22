@@ -3,7 +3,6 @@ import JSONbig from 'json-bigint';
 import { useSearchParams } from 'react-router-dom';
 import type { CalendarEvent } from '@/types/calendar';
 import type { ExchangeRequest } from '@/types/home';
-import { CURRENT_TEACHER_ID } from '@/constants/supervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
 import { useUserStore } from '@/stores/useUserStore';
 import { useSupervisionSearchQuery } from '@/services/supervision/supervision.query';
@@ -29,7 +28,7 @@ export const useSupervision = () => {
     const [exchangeIds, setExchangeIds] = useState<{ requestorId: string; changeId: string } | null>(null);
     const user = useUserStore((state) => state.user);
     // BigInt 값이므로 string으로 유지
-    const currentTeacherId = user?.id ? String(user.id) : String(CURRENT_TEACHER_ID);
+    const currentTeacherId = user?.id ? String(user.id) : null;
 
     const { data: supervisionDays } = useSupervisionSearchQuery(month, queryParam);
     const { mutate: requestExchange } = useRequestSupervisionExchangeMutation();
@@ -40,14 +39,12 @@ export const useSupervision = () => {
     );
 
     const events = useMemo(() => {
-        if (!showMyOnly) return baseEvents;
-        if (!currentTeacherId) return baseEvents;
-        
-        const filtered = baseEvents.filter((event) => {
-            const matches = String(event.teacherId) === currentTeacherId;
-            console.log(`Comparing ${event.teacherId} (${typeof event.teacherId}) === ${currentTeacherId} (${typeof currentTeacherId}): ${matches}`);
-            return matches;
-        });
+        let filtered = baseEvents;
+
+        if (showMyOnly && currentTeacherId) {
+            filtered = filtered.filter((event) => String(event.teacherId) === currentTeacherId);
+        }
+
         return filtered;
     }, [baseEvents, showMyOnly, currentTeacherId]);
 

@@ -28,6 +28,7 @@ export interface SupervisionDay {
   day: string;
   self_study_supervision: Supervision | null;
   leave_seat_supervision: Supervision | null;
+  seventh_period_supervision: Supervision | null;
 }
 
 export interface SupervisionRank {
