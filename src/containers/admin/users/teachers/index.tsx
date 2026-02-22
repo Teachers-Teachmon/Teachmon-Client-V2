@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
+import ConfirmModal from '@/components/layout/modal/confirm';
 import { USER_ROLES } from '@/constants/admin';
 
 import { useTeacherColumns } from '@/hooks/useTeacherUserManageColumns';
@@ -30,6 +31,11 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localTeachers, setLocalTeachers] = useState<Teacher[]>([]);
   const tableWrapperRef = useRef<HTMLDivElement>(null);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ isOpen: boolean; teacherId: string | null; teacherName: string }>({
+    isOpen: false,
+    teacherId: null,
+    teacherName: '',
+  });
 
   const { mutate: createTeacher } = useCreateTeacherMutation();
   const { mutate: updateTeacher } = useUpdateTeacherMutation();
@@ -130,6 +136,19 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   };
 
   const handleDelete = (teacherId: string) => {
+    const teacher = teachers.find(t => t.id === teacherId);
+    setDeleteConfirmModal({
+      isOpen: true,
+      teacherId,
+      teacherName: teacher?.name || '',
+    });
+    setOpenMenuId(null);
+  };
+
+  const handleConfirmDelete = () => {
+    const teacherId = deleteConfirmModal.teacherId;
+    if (!teacherId) return;
+
     // 새로 추가된 선생님인 경우 로컬에서만 삭제
     if (String(teacherId).startsWith('new-')) {
       setLocalTeachers(prev => prev.filter(t => t.id !== teacherId));
@@ -138,7 +157,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
         newSet.delete(teacherId);
         return newSet;
       });
-      setOpenMenuId(null);
+      setDeleteConfirmModal({ isOpen: false, teacherId: null, teacherName: '' });
       return;
     }
 
@@ -155,10 +174,14 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
             newSet.delete(teacherId);
             return newSet;
           });
-          setOpenMenuId(null);
+          setDeleteConfirmModal({ isOpen: false, teacherId: null, teacherName: '' });
         },
       }
     );
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmModal({ isOpen: false, teacherId: null, teacherName: '' });
   };
 
   const handleAdd = () => {
@@ -258,6 +281,15 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
         <img src="/icons/common/plusBlue.svg" alt="추가" />
         <span>추가</span>
       </PageS.AddButton>
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="선생님 삭제"
+        message={`${deleteConfirmModal.teacherName} 선생님을 삭제하시겠습니까?`}
+        cancelText="취소"
+        confirmText="삭제"
+      />
     </>
   );
 }
