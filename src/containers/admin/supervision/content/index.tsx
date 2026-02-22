@@ -170,6 +170,7 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
       name: item.name,
       selfStudy: item.self_study_supervision_count,
       leaveSeat: item.leave_seat_supervision_count,
+      seventhPeriod: item.seventh_period_supervision_count,
       total: item.total_supervision_count,
     }));
   }, [supervisionRanks]);
@@ -447,20 +448,22 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
             </S.SortButtons>
           </S.SearchContainer>
           <S.TableHeader>
-            <S.TableCell $width="50px">순위</S.TableCell>
-            <S.TableCell $width="80px">이름</S.TableCell>
-            <S.TableCell $width="60px">자습감독</S.TableCell>
-            <S.TableCell $width="60px">이석감독</S.TableCell>
-            <S.TableCell $width="50px">합계</S.TableCell>
+            <S.TableCell $width="44px">순위</S.TableCell>
+            <S.TableCell $width="68px">이름</S.TableCell>
+            <S.TableCell $width="52px">자습</S.TableCell>
+            <S.TableCell $width="52px">이석</S.TableCell>
+            <S.TableCell $width="52px">7교시</S.TableCell>
+            <S.TableCell $width="46px">합계</S.TableCell>
           </S.TableHeader>
           <S.TableBody>
             {filteredCounts.map((item, index) => (
               <S.TableRow key={index}>
-                <S.TableCell $width="50px">{item.rank}위</S.TableCell>
-                <S.TableCell $width="80px">{item.name}</S.TableCell>
-                <S.TableCell $width="60px">{item.selfStudy}회</S.TableCell>
-                <S.TableCell $width="60px">{item.leaveSeat}회</S.TableCell>
-                <S.TableCell $width="50px">{item.total}회</S.TableCell>
+                <S.TableCell $width="44px">{item.rank}위</S.TableCell>
+                <S.TableCell $width="68px">{item.name}</S.TableCell>
+                <S.TableCell $width="52px">{item.selfStudy}회</S.TableCell>
+                <S.TableCell $width="52px">{item.leaveSeat}회</S.TableCell>
+                <S.TableCell $width="52px">{item.seventhPeriod}회</S.TableCell>
+                <S.TableCell $width="46px">{item.total}회</S.TableCell>
               </S.TableRow>
             ))}
           </S.TableBody>
