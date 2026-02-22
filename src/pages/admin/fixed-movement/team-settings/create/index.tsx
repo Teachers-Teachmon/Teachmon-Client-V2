@@ -94,7 +94,7 @@ export default function TeamFormPage() {
     } else {
       createMutation.mutate({
         name: teamName,
-        students_id: selectedStudents.map((s) => s.studentNumber),
+        students_id: selectedStudents.map((s) => s.id ?? s.studentNumber),
       });
     }
   };
@@ -134,17 +134,19 @@ export default function TeamFormPage() {
                 <S.StudentDropdown>
                   {studentResults
                     .filter(student =>
-                      !selectedStudents.find(s => 
-                        (studentIdMap[s.studentNumber] && studentIdMap[s.studentNumber] === student.id) || 
-                        (!studentIdMap[s.studentNumber] && s.studentNumber === student.id)
-                      )
+                      !selectedStudents.find(s => {
+                        const currentStudentNumber = Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`);
+                        return (studentIdMap[s.studentNumber] && studentIdMap[s.studentNumber] === student.id) || 
+                               (!studentIdMap[s.studentNumber] && s.studentNumber === currentStudentNumber);
+                      })
                     )
                     .slice(0, 5)
                     .map((student) => (
                       <S.StudentDropdownItem
                         key={student.id}
                         onClick={() => handleAddStudent({ 
-                          studentNumber: typeof student.id === 'number' ? student.id : parseInt(String(student.id)), 
+                          id: typeof student.id === 'number' ? student.id : Number(student.id),
+                          studentNumber: Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`), 
                           name: student.name, 
                           grade: student.grade, 
                           classNumber: student.classNumber 
@@ -164,7 +166,7 @@ export default function TeamFormPage() {
               {selectedStudents.map((student) => (
                 <S.StudentCard key={student.studentNumber}>
                   <S.StudentInfo>
-                    <S.StudentNumber>{student.grade && student.classNumber ? `${student.grade}${student.classNumber}${student.studentNumber < 10 ? `0${student.studentNumber}` : student.studentNumber}` : student.studentNumber}</S.StudentNumber>
+                    <S.StudentNumber>{student.grade && student.classNumber ? `${student.grade}${student.classNumber}${String(student.studentNumber).slice(-2).padStart(2, '0')}` : student.studentNumber}</S.StudentNumber>
                     <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
                   <S.RemoveButton onClick={() => handleRemoveStudent(student.studentNumber)}>
