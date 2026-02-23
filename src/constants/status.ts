@@ -25,16 +25,16 @@ export const STATUS_CONFIG: Record<StatusType, {
   mapBackground: string; // 지도 전용 배경색
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
-    background: '#FFFFFF',
-    dotColor: '#eaeaea',
-    textColor: '#eaeaea',
-    mapBackground: '#FFFFFF', // 흰색
+    background: colors.primary100, // #EBF1FF
+    dotColor: colors.primary, // #2E6FF2
+    textColor: colors.primary, // #2E6FF2
+    mapBackground: '#A8C7FF', // 진한 파란색
   },
   [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
-    background: '#FFFFFF',
-    dotColor: '#eaeaea',
-    textColor: '#eaeaea',
-    mapBackground: '#FFFFFF', // 흰색
+    background: colors.primary100, // #EBF1FF
+    dotColor: colors.primary, // #2E6FF2
+    textColor: colors.primary, // #2E6FF2
+    mapBackground: '#A8C7FF', // 진한 파란색
   },
   [STATUS_TYPES.SELF_STUDY]: {
     background: '#ECFDF3',
@@ -88,5 +88,6 @@ export const STATUS_CONFIG: Record<StatusType, {
     background: '#F5F5F5',
     dotColor: '#9CA4BA',
     textColor: '#9CA4BA',
+    mapBackground: '#D1D5DB', // 진한 회색
   },
 };
