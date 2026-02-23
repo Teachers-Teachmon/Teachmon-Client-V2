@@ -1,5 +1,4 @@
 import axiosInstance from '@/lib/axiosInstance';
-import type { AffordableReinforcement } from '@/types/after-school';
 import type { AfterSchoolResponse, AfterSchoolRequestParams, CreateAfterSchoolRequest, UpdateAfterSchoolRequest } from '@/types/after-school';
 import type {
   TodayAfterSchool,
@@ -48,30 +47,6 @@ export const deleteAfterSchoolClass = async (
   return response.data;
 };
 
-export interface FetchAffordableReinforcementParams {
-  month: number;
-  afterschoolid: string | number;
-}
-
-export const fetchAffordableReinforcement = async (
-  params: FetchAffordableReinforcementParams
-): Promise<AffordableReinforcement[]> => {
-  const { data } = await axiosInstance.get('/afterschool/reinforcement/affordable', { params });
-  return data;
-};
-
-export interface ReinforcementRequestPayload {
-  day: string;
-  afterschool_id: string;
-  change_period: 'EIGHT_AND_NINE_PERIOD' | 'TEN_AND_ELEVEN_PERIOD';
-  change_place_id: string;
-}
-
-export const requestReinforcement = async (payload: ReinforcementRequestPayload) => {
-  const { data } = await axiosInstance.post('/afterschool/reinforcement', payload);
-  return data;
-};
-
 export const getMyTodayAfterSchool = async (): Promise<TodayAfterSchool[]> => {
   const response = await axiosInstance.get<TodayAfterSchool[]>('/afterschool/me/today');
   return response.data;
@@ -105,6 +80,16 @@ export const createAfterSchoolBusinessTrip = async (data: {
   afterschool_id: string;
 }): Promise<unknown> => {
   const response = await axiosInstance.post('/afterschool/business-trip', data);
+  return response.data;
+};
+
+export const requestReinforcement = async (data: {
+  day: string;
+  afterschool_id: string;
+  change_period: 'EIGHT_AND_NINE_PERIOD' | 'TEN_AND_ELEVEN_PERIOD';
+  change_place_id: string;
+}): Promise<unknown> => {
+  const response = await axiosInstance.post('/afterschool/reinforcement', data);
   return response.data;
 };
 

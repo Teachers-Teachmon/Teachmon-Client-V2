@@ -55,32 +55,26 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                 ) : (
                     students.map((student) => {
                         const stateInfo = getStudentStateInfo(student.state);
-                        // AFTER_SCHOOL이면 흰색, state가 null이면 회색으로 표시
-                        let displayColor = stateInfo?.color || '#9CA4BA';
-                        let displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
-                        
-                        if (student.state === 'AFTER_SCHOOL') {
-                            displayColor = '#eaeaea';
-                            displayBgColor = '#FFFFFF';
-                        }
+                        const displayColor = stateInfo?.color || '#9CA4BA';
+                        const displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
                         
                         return (
                             <S.StudentCard 
                                 key={student.id}
                                 $stateColor={displayColor}
                                 $stateBgColor={displayBgColor}
-                                $hasState={!!student.state}
+                                $hasState={!!student.state && !isAfterSchool}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    // state가 있을 때만 선택 가능
-                                    if (student.state) {
+                                    // state가 있고 방과후가 아닐 때만 선택 가능
+                                    if (student.state && !isAfterSchool) {
                                         onStudentSelect(student.id);
                                     }
                                 }}
                             >
                                 <S.StudentNumber>{String(student.number).slice(-2)}</S.StudentNumber>
                                 <S.StudentName>{student.name}</S.StudentName>
-                                {selectedStudentId === student.id && student.state && (
+                                {selectedStudentId === student.id && student.state && !isAfterSchool && (
                                     <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
                                         {getStatusOptions(student).map((status, index) => (
                                             <S.StatusBadgeWrapper 

@@ -74,10 +74,47 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
         setSelectedStudents((prev) => prev.filter((s) => s.id !== studentId));
     };
 
+    /**
+     * 엔터 키를 눌렀을 때 필터링된 첫 번째 결과를 선택하는 함수
+     */
+    const handleEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && studentSearch && searchResults.length > 0) {
+            e.preventDefault();
+            
+            // 중복 제거된 결과에서 첫 번째 항목 선택
+            const filteredResults = searchResults.filter((result: StudentSearchResponse | TeamSearchResponse) => {
+                if (isTeamMode) {
+                    return true;
+                }
+                return !selectedStudents.some(s => s.id === result.id);
+            });
+            
+            if (filteredResults.length > 0) {
+                handleSelectResult(filteredResults[0]);
+            }
+        }
+    };
+
     const handleNext = () => {
+        const today = getTodayDate();
+        const todayDate = new Date(today);
+        const selectedDateObj = new Date(selectedDate);
+        
         // 날짜가 오늘보다 이전인지 확인
-        if (selectedDate < getTodayDate()) {
+        if (selectedDate < today) {
             toast.warning('오늘 이전 날짜는 선택할 수 없습니다.');
+            return;
+        }
+
+        // 다음 주 월요일부터 막기 (이번 주 일요일까지만 허용)
+        const currentDayOfWeek = todayDate.getDay(); // 0(일) ~ 6(토)
+        const daysUntilSunday = 7 - currentDayOfWeek; // 이번 주 일요일까지 남은 일수
+        const thisWeekSunday = new Date(todayDate);
+        thisWeekSunday.setDate(todayDate.getDate() + daysUntilSunday);
+        thisWeekSunday.setHours(23, 59, 59, 999); // 일요일 끝까지
+        
+        if (selectedDateObj > thisWeekSunday) {
+            toast.warning('이번주 이후의 이석 작성은 불가능합니다.');
             return;
         }
 
@@ -114,7 +151,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
     /**
      * 검색 결과(학생 또는 팀)를 선택했을 때 처리하는 함수
      * - 팀 모드: 팀의 모든 멤버를 학생 리스트에 추가 (중복 제거)
-     * - 학생 모드: 선택한 학생을 리스트에 추가
+     * - 학생 모드: 선택한 학생을 리스트에 추가 (중복 체크)
      * - 검색어 초기화
      */
     const handleSelectResult = (result: StudentSearchResponse | TeamSearchResponse) => {
@@ -128,7 +165,15 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                 }));
             setSelectedStudents([...selectedStudents, ...newMembers]);
         } else {
-            setSelectedStudents([...selectedStudents, { id: result.id as number, display: formatStudent(result as StudentSearchResponse) }]);
+            // 학생 모드: 중복 체크
+            const student = result as StudentSearchResponse;
+            const studentId = typeof student.id === 'number' ? student.id : parseInt(String(student.id));
+            if (!selectedStudents.some(s => s.id === studentId)) {
+                setSelectedStudents([...selectedStudents, { 
+                    id: studentId, 
+                    display: formatStudent(student) 
+                }]);
+            }
         }
         setStudentSearch('');
     };
@@ -180,7 +225,10 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                         {/* 학생/팀 */}
                         <S.FormGroup>
                             <S.StudentHeader>
-                                <S.Label>{isTeamMode ? '팀' : '학생'}</S.Label>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <S.Label>{isTeamMode ? '팀' : '학생'}</S.Label>
+                                    <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+                                </div>
                                 <S.TeamToggle>
                                     <span>팀</span>
                                     <S.Switch $isOn={isTeamMode} onClick={() => {
@@ -195,6 +243,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                                 placeholder={isTeamMode ? '팀을 입력해주세요' : '학생을 입력해주세요'}
                                 value={studentSearch}
                                 onChange={(e) => setStudentSearch(e.target.value)}
+                                onKeyDown={handleEnterKeyPress}
                                 leftIcon={
                                     <img 
                                         src="/icons/common/search.svg" 
@@ -205,18 +254,19 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                             />
                             
                             {/* 검색 드롭다운 */}
-                            {studentSearch && searchResults.length > 0 && (
-                                <S.StudentDropdown>
-                                    {searchResults
-                                        .filter((result: StudentSearchResponse | TeamSearchResponse) => {
-                                            if (isTeamMode) {
-                                                // 팀은 중복 체크 안 함 (멤버가 이미 추가되어 있을 수 있음)
-                                                return true;
-                                            }
-                                            return !selectedStudents.some(s => s.id === result.id);
-                                        })
-                                        .slice(0, 3)
-                                        .map((result: StudentSearchResponse | TeamSearchResponse) => {
+                            {studentSearch && searchResults.length > 0 && (() => {
+                                // 중복 제거를 먼저 하고 slice
+                                const filteredResults = searchResults.filter((result: StudentSearchResponse | TeamSearchResponse) => {
+                                    if (isTeamMode) {
+                                        // 팀은 중복 체크 안 함
+                                        return true;
+                                    }
+                                    return !selectedStudents.some(s => s.id === result.id);
+                                }).slice(0, 3);
+
+                                return filteredResults.length > 0 ? (
+                                    <S.StudentDropdown>
+                                        {filteredResults.map((result: StudentSearchResponse | TeamSearchResponse) => {
                                             const displayText = isTeamMode 
                                                 ? (result as TeamSearchResponse).name 
                                                 : formatStudent(result as StudentSearchResponse);
@@ -229,8 +279,9 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                                                 </S.StudentDropdownItem>
                                             );
                                         })}
-                                </S.StudentDropdown>
-                            )}
+                                    </S.StudentDropdown>
+                                ) : null;
+                            })()}
                         </S.FormGroup>
                     </S.FormContent>
                 </S.FormSection>

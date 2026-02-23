@@ -302,15 +302,33 @@ export default function DailySection() {
   return (
     <S.Container>
       <S.CalendarWrapper>
-        {startDate && (
-          <S.CancelButtonWrapper>
-            <Button
-              text="취소하기"
-              variant="confirm"
-              onClick={handleCancelSelection}
-            />
-          </S.CancelButtonWrapper>
-        )}
+        <S.HeaderRow>
+          {/* Date selection guidance */}
+          {!startDate && (
+            <S.GuidanceMessage>
+              자습을 추가할 시작날을 선택해주세요
+            </S.GuidanceMessage>
+          )}
+          {startDate && !endDate && (
+            <S.GuidanceMessage>
+              자습을 추가할 마지막날을 선택해주세요
+            </S.GuidanceMessage>
+          )}
+          
+          {startDate && (
+            <S.CancelButtonWrapper>
+              <Button
+                text="취소하기"
+                variant="confirm"
+                onClick={handleCancelSelection}
+              />
+            </S.CancelButtonWrapper>
+          )}
+          
+          {/* Empty div to maintain space when guidance is not shown */}
+          {startDate && endDate && <div />}
+        </S.HeaderRow>
+        
         <Calendar
           year={selectedYear}
           month={selectedMonth}

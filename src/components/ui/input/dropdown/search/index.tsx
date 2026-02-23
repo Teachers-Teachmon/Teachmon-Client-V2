@@ -88,6 +88,13 @@ export default function SearchDropdown<T = string>({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && items.length > 0) {
+      e.preventDefault();
+      handleSelect(items[0]);
+    }
+  };
+
   const defaultRenderItem = (item: T) => String(item);
   const itemRenderer = renderItem || defaultRenderItem;
   const displayValue = value !== undefined && value !== null ? itemRenderer(value) : null;
@@ -121,6 +128,7 @@ export default function SearchDropdown<T = string>({
               placeholder={searchPlaceholder}
               value={searchQuery}
               onChange={(e) => handleSearchChange(e.target.value)}
+              onKeyDown={handleKeyDown}
               onClick={(e) => e.stopPropagation()}
             />
             

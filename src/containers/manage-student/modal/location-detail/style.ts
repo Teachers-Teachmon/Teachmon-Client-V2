@@ -208,9 +208,14 @@ export const StatusButtons = styled.div`
   }
 `;
 
-export const StatusButton = styled.button`
+export const StatusButton = styled.button<{ $statusType?: '이탈' | '조퇴' | '취소' }>`
   flex: 1;
-  background: ${colors.primary};
+  background: ${({ $statusType }) => {
+    if ($statusType === '이탈') return '#FF938C'; // 이탈 - 빨강
+    if ($statusType === '조퇴') return '#FF9000'; // 조퇴 - 주황
+    if ($statusType === '취소') return '#9CA4BA'; // 취소 - 회색
+    return colors.primary;
+  }};
   border: none;
   border-radius: 6px;
   font-family: 'Paperlogy', sans-serif;
@@ -221,7 +226,6 @@ export const StatusButton = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background: ${colors.primary};
     opacity: 0.8;
     transform: scale(1.02);
   }

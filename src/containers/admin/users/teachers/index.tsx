@@ -1,11 +1,13 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import TableLayout from '@/components/layout/table';
 import Button from '@/components/ui/button';
+import ConfirmModal from '@/components/layout/modal/confirm';
 import { USER_ROLES } from '@/constants/admin';
 
 import { useTeacherColumns } from '@/hooks/useTeacherUserManageColumns';
 import { useActionMenu } from '@/hooks/useActionMenu';
 import type { Teacher as ApiTeacher, ForbiddenDay } from '@/services/user-management/user-management.api';
+import type { Teacher } from '@/types/admin';
 import { 
   useCreateTeacherMutation,
   useUpdateTeacherMutation, 
@@ -14,18 +16,6 @@ import {
 
 import * as S from './style';
 import * as PageS from '@/pages/admin/users/style';
-
-type UserRole = '관리자' | '일반';
-
-export interface Teacher {
-  id: string;
-  teacher_id?: string; // API에서 받은 원본 ID (문자열로 처리)
-  role: UserRole;
-  name: string;
-  email: string;
-  supervisionCount: number;
-  forbiddenDates?: string[];
-}
 
 interface TeachersProps {
   teachersData: ApiTeacher[];
@@ -41,6 +31,11 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   const [editingIds, setEditingIds] = useState<Set<string>>(new Set());
   const [localTeachers, setLocalTeachers] = useState<Teacher[]>([]);
   const tableWrapperRef = useRef<HTMLDivElement>(null);
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState<{ isOpen: boolean; teacherId: string | null; teacherName: string }>({
+    isOpen: false,
+    teacherId: null,
+    teacherName: '',
+  });
 
   const { mutate: createTeacher } = useCreateTeacherMutation();
   const { mutate: updateTeacher } = useUpdateTeacherMutation();
@@ -51,7 +46,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
     const apiTeachers = teachersData.map((teacher): Teacher => ({
       id: teacher.teacher_id, // 이미 문자열
       teacher_id: teacher.teacher_id, // 원본 ID 보존
-      role: teacher.role === 'ADMIN' ? USER_ROLES.ADMIN : USER_ROLES.NORMAL,
+      role: teacher.role === 'ADMIN' ? USER_ROLES.ADMIN : teacher.role === 'VIEWER' ? USER_ROLES.VIEWER : USER_ROLES.NORMAL,
       name: teacher.name,
       email: teacher.email,
       supervisionCount: teacher.supervision_count,
@@ -59,7 +54,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
     }));
     
     // 로컬에서 추가된 선생님들과 병합 (새로 추가된 항목을 맨 위에)
-    const newTeachers = localTeachers.filter(t => t.id.startsWith('new-'));
+    const newTeachers = localTeachers.filter(t => String(t.id).startsWith('new-'));
     return [...newTeachers, ...apiTeachers];
   }, [teachersData, forbiddenDates, localTeachers]);
 
@@ -89,9 +84,9 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
     if (!editingTeacher || editingTeacher.id !== teacherId) return;
     
     // 새로 추가된 선생님인 경우
-    if (teacherId.startsWith('new-')) {
+    if (String(teacherId).startsWith('new-')) {
       createTeacher({
-        role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
+        role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : editingTeacher.role === USER_ROLES.VIEWER ? 'VIEWER' : 'TEACHER',
         name: editingTeacher.name,
         email: editingTeacher.email,
       }, {
@@ -109,7 +104,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
       // 기존 선생님 수정
       updateTeacher({
         teacher_id: editingTeacher.teacher_id!, // 원본 ID 사용
-        role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : 'TEACHER',
+        role: editingTeacher.role === USER_ROLES.ADMIN ? 'ADMIN' : editingTeacher.role === USER_ROLES.VIEWER ? 'VIEWER' : 'TEACHER',
         name: editingTeacher.name,
       }, {
         onSuccess: () => {
@@ -126,7 +121,7 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
 
   const handleCancel = (teacherId: string) => {
     // 새로 추가된 선생님이고 아직 저장 안 된 경우 삭제
-    if (teacherId.startsWith('new-')) {
+    if (String(teacherId).startsWith('new-')) {
       setLocalTeachers(prev => prev.filter(t => t.id !== teacherId));
     }
     
@@ -141,15 +136,28 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
   };
 
   const handleDelete = (teacherId: string) => {
+    const teacher = teachers.find(t => t.id === teacherId);
+    setDeleteConfirmModal({
+      isOpen: true,
+      teacherId,
+      teacherName: teacher?.name || '',
+    });
+    setOpenMenuId(null);
+  };
+
+  const handleConfirmDelete = () => {
+    const teacherId = deleteConfirmModal.teacherId;
+    if (!teacherId) return;
+
     // 새로 추가된 선생님인 경우 로컬에서만 삭제
-    if (teacherId.startsWith('new-')) {
+    if (String(teacherId).startsWith('new-')) {
       setLocalTeachers(prev => prev.filter(t => t.id !== teacherId));
       setEditingIds((prev) => {
         const newSet = new Set(prev);
         newSet.delete(teacherId);
         return newSet;
       });
-      setOpenMenuId(null);
+      setDeleteConfirmModal({ isOpen: false, teacherId: null, teacherName: '' });
       return;
     }
 
@@ -166,10 +174,14 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
             newSet.delete(teacherId);
             return newSet;
           });
-          setOpenMenuId(null);
+          setDeleteConfirmModal({ isOpen: false, teacherId: null, teacherName: '' });
         },
       }
     );
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirmModal({ isOpen: false, teacherId: null, teacherName: '' });
   };
 
   const handleAdd = () => {
@@ -269,6 +281,15 @@ export default function Teachers({ teachersData, forbiddenDates, onOpenForbidden
         <img src="/icons/common/plusBlue.svg" alt="추가" />
         <span>추가</span>
       </PageS.AddButton>
+      <ConfirmModal
+        isOpen={deleteConfirmModal.isOpen}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="선생님 삭제"
+        message={`${deleteConfirmModal.teacherName} 선생님을 삭제하시겠습니까?`}
+        cancelText="취소"
+        confirmText="삭제"
+      />
     </>
   );
 }
