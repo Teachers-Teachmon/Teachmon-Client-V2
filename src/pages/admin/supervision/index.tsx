@@ -6,10 +6,11 @@ import AdminSupervisionContent, { type AdminSupervisionContentHandle } from '@/c
 import AdminSupervisionCreateModal from '@/containers/admin/supervision/create-modal';
 import { getApiErrorMessage } from '@/utils/error';
 
-type ViewMode = 'default' | 'count' | 'edit';
+type ViewMode = 'default' | 'edit';
 
 export default function AdminSupervisionPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('default');
+  const [isCountOpen, setIsCountOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const contentRef = useRef<AdminSupervisionContentHandle>(null);
@@ -37,7 +38,8 @@ export default function AdminSupervisionPage() {
     <S.Container>
       <AdminSupervisionHeader
         viewMode={viewMode}
-        onShowCount={() => setViewMode('count')}
+        isCountOpen={isCountOpen}
+        onToggleCount={() => setIsCountOpen((prev) => !prev)}
         onEditMode={() => setViewMode('edit')}
         onCreateOpen={() => setIsCreateModalOpen(true)}
         onSave={handleSave}
@@ -47,7 +49,8 @@ export default function AdminSupervisionPage() {
       <AdminSupervisionContent
         ref={contentRef}
         viewMode={viewMode}
-        onViewModeChange={setViewMode}
+        isCountOpen={isCountOpen}
+        onCountOpenChange={setIsCountOpen}
       />
       <AdminSupervisionCreateModal
         isOpen={isCreateModalOpen}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import Modal from '@/components/layout/modal';
 import { useDevice } from '@/hooks/useDevice';
 import type { StatusType } from '@/components/ui/status';
@@ -40,7 +41,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                 </S.Header>
                 <S.InfoSection>
                     <S.StudentCount>학생 {students.length}명</S.StudentCount>
-                    <S.HintText>* 결석한 학생이 있다면 클릭해서 상태를 바꿔주세요</S.HintText>
+                    <S.HintText>* 이탈이나 조퇴를한 학생이 있다면 클릭해서 상태를 바꿔주세요</S.HintText>
                 </S.InfoSection>
                 <S.StudentsGrid>
                     {isLoading ? (
@@ -56,12 +57,18 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                         const isSelected = selectedStudentId === student.number;
                         const hasStatus = student.state === 'AWAY' || student.state === 'EXIT' || 
                                         student.state === 'EARLY_LEAVE' || student.state === 'EVASION';
+                        const isAfterSchool = student.state === 'AFTER_SCHOOL' || student.state === 'AFTER_SCHOOL_REINFORCEMENT';
                         
                         return (
                             <S.StudentCard
                                 key={student.number}
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    // 방과후 상태일 때는 toast 메시지 표시
+                                    if (isAfterSchool) {
+                                        toast.warning('방과후는 상태 변경이 불가능합니다');
+                                        return;
+                                    }
                                     // state가 있을 때만 선택 가능
                                     if (student.state) {
                                         setSelectedStudentId(isSelected ? null : student.number);
@@ -79,6 +86,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                                     <S.StatusButtons>
                                         {hasStatus ? (
                                             <S.StatusButton
+                                                $statusType="취소"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleStatusClick(student, '취소' as StatusType);
@@ -89,6 +97,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                                         ) : (
                                             <>
                                                 <S.StatusButton
+                                                    $statusType="이탈"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleStatusClick(student, '이탈' as StatusType);
@@ -97,6 +106,7 @@ export default function LocationDetail({ locationName, students, onClose, isOpen
                                                     이탈
                                                 </S.StatusButton>
                                                 <S.StatusButton
+                                                    $statusType="조퇴"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         handleStatusClick(student, '조퇴' as StatusType);

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
@@ -21,6 +21,7 @@ export default function FixedMovementFormPage() {
   const isEditMode = !!id;
   const createMutation = useCreateFixedMovementMutation();
   const updateMutation = useUpdateFixedMovementMutation();
+  const queryClient = useQueryClient();
 
   const { data: detailData } = useQuery(fixedMovementQuery.detail(id));
   
@@ -114,11 +115,59 @@ export default function FixedMovementFormPage() {
     setSelectedStudents(selectedStudents.filter(s => s.studentNumber !== studentNumber));
   };
 
+  /**
+   * 학생 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchInput && studentResults.length > 0) {
+      e.preventDefault();
+      
+      const filteredResults = studentResults.filter(student => 
+        !selectedStudents.find(s => 
+          (s.id && s.id === student.id) || 
+          (!s.id && s.studentNumber === student.number)
+        )
+      );
+      
+      if (filteredResults.length > 0) {
+        const student = filteredResults[0];
+        handleAddStudent({ 
+          id: student.id as number, 
+          studentNumber: student.number, 
+          name: student.name, 
+          grade: student.grade, 
+          classNumber: student.classNumber 
+        });
+      }
+    }
+  };
+
+  /**
+   * 팀 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handleTeamEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && teamSearchInput && teamResults.length > 0) {
+      e.preventDefault();
+      const team = teamResults[0];
+      handleSelectTeam(team.name, team.members);
+    }
+  };
+
+  /**
+   * 장소 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handlePlaceEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && placeSearchInput && placeResults.length > 0) {
+      e.preventDefault();
+      handleSelectPlace(placeResults[0]);
+    }
+  };
+
   const handleCancel = () => {
     navigate('/admin/fixed-movement');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const weekDay = WEEKDAY_LABEL_TO_API[dayOfWeek];
     const periodEnum = PERIOD_LABEL_TO_API[period];
 
@@ -132,25 +181,53 @@ export default function FixedMovementFormPage() {
       return;
     }
 
-    if (isEditMode && id) {
-      updateMutation.mutate({
-        id,
-        data: {
+    try {
+      if (isEditMode && id) {
+        updateMutation.mutate({
+          id,
+          data: {
+            week_day: weekDay,
+            period: periodEnum,
+            place: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          },
+        });
+        return;
+      }
+
+      if (period === '8~11교시') {
+        await Promise.all([
+          createMutation.mutateAsync({
+            week_day: weekDay,
+            period: 'EIGHT_AND_NINE_PERIOD',
+            place_id: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          }),
+          createMutation.mutateAsync({
+            week_day: weekDay,
+            period: 'TEN_AND_ELEVEN_PERIOD',
+            place_id: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          }),
+        ]);
+      } else {
+        await createMutation.mutateAsync({
           week_day: weekDay,
           period: periodEnum,
-          place: selectedPlace.id,
+          place_id: selectedPlace.id,
           cause: reason,
           students: selectedStudents.map((s) => s.id || s.studentNumber),
-        },
-      });
-    } else {
-      createMutation.mutate({
-        week_day: weekDay,
-        period: periodEnum,
-        place_id: selectedPlace.id,
-        cause: reason,
-        students: selectedStudents.map((s) => s.id || s.studentNumber),
-      });
+        });
+      }
+
+      toast.success('고정 이석이 성공적으로 생성되었습니다.');
+      queryClient.invalidateQueries({ queryKey: ['fixedMovement.list'] });
+      navigate('/admin/fixed-movement');
+    } catch (e) {
+      toast.error('고정 이석 생성에 실패했습니다.');
     }
   };
 
@@ -181,7 +258,10 @@ export default function FixedMovementFormPage() {
           </S.FormSection>
 
           <S.FormSection>
-            <S.SectionTitle>장소</S.SectionTitle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <S.SectionTitle>장소</S.SectionTitle>
+              <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            </div>
             <S.DropdownWrapper>
               <TextInput
                 placeholder="장소를 검색해주세요"
@@ -193,6 +273,7 @@ export default function FixedMovementFormPage() {
                     setLocation('');
                   }
                 }}
+                onKeyDown={handlePlaceEnterKeyPress}
                 leftIcon={
                   <img
                     src="/icons/common/search.svg"
@@ -227,7 +308,10 @@ export default function FixedMovementFormPage() {
 
           <S.FormSection>
             <S.ToggleRow>
-              <S.SectionTitle>학생</S.SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <S.SectionTitle>학생</S.SectionTitle>
+                <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+              </div>
               <S.ToggleContent>
                 <S.SectionTitle>팀</S.SectionTitle>
                 <S.Toggle
@@ -250,6 +334,7 @@ export default function FixedMovementFormPage() {
                     setSearchInput(e.target.value);
                   }
                 }}
+                onKeyDown={isTeamMode ? handleTeamEnterKeyPress : handleStudentEnterKeyPress}
                 leftIcon={
                   <img 
                     src="/icons/common/search.svg" 
@@ -273,7 +358,7 @@ export default function FixedMovementFormPage() {
                       <S.StudentDropdownItem 
                         key={student.id}
                         onClick={() => handleAddStudent({ 
-                          id: student.id, 
+                          id: typeof student.id === 'string' ? Number(student.id) : student.id,
                           studentNumber: student.number, 
                           name: student.name, 
                           grade: student.grade, 

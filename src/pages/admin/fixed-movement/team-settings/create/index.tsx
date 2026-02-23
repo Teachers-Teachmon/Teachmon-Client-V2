@@ -67,6 +67,32 @@ export default function TeamFormPage() {
     setSelectedStudents(selectedStudents.filter(s => s.studentNumber !== studentNumber));
   };
 
+  /**
+   * 학생 검색에서 엔터 키를 눌렀을 때 첫 번째 결과를 선택하는 함수
+   */
+  const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchInput && studentResults.length > 0) {
+      e.preventDefault();
+      
+      const filteredResults = studentResults.filter(student =>
+        !selectedStudents.find(s => 
+          (studentIdMap[s.studentNumber] && studentIdMap[s.studentNumber] === student.id) || 
+          (!studentIdMap[s.studentNumber] && s.studentNumber === student.id)
+        )
+      );
+      
+      if (filteredResults.length > 0) {
+        const student = filteredResults[0];
+        handleAddStudent({ 
+          studentNumber: typeof student.id === 'number' ? student.id : parseInt(String(student.id)), 
+          name: student.name, 
+          grade: student.grade, 
+          classNumber: student.classNumber 
+        });
+      }
+    }
+  };
+
   const handleCancel = () => {
     navigate('/admin/fixed-movement/team-settings');
   };
@@ -116,7 +142,10 @@ export default function TeamFormPage() {
           </S.FormSection>
 
           <S.FormSection>
-            <S.SectionTitle>학생</S.SectionTitle>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <S.SectionTitle>학생</S.SectionTitle>
+              <S.EnterHint>엔터를 치면 입력됩니다</S.EnterHint>
+            </div>
             <S.DropdownWrapper>
               <TextInput
                 placeholder="학생을 검색해주세요"

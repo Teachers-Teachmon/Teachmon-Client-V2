@@ -3,7 +3,7 @@ import {
   WEEKDAY_API_TO_SHORT,
   PERIOD_API_TO_LABEL,
   PERIOD_LABEL_TO_API as COMMON_PERIOD_LABEL_TO_API,
-  AFTER_SCHOOL_PERIODS,
+  ADMIN_AFTER_SCHOOL_PERIODS,
 } from './common';
 
 export const WEEKDAYS = {
@@ -45,10 +45,11 @@ export const PERIOD_LABEL_TO_API: Record<string, Period> = {
   '7교시': COMMON_PERIOD_LABEL_TO_API['7교시'] as Period,
   '8~9교시': COMMON_PERIOD_LABEL_TO_API['8~9교시'] as Period,
   '10~11교시': COMMON_PERIOD_LABEL_TO_API['10~11교시'] as Period,
+  '8~11교시': COMMON_PERIOD_LABEL_TO_API['8~11교시'] as Period,
 };
 
-// 교시 옵션 - common에서 가져옴
-export const PERIOD_OPTIONS = AFTER_SCHOOL_PERIODS;
+// 교시 옵션 - 관리자 방과후 교시 옵션 사용
+export const PERIOD_OPTIONS = [...ADMIN_AFTER_SCHOOL_PERIODS];
 
 export const LOCATION_OPTIONS = [
   '베드실7',

@@ -358,3 +358,27 @@ export const CancelButtonWrapper = styled.div`
     margin-bottom: 0.25rem;
   }
 `;
+
+export const HeaderRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+
+  ${mq.mobile} {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+`;
+
+export const GuidanceMessage = styled.div`
+  text-align: right;
+  font-size: ${fontSizes.Body};
+  color: ${colors.exit};
+
+  ${mq.mobile} {
+    font-size: ${fontSizes.Small};
+    text-align: center;
+  }
+`;

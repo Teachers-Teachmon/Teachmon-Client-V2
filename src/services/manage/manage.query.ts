@@ -1,5 +1,12 @@
 import { queryOptions } from '@tanstack/react-query';
 import { getWeeklyExitHistory } from './manage.api';
+import type {
+  GetStudentScheduleParams,
+  GetPlacesByFloorParams,
+  GetAllFloorsStatusParams,
+  GetScheduleHistoryParams,
+  Period,
+} from '@/types/manage';
 import {
   getStudentSchedule,
   getPlaceSchedule,
@@ -7,11 +14,6 @@ import {
   getAllFloorsStatus,
   getDailyEvasion,
   getScheduleHistory,
-  type GetStudentScheduleParams,
-  type GetPlacesByFloorParams,
-  type GetAllFloorsStatusParams,
-  type GetScheduleHistoryParams,
-  type Period,
 } from './manage.api';
 
 export const manageQuery = {

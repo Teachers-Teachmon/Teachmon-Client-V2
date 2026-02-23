@@ -28,6 +28,7 @@ export interface SupervisionDay {
   day: string;
   self_study_supervision: Supervision | null;
   leave_seat_supervision: Supervision | null;
+  seventh_period_supervision: Supervision | null;
 }
 
 export interface SupervisionRank {
@@ -35,5 +36,6 @@ export interface SupervisionRank {
   name: string;
   self_study_supervision_count: number;
   leave_seat_supervision_count: number;
+  seventh_period_supervision_count: number;
   total_supervision_count: number;
 }

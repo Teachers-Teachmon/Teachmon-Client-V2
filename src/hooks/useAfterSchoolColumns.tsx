@@ -89,7 +89,7 @@ export const useAfterSchoolColumns = (): { columns: TableColumn<AdminAfterSchool
     {
       key: 'location',
       header: '장소이름',
-      width: 'auto',
+      width: '180px',
       render: (row: AdminAfterSchoolClass) =>
         React.createElement('span', {
           style: {
@@ -103,7 +103,7 @@ export const useAfterSchoolColumns = (): { columns: TableColumn<AdminAfterSchool
     {
       key: 'subject',
       header: '이름',
-      width: 'auto',
+      width: '200px',
       render: (row: AdminAfterSchoolClass) =>
         React.createElement('span', {
           style: {
@@ -117,7 +117,7 @@ export const useAfterSchoolColumns = (): { columns: TableColumn<AdminAfterSchool
     {
       key: 'students',
       header: '학생',
-      width: 'auto',
+      width: '1fr',
       render: (row: AdminAfterSchoolClass) => renderStudents(row.students),
     },
   ], [maxStudentsToShow, renderStudents]);

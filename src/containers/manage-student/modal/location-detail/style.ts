@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 import { colors } from '@/styles/theme';
 import { mq } from '@/styles/media';
+import type { StudentState } from '@/types/manage';
+import { getStudentStateInfo } from '@/utils/studentState';
 
 export const ModalContainer = styled.div`
   display: flex;
@@ -149,18 +151,12 @@ export const StudentCard = styled.div<{ $state?: string | null }>`
   width: 100%;
   height: 81px;
   background: ${({ $state }) => {
-    if ($state === 'SELF_STUDY'|| $state === 'ADDITIONAL_SELF_STUDY') return '#ECFDF3'; // 자습 - 초록
-    if ($state === 'LEAVE_SEAT') return '#F0ECFD'; // 이석 - 보라
-    if ($state === 'AWAY' || $state === 'EARLY_LEAVE') return '#FFF6E4'; // 조퇴 - 주황
-    if ($state === 'EXIT' || $state === 'EVASION') return '#FFEBEA'; // 이탈 - 빨강
-    return colors.background;
+    const stateInfo = getStudentStateInfo($state as StudentState);
+    return stateInfo?.backgroundColor || colors.background;
   }};
   border: 1px solid ${({ $state }) => {
-    if ($state === 'SELF_STUDY' || $state === 'ADDITIONAL_SELF_STUDY') return '#14BA6D'; // 자습
-    if ($state === 'LEAVE_SEAT') return '#6A1EC1'; // 이석
-    if ($state === 'AWAY' || $state === 'EARLY_LEAVE') return '#FF9000'; // 조퇴
-    if ($state === 'EXIT' || $state === 'EVASION') return '#FF938C'; // 이탈
-    return '#F5F5F5';
+    const stateInfo = getStudentStateInfo($state as StudentState);
+    return stateInfo?.color || '#F5F5F5';
   }};
   display: flex;
   align-items: center;
@@ -208,9 +204,14 @@ export const StatusButtons = styled.div`
   }
 `;
 
-export const StatusButton = styled.button`
+export const StatusButton = styled.button<{ $statusType?: '이탈' | '조퇴' | '취소' }>`
   flex: 1;
-  background: ${colors.primary};
+  background: ${({ $statusType }) => {
+    if ($statusType === '이탈') return '#FF938C'; // 이탈 - 빨강
+    if ($statusType === '조퇴') return '#FF9000'; // 조퇴 - 주황
+    if ($statusType === '취소') return '#9CA4BA'; // 취소 - 회색
+    return colors.primary;
+  }};
   border: none;
   border-radius: 6px;
   font-family: 'Paperlogy', sans-serif;
@@ -221,7 +222,6 @@ export const StatusButton = styled.button`
   transition: all 0.2s;
 
   &:hover {
-    background: ${colors.primary};
     opacity: 0.8;
     transform: scale(1.02);
   }

@@ -43,7 +43,7 @@ export default function SupervisionPage() {
           showYear={true}
           showLegend={true}
           exchangeMode={exchangeMode}
-          currentTeacherId={currentTeacherId}
+          currentTeacherId={currentTeacherId || ''}
           selectedMyEvent={selectedMyEvent}
           onMyEventSelect={handleMyEventSelect}
           onTargetEventSelect={handleTargetEventSelect}
@@ -53,7 +53,7 @@ export default function SupervisionPage() {
       <ExchangeDetailModal
         isOpen={isModalOpen}
         exchange={exchangeRequest}
-        currentTeacherId={currentTeacherId}
+        currentTeacherId={currentTeacherId || ''}
         onClose={handleCloseModal}
         onAccept={() => { }}
         onReject={() => { }}

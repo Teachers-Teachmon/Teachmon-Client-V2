@@ -76,7 +76,7 @@ export const getScheduleHistory = async (params?: GetScheduleHistoryParams): Pro
 };
 
 // 이탈 기록 삭제
-export const deleteEvasionRecord = async (exitId: number): Promise<MessageResponse> => {
+export const deleteEvasionRecord = async (exitId: number | string): Promise<MessageResponse> => {
   const response = await axiosInstance.delete<MessageResponse>(`/exit/${exitId}`);
   return response.data;
 };
