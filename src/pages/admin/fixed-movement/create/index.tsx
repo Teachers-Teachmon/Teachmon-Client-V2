@@ -119,7 +119,7 @@ export default function FixedMovementFormPage() {
     navigate('/admin/fixed-movement');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const weekDay = WEEKDAY_LABEL_TO_API[dayOfWeek];
     const periodEnum = PERIOD_LABEL_TO_API[period];
 
@@ -133,20 +133,23 @@ export default function FixedMovementFormPage() {
       return;
     }
 
-    if (isEditMode && id) {
-      updateMutation.mutate({
-        id,
-        data: {
-          week_day: weekDay,
-          period: periodEnum,
-          place: selectedPlace.id,
-          cause: reason,
-          students: selectedStudents.map((s) => s.id || s.studentNumber),
-        },
-      });
-    } else {
+    try {
+      if (isEditMode && id) {
+        updateMutation.mutate({
+          id,
+          data: {
+            week_day: weekDay,
+            period: periodEnum,
+            place: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          },
+        });
+        return;
+      }
+
       if (period === '8~11교시') {
-        Promise.all([
+        await Promise.all([
           createMutation.mutateAsync({
             week_day: weekDay,
             period: 'EIGHT_AND_NINE_PERIOD',
@@ -161,15 +164,9 @@ export default function FixedMovementFormPage() {
             cause: reason,
             students: selectedStudents.map((s) => s.id || s.studentNumber),
           }),
-        ]).then(() => {
-          toast.success('고정 이석이 성공적으로 생성되었습니다.');
-          queryClient.invalidateQueries({ queryKey: ['fixedMovement.list'] });
-          navigate('/admin/fixed-movement');
-        }).catch(() => {
-          toast.error('고정 이석 생성에 실패했습니다.');
-        });
+        ]);
       } else {
-        createMutation.mutate({
+        await createMutation.mutateAsync({
           week_day: weekDay,
           period: periodEnum,
           place_id: selectedPlace.id,
@@ -177,6 +174,12 @@ export default function FixedMovementFormPage() {
           students: selectedStudents.map((s) => s.id || s.studentNumber),
         });
       }
+
+      toast.success('고정 이석이 성공적으로 생성되었습니다.');
+      queryClient.invalidateQueries({ queryKey: ['fixedMovement.list'] });
+      navigate('/admin/fixed-movement');
+    } catch (e) {
+      toast.error('고정 이석 생성에 실패했습니다.');
     }
   };
 
