@@ -358,11 +358,7 @@ export default function FixedMovementFormPage() {
                       <S.StudentDropdownItem 
                         key={student.id}
                         onClick={() => handleAddStudent({ 
-<<<<<<< feat/TC-85
-                          id: typeof student.id === 'string' ? parseInt(student.id, 10) : student.id, 
-=======
-                          id: student.id as number, 
->>>>>>> main
+                          id: typeof student.id === 'string' ? Number(student.id) : student.id,
                           studentNumber: student.number, 
                           name: student.name, 
                           grade: student.grade, 
