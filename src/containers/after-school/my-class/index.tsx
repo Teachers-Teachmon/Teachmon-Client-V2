@@ -22,21 +22,24 @@ export default function MyClassTable() {
   onSuccess: () => {
     setIsTerminateModalOpen(false);
     setSelectedClassForTerminate(null);
-    queryClient.invalidateQueries({ queryKey: ['afterSchool', 'my', selectedGrade] });
+    // 모든 학년 쿼리를 무효화하여 데이터를 다시 가져오도록 함
+    queryClient.invalidateQueries({ queryKey: ['afterSchool.my', 1] });
+    queryClient.invalidateQueries({ queryKey: ['afterSchool.my', 2] });
+    queryClient.invalidateQueries({ queryKey: ['afterSchool.my', 3] });
   },
 });
   const menuButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});
   const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
 
-  const { data: classes = [], isLoading } = useQuery(afterSchoolQuery.my(selectedGrade));
+  // 컴포넌트 마운트 시 모든 학년 데이터를 한 번에 가져오기
+  const { data: grade1Classes = [], isLoading: isLoading1 } = useQuery(afterSchoolQuery.my(1));
+  const { data: grade2Classes = [], isLoading: isLoading2 } = useQuery(afterSchoolQuery.my(2));
+  const { data: grade3Classes = [], isLoading: isLoading3 } = useQuery(afterSchoolQuery.my(3));
 
-  // Fetch data for all grades to get total count
-  const { data: grade1Classes = [] } = useQuery(afterSchoolQuery.my(1));
-  const { data: grade2Classes = [] } = useQuery(afterSchoolQuery.my(2));
-  const { data: grade3Classes = [] } = useQuery(afterSchoolQuery.my(3));
-
-  const filteredClasses = classes;
+  // 선택된 학년에 따라 해당 데이터만 필터링
+  const filteredClasses = selectedGrade === 1 ? grade1Classes : selectedGrade === 2 ? grade2Classes : grade3Classes;
   const totalCount = grade1Classes.length + grade2Classes.length + grade3Classes.length;
+  const isLoading = isLoading1 || isLoading2 || isLoading3;
 
   useEffect(() => {
     if (!menuOpenId) return;

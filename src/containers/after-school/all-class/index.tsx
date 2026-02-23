@@ -42,9 +42,11 @@ export default function AllClassSection({
     branch: currentQuarter.number,
   } : params;
 
+  // React Query가 자동으로 캐싱해줌 - 이미 요청한 요일은 다시 요청하지 않음
   const { data: classes = [] } = useQuery({
     ...afterSchoolQuery.all(paramsWithBranch),
     enabled: !isBranchLoading && !!params.grade && !!params.week_day,
+    staleTime: 5 * 60 * 1000, // 5분간 데이터를 fresh 상태로 유지
   });
 
   // selectedGrade나 selectedDay가 변경될 때 timeSlotPages 초기화

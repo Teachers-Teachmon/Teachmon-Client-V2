@@ -94,6 +94,18 @@ export interface AllAfterSchool {
 // 나의 방과후 조회용 타입
 export interface MyAfterSchool {
   id: number;
+  grade: number;
+  week_day: string;
+  period: string;
+  name: string;
+  teacher: Teacher;
+  place: Place;
+  students: Student[];
+}
+
+// 나의 오늘 방과후 조회용 타입
+export interface TodayAfterSchool {
+  id: number;
   week_day: string;
   period: string;
   name: string;
