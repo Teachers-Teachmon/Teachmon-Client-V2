@@ -1,5 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
-import { getLeaveSeatList, getLeaveSeatDetail, type GetLeaveSeatListParams } from './movement.api';
+import { getLeaveSeatList, getLeaveSeatDetail } from './movement.api';
+import type { GetLeaveSeatListParams } from '@/types/movement';
 
 export const movementQuery = {
   list: (params: GetLeaveSeatListParams) =>

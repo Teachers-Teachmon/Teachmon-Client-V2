@@ -1,4 +1,4 @@
-import type { Student } from '@/services/search/search.api';
+import type { StudentSearchResponse as Student } from '@/types/search';
 import type { ExchangeStatus, PeriodType, SupervisionType } from '@/types/home';
 import {
   formatDate,

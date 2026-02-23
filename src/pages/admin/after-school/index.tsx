@@ -83,7 +83,7 @@ export default function AdminAfterSchoolPage() {
       teacher: item.teacher.name,
       teacherId: item.teacher.id,
       location: item.place.name,
-      placeId: item.place.id,
+      placeId: Number(item.place.id),
       subject: item.name,
       students: item.students.map(student => `${student.number} ${student.name}`),
       studentIds: item.students.map(student => student.id ?? 0),

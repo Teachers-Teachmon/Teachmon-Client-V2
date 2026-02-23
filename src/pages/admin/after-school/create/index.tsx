@@ -124,8 +124,6 @@ export default function AfterSchoolFormPage() {
   const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
     const name = student.name;
     const baseNumber = 'number' in student ? student.number : (student as Student).studentNumber;
-    const grade = (student as Student).grade ?? (student as StudentSearchResponse).grade;
-    const classNumber = (student as Student).classNumber ?? (student as StudentSearchResponse).classNumber;
 
     const displayNumber = `${baseNumber.toString().padStart(4, '0')}`;
   

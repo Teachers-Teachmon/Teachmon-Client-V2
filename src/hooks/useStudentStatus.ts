@@ -49,7 +49,7 @@ export const useStudentStatus = () => {
         },
     });
 
-    const changeStatus = (scheduleId: string, status: StatusType, currentState?: StudentState | null, silent = false) => {        
+    const changeStatus = (scheduleId: string, status: StatusType, currentState?: StudentState | null) => {
         if (status === '취소' && currentState) {
             cancelMutation.mutate({ scheduleId, state: currentState });
         } else {

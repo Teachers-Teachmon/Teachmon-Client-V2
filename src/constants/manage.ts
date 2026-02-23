@@ -1,5 +1,3 @@
-import { GRADES } from './common';
-
 // 학급 번호
 export const CLASSES = [1, 2, 3, 4] as const;
 
