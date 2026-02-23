@@ -19,7 +19,7 @@ export default function TeamSettingsPage() {
   const deleteMutation = useDeleteTeamMutation();
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [detailTargetId, setDetailTargetId] = useState<string | null>(null);
-  const [detailTeamData, setDetailTeamData] = useState<TeamResponse | Team | null>(null);
+  const [detailTeamData, setDetailTeamData] = useState<TeamResponse | null>(null);
 
   const teams: Team[] = (rawTeams ?? []).map((t: TeamResponse) => ({
     id: String(t.id),
@@ -44,9 +44,9 @@ export default function TeamSettingsPage() {
   };
 
   const handleDetail = (row: Team) => {
-    const originalTeam = (rawTeams ?? []).find((t: any) => String(t.id) === row.id);
-    
-    setDetailTeamData(originalTeam || row);
+    const originalTeam = (rawTeams ?? []).find((t: TeamResponse) => String(t.id) === row.id);
+    if (!originalTeam) return;
+    setDetailTeamData(originalTeam);
     setDetailTargetId(row.id);
   };
 

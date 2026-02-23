@@ -1,7 +1,6 @@
 import Modal from '@/components/layout/modal';
 import { useQuery } from '@tanstack/react-query';
 import { fixedMovementQuery } from '@/services/fixed-movement/fixedMovement.query';
-import { teamQuery } from '@/services/team/team.query';
 import { PERIOD_LABEL, WEEKDAY_LABEL } from '@/constants/fixedMovement';
 import type { TeamResponse } from '@/types/fixedMovement';
 import * as S from './style';
@@ -26,9 +25,6 @@ export default function DetailModal({
     fixedMovementQuery.detail(movementId || undefined)
   );
 
-  const { data: fetchedTeamData } = useQuery(
-    teamQuery.detail(teamId || undefined)
-  );
   if (movementId && movementData) {
     return (
       <Modal isOpen={isOpen} onClose={onClose} padding="0">
@@ -74,7 +70,7 @@ export default function DetailModal({
       </Modal>
     );
   }
-  const displayTeamData = teamData || fetchedTeamData;
+  const displayTeamData = teamData;
   
   if (teamId && displayTeamData) {
     return (

@@ -28,7 +28,7 @@ export const useAuthCodeMutation = () => {
         navigate('/');
       }
     },
-    onError: (error) => {
+    onError: () => {
       toast.error('로그인에 실패했습니다.');
       navigate('/');
     },
@@ -50,7 +50,7 @@ export const useLogoutMutation = () => {
       navigate('/');
       toast.success('로그아웃되었습니다.');
     },
-    onError: (error) => {
+    onError: () => {
       // 에러가 발생해도 로컬 상태는 정리
       clearAuth();
       clearUser();

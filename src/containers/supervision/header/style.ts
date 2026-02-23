@@ -6,7 +6,7 @@ export const Header = styled.div`
   justify-content: flex-end;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 
   ${mq.mobile} {
     flex-direction: column;

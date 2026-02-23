@@ -114,6 +114,8 @@ export interface TodayAfterSchool {
   students: Student[];
 }
 
+export type TodayAfterSchool = MyAfterSchool;
+
 // 방과후 검색 파라미터 타입
 export interface AfterSchoolSearchParams {
   grade?: number;

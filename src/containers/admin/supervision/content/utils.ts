@@ -14,7 +14,10 @@ export const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 export const getEventType = (event: CalendarEvent): AdminSupervisionType | null => {
-  if (event.supervisionType && (event.supervisionType === 'self_study' || event.supervisionType === 'leave_seat')) {
+  if (
+    event.supervisionType &&
+    (event.supervisionType === 'self_study' || event.supervisionType === 'leave_seat' || event.supervisionType === 'seventh_period')
+  ) {
     return event.supervisionType;
   }
   const match = (Object.entries(SUPERVISION_TYPE_STYLES) as Array<[AdminSupervisionType, { bgColor: string; textColor: string }]>)
@@ -73,18 +76,18 @@ export const filterCounts = (
   return result;
 };
 
-export const getEditorAnchor = (
-  wrapperRect: DOMRect,
-  anchorRect: DOMRect,
-) => {
-  const leftBase = anchorRect.left - wrapperRect.left;
-  const maxLeft = wrapperRect.width - SUPERVISION_EDITOR_WIDTH - 12;
+export const getEditorAnchor = (anchorRect: DOMRect) => {
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+
+  const leftBase = anchorRect.left;
+  const maxLeft = viewportWidth - SUPERVISION_EDITOR_WIDTH - 12;
   const clampedLeft = Math.max(12, Math.min(leftBase, maxLeft));
-  const topBase = anchorRect.bottom - wrapperRect.top + 6;
-  const maxTop = wrapperRect.height - SUPERVISION_EDITOR_HEIGHT - 8;
-  const bottomOverflow = topBase + SUPERVISION_EDITOR_HEIGHT > wrapperRect.height - 8;
-  const top = bottomOverflow
-    ? Math.max(8, Math.max(anchorRect.top - wrapperRect.top - SUPERVISION_EDITOR_HEIGHT - 6, maxTop))
-    : topBase;
+
+  const topBelow = anchorRect.bottom + 6;
+  const topAbove = anchorRect.top - SUPERVISION_EDITOR_HEIGHT - 6;
+  const canPlaceBelow = topBelow + SUPERVISION_EDITOR_HEIGHT <= viewportHeight - 8;
+  const top = canPlaceBelow ? topBelow : Math.max(8, topAbove);
+
   return { top, left: clampedLeft };
 };

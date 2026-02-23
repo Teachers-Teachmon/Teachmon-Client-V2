@@ -89,7 +89,7 @@ export default function Calendar({
 
   const handleEventClick = (event: CalendarEvent, rect: DOMRect) => {
     if (showMobilePopover) {
-      const dayEvents = getEventsForDate(event.date)
+      const dayEvents = sortDayEvents(getEventsForDate(event.date))
       const dayRangeEvents = getRangeEventsForDate(event.date)
       setSelectedDay({ date: event.date, isCurrentMonth: true, events: dayEvents, rangeEvents: dayRangeEvents })
       updatePopoverPosition(rect)
@@ -106,6 +106,37 @@ export default function Calendar({
   }
 
   const formatShortDate = (date: Date) => `${date.getMonth() + 1}월 ${date.getDate()}일`
+  const getEventPriority = (event: CalendarEvent) => {
+    if (event.supervisionType === 'seventh_period') return 0
+    if (event.supervisionType === 'self_study') return 1
+    if (event.supervisionType === 'leave_seat') return 2
+    return 3
+  }
+  const sortDayEvents = (dayEvents: CalendarEvent[]) =>
+    [...dayEvents].sort((a, b) => getEventPriority(a) - getEventPriority(b))
+  const getEventTitle = (event: CalendarEvent) => {
+    if (event.supervisionType === 'self_study') return `자습 감독: ${event.label}`
+    if (event.supervisionType === 'leave_seat') return `이석 감독: ${event.label}`
+    if (event.supervisionType === 'seventh_period') return `7교시 감독: ${event.label}`
+    return event.label
+  }
+  const getEventDisabled = (event: CalendarEvent) => {
+    const isMyEvent = String(event.teacherId) === String(currentTeacherId)
+    const isExchangeEvent = event.supervisionType === 'self_study' || event.supervisionType === 'leave_seat'
+    let isDisabled = false
+
+    if (exchangeMode) {
+      if (!isExchangeEvent) {
+        isDisabled = true
+      } else if (!selectedMyEvent) {
+        isDisabled = !isMyEvent
+      } else {
+        isDisabled = isMyEvent
+      }
+    }
+
+    return isDisabled
+  }
 
   return (
     <S.CalendarContainer
@@ -148,7 +179,7 @@ export default function Calendar({
         <S.DaysGridWrapper>
           <S.DaysGrid style={{ ['--calendar-rows' as string]: calendarRows }}>
             {calendarDays.map(({ date, isCurrentMonth }, index) => {
-              const dayEvents = getEventsForDate(date)
+              const dayEvents = sortDayEvents(getEventsForDate(date))
               const dayRangeEvents = getRangeEventsForDate(date)
               const dayType = getDayType(date.getDay())
               const isInDragRange = isDateInDragRange(date)
@@ -174,41 +205,218 @@ export default function Calendar({
                 >
                   <S.DayNumber dayType={dayType} isCurrentMonth={isCurrentMonth}>{date.getDate()}</S.DayNumber>
                   <S.EventList>
-                    {dayEvents.map((event) => {
-                      const isMyEvent = String(event.teacherId) === String(currentTeacherId)
-                      let isDisabled = false
-
-                      if (exchangeMode) {
-                        if (!selectedMyEvent) {
-                          isDisabled = !isMyEvent
-                        } else {
-                          isDisabled = isMyEvent
-                        }
-                      }
+                    {(() => {
+                      const seventhEvent = dayEvents.find((event) => event.supervisionType === 'seventh_period')
+                      const selfStudyEvent = dayEvents.find((event) => event.supervisionType === 'self_study')
+                      const leaveSeatEvent = dayEvents.find((event) => event.supervisionType === 'leave_seat')
+                      const otherEvents = dayEvents.filter(
+                        (event) =>
+                          event.id !== seventhEvent?.id &&
+                          event.id !== selfStudyEvent?.id &&
+                          event.id !== leaveSeatEvent?.id
+                      )
 
                       return (
-                        <S.EventTag
-                          key={event.id}
-                          bgColor={event.bgColor}
-                          textColor={event.textColor}
-                          clickable={!!onEventClick || (exchangeMode && !isDisabled)}
-                          isSelected={exchangeMode && selectedMyEvent?.id === event.id}
-                          isDisabled={isDisabled}
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            if (!isDisabled) {
-                              handleEventClick(event, (e.currentTarget as HTMLElement).getBoundingClientRect())
-                            }
-                            if (onEventClick) {
-                              e.stopPropagation()
-                              onEventClick(event, (e.currentTarget as HTMLElement).getBoundingClientRect())
-                            }
-                          }}
-                        >
-                          {event.label}
-                        </S.EventTag>
+                        <>
+                          <S.DesktopEventGroup>
+                            {seventhEvent && (
+                              <S.EventTag
+                                key={seventhEvent.id}
+                                title={getEventTitle(seventhEvent)}
+                                bgColor={seventhEvent.bgColor}
+                                textColor={seventhEvent.textColor}
+                                clickable={!!onEventClick || (exchangeMode && !getEventDisabled(seventhEvent))}
+                                isSelected={exchangeMode && selectedMyEvent?.id === seventhEvent.id}
+                                isDisabled={getEventDisabled(seventhEvent)}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  const isDisabled = getEventDisabled(seventhEvent)
+                                  if (!isDisabled) {
+                                    handleEventClick(seventhEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                  }
+                                  if (onEventClick) {
+                                    e.stopPropagation()
+                                    onEventClick(seventhEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                  }
+                                }}
+                              >
+                                {seventhEvent.label}
+                              </S.EventTag>
+                            )}
+
+                            {(selfStudyEvent || leaveSeatEvent) && (
+                              <S.EventSplitRow>
+                                {selfStudyEvent ? (
+                                  <S.EventHalfTag
+                                    key={selfStudyEvent.id}
+                                    title={getEventTitle(selfStudyEvent)}
+                                    bgColor={selfStudyEvent.bgColor}
+                                    textColor={selfStudyEvent.textColor}
+                                    clickable={!!onEventClick || (exchangeMode && !getEventDisabled(selfStudyEvent))}
+                                    isSelected={exchangeMode && selectedMyEvent?.id === selfStudyEvent.id}
+                                    isDisabled={getEventDisabled(selfStudyEvent)}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      const isDisabled = getEventDisabled(selfStudyEvent)
+                                      if (!isDisabled) {
+                                        handleEventClick(selfStudyEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                      }
+                                      if (onEventClick) {
+                                        e.stopPropagation()
+                                        onEventClick(selfStudyEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                      }
+                                    }}
+                                  >
+                                    {selfStudyEvent.label}
+                                  </S.EventHalfTag>
+                                ) : (
+                                  <S.EventPlaceholder />
+                                )}
+
+                                {leaveSeatEvent ? (
+                                  <S.EventHalfTag
+                                    key={leaveSeatEvent.id}
+                                    title={getEventTitle(leaveSeatEvent)}
+                                    bgColor={leaveSeatEvent.bgColor}
+                                    textColor={leaveSeatEvent.textColor}
+                                    clickable={!!onEventClick || (exchangeMode && !getEventDisabled(leaveSeatEvent))}
+                                    isSelected={exchangeMode && selectedMyEvent?.id === leaveSeatEvent.id}
+                                    isDisabled={getEventDisabled(leaveSeatEvent)}
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      const isDisabled = getEventDisabled(leaveSeatEvent)
+                                      if (!isDisabled) {
+                                        handleEventClick(leaveSeatEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                      }
+                                      if (onEventClick) {
+                                        e.stopPropagation()
+                                        onEventClick(leaveSeatEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                      }
+                                    }}
+                                  >
+                                    {leaveSeatEvent.label}
+                                  </S.EventHalfTag>
+                                ) : (
+                                  <S.EventPlaceholder />
+                                )}
+                              </S.EventSplitRow>
+                            )}
+
+                            {otherEvents.map((event) => {
+                              const isDisabled = getEventDisabled(event)
+                              return (
+                                <S.EventTag
+                                  key={event.id}
+                                  title={getEventTitle(event)}
+                                  bgColor={event.bgColor}
+                                  textColor={event.textColor}
+                                  clickable={!!onEventClick || (exchangeMode && !isDisabled)}
+                                  isSelected={exchangeMode && selectedMyEvent?.id === event.id}
+                                  isDisabled={isDisabled}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    if (!isDisabled) {
+                                      handleEventClick(event, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                    if (onEventClick) {
+                                      e.stopPropagation()
+                                      onEventClick(event, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                  }}
+                                >
+                                  {event.label}
+                                </S.EventTag>
+                              )
+                            })}
+                          </S.DesktopEventGroup>
+
+                          <S.MobileEventGroup>
+                            <S.MobileTripleRow>
+                              {seventhEvent ? (
+                                <S.MobileThirdTag
+                                  key={seventhEvent.id}
+                                  title={getEventTitle(seventhEvent)}
+                                  bgColor={seventhEvent.bgColor}
+                                  textColor={seventhEvent.textColor}
+                                  clickable={!!onEventClick || (exchangeMode && !getEventDisabled(seventhEvent))}
+                                  isSelected={exchangeMode && selectedMyEvent?.id === seventhEvent.id}
+                                  isDisabled={getEventDisabled(seventhEvent)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    const isDisabled = getEventDisabled(seventhEvent)
+                                    if (!isDisabled) {
+                                      handleEventClick(seventhEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                    if (onEventClick) {
+                                      e.stopPropagation()
+                                      onEventClick(seventhEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                  }}
+                                >
+                                  {seventhEvent.label}
+                                </S.MobileThirdTag>
+                              ) : (
+                                <S.MobileThirdPlaceholder />
+                              )}
+
+                              {selfStudyEvent ? (
+                                <S.MobileThirdTag
+                                  key={selfStudyEvent.id}
+                                  title={getEventTitle(selfStudyEvent)}
+                                  bgColor={selfStudyEvent.bgColor}
+                                  textColor={selfStudyEvent.textColor}
+                                  clickable={!!onEventClick || (exchangeMode && !getEventDisabled(selfStudyEvent))}
+                                  isSelected={exchangeMode && selectedMyEvent?.id === selfStudyEvent.id}
+                                  isDisabled={getEventDisabled(selfStudyEvent)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    const isDisabled = getEventDisabled(selfStudyEvent)
+                                    if (!isDisabled) {
+                                      handleEventClick(selfStudyEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                    if (onEventClick) {
+                                      e.stopPropagation()
+                                      onEventClick(selfStudyEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                  }}
+                                >
+                                  {selfStudyEvent.label}
+                                </S.MobileThirdTag>
+                              ) : (
+                                <S.MobileThirdPlaceholder />
+                              )}
+
+                              {leaveSeatEvent ? (
+                                <S.MobileThirdTag
+                                  key={leaveSeatEvent.id}
+                                  title={getEventTitle(leaveSeatEvent)}
+                                  bgColor={leaveSeatEvent.bgColor}
+                                  textColor={leaveSeatEvent.textColor}
+                                  clickable={!!onEventClick || (exchangeMode && !getEventDisabled(leaveSeatEvent))}
+                                  isSelected={exchangeMode && selectedMyEvent?.id === leaveSeatEvent.id}
+                                  isDisabled={getEventDisabled(leaveSeatEvent)}
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    const isDisabled = getEventDisabled(leaveSeatEvent)
+                                    if (!isDisabled) {
+                                      handleEventClick(leaveSeatEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                    if (onEventClick) {
+                                      e.stopPropagation()
+                                      onEventClick(leaveSeatEvent, (e.currentTarget as HTMLElement).getBoundingClientRect())
+                                    }
+                                  }}
+                                >
+                                  {leaveSeatEvent.label}
+                                </S.MobileThirdTag>
+                              ) : (
+                                <S.MobileThirdPlaceholder />
+                              )}
+                            </S.MobileTripleRow>
+                          </S.MobileEventGroup>
+                        </>
                       )
-                    })}
+                    })()}
                   </S.EventList>
                 </S.DayCell>
               )

@@ -1,14 +1,12 @@
 import { queryOptions } from '@tanstack/react-query';
 import {
+  getAfterSchoolClasses,
   getMyTodayAfterSchool,
   getMyAfterSchool,
   getAllAfterSchool,
   getBranchInfo,
-  getAfterSchoolClasses,
-  fetchAffordableReinforcement,
 } from './afterSchool.api';
-import type { AfterSchoolSearchParams } from '@/types/after-school';
-import type { AfterSchoolRequestParams } from '@/types/after-school';
+import type { AfterSchoolSearchParams, AfterSchoolRequestParams } from '@/types/after-school';
 
 export const afterSchoolQuery = {
   // 방과후 수업 목록
@@ -26,14 +24,12 @@ export const afterSchoolQuery = {
       queryFn: getMyTodayAfterSchool,
     }),
 
-  // 나의 방과후 (학년별)
   my: (grade: number) =>
     queryOptions({
       queryKey: ['afterSchool.my', grade],
       queryFn: () => getMyAfterSchool(grade),
     }),
 
-  // 전체 방과후 (필터링)
   all: (params: AfterSchoolSearchParams) =>
     queryOptions({
       queryKey: ['afterSchool.all', params],
@@ -41,22 +37,9 @@ export const afterSchoolQuery = {
       enabled: !!params.grade && !!params.week_day && !!params.start_period && !!params.end_period,
     }),
 
-  // 분기 정보
   branch: () =>
     queryOptions({
       queryKey: ['afterSchool.branch'],
       queryFn: getBranchInfo,
-    }),
-
-  // 보강 가능한 시간
-  affordableReinforcement: (month: number, afterschoolid?: string | number) =>
-    queryOptions({
-      queryKey: ['afterSchool.affordableReinforcement', month, String(afterschoolid ?? '')],
-      queryFn: () =>
-        fetchAffordableReinforcement({
-          month,
-          afterschoolid: afterschoolid ?? '',
-        }),
-      enabled: !!afterschoolid,
     }),
 };

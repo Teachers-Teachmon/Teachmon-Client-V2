@@ -24,11 +24,21 @@ interface ClassCardProps {
 
 export default function ClassCard({ classNum, students, selectedStudentId, onStudentSelect, onStatusChange, isLoading }: ClassCardProps) {
     useEffect(() => {
-        const handleClickOutside = () => onStudentSelect(null);
-        if (selectedStudentId) {
+        if (!selectedStudentId) return;
+
+        const handleClickOutside = () => {
+            onStudentSelect(null);
+        };
+
+        // 다음 틱에 이벤트 리스너 추가
+        const timer = setTimeout(() => {
             document.addEventListener('click', handleClickOutside);
-        }
-        return () => document.removeEventListener('click', handleClickOutside);
+        }, 0);
+
+        return () => {
+            clearTimeout(timer);
+            document.removeEventListener('click', handleClickOutside);
+        };
     }, [selectedStudentId, onStudentSelect]);
 
     const getStatusOptions = (student: Student): StatusType[] => {
@@ -55,32 +65,28 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                 ) : (
                     students.map((student) => {
                         const stateInfo = getStudentStateInfo(student.state);
-                        // AFTER_SCHOOL이면 흰색, state가 null이면 회색으로 표시
-                        let displayColor = stateInfo?.color || '#9CA4BA';
-                        let displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
-                        
-                        if (student.state === 'AFTER_SCHOOL') {
-                            displayColor = '#eaeaea';
-                            displayBgColor = '#FFFFFF';
-                        }
+                        const displayColor = stateInfo?.color || '#9CA4BA';
+                        const displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
+                        // 해당 학생이 방과후 상태인지 확인
+                        const isStudentAfterSchool = student.state === 'AFTER_SCHOOL' || student.state === 'AFTER_SCHOOL_REINFORCEMENT';
                         
                         return (
                             <S.StudentCard 
                                 key={student.id}
                                 $stateColor={displayColor}
                                 $stateBgColor={displayBgColor}
-                                $hasState={!!student.state}
+                                $hasState={!!student.state && !isStudentAfterSchool}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    // state가 있을 때만 선택 가능
-                                    if (student.state) {
+                                    // 방과후 상태가 아닐 때만 선택 가능
+                                    if (!isStudentAfterSchool) {
                                         onStudentSelect(student.id);
                                     }
                                 }}
                             >
                                 <S.StudentNumber>{String(student.number).slice(-2)}</S.StudentNumber>
                                 <S.StudentName>{student.name}</S.StudentName>
-                                {selectedStudentId === student.id && student.state && (
+                                {selectedStudentId === student.id && !isStudentAfterSchool && (
                                     <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
                                         {getStatusOptions(student).map((status, index) => (
                                             <S.StatusBadgeWrapper 
