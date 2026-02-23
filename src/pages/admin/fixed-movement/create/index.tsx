@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
@@ -21,6 +21,7 @@ export default function FixedMovementFormPage() {
   const isEditMode = !!id;
   const createMutation = useCreateFixedMovementMutation();
   const updateMutation = useUpdateFixedMovementMutation();
+  const queryClient = useQueryClient();
 
   const { data: detailData } = useQuery(fixedMovementQuery.detail(id));
   
@@ -166,7 +167,7 @@ export default function FixedMovementFormPage() {
     navigate('/admin/fixed-movement');
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const weekDay = WEEKDAY_LABEL_TO_API[dayOfWeek];
     const periodEnum = PERIOD_LABEL_TO_API[period];
 
@@ -180,25 +181,53 @@ export default function FixedMovementFormPage() {
       return;
     }
 
-    if (isEditMode && id) {
-      updateMutation.mutate({
-        id,
-        data: {
+    try {
+      if (isEditMode && id) {
+        updateMutation.mutate({
+          id,
+          data: {
+            week_day: weekDay,
+            period: periodEnum,
+            place: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          },
+        });
+        return;
+      }
+
+      if (period === '8~11교시') {
+        await Promise.all([
+          createMutation.mutateAsync({
+            week_day: weekDay,
+            period: 'EIGHT_AND_NINE_PERIOD',
+            place_id: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          }),
+          createMutation.mutateAsync({
+            week_day: weekDay,
+            period: 'TEN_AND_ELEVEN_PERIOD',
+            place_id: selectedPlace.id,
+            cause: reason,
+            students: selectedStudents.map((s) => s.id || s.studentNumber),
+          }),
+        ]);
+      } else {
+        await createMutation.mutateAsync({
           week_day: weekDay,
           period: periodEnum,
-          place: selectedPlace.id,
+          place_id: selectedPlace.id,
           cause: reason,
           students: selectedStudents.map((s) => s.id || s.studentNumber),
-        },
-      });
-    } else {
-      createMutation.mutate({
-        week_day: weekDay,
-        period: periodEnum,
-        place_id: selectedPlace.id,
-        cause: reason,
-        students: selectedStudents.map((s) => s.id || s.studentNumber),
-      });
+        });
+      }
+
+      toast.success('고정 이석이 성공적으로 생성되었습니다.');
+      queryClient.invalidateQueries({ queryKey: ['fixedMovement.list'] });
+      navigate('/admin/fixed-movement');
+    } catch (e) {
+      toast.error('고정 이석 생성에 실패했습니다.');
     }
   };
 
@@ -329,7 +358,11 @@ export default function FixedMovementFormPage() {
                       <S.StudentDropdownItem 
                         key={student.id}
                         onClick={() => handleAddStudent({ 
+<<<<<<< feat/TC-85
+                          id: typeof student.id === 'string' ? parseInt(student.id, 10) : student.id, 
+=======
                           id: student.id as number, 
+>>>>>>> main
                           studentNumber: student.number, 
                           name: student.name, 
                           grade: student.grade, 
