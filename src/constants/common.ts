@@ -163,11 +163,11 @@ export const ALL_PERIODS: readonly string[] = [
 // 분기 관련 상수
 // ============================================
 
-export type Quarter = 1 | 2 | 3;
-export type QuarterLabel = '1분기' | '2분기' | '3분기';
+export type Quarter = 1 | 2 | 3 | 4;
+export type QuarterLabel = '1분기' | '2분기' | '3분기' | '4분기';
 
-export const QUARTERS: readonly Quarter[] = [1, 2, 3] as const;
-export const QUARTER_LABELS: readonly QuarterLabel[] = ['1분기', '2분기', '3분기'] as const;
+export const QUARTERS: readonly Quarter[] = [1, 2, 3, 4] as const;
+export const QUARTER_LABELS: readonly QuarterLabel[] = ['1분기', '2분기', '3분기', '4분기'] as const;
 
 // ============================================
 // 학년 관련 상수
