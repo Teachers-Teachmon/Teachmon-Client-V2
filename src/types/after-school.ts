@@ -106,6 +106,9 @@ export interface MyAfterSchool {
 // 나의 오늘 방과후 조회용 타입
 export interface TodayAfterSchool {
   id: number;
+  branch: number;
+  grade: number;
+  day: string;
   week_day: string;
   period: string;
   name: string;
@@ -113,8 +116,6 @@ export interface TodayAfterSchool {
   place: Place;
   students: Student[];
 }
-
-export type TodayAfterSchool = MyAfterSchool;
 
 // 방과후 검색 파라미터 타입
 export interface AfterSchoolSearchParams {
