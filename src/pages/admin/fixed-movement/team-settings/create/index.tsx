@@ -151,6 +151,7 @@ export default function TeamFormPage() {
                 placeholder="학생을 검색해주세요"
                 value={searchInput}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
+                onKeyDown={handleStudentEnterKeyPress}
                 leftIcon={
                   <img
                     src="/icons/common/search.svg"
