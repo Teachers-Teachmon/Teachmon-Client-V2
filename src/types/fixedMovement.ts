@@ -58,7 +58,7 @@ export interface CreateFixedMovementRequest {
   period: Period;
   place_id: number;
   cause: string;
-  students: number[];
+  students: string[];
 }
 
 export interface CreateFixedMovementResponse {
@@ -70,7 +70,7 @@ export interface UpdateFixedMovementRequest {
   period: Period;
   place: number;
   cause: string;
-  students: number[];
+  students: string[];
 }
 
 export interface UpdateFixedMovementResponse {
@@ -117,14 +117,14 @@ export interface TeamResponse {
 
 export interface CreateTeamRequest {
   name: string;
-  students_id: number[];
+  students_id: string[];
 }
 
 export interface UpdateTeamRequest {
   id: string;
   name: string;
   students: {
-    id: number;
+    id: string;
     student_number: number;
     name: string;
   }[];

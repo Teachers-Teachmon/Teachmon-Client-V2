@@ -115,7 +115,7 @@ export default function TeamFormPage() {
         id,
         name: teamName,
         students: selectedStudents.map((s) => ({
-          id: studentIdMap[s.studentNumber] ?? s.id!,
+          id: String(studentIdMap[s.studentNumber] ?? s.id!),
           student_number: s.studentNumber,
           name: s.name,
         })),
@@ -123,7 +123,7 @@ export default function TeamFormPage() {
     } else {
       createMutation.mutate({
         name: teamName,
-        students_id: selectedStudents.map((s) => s.id!),
+        students_id: selectedStudents.map((s) => String(s.id!)),
       });
     }
   };

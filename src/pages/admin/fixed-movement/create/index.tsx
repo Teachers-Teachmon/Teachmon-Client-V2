@@ -190,7 +190,7 @@ export default function FixedMovementFormPage() {
             period: periodEnum,
             place: selectedPlace.id,
             cause: reason,
-            students: selectedStudents.map((s) => s.id || s.studentNumber),
+            students: selectedStudents.map((s) => String(s.id ?? s.studentNumber)),
           },
         });
         return;
@@ -203,14 +203,14 @@ export default function FixedMovementFormPage() {
             period: 'EIGHT_AND_NINE_PERIOD',
             place_id: selectedPlace.id,
             cause: reason,
-            students: selectedStudents.map((s) => s.id || s.studentNumber),
+            students: selectedStudents.map((s) => String(s.id ?? s.studentNumber)),
           }),
           createMutation.mutateAsync({
             week_day: weekDay,
             period: 'TEN_AND_ELEVEN_PERIOD',
             place_id: selectedPlace.id,
             cause: reason,
-            students: selectedStudents.map((s) => s.id || s.studentNumber),
+            students: selectedStudents.map((s) => String(s.id ?? s.studentNumber)),
           }),
         ]);
       } else {
@@ -219,7 +219,7 @@ export default function FixedMovementFormPage() {
           period: periodEnum,
           place_id: selectedPlace.id,
           cause: reason,
-          students: selectedStudents.map((s) => s.id || s.studentNumber),
+          students: selectedStudents.map((s) => String(s.id ?? s.studentNumber)),
         });
       }
 
