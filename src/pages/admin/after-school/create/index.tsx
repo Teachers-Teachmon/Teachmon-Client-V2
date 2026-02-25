@@ -178,10 +178,11 @@ export default function AfterSchoolFormPage() {
       const currentYear = new Date().getFullYear();
       if (isEditMode) {
         const mappedPeriod = mapSinglePeriod(period);
+        const weekDay = editData?.day ? WEEKDAY_MAP[editData.day as keyof typeof WEEKDAY_MAP] : 'MON';
 
         const requestData: UpdateAfterSchoolRequest = {
           grade: selectedStudents[0].grade,
-          week_day: createData?.selectedDay ? WEEKDAY_MAP[createData.selectedDay as keyof typeof WEEKDAY_MAP] : 'MON',
+          week_day: weekDay,
           period: mappedPeriod,
           year: currentYear,
           after_school_id: id as string,
