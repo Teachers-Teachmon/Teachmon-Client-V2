@@ -58,13 +58,14 @@ export default function AfterSchoolFormPage() {
       const fullStudentNumber = parseInt(parts[0]) || 0;
       const name = parts.slice(1).join(' ');
       const studentStr = fullStudentNumber.toString();
-      const classNum = studentStr.length >= 5 ? parseInt(studentStr.substring(1, 2)) : 0;
-      const studentNumber = studentStr.length >= 5 ? parseInt(studentStr.substring(2)) : parseInt(studentStr);
+      // 학번 형식: 4자리 = 학년(1) + 반(1) + 번호(2) e.g. 2413 = 2학년 4반 13번
+      const gradeFromNumber = studentStr.length >= 1 ? parseInt(studentStr.substring(0, 1), 10) : 0;
+      const classNum = studentStr.length >= 2 ? parseInt(studentStr.substring(1, 2), 10) : 0;
       return {
         id: (editData.studentIds?.[idx] ?? 0).toString(),
-        studentNumber,
+        studentNumber: fullStudentNumber,
         name,
-        grade: editData.grade,
+        grade: editData.grade ?? gradeFromNumber,
         classNumber: classNum,
       };
     }) : []
@@ -102,16 +103,17 @@ export default function AfterSchoolFormPage() {
     if ('members' in student) {
       const newStudents: Student[] = student.members.map(member => ({
         id: member.id.toString(),
-        studentNumber: member.number,
+        studentNumber: Number(`${member.grade}${member.classNumber}${String(member.number).padStart(2, '0')}`),
         name: member.name,
         grade: member.grade,
         classNumber: member.classNumber,
       }));
       setSelectedStudents([...selectedStudents, ...newStudents]);
     } else {
+      const studentNumber = Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`);
       const newStudent: Student = {
-        id: student.id.toString(),
-        studentNumber: student.number,
+        id: String(student.id),
+        studentNumber,
         name: student.name,
         grade: student.grade,
         classNumber: student.classNumber,
@@ -123,10 +125,10 @@ export default function AfterSchoolFormPage() {
 
   const formatStudentDisplay = (student: Student | StudentSearchResponse) => {
     const name = student.name;
-    const baseNumber = 'number' in student ? student.number : (student as Student).studentNumber;
-
-    const displayNumber = `${baseNumber.toString().padStart(4, '0')}`;
-  
+    const displayNumber =
+      'number' in student && 'grade' in student && 'classNumber' in student && !('studentNumber' in student)
+        ? `${(student as StudentSearchResponse).grade}${(student as StudentSearchResponse).classNumber}${String((student as StudentSearchResponse).number).padStart(2, '0')}`
+        : String((student as Student).studentNumber);
     return `${displayNumber} ${name}`;
   };
 
@@ -178,17 +180,18 @@ export default function AfterSchoolFormPage() {
       const currentYear = new Date().getFullYear();
       if (isEditMode) {
         const mappedPeriod = mapSinglePeriod(period);
+        const weekDay = editData?.day ? WEEKDAY_MAP[editData.day as keyof typeof WEEKDAY_MAP] : 'MON';
 
         const requestData: UpdateAfterSchoolRequest = {
           grade: selectedStudents[0].grade,
-          week_day: createData?.selectedDay ? WEEKDAY_MAP[createData.selectedDay as keyof typeof WEEKDAY_MAP] : 'MON',
+          week_day: weekDay,
           period: mappedPeriod,
           year: currentYear,
           after_school_id: id as string,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
-          students_id: selectedStudents.map((s) => parseInt(s.id || '0')),
+          students_id: selectedStudents.map((s) => String(s.id ?? '')),
         };
 
         await updateAfterSchoolClass(requestData);
@@ -201,7 +204,7 @@ export default function AfterSchoolFormPage() {
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
-          students_id: selectedStudents.map((s) => parseInt(s.id || '0')),
+          students_id: selectedStudents.map((s) => String(s.id ?? '')),
         };
 
         if (period === '8~11교시') {
@@ -366,12 +369,16 @@ export default function AfterSchoolFormPage() {
           {selectedStudents.length > 0 && (
             <S.StudentGrid>
               {selectedStudents.map((student) => (
-                <S.StudentCard key={`${student.id || student.studentNumber}-${student.name}-${student.grade}`}>
+                <S.StudentCard key={`${student.id ?? student.studentNumber}-${student.name}-${student.grade}`}>
                   <S.StudentInfo>
-                    <S.StudentNumber>{formatStudentDisplay(student).split(' ')[0]}</S.StudentNumber>
-                    <S.StudentName>{formatStudentDisplay(student).split(' ').slice(1).join(' ')}</S.StudentName>
+                    <S.StudentNumber>
+                      {student.grade != null && student.classNumber != null
+                        ? `${student.grade}${student.classNumber}${String(student.studentNumber).slice(-2).padStart(2, '0')}`
+                        : String(student.studentNumber)}
+                    </S.StudentNumber>
+                    <S.StudentName>{student.name}</S.StudentName>
                   </S.StudentInfo>
-                  <S.RemoveButton onClick={() => handleRemoveStudent(String(student.id || student.studentNumber))}>
+                  <S.RemoveButton onClick={() => handleRemoveStudent(String(student.id ?? student.studentNumber))}>
                     <img src="/icons/common/x.svg" alt="삭제" width={20} height={20} />
                   </S.RemoveButton>
                 </S.StudentCard>

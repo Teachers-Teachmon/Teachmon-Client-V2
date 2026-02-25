@@ -65,7 +65,7 @@ export interface CreateAfterSchoolRequest {
   teacher_id: number;
   place_id: number;
   name: string;
-  students_id: number[];
+  students_id: string[];
 }
 
 export interface UpdateAfterSchoolRequest {
@@ -77,7 +77,7 @@ export interface UpdateAfterSchoolRequest {
   teacher_id: number;
   place_id: number;
   name: string;
-  students_id: number[];
+  students_id: string[];
 }
 
 // 전체 방과후 조회용 타입
