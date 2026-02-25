@@ -73,21 +73,23 @@ export default function TeamFormPage() {
   const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchInput && studentResults.length > 0) {
       e.preventDefault();
-      
-      const filteredResults = studentResults.filter(student =>
-        !selectedStudents.find(s => 
-          (studentIdMap[s.studentNumber] && studentIdMap[s.studentNumber] === student.id) || 
-          (!studentIdMap[s.studentNumber] && s.studentNumber === student.id)
-        )
-      );
-      
+
+      const filteredResults = studentResults.filter(student => {
+        const currentStudentNumber = Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`);
+        return !selectedStudents.find(s =>
+          (studentIdMap[s.studentNumber] && studentIdMap[s.studentNumber] === student.id) ||
+          (!studentIdMap[s.studentNumber] && s.studentNumber === currentStudentNumber)
+        );
+      });
+
       if (filteredResults.length > 0) {
         const student = filteredResults[0];
-        handleAddStudent({ 
-          studentNumber: typeof student.id === 'number' ? student.id : parseInt(String(student.id)), 
-          name: student.name, 
-          grade: student.grade, 
-          classNumber: student.classNumber 
+        handleAddStudent({
+          id: typeof student.id === 'number' ? student.id : Number(student.id),
+          studentNumber: Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`),
+          name: student.name,
+          grade: student.grade,
+          classNumber: student.classNumber,
         });
       }
     }
@@ -113,7 +115,7 @@ export default function TeamFormPage() {
         id,
         name: teamName,
         students: selectedStudents.map((s) => ({
-          id: studentIdMap[s.studentNumber] ?? s.studentNumber,
+          id: studentIdMap[s.studentNumber] ?? s.id!,
           student_number: s.studentNumber,
           name: s.name,
         })),
@@ -121,7 +123,7 @@ export default function TeamFormPage() {
     } else {
       createMutation.mutate({
         name: teamName,
-        students_id: selectedStudents.map((s) => s.id ?? s.studentNumber),
+        students_id: selectedStudents.map((s) => s.id!),
       });
     }
   };
