@@ -101,24 +101,38 @@ export default function AfterSchoolFormPage() {
 
   const handleAddStudent = (student: StudentSearchResponse | TeamSearchResponse) => {
     if ('members' in student) {
-      const newStudents: Student[] = student.members.map(member => ({
-        id: member.id.toString(),
-        studentNumber: Number(`${member.grade}${member.classNumber}${String(member.number).padStart(2, '0')}`),
-        name: member.name,
-        grade: member.grade,
-        classNumber: member.classNumber,
-      }));
-      setSelectedStudents([...selectedStudents, ...newStudents]);
+      const newStudents: Student[] = student.members
+        .map(member => ({
+          id: member.id.toString(),
+          studentNumber: Number(`${member.grade}${member.classNumber}${String(member.number).padStart(2, '0')}`),
+          name: member.name,
+          grade: member.grade,
+          classNumber: member.classNumber,
+        }))
+        .filter(
+          (newSt) =>
+            !selectedStudents.some(
+              (s) => s.id === newSt.id || s.studentNumber === newSt.studentNumber
+            )
+        );
+      if (newStudents.length > 0) {
+        setSelectedStudents([...selectedStudents, ...newStudents]);
+      }
     } else {
       const studentNumber = Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`);
-      const newStudent: Student = {
-        id: String(student.id),
-        studentNumber,
-        name: student.name,
-        grade: student.grade,
-        classNumber: student.classNumber,
-      };
-      setSelectedStudents([...selectedStudents, newStudent]);
+      const isDuplicate = selectedStudents.some(
+        (s) => s.id === String(student.id) || s.studentNumber === studentNumber
+      );
+      if (!isDuplicate) {
+        const newStudent: Student = {
+          id: String(student.id),
+          studentNumber,
+          name: student.name,
+          grade: student.grade,
+          classNumber: student.classNumber,
+        };
+        setSelectedStudents([...selectedStudents, newStudent]);
+      }
     }
     setStudentSearchQuery('');
   };
@@ -142,7 +156,8 @@ export default function AfterSchoolFormPage() {
   const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && studentSearchQuery) {
       e.preventDefault();
-      
+      setStudentSearchQuery('');
+
       if (isTeamMode && teamsData.length > 0) {
         const filteredTeams = teamsData.filter((team: TeamSearchResponse) => {
           const teamMemberIds = new Set(team.members.map((member) => member.id.toString()));
@@ -150,7 +165,7 @@ export default function AfterSchoolFormPage() {
             selectedStudents.some((selected) => selected.id === member.id.toString())
           ) && teamMemberIds.size > 0;
         });
-        
+
         if (filteredTeams.length > 0) {
           handleAddStudent(filteredTeams[0]);
         }
@@ -158,7 +173,7 @@ export default function AfterSchoolFormPage() {
         const filteredStudents = studentsData.filter((student: StudentSearchResponse) =>
           !selectedStudents.find((s) => s.id === student.id.toString())
         );
-        
+
         if (filteredStudents.length > 0) {
           handleAddStudent(filteredStudents[0]);
         }
