@@ -39,8 +39,9 @@ export default function AfterSchoolFormPage() {
   const { id } = useParams<{ id: string }>();
   const routerLocation = useLocation();
   const isEditMode = !!id;
-  const editData = routerLocation.state as AdminAfterSchoolClass | null;
-  const createData = routerLocation.state as { selectedDay: string } | null;
+  const editData = routerLocation.state as (AdminAfterSchoolClass & { selectedBranch?: number }) | null;
+  const createData = routerLocation.state as { selectedDay?: string; selectedBranch?: number } | null;
+  const selectedBranch = createData?.selectedBranch ?? editData?.selectedBranch ?? 1;
   
   const [teacher, setTeacher] = useState<Teacher | null>(
     isEditMode && editData ? { id: editData.teacherId, name: editData.teacher } : null
@@ -202,6 +203,7 @@ export default function AfterSchoolFormPage() {
           week_day: weekDay,
           period: mappedPeriod,
           year: currentYear,
+          branch: selectedBranch,
           after_school_id: id as string,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
@@ -216,6 +218,7 @@ export default function AfterSchoolFormPage() {
           grade: selectedStudents[0].grade,
           week_day: createData?.selectedDay ? WEEKDAY_MAP[createData.selectedDay as keyof typeof WEEKDAY_MAP] : 'MON',
           year: currentYear,
+          branch: selectedBranch,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,

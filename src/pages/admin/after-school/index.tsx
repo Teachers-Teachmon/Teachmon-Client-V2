@@ -110,7 +110,7 @@ export default function AdminAfterSchoolPage() {
     if (e) {
       e.stopPropagation();
     }
-    navigate(`/admin/after-school/edit/${classData.id}`, { state: classData });
+    navigate(`/admin/after-school/edit/${classData.id}`, { state: { ...classData, selectedBranch: branch } });
   };
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
@@ -126,7 +126,7 @@ export default function AdminAfterSchoolPage() {
       try {
         await deleteAfterSchoolClass(deleteTargetId);
         toast.success('방과후가 성공적으로 삭제되었습니다.');
-        queryClient.invalidateQueries({ queryKey: ['afterSchool'] });
+        await queryClient.invalidateQueries({ queryKey: ['afterSchool.classes'] });
       } catch {
         toast.error('방과후 삭제에 실패했습니다.');
       }
@@ -138,7 +138,8 @@ export default function AdminAfterSchoolPage() {
   const handleAdd = () => {
     navigate('/admin/after-school/create', { 
       state: { 
-        selectedDay: selectedDay 
+        selectedDay: selectedDay,
+        selectedBranch: branch,
       } 
     });
   };
