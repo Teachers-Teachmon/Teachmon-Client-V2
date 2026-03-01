@@ -116,6 +116,8 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     async (error: AxiosError) => {
+        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+        
         // CORS 에러 감지 (네트워크 에러이면서 response가 없는 경우)
         if (!error.response && error.message === 'Network Error') {
             if (!error.config?.skipLoading) {
@@ -139,12 +141,61 @@ axiosInstance.interceptors.response.use(
             return Promise.reject(error);
         }
         
+        // 401 에러이고 아직 재시도하지 않은 경우
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            
+            // 로딩 중지
+            if (!originalRequest.skipLoading) {
+                useLoadingStore.getState().stopLoading();
+            }
+            
+            try {
+                // 이미 재발급 중이면 기다리고, 아니면 새로 시작
+                if (!reissuePromise) {
+                    reissuePromise = reissueToken()
+                        .then(({ access_token }) => {
+                            // 새 토큰을 메모리에 저장 (defaults도 업데이트됨)
+                            useAuthStore.getState().setAccessToken(access_token);
+                            return access_token;
+                        })
+                        .finally(() => {
+                            // 완료되면 캐시 초기화
+                            reissuePromise = null;
+                        });
+                }
+                
+                // 재발급된 토큰 받기
+                const access_token = await reissuePromise;
+                
+                // 원래 요청의 헤더에 새 토큰 적용
+                originalRequest.headers.Authorization = `Bearer ${access_token}`;
+                
+                // 원래 요청 재시도
+                return axiosInstance(originalRequest);
+            } catch (reissueError) {
+                // 토큰 재발급 실패 시 로그아웃 처리
+                useAuthStore.getState().clearAuth();
+                useUserStore.getState().clearUser();
+                
+                // 토스트 메시지 표시
+                toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
+                
+                // 루트 페이지로 리다이렉트
+                if (window.location.pathname !== '/') {
+                    window.location.href = '/';
+                }
+                
+                return Promise.reject(reissueError);
+            }
+        }
+        
         if (!error.config?.skipLoading) {
             useLoadingStore.getState().stopLoading();
         }
 
-        // 에러 토스트 표시
-        if (!error.config?.skipErrorToast) {
+        // 401 에러는 이미 처리했으므로 토스트 표시 안함
+        if (!error.config?.skipErrorToast && error.response?.status !== 401) {
             showErrorToast(error);
         }
 
