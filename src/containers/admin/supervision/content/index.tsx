@@ -8,6 +8,7 @@ import type { CalendarEvent, DayInfo } from '@/types/calendar';
 import type { SupervisionCount } from '@/types/admin';
 import { SUPERVISION_LABEL_TO_TYPE, SUPERVISION_TYPE_LABELS, SUPERVISION_TYPE_STYLES, type AdminSupervisionType } from '@/constants/adminSupervision';
 import { convertToCalendarEvents } from '@/utils/supervision';
+import { getApiErrorMessage } from '@/utils/error';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAdminSupervisionQuery, useSupervisionRankQuery, useTeacherSearchQuery } from '@/services/admin/supervision/adminSupervision.query';
 import {
@@ -360,12 +361,24 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
         if (isSameTeacherAssignment(before, after)) continue;
 
         if (!hasAnyAssignment(before) && hasAnyAssignment(after)) {
-          await createScheduleMutation.mutateAsync({
-            day,
-            self_study_supervision_teacher_id: after.selfStudyTeacherId,
-            leave_seat_supervision_teacher_id: after.leaveSeatTeacherId,
-            seventh_period_supervision_teacher_id: after.seventhPeriodTeacherId,
-          });
+          try {
+            await createScheduleMutation.mutateAsync({
+              day,
+              self_study_supervision_teacher_id: after.selfStudyTeacherId,
+              leave_seat_supervision_teacher_id: after.leaveSeatTeacherId,
+              seventh_period_supervision_teacher_id: after.seventhPeriodTeacherId,
+            });
+          } catch (error) {
+            const errorMessage = getApiErrorMessage(error);
+            if (errorMessage.includes('필수입니다')) {
+              const missingFields: string[] = [];
+              if (errorMessage.includes('이석')) missingFields.push('이석 감독 교사');
+              if (errorMessage.includes('자습')) missingFields.push('자습 감독 교사');
+              if (errorMessage.includes('7교시')) missingFields.push('7교시 감독 교사');
+              throw new Error(`${day} 날짜의 ${missingFields.join(', ')}를 설정해주세요.`);
+            }
+            throw error;
+          }
           continue;
         }
 
@@ -377,12 +390,24 @@ const AdminSupervisionContent = forwardRef<AdminSupervisionContentHandle, AdminS
           continue;
         }
 
-        await updateScheduleMutation.mutateAsync({
-          day,
-          self_study_supervision_teacher_id: after.selfStudyTeacherId,
-          leave_seat_supervision_teacher_id: after.leaveSeatTeacherId,
-          seventh_period_supervision_teacher_id: after.seventhPeriodTeacherId,
-        });
+        try {
+          await updateScheduleMutation.mutateAsync({
+            day,
+            self_study_supervision_teacher_id: after.selfStudyTeacherId,
+            leave_seat_supervision_teacher_id: after.leaveSeatTeacherId,
+            seventh_period_supervision_teacher_id: after.seventhPeriodTeacherId,
+          });
+        } catch (error) {
+          const errorMessage = getApiErrorMessage(error);
+          if (errorMessage.includes('필수입니다')) {
+            const missingFields: string[] = [];
+            if (errorMessage.includes('이석')) missingFields.push('이석 감독 교사');
+            if (errorMessage.includes('자습')) missingFields.push('자습 감독 교사');
+            if (errorMessage.includes('7교시')) missingFields.push('7교시 감독 교사');
+            throw new Error(`${day} 날짜의 ${missingFields.join(', ')}를 설정해주세요.`);
+          }
+          throw error;
+        }
       }
     }
 
