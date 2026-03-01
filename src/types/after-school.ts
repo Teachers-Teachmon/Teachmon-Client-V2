@@ -62,10 +62,11 @@ export interface CreateAfterSchoolRequest {
   week_day: string;
   period: string;
   year: number;
+  branch: number;
   teacher_id: number;
   place_id: number;
   name: string;
-  students_id: number[];
+  students_id: string[];
 }
 
 export interface UpdateAfterSchoolRequest {
@@ -73,11 +74,12 @@ export interface UpdateAfterSchoolRequest {
   week_day: string;
   period: string;
   year: number;
+  branch: number;
   after_school_id: string;
   teacher_id: number;
   place_id: number;
   name: string;
-  students_id: number[];
+  students_id: string[];
 }
 
 // 전체 방과후 조회용 타입
