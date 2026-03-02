@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -20,6 +20,7 @@ export default function TeamFormPage() {
   const isEditMode = !!id;
   const createMutation = useCreateTeamMutation();
   const updateMutation = useUpdateTeamMutation();
+  const isProcessingStudent = useRef(false);
 
   const { data: teamsData } = useQuery(teamQuery.list());
 
@@ -55,8 +56,13 @@ export default function TeamFormPage() {
   }, [isEditMode, teamsData, id]);
 
   const handleAddStudent = (student: Student) => {
+    if (isProcessingStudent.current) return;
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
+      isProcessingStudent.current = true;
       setSelectedStudents([...selectedStudents, student]);
+      setTimeout(() => {
+        isProcessingStudent.current = false;
+      }, 100);
     }
     setSearchInput('');
   };
@@ -71,6 +77,9 @@ export default function TeamFormPage() {
   const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchInput && studentResults.length > 0) {
       e.preventDefault();
+      e.stopPropagation();
+      
+      if (isProcessingStudent.current) return;
 
       const filteredResults = studentResults.filter(student => {
         const currentStudentNumber = Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`);
@@ -175,13 +184,17 @@ export default function TeamFormPage() {
                     .map((student) => (
                       <S.StudentDropdownItem
                         key={student.id}
-                        onClick={() => handleAddStudent({ 
-                          id: typeof student.id === 'number' ? student.id : Number(student.id),
-                          studentNumber: Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`), 
-                          name: student.name, 
-                          grade: student.grade, 
-                          classNumber: student.classNumber 
-                        })}
+                        onMouseDown={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleAddStudent({ 
+                            id: typeof student.id === 'number' ? student.id : Number(student.id),
+                            studentNumber: Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`), 
+                            name: student.name, 
+                            grade: student.grade, 
+                            classNumber: student.classNumber 
+                          });
+                        }}
                       >
                         {student.grade}{student.classNumber}{student.number < 10 ? `0${student.number}` : student.number} {student.name}
                       </S.StudentDropdownItem>

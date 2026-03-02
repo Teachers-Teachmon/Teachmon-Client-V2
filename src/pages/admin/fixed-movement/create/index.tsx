@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { flushSync } from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -22,6 +22,7 @@ export default function FixedMovementFormPage() {
   const createMutation = useCreateFixedMovementMutation();
   const updateMutation = useUpdateFixedMovementMutation();
   const queryClient = useQueryClient();
+  const isProcessingTeam = useRef(false);
 
   const { data: detailData } = useQuery(fixedMovementQuery.detail(id));
   
@@ -88,12 +89,16 @@ export default function FixedMovementFormPage() {
   };
 
   const handleSelectTeam = (teamName: string, teamMembers: TeamSearchResponse['members']) => {
-    // 이미 검색 입력이 비어있으면 중복 호출이므로 무시
+    // 중복 실행 방지
+    if (isProcessingTeam.current) return;
     if (!teamSearchInput) return;
     
+    isProcessingTeam.current = true;
     setTeamSearchInput('');
+    
     const newStudents = teamMembers.map(member => {
-      const fullStudentNumber = Number(`${member.grade}${member.classNumber}${String(member.number).padStart(2, '0')}`);
+      // grade(1자리) + classNumber(1자리) + number(2자리) = 4자리
+      const fullStudentNumber = member.grade * 1000 + member.classNumber * 100 + member.number;
       return {
         id: member.id,
         studentNumber: fullStudentNumber,
@@ -116,6 +121,11 @@ export default function FixedMovementFormPage() {
     } else {
       toast.info(`${teamName} 팀의 모든 학생이 이미 선택되어 있습니다.`);
     }
+    
+    // 100ms 후 플래그 리셋
+    setTimeout(() => {
+      isProcessingTeam.current = false;
+    }, 100);
   };
 
   const handleRemoveStudent = (studentNumber: number) => {
@@ -155,6 +165,11 @@ export default function FixedMovementFormPage() {
   const handleTeamEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && teamSearchInput && teamResults.length > 0) {
       e.preventDefault();
+      e.stopPropagation();
+      
+      // 중복 실행 방지
+      if (isProcessingTeam.current) return;
+      
       const team = teamResults[0];
       handleSelectTeam(team.name, team.members);
     }
@@ -384,9 +399,9 @@ export default function FixedMovementFormPage() {
                   {teamResults.slice(0, 5).map((team) => (
                     <S.StudentDropdownItem
                       key={team.id}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onMouseDown={(e) => {
                         e.preventDefault();
+                        e.stopPropagation();
                         handleSelectTeam(team.name, team.members);
                       }}
                     >
