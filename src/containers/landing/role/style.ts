@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { mq } from '@/styles/media';
-import { colors } from '@/styles/theme';
 
 export const RoleContainer = styled.div`
   width: 100%;
