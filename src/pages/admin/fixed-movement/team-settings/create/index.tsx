@@ -56,9 +56,7 @@ export default function TeamFormPage() {
 
   const handleAddStudent = (student: Student) => {
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
-      flushSync(() => {
-        setSelectedStudents([...selectedStudents, student]);
-      });
+      setSelectedStudents([...selectedStudents, student]);
     }
     setSearchInput('');
   };

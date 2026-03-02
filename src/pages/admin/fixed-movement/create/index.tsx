@@ -89,13 +89,18 @@ export default function FixedMovementFormPage() {
 
   const handleSelectTeam = (teamName: string, teamMembers: TeamSearchResponse['members']) => {
     setTeamSearchInput('');
-    const newStudents = teamMembers.map(member => ({
-      id: member.id,
-      studentNumber: member.number,
-      name: member.name,
-      grade: member.grade,
-      classNumber: member.classNumber,
-    }));
+    const newStudents = teamMembers.map(member => {
+      // 학년반번호 형식으로 변환 (예: 1학년 1반 5번 -> 10105)
+      const studentNumber = Number(`${member.grade}${String(member.classNumber).padStart(1, '0')}${String(member.number).padStart(2, '0')}`);
+      return {
+        id: member.id,
+        studentNumber,
+        name: member.name,
+        grade: member.grade,
+        classNumber: member.classNumber,
+      };
+    });
+    
     const uniqueNewStudents = newStudents.filter(newStudent => 
       !selectedStudents.find(existing => 
         (existing.id && existing.id === newStudent.id) || 
