@@ -38,9 +38,9 @@ export default function FixedMovementFormPage() {
   const [placeSearchInput, setPlaceSearchInput] = useState('');
   const [teamSearchInput, setTeamSearchInput] = useState('');
 
-  const debouncedSearch = useDebounce(searchInput, 300);
-  const debouncedPlaceSearch = useDebounce(placeSearchInput, 300);
-  const debouncedTeamSearch = useDebounce(teamSearchInput, 300);
+  const debouncedSearch = useDebounce(searchInput, 500);
+  const debouncedPlaceSearch = useDebounce(placeSearchInput, 500);
+  const debouncedTeamSearch = useDebounce(teamSearchInput, 500);
 
   const { data: studentResults = [] } = useQuery(searchQuery.students(debouncedSearch));
   const { data: placeResults = [] } = useQuery(searchQuery.places(debouncedPlaceSearch));

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import DateInput from '@/components/ui/input/date';
@@ -23,6 +23,7 @@ interface MovementFormProps {
 }
 
 export default function MovementForm({ onNext, onCancel, initialData, savedFormData }: MovementFormProps) {
+    const isProcessing = useRef(false);
     const [selectedDate, setSelectedDate] = useState<string>(savedFormData?.day || initialData?.day || getTodayDate());
     const [selectedPeriod, setSelectedPeriod] = useState<Period | ''>(savedFormData?.period || initialData?.period || '');
     const [reason, setReason] = useState<string>(savedFormData?.cause || initialData?.cause || '');
@@ -53,7 +54,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
     }, [initialData]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // 학생 검색 디바운스
-    const debouncedSearch = useDebounce(studentSearch, 300);
+    const debouncedSearch = useDebounce(studentSearch, 500);
 
     // 학생 검색 API (팀 모드가 아닐 때)
     const { data: studentResults = [] } = useQuery({
@@ -78,8 +79,15 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
      * 엔터 키를 눌렀을 때 필터링된 첫 번째 결과를 선택하는 함수
      */
     const handleEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // 한글 입력 중일 때는 무시
+        if (e.nativeEvent.isComposing) return;
+        
         if (e.key === 'Enter' && studentSearch && searchResults.length > 0) {
             e.preventDefault();
+            e.stopPropagation();
+            
+            if (isProcessing.current) return;
+            isProcessing.current = true;
             
             // 중복 제거된 결과에서 첫 번째 항목 선택
             const filteredResults = searchResults.filter((result: StudentSearchResponse | TeamSearchResponse) => {
@@ -92,6 +100,10 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
             if (filteredResults.length > 0) {
                 handleSelectResult(filteredResults[0]);
             }
+            
+            setTimeout(() => {
+                isProcessing.current = false;
+            }, 100);
         }
     };
 
@@ -273,7 +285,14 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                                             return (
                                                 <S.StudentDropdownItem 
                                                     key={result.id}
-                                                    onClick={() => handleSelectResult(result)}
+                                                    onClick={() => {
+                                                        if (isProcessing.current) return;
+                                                        isProcessing.current = true;
+                                                        handleSelectResult(result);
+                                                        setTimeout(() => {
+                                                            isProcessing.current = false;
+                                                        }, 100);
+                                                    }}
                                                 >
                                                     {displayText}
                                                 </S.StudentDropdownItem>

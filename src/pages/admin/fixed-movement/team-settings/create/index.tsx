@@ -29,7 +29,7 @@ export default function TeamFormPage() {
   const [studentIdMap, setStudentIdMap] = useState<Record<number, number>>({});
   const [searchInput, setSearchInput] = useState('');
 
-  const debouncedSearch = useDebounce(searchInput, 300);
+  const debouncedSearch = useDebounce(searchInput, 500);
   const { data: studentResults = [] } = useQuery(searchQuery.students(debouncedSearch));
 
   useEffect(() => {
