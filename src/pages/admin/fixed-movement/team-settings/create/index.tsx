@@ -21,6 +21,7 @@ export default function TeamFormPage() {
   const createMutation = useCreateTeamMutation();
   const updateMutation = useUpdateTeamMutation();
   const isProcessingStudent = useRef(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { data: teamsData } = useQuery(teamQuery.list());
 
@@ -87,13 +88,26 @@ export default function TeamFormPage() {
 
       if (filteredResults.length > 0) {
         const student = filteredResults[0];
-        handleAddStudent({
+        const newStudent = {
           id: typeof student.id === 'number' ? student.id : Number(student.id),
           studentNumber: Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`),
           name: student.name,
           grade: student.grade,
           classNumber: student.classNumber,
-        });
+        };
+        
+        if (!selectedStudents.find(s => s.studentNumber === newStudent.studentNumber)) {
+          setSelectedStudents([...selectedStudents, newStudent]);
+        }
+      }
+      
+      // 입력창 초기화 및 blur
+      setSearchInput('');
+      if (searchInputRef.current) {
+        searchInputRef.current.blur();
+        setTimeout(() => {
+          searchInputRef.current?.focus();
+        }, 50);
       }
       
       setTimeout(() => {
@@ -157,6 +171,7 @@ export default function TeamFormPage() {
             </div>
             <S.DropdownWrapper>
               <TextInput
+                ref={searchInputRef}
                 placeholder="학생을 검색해주세요"
                 value={searchInput}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
