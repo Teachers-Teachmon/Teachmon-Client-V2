@@ -29,7 +29,6 @@ export default function RoleLanding() {
               <S.TextSection key={index}>
                 <S.Title>{slide.title}</S.Title>
                 <S.Description>{slide.description}</S.Description>
-                <S.StartButton>자습감독 시작하기</S.StartButton>
                 <S.ScreenshotImage src={slide.image} alt={slide.title} />
               </S.TextSection>
             ))}

@@ -96,31 +96,6 @@ export const Description = styled.p`
   }
 `;
 
-export const StartButton = styled.button`
-  width: fit-content;
-  padding: 14px 32px;
-  background: #ffffff;
-  color: ${colors.primary};
-  border: none;
-  border-radius: 8px;
-  font-family: 'Paperlogy', sans-serif;
-  font-weight: 600;
-  font-size: clamp(14px, 1.1vw, 16px);
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
-  }
-
-  ${mq.mobile} {
-    padding: 12px 24px;
-    font-size: 14px;
-  }
-`;
-
 export const ScreenshotImage = styled.img`
   max-width: 100%;
   width: auto;

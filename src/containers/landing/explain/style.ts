@@ -26,18 +26,6 @@ export const ContentWrapper = styled.div`
   }
 `;
 
-export const VideosGrid = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-
-  ${mq.mobile} {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-`;
-
 export const MobileTitle = styled.h2`
   display: none;
   

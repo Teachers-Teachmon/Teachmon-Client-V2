@@ -34,8 +34,7 @@ const ExplainLanding: React.FC = () => {
     <S.ExplainContainer>
       <S.ContentWrapper>
         <S.MobileTitle>사용설명 영상</S.MobileTitle>
-        <S.VideosGrid>
-          <S.VideoWrapper>
+        <S.VideoWrapper>
             <S.VideoIframe
               ref={iframeRef}
               src="https://www.youtube.com/embed/YM1tGbnY2wo?enablejsapi=1"
@@ -49,7 +48,6 @@ const ExplainLanding: React.FC = () => {
               isLoading={isLoading}
             />
           </S.VideoWrapper>
-        </S.VideosGrid>
       </S.ContentWrapper>
     </S.ExplainContainer>
   );
