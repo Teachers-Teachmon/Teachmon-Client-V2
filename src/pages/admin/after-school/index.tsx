@@ -140,6 +140,7 @@ export default function AdminAfterSchoolPage() {
       state: { 
         selectedDay: selectedDay,
         selectedBranch: branch,
+        selectedGrade: selectedGrade,
       } 
     });
   };

@@ -40,8 +40,9 @@ export default function AfterSchoolFormPage() {
   const routerLocation = useLocation();
   const isEditMode = !!id;
   const editData = routerLocation.state as (AdminAfterSchoolClass & { selectedBranch?: number }) | null;
-  const createData = routerLocation.state as { selectedDay?: string; selectedBranch?: number } | null;
+  const createData = routerLocation.state as { selectedDay?: string; selectedBranch?: number; selectedGrade?: number } | null;
   const selectedBranch = createData?.selectedBranch ?? editData?.selectedBranch ?? 1;
+  const selectedGrade = createData?.selectedGrade ?? editData?.grade ?? 1;
   
   const [teacher, setTeacher] = useState<Teacher | null>(
     isEditMode && editData ? { id: editData.teacherId, name: editData.teacher } : null
@@ -199,7 +200,7 @@ export default function AfterSchoolFormPage() {
         const weekDay = editData?.day ? WEEKDAY_MAP[editData.day as keyof typeof WEEKDAY_MAP] : 'MON';
 
         const requestData: UpdateAfterSchoolRequest = {
-          grade: selectedStudents[0].grade,
+          grade: selectedStudents.length > 0 ? selectedStudents[0].grade : selectedGrade,
           week_day: weekDay,
           period: mappedPeriod,
           year: currentYear,
@@ -215,7 +216,7 @@ export default function AfterSchoolFormPage() {
         toast.success('방과후가 성공적으로 수정되었습니다.');
       } else {
         const baseRequest: Omit<CreateAfterSchoolRequest, 'period'> = {
-          grade: selectedStudents[0].grade,
+          grade: selectedStudents.length > 0 ? selectedStudents[0].grade : selectedGrade,
           week_day: createData?.selectedDay ? WEEKDAY_MAP[createData.selectedDay as keyof typeof WEEKDAY_MAP] : 'MON',
           year: currentYear,
           branch: selectedBranch,
