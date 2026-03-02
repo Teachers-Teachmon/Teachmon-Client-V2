@@ -23,7 +23,6 @@ export default function FixedMovementFormPage() {
   const updateMutation = useUpdateFixedMovementMutation();
   const queryClient = useQueryClient();
   const isProcessingTeam = useRef(false);
-  const isProcessingStudent = useRef(false);
 
   const { data: detailData } = useQuery(fixedMovementQuery.detail(id));
   
@@ -139,10 +138,6 @@ export default function FixedMovementFormPage() {
   const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchInput && studentResults.length > 0) {
       e.preventDefault();
-      e.stopPropagation();
-      
-      if (isProcessingStudent.current) return;
-      isProcessingStudent.current = true;
       
       const filteredResults = studentResults.filter(student => 
         !selectedStudents.find(s => 
@@ -153,24 +148,14 @@ export default function FixedMovementFormPage() {
       
       if (filteredResults.length > 0) {
         const student = filteredResults[0];
-        const newStudent = { 
+        handleAddStudent({ 
           id: student.id as number, 
           studentNumber: student.number, 
           name: student.name, 
           grade: student.grade, 
           classNumber: student.classNumber 
-        };
-        
-        if (!selectedStudents.find(s => s.studentNumber === newStudent.studentNumber)) {
-          setSelectedStudents([...selectedStudents, newStudent]);
-        }
+        });
       }
-      
-      setSearchInput('');
-      
-      setTimeout(() => {
-        isProcessingStudent.current = false;
-      }, 100);
     }
   };
 
@@ -394,22 +379,13 @@ export default function FixedMovementFormPage() {
                     .map((student) => (
                       <S.StudentDropdownItem 
                         key={student.id}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (isProcessingStudent.current) return;
-                          isProcessingStudent.current = true;
-                          handleAddStudent({ 
-                            id: typeof student.id === 'string' ? Number(student.id) : student.id,
-                            studentNumber: student.number, 
-                            name: student.name, 
-                            grade: student.grade, 
-                            classNumber: student.classNumber 
-                          });
-                          setTimeout(() => {
-                            isProcessingStudent.current = false;
-                          }, 100);
-                        }}
+                        onClick={() => handleAddStudent({ 
+                          id: typeof student.id === 'string' ? Number(student.id) : student.id,
+                          studentNumber: student.number, 
+                          name: student.name, 
+                          grade: student.grade, 
+                          classNumber: student.classNumber 
+                        })}
                       >
                         {student.grade}{student.classNumber}{student.number < 10 ? `0${student.number}` : student.number} {student.name}
                       </S.StudentDropdownItem>

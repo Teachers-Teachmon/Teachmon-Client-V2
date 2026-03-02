@@ -21,7 +21,6 @@ export default function TeamFormPage() {
   const createMutation = useCreateTeamMutation();
   const updateMutation = useUpdateTeamMutation();
   const isProcessingStudent = useRef(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const { data: teamsData } = useQuery(teamQuery.list());
 
@@ -37,19 +36,25 @@ export default function TeamFormPage() {
     if (isEditMode && teamsData) {
       const team = teamsData.find((t) => String(t.id) === id);
       if (team) {
+        console.log('Team members:', team.members);
         flushSync(() => {
           setTeamName(team.name);
-          setSelectedStudents(
-            team.members.map((m) => ({
-              studentNumber: m.grade * 1000 + m.classNumber * 100 + m.number,
+          const students = team.members.map((m) => {
+            const studentNumber = m.grade * 1000 + m.classNumber * 100 + m.number;
+            console.log(`Member: grade=${m.grade}, class=${m.classNumber}, number=${m.number} => studentNumber=${studentNumber}`);
+            return {
+              studentNumber,
               name: m.name,
-            })),
-          );
+            };
+          });
+          setSelectedStudents(students);
+          
           const idMap: Record<number, number> = {};
           team.members.forEach((m) => {
             const studentNumber = m.grade * 1000 + m.classNumber * 100 + m.number;
             idMap[studentNumber] = m.id;
           });
+          console.log('Student ID map:', idMap);
           setStudentIdMap(idMap);
         });
       }
@@ -57,8 +62,12 @@ export default function TeamFormPage() {
   }, [isEditMode, teamsData, id]);
 
   const handleAddStudent = (student: Student) => {
+    console.log('handleAddStudent called with:', student);
     if (!selectedStudents.find(s => s.studentNumber === student.studentNumber)) {
       setSelectedStudents([...selectedStudents, student]);
+      console.log('Student added:', student);
+    } else {
+      console.log('Student already exists');
     }
     setSearchInput('');
   };
@@ -75,6 +84,7 @@ export default function TeamFormPage() {
       e.preventDefault();
       e.stopPropagation();
       
+      console.log('Enter pressed, isProcessing:', isProcessingStudent.current);
       if (isProcessingStudent.current) return;
       isProcessingStudent.current = true;
 
@@ -86,32 +96,24 @@ export default function TeamFormPage() {
         );
       });
 
+      console.log('Filtered results:', filteredResults);
+
       if (filteredResults.length > 0) {
         const student = filteredResults[0];
-        const newStudent = {
+        const studentNumber = Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`);
+        console.log(`Creating student: grade=${student.grade}, class=${student.classNumber}, number=${student.number} => studentNumber=${studentNumber}`);
+        handleAddStudent({
           id: typeof student.id === 'number' ? student.id : Number(student.id),
-          studentNumber: Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`),
+          studentNumber,
           name: student.name,
           grade: student.grade,
           classNumber: student.classNumber,
-        };
-        
-        if (!selectedStudents.find(s => s.studentNumber === newStudent.studentNumber)) {
-          setSelectedStudents([...selectedStudents, newStudent]);
-        }
-      }
-      
-      // 입력창 초기화 및 blur
-      setSearchInput('');
-      if (searchInputRef.current) {
-        searchInputRef.current.blur();
-        setTimeout(() => {
-          searchInputRef.current?.focus();
-        }, 50);
+        });
       }
       
       setTimeout(() => {
         isProcessingStudent.current = false;
+        console.log('Processing flag reset');
       }, 100);
     }
   };
@@ -171,7 +173,6 @@ export default function TeamFormPage() {
             </div>
             <S.DropdownWrapper>
               <TextInput
-                ref={searchInputRef}
                 placeholder="학생을 검색해주세요"
                 value={searchInput}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchInput(e.target.value)}
