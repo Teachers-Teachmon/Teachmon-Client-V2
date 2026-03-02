@@ -35,16 +35,7 @@ export const useDeleteEvasionMutation = () => {
 };
 
 export const useDeleteExitHistoryMutation = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: deleteEvasionRecord,
-    onSuccess: (data: { message: string }) => {
-      toast.success(data.message);
-      queryClient.invalidateQueries({ queryKey: ['manage.weeklyExitHistory'] });
-    },
-    onError: () => {
-      toast.error('이탈 기록 삭제에 실패했습니다.');
-    },
   });
 };

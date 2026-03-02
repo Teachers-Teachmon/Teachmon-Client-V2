@@ -15,14 +15,22 @@ import { formatDateShort, formatPeriod } from '@/utils/format';
 
 export default function AdminMain() {
     const { data: supervisionData, isError: isSupervisionError, isLoading: isSupervisionLoading } = useQuery(supervisionQuery.rank());
-    const { data: exitHistoryData, isError: isExitHistoryError } = useQuery(manageQuery.weeklyExitHistory());
+    const { data: exitHistoryData, isError: isExitHistoryError, refetch: refetchExitHistory } = useQuery(manageQuery.weeklyExitHistory());
     const { data: branchData, isError: isBranchError } = useQuery(branchQuery.list());
     
     const deleteExitHistoryMutation = useDeleteExitHistoryMutation();
     const createBranchMutation = useCreateBranchMutation();
 
     const handleDelete = (id: number) => {
-        deleteExitHistoryMutation.mutate(id);
+        deleteExitHistoryMutation.mutate(id, {
+            onSuccess: () => {
+                toast.success('이탈 기록이 삭제되었습니다.');
+                refetchExitHistory();
+            },
+            onError: () => {
+                toast.error('이탈 기록 삭제에 실패했습니다.');
+            }
+        });
     };
 
     const handleCreateBranch = (quarter: number, startDate: string, endDate: string, afterSchoolEndDate?: string) => {

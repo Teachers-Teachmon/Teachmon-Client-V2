@@ -2,33 +2,58 @@ import React, { useState, useRef } from 'react';
 import * as S from './style';
 
 const ExplainLanding: React.FC = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isPlaying1, setIsPlaying1] = useState(false);
+  const [isLoading1, setIsLoading1] = useState(false);
+  const [isPlaying2, setIsPlaying2] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
+  const iframeRef1 = useRef<HTMLIFrameElement>(null);
+  const iframeRef2 = useRef<HTMLIFrameElement>(null);
 
-  const handleOverlayClick = () => {
-    if (isLoading || !iframeRef.current) return;
+  const handleOverlayClick1 = () => {
+    if (isLoading1 || !iframeRef1.current) return;
 
-    setIsLoading(true);
+    setIsLoading1(true);
 
-    if (!isPlaying) {
-      // 재생
-      iframeRef.current.contentWindow?.postMessage(
+    if (!isPlaying1) {
+      iframeRef1.current.contentWindow?.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         '*'
       );
-      setIsPlaying(true);
+      setIsPlaying1(true);
     } else {
-      // 일시정지
-      iframeRef.current.contentWindow?.postMessage(
+      iframeRef1.current.contentWindow?.postMessage(
         '{"event":"command","func":"pauseVideo","args":""}',
         '*'
       );
-      setIsPlaying(false);
+      setIsPlaying1(false);
     }
 
     setTimeout(() => {
-      setIsLoading(false);
+      setIsLoading1(false);
+    }, 200);
+  };
+
+  const handleOverlayClick2 = () => {
+    if (isLoading2 || !iframeRef2.current) return;
+
+    setIsLoading2(true);
+
+    if (!isPlaying2) {
+      iframeRef2.current.contentWindow?.postMessage(
+        '{"event":"command","func":"playVideo","args":""}',
+        '*'
+      );
+      setIsPlaying2(true);
+    } else {
+      iframeRef2.current.contentWindow?.postMessage(
+        '{"event":"command","func":"pauseVideo","args":""}',
+        '*'
+      );
+      setIsPlaying2(false);
+    }
+
+    setTimeout(() => {
+      setIsLoading2(false);
     }, 200);
   };
 
@@ -36,21 +61,36 @@ const ExplainLanding: React.FC = () => {
     <S.ExplainContainer>
       <S.ContentWrapper>
         <S.MobileTitle>사용설명 영상</S.MobileTitle>
-        <S.VideoWrapper>
-            {/* 이건 나중에 설명영상을 바꿔야함 */}
-          <S.VideoIframe
-            ref={iframeRef}
-            src="https://www.youtube.com/embed/ZO0brUR1L4Q?si=tde1mDLMKoQWj3zD&enablejsapi=1"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          />
-          <S.VideoOverlay 
-            onClick={handleOverlayClick}
-            isLoading={isLoading}
-          />
-        </S.VideoWrapper>
+        <S.VideosGrid>
+          <S.VideoWrapper>
+            <S.VideoIframe
+              ref={iframeRef1}
+              src="https://www.youtube.com/embed/YM1tGbnY2wo?enablejsapi=1"
+              title="YouTube video player 1"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+            <S.VideoOverlay 
+              onClick={handleOverlayClick1}
+              isLoading={isLoading1}
+            />
+          </S.VideoWrapper>
+          <S.VideoWrapper>
+            <S.VideoIframe
+              ref={iframeRef2}
+              src="https://www.youtube.com/embed/yFN13duHYSs?enablejsapi=1"
+              title="YouTube video player 2"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+            <S.VideoOverlay 
+              onClick={handleOverlayClick2}
+              isLoading={isLoading2}
+            />
+          </S.VideoWrapper>
+        </S.VideosGrid>
       </S.ContentWrapper>
     </S.ExplainContainer>
   );
