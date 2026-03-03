@@ -8,11 +8,12 @@ import Button from '@/components/ui/button';
 import { ADMIN_AFTER_SCHOOL_PERIODS } from '@/constants/admin';
 import { searchQuery } from '@/services/search/search.query';
 import { useDebounce } from '@/hooks/useDebounce';
-import { createAfterSchoolClass, updateAfterSchoolClass } from '@/services/after-school/afterSchool.api';
+import { createAfterSchoolClass, updateAfterSchoolClass, getAfterSchoolClasses } from '@/services/after-school/afterSchool.api';
 import { toast } from 'react-toastify';
 import type { StudentSearchResponse, PlaceSearchResponse, TeacherSearchResponse, TeamSearchResponse } from '@/types/search';
-import type { CreateAfterSchoolRequest, UpdateAfterSchoolRequest, AdminAfterSchoolClass } from '@/types/after-school';
+import type { CreateAfterSchoolRequest, UpdateAfterSchoolRequest, AdminAfterSchoolClass, AfterSchoolResponse } from '@/types/after-school';
 import { WEEKDAY_MAP } from '@/constants/admin';
+import type { Student as CommonStudent } from '@/types/common';
 import * as S from './style';
 
 
@@ -34,6 +35,11 @@ const mapSinglePeriod = (period: string): 'EIGHT_AND_NINE_PERIOD' | 'TEN_AND_ELE
   return period === '10~11교시' ? 'TEN_AND_ELEVEN_PERIOD' : 'EIGHT_AND_NINE_PERIOD';
 };
 
+const PERIOD_MAP: Record<string, { start: number; end: number }> = {
+  'EIGHT_AND_NINE_PERIOD': { start: 8, end: 9 },
+  'TEN_AND_ELEVEN_PERIOD': { start: 10, end: 11 },
+};
+
 export default function AfterSchoolFormPage() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -43,6 +49,9 @@ export default function AfterSchoolFormPage() {
   const createData = routerLocation.state as { selectedDay?: string; selectedBranch?: number; selectedGrade?: number } | null;
   const selectedBranch = createData?.selectedBranch ?? editData?.selectedBranch ?? 1;
   const selectedGrade = createData?.selectedGrade ?? editData?.grade ?? 1;
+  
+  // localStorage에서 afterschool ID 가져오기
+  const afterSchoolId = localStorage.getItem('currentAfterSchoolId') || id || '';
   
   const [teacher, setTeacher] = useState<Teacher | null>(
     isEditMode && editData ? { id: editData.teacherId, name: editData.teacher } : null
@@ -72,6 +81,8 @@ export default function AfterSchoolFormPage() {
       };
     }) : []
   );
+  // 삭제한 학생 ID를 기억하기 위한 state
+  const [deletedStudentIds, setDeletedStudentIds] = useState<Set<string>>(new Set());
   const [studentSearchQuery, setStudentSearchQuery] = useState('');
   const [locationSearchQuery, setLocationSearchQuery] = useState('');
   const debouncedStudentSearch = useDebounce(studentSearchQuery, 300);
@@ -149,6 +160,8 @@ export default function AfterSchoolFormPage() {
   };
 
   const handleRemoveStudent = (studentId: string) => {
+    // 삭제한 학생 ID를 기억
+    setDeletedStudentIds(prev => new Set(prev).add(studentId));
     setSelectedStudents(selectedStudents.filter(s => s.id !== studentId));
   };
 
@@ -199,21 +212,59 @@ export default function AfterSchoolFormPage() {
         const mappedPeriod = mapSinglePeriod(period);
         const weekDay = editData?.day ? WEEKDAY_MAP[editData.day as keyof typeof WEEKDAY_MAP] : 'MON';
 
+        // 수정 모드일 때 최신 데이터 가져오기
+        let finalStudentIds: string[] = selectedStudents.map((s) => String(s.id ?? ''));
+
+        try {
+          const periodInfo = PERIOD_MAP[editData?.period || ''] || { start: 8, end: 9 };
+          const response = await getAfterSchoolClasses({
+            grade: editData?.grade || selectedGrade,
+            branch: selectedBranch,
+            week_day: weekDay,
+            start_period: periodInfo.start,
+            end_period: periodInfo.end,
+          });
+
+          // 같은 after_school id를 가진 데이터 찾기
+          const matchingClass = response.find((item: AfterSchoolResponse) => item.id.toString() === afterSchoolId);
+
+          if (matchingClass) {
+            // 최신 학생 목록 가져오기
+            const latestStudentIds = matchingClass.students
+              .map((student: CommonStudent) => student.id?.toString() || '')
+              .filter((id: string) => id !== '');
+
+            // 현재 선택된 학생 ID들
+            const currentStudentIds = selectedStudents.map((s) => String(s.id ?? ''));
+
+            // 병합: 현재 학생 + 최신 학생 (중복 제거)
+            const mergedIds = new Set([...currentStudentIds, ...latestStudentIds]);
+
+            // 삭제한 학생들은 제외
+            finalStudentIds = Array.from(mergedIds).filter(id => !deletedStudentIds.has(id));
+          }
+        } catch (error) {
+          console.error('최신 데이터를 가져오는데 실패했습니다:', error);
+          // 최신 데이터를 가져오지 못하면 현재 선택된 학생들로만 진행
+        }
+
         const requestData: UpdateAfterSchoolRequest = {
           grade: selectedStudents.length > 0 ? selectedStudents[0].grade : selectedGrade,
           week_day: weekDay,
           period: mappedPeriod,
           year: currentYear,
           branch: selectedBranch,
-          after_school_id: id as string,
+          after_school_id: afterSchoolId || id as string,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
-          students_id: selectedStudents.map((s) => String(s.id ?? '')),
+          students_id: finalStudentIds,
         };
 
         await updateAfterSchoolClass(requestData);
         toast.success('방과후가 성공적으로 수정되었습니다.');
+        // 수정 완료 후 localStorage 정리
+        localStorage.removeItem('currentAfterSchoolId');
       } else {
         const baseRequest: Omit<CreateAfterSchoolRequest, 'period'> = {
           grade: selectedStudents.length > 0 ? selectedStudents[0].grade : selectedGrade,

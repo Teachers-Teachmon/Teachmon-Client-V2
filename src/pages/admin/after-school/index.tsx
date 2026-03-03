@@ -110,6 +110,8 @@ export default function AdminAfterSchoolPage() {
     if (e) {
       e.stopPropagation();
     }
+    // localStorage에 afterschool ID 저장
+    localStorage.setItem('currentAfterSchoolId', classData.id);
     navigate(`/admin/after-school/edit/${classData.id}`, { state: { ...classData, selectedBranch: branch } });
   };
 
