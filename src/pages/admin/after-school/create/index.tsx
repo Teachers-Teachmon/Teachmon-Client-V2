@@ -255,7 +255,6 @@ export default function AfterSchoolFormPage() {
           week_day: weekDay,
           year: currentYear,
           branch: selectedBranch,
-          after_school_id: afterSchoolId || id as string,
           teacher_id: teacher.id,
           place_id: selectedLocation.id,
           name: subject,
@@ -264,13 +263,20 @@ export default function AfterSchoolFormPage() {
 
         // 8~11교시인 경우 두 개의 요청으로 분리
         if (period === '8~11교시') {
+          // ID가 콤마로 구분되어 있는 경우 분리 (예: "61853594277646336,61853594277646337")
+          const ids = (afterSchoolId || id || '').split(',');
+          const eightNineId = ids[0]?.trim() || '';
+          const tenElevenId = ids[1]?.trim() || '';
+
           await Promise.all([
             updateAfterSchoolClass({
               ...baseUpdateRequest,
+              after_school_id: eightNineId,
               period: 'EIGHT_AND_NINE_PERIOD',
             }),
             updateAfterSchoolClass({
               ...baseUpdateRequest,
+              after_school_id: tenElevenId,
               period: 'TEN_AND_ELEVEN_PERIOD',
             }),
           ]);
@@ -278,6 +284,7 @@ export default function AfterSchoolFormPage() {
           const mappedPeriod = mapSinglePeriod(period);
           await updateAfterSchoolClass({
             ...baseUpdateRequest,
+            after_school_id: afterSchoolId || id as string,
             period: mappedPeriod,
           });
         }
