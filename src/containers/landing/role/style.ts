@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { mq } from '@/styles/media';
-import { colors } from '@/styles/theme';
 
 export const RoleContainer = styled.div`
   width: 100%;
@@ -93,31 +92,6 @@ export const Description = styled.p`
   ${mq.mobile} {
     font-size: clamp(13px, 4vw, 16px);
     line-height: 1.6;
-  }
-`;
-
-export const StartButton = styled.button`
-  width: fit-content;
-  padding: 14px 32px;
-  background: #ffffff;
-  color: ${colors.primary};
-  border: none;
-  border-radius: 8px;
-  font-family: 'Paperlogy', sans-serif;
-  font-weight: 600;
-  font-size: clamp(14px, 1.1vw, 16px);
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
-  }
-
-  ${mq.mobile} {
-    padding: 12px 24px;
-    font-size: 14px;
   }
 `;
 

@@ -12,14 +12,12 @@ const ExplainLanding: React.FC = () => {
     setIsLoading(true);
 
     if (!isPlaying) {
-      // 재생
       iframeRef.current.contentWindow?.postMessage(
         '{"event":"command","func":"playVideo","args":""}',
         '*'
       );
       setIsPlaying(true);
     } else {
-      // 일시정지
       iframeRef.current.contentWindow?.postMessage(
         '{"event":"command","func":"pauseVideo","args":""}',
         '*'
@@ -37,20 +35,19 @@ const ExplainLanding: React.FC = () => {
       <S.ContentWrapper>
         <S.MobileTitle>사용설명 영상</S.MobileTitle>
         <S.VideoWrapper>
-            {/* 이건 나중에 설명영상을 바꿔야함 */}
-          <S.VideoIframe
-            ref={iframeRef}
-            src="https://www.youtube.com/embed/ZO0brUR1L4Q?si=tde1mDLMKoQWj3zD&enablejsapi=1"
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          />
-          <S.VideoOverlay 
-            onClick={handleOverlayClick}
-            isLoading={isLoading}
-          />
-        </S.VideoWrapper>
+            <S.VideoIframe
+              ref={iframeRef}
+              src="https://www.youtube.com/embed/YM1tGbnY2wo?enablejsapi=1"
+              title="YouTube video player 1"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            />
+            <S.VideoOverlay 
+              onClick={handleOverlayClick}
+              isLoading={isLoading}
+            />
+          </S.VideoWrapper>
       </S.ContentWrapper>
     </S.ExplainContainer>
   );

@@ -128,13 +128,9 @@ axiosInstance.interceptors.response.use(
             useAuthStore.getState().clearAuth();
             useUserStore.getState().clearUser();
             
-            // 토스트 메시지 표시
-            if (!error.config?.skipErrorToast) {
-                toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
-            }
-            
             // 루트 페이지로 리다이렉트
             if (window.location.pathname !== '/') {
+                toast.error('세션이 만료되었습니다. 다시 로그인해주세요.');
                 window.location.href = '/';
             }
             
