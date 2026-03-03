@@ -213,6 +213,13 @@ export default function AfterSchoolFormPage() {
       const currentYear = new Date().getFullYear();
       if (isEditMode) {
         const weekDay = editData?.day ? WEEKDAY_MAP[editData.day as keyof typeof WEEKDAY_MAP] : 'MON';
+        const splitIds = (afterSchoolId || id || '')
+          .split(',')
+          .map((value) => value.trim())
+          .filter(Boolean);
+        const targetAfterSchoolId = period === '10~11교시'
+          ? (splitIds[1] ?? splitIds[0] ?? '')
+          : (splitIds[0] ?? '');
 
         // 수정 모드일 때 최신 데이터 가져오기
         let finalStudentIds: string[] = selectedStudents.map((s) => String(s.id ?? ''));
@@ -228,7 +235,7 @@ export default function AfterSchoolFormPage() {
           });
 
           // 같은 after_school id를 가진 데이터 찾기
-          const matchingClass = response.find((item: AfterSchoolResponse) => item.id.toString() === afterSchoolId);
+          const matchingClass = response.find((item: AfterSchoolResponse) => item.id.toString() === targetAfterSchoolId);
 
           if (matchingClass) {
             // 최신 학생 목록 가져오기
@@ -284,7 +291,7 @@ export default function AfterSchoolFormPage() {
           const mappedPeriod = mapSinglePeriod(period);
           await updateAfterSchoolClass({
             ...baseUpdateRequest,
-            after_school_id: afterSchoolId || id as string,
+            after_school_id: targetAfterSchoolId || afterSchoolId || id as string,
             period: mappedPeriod,
           });
         }
