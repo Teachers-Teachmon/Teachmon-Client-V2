@@ -26,7 +26,7 @@ export default function TeamFormPage() {
 
   const [teamName, setTeamName] = useState<string>('');
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
-  const [studentIdMap, setStudentIdMap] = useState<Record<number, number>>({});
+  const [studentIdMap, setStudentIdMap] = useState<Record<number, number | string>>({});
   const [searchInput, setSearchInput] = useState('');
 
   const debouncedSearch = useDebounce(searchInput, 500);
@@ -49,7 +49,7 @@ export default function TeamFormPage() {
           });
           setSelectedStudents(students);
           
-          const idMap: Record<number, number> = {};
+          const idMap: Record<number, number | string> = {};
           team.members.forEach((m) => {
             const studentNumber = m.grade * 1000 + m.classNumber * 100 + m.number;
             idMap[studentNumber] = m.id;
@@ -112,7 +112,7 @@ export default function TeamFormPage() {
         const studentNumber = Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`);
         console.log(`Creating student: grade=${student.grade}, class=${student.classNumber}, number=${student.number} => studentNumber=${studentNumber}`);
         handleAddStudent({
-          id: typeof student.id === 'number' ? student.id : Number(student.id),
+          id: student.id,
           studentNumber,
           name: student.name,
           grade: student.grade,
@@ -213,7 +213,7 @@ export default function TeamFormPage() {
                           if (isProcessingStudent.current) return;
                           isProcessingStudent.current = true;
                           handleAddStudent({ 
-                            id: typeof student.id === 'number' ? student.id : Number(student.id),
+                            id: student.id,
                             studentNumber: Number(`${student.grade}${student.classNumber}${String(student.number).padStart(2, '0')}`), 
                             name: student.name, 
                             grade: student.grade, 
