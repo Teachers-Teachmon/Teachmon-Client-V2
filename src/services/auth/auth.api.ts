@@ -4,6 +4,7 @@ export interface UserInfo {
   id: string;
   name: string;
   profile: string;
+  role: string;
 }
 
 interface AuthCodeResponse {

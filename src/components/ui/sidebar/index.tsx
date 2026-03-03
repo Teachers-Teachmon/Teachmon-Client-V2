@@ -73,6 +73,11 @@ export default function Sidebar() {
 
         <S.MenuSection collapsed={isCollapsed}>
           {SIDEBAR_MENU_ITEMS.map((item) => {
+            // 관리자 메뉴는 ADMIN 역할일 때만 표시
+            if (item.id === 'admin' && user?.role !== 'ADMIN') {
+              return null
+            }
+            
             const isActive = activeMenu === item.id
             return (
               <S.MenuItemButton
