@@ -157,7 +157,7 @@ export default function FixedMovementFormPage() {
       if (filteredResults.length > 0) {
         const student = filteredResults[0];
         handleAddStudent({ 
-          id: student.id as number, 
+          id: student.id, 
           studentNumber: student.number, 
           name: student.name, 
           grade: student.grade, 
@@ -395,7 +395,7 @@ export default function FixedMovementFormPage() {
                       <S.StudentDropdownItem 
                         key={student.id}
                         onClick={() => handleAddStudent({ 
-                          id: typeof student.id === 'string' ? Number(student.id) : student.id,
+                          id: student.id,
                           studentNumber: student.number, 
                           name: student.name, 
                           grade: student.grade, 
