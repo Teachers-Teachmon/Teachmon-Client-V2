@@ -4,6 +4,7 @@ import * as S from './style';
 import type { AllAfterSchool, AfterSchoolSearchParams } from '@/types/after-school';
 import { DAYS, ITEMS_PER_PAGE, DAY_TO_ENGLISH } from '@/constants/after-school';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
+import AfterSchoolDetailModal from '@/containers/after-school/detail-modal';
 
 interface AllClassSectionProps {
   selectedGrade: 1 | 2 | 3;
@@ -22,6 +23,8 @@ export default function AllClassSection({
 }: AllClassSectionProps) {
   const [selectedDay, setSelectedDay] = useState(getInitialDay());
   const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
+  const [selectedClass, setSelectedClass] = useState<AllAfterSchool | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: branchInfo } = useQuery(afterSchoolQuery.branch());
 
@@ -146,7 +149,7 @@ export default function AllClassSection({
                   </S.TimeHeader>
                   <S.ClassList>
                     {displayClasses.map(cls => (
-                      <S.ClassCard key={cls.id}>
+                      <S.ClassCard key={cls.id} onClick={() => { setSelectedClass(cls); setIsModalOpen(true); }} style={{ cursor: 'pointer' }}>
                         <S.ClassSubject>{cls.name}</S.ClassSubject>
                         <S.ClassInfo>{cls.place.name}</S.ClassInfo>
                         <S.TeacherName>{cls.teacher.name} 선생님</S.TeacherName>
@@ -161,6 +164,11 @@ export default function AllClassSection({
           )}
         </S.TimeSlotList>
       </S.Container>
+      <AfterSchoolDetailModal
+        classData={selectedClass}
+        isOpen={isModalOpen}
+        onClose={() => { setIsModalOpen(false); setSelectedClass(null); }}
+      />
     </S.Wrapper>
   );
 }

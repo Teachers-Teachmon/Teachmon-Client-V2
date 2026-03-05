@@ -9,6 +9,7 @@ import { MENU_OPTIONS } from '@/constants/after-school';
 import { colors } from '@/styles/theme';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 import { useQuitAfterSchoolMutation } from '@/services/after-school/afterSchool.mutation';
+import AfterSchoolDetailModal from '@/containers/after-school/detail-modal';
 
 export default function MyClassTable() {
   const navigate = useNavigate();
@@ -17,6 +18,8 @@ export default function MyClassTable() {
   const [selectedClassForTerminate, setSelectedClassForTerminate] = useState<MyAfterSchool | null>(null);
   const [selectedGrade, setSelectedGrade] = useState<1 | 2 | 3>(1);
   const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
+  const [selectedClassForDetail, setSelectedClassForDetail] = useState<MyAfterSchool | null>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const quitMutation = useQuitAfterSchoolMutation({
   onSuccess: () => {
@@ -127,7 +130,7 @@ export default function MyClassTable() {
           <>
             <S.MobileCardList>
               {filteredClasses.map((cls) => (
-                <S.MobileCard key={cls.id}>
+                <S.MobileCard key={cls.id} onClick={() => { setSelectedClassForDetail(cls); setIsDetailModalOpen(true); }} style={{ cursor: 'pointer' }}>
                   <S.MobileCardTop>
                     <S.MobileTimeTag>{cls.period}</S.MobileTimeTag>
                     <S.MobileMenuButton
@@ -170,7 +173,7 @@ export default function MyClassTable() {
             <S.Table>
               <tbody>
                 {filteredClasses.map((cls) => (
-                  <S.TableRow key={cls.id}>
+                  <S.TableRow key={cls.id} onClick={() => { setSelectedClassForDetail(cls); setIsDetailModalOpen(true); }} style={{ cursor: 'pointer' }}>
                     <S.TableCell>
                       <S.DayText>{cls.week_day}</S.DayText>
                     </S.TableCell>
@@ -219,6 +222,12 @@ export default function MyClassTable() {
         }
         cancelText="취소"
         confirmText={quitMutation.isPending ? '처리중...' : '종료'}
+      />
+
+      <AfterSchoolDetailModal
+        classData={selectedClassForDetail}
+        isOpen={isDetailModalOpen}
+        onClose={() => { setIsDetailModalOpen(false); setSelectedClassForDetail(null); }}
       />
     </S.Wrapper>
   );
