@@ -238,11 +238,42 @@ export const ClassCard = styled.div`
   gap: 0.75rem;
   overflow: hidden;
   min-width: 0;
+  position: relative;
 
   ${mq.mobile} {
     min-height: 70px;
     padding: 0.5rem;
     gap: 0.25rem;
+  }
+`;
+
+export const CardTopRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+`;
+
+export const EditButton = styled.button`
+  flex-shrink: 0;
+  padding: 0.25rem 0.6rem;
+  font-size: ${fontSizes.Small};
+  color: ${colors.primary};
+  background: transparent;
+  border: 1px solid ${colors.primary};
+  border-radius: ${radius.sm};
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+
+  &:hover {
+    background: ${colors.primary};
+    color: #fff;
+  }
+
+  ${mq.mobile} {
+    padding: 0.15rem 0.4rem;
+    font-size: 12px;
   }
 `;
 

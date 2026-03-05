@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import * as S from './style';
 import type { AllAfterSchool, AfterSchoolSearchParams } from '@/types/after-school';
 import { DAYS, ITEMS_PER_PAGE, DAY_TO_ENGLISH } from '@/constants/after-school';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 import AfterSchoolDetailModal from '@/containers/after-school/detail-modal';
+import { API_WEEKDAY_TO_UI } from '@/utils/afterSchool';
 
 interface AllClassSectionProps {
   selectedGrade: 1 | 2 | 3;
@@ -21,6 +23,7 @@ export default function AllClassSection({
   selectedGrade,
   onGradeChange,
 }: AllClassSectionProps) {
+  const navigate = useNavigate();
   const [selectedDay, setSelectedDay] = useState(getInitialDay());
   const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
   const [selectedClass, setSelectedClass] = useState<AllAfterSchool | null>(null);
@@ -96,6 +99,27 @@ export default function AllClassSection({
     }));
   };
 
+  const handleEdit = (e: React.MouseEvent, cls: AllAfterSchool) => {
+    e.stopPropagation();
+    const classData = {
+      id: cls.id.toString(),
+      grade: selectedGrade,
+      day: API_WEEKDAY_TO_UI[cls.week_day] ?? DAYS[selectedDay],
+      period: cls.period,
+      teacher: cls.teacher.name,
+      teacherId: cls.teacher.id,
+      location: cls.place.name,
+      placeId: Number(cls.place.id),
+      subject: cls.name,
+      students: cls.students.map(s => `${s.number} ${s.name}`),
+      studentIds: cls.students.map(s => s.id ?? 0),
+    };
+    localStorage.setItem('currentAfterSchoolId', classData.id);
+    navigate(`/admin/after-school/edit/${classData.id}`, {
+      state: { ...classData, selectedBranch: currentBranch, returnPath: '/after-school' },
+    });
+  };
+
   return (
     <S.Wrapper>
       <S.TitleSection>
@@ -150,7 +174,10 @@ export default function AllClassSection({
                   <S.ClassList>
                     {displayClasses.map(cls => (
                       <S.ClassCard key={cls.id} onClick={() => { setSelectedClass(cls); setIsModalOpen(true); }} style={{ cursor: 'pointer' }}>
-                        <S.ClassSubject>{cls.name}</S.ClassSubject>
+                        <S.CardTopRow>
+                          <S.ClassSubject>{cls.name}</S.ClassSubject>
+                          <S.EditButton onClick={(e) => handleEdit(e, cls)}>수정</S.EditButton>
+                        </S.CardTopRow>
                         <S.ClassInfo>{cls.place.name}</S.ClassInfo>
                         <S.TeacherName>{cls.teacher.name} 선생님</S.TeacherName>
                       </S.ClassCard>

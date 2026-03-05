@@ -45,10 +45,11 @@ export default function AfterSchoolFormPage() {
   const { id } = useParams<{ id: string }>();
   const routerLocation = useLocation();
   const isEditMode = !!id;
-  const editData = routerLocation.state as (AdminAfterSchoolClass & { selectedBranch?: number }) | null;
+  const editData = routerLocation.state as (AdminAfterSchoolClass & { selectedBranch?: number; returnPath?: string }) | null;
   const createData = routerLocation.state as { selectedDay?: string; selectedBranch?: number; selectedGrade?: number } | null;
   const selectedBranch = createData?.selectedBranch ?? editData?.selectedBranch ?? 1;
   const selectedGrade = createData?.selectedGrade ?? editData?.grade ?? 1;
+  const returnPath = editData?.returnPath || '/admin/after-school';
   
   // localStorage에서 afterschool ID 가져오기
   const afterSchoolId = localStorage.getItem('currentAfterSchoolId') || id || '';
@@ -200,7 +201,7 @@ export default function AfterSchoolFormPage() {
   };
 
   const handleCancel = () => {
-    navigate('/admin/after-school');
+    navigate(returnPath);
   };
 
   const handleSubmit = async () => {
@@ -334,7 +335,7 @@ export default function AfterSchoolFormPage() {
 
         toast.success('방과후가 성공적으로 생성되었습니다.');
       }
-      navigate('/admin/after-school');
+      navigate(returnPath);
     } catch {
       toast.error(isEditMode ? '방과후 수정에 실패했습니다.' : '방과후 생성에 실패했습니다.');
     }
