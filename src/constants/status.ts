@@ -43,8 +43,8 @@ export const STATUS_CONFIG: Record<StatusType, {
     mapBackground: '#84FFC7', // 진한 초록색
   },
   [STATUS_TYPES.LEAVE_SEAT]: {
-    background: '#F0ECFD',
-    dotColor: '#6A1EC1',
+    background: '#E6CFFF',
+    dotColor: '#6A1EC1', 
     textColor: '#6A1EC1',
     mapBackground: '#CCBCFF', // 연한 보라색
   },
