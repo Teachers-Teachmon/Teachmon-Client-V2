@@ -6,7 +6,7 @@ import { getStudentStateInfo } from '@/utils/studentState';
 import * as S from './style';
 
 interface Student {
-    id: number;
+    id: string;
     number: number;
     name: string;
     state?: StudentState | null;
@@ -16,8 +16,8 @@ interface Student {
 interface ClassCardProps {
     classNum: number;
     students: Student[];
-    selectedStudentId: number | null;
-    onStudentSelect: (id: number | null) => void;
+    selectedStudentId: string | null;
+    onStudentSelect: (id: string | null) => void;
     onStatusChange?: (scheduleId: string, status: StatusType, currentState?: StudentState | null) => void;
     isLoading?: boolean;
 }

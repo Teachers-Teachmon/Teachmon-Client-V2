@@ -32,6 +32,6 @@ export interface MovementFormData {
     day: string;
     period: Period;
     cause: string;
-    students: number[];
-    studentDetails?: Array<{ id: number; display: string }>;
+    students: string[];
+    studentDetails?: Array<{ id: string; display: string }>;
 }

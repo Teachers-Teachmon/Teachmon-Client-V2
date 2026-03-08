@@ -29,10 +29,10 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
     const [reason, setReason] = useState<string>(savedFormData?.cause || initialData?.cause || '');
     const [studentSearch, setStudentSearch] = useState<string>('');
     const [isTeamMode, setIsTeamMode] = useState(false);
-    const [selectedStudents, setSelectedStudents] = useState<Array<{ id: number; display: string }>>(
+    const [selectedStudents, setSelectedStudents] = useState<Array<{ id: string; display: string }>>(
         savedFormData?.studentDetails ||
         initialData?.students.map(student => ({
-            id: student.id,
+            id: String(student.id),
             display: `${student.number} ${student.name}`,
         })) || []
     );
@@ -46,7 +46,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
             setReason(initialData.cause || '');
             setSelectedStudents(
                 initialData.students.map(student => ({
-                    id: student.id,
+                    id: String(student.id),
                     display: `${student.number} ${student.name}`,
                 }))
             );
@@ -71,7 +71,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
     // 검색 결과 (학생 또는 팀)
     const searchResults = isTeamMode ? teamResults : studentResults;
 
-    const handleRemoveStudent = (studentId: number) => {
+    const handleRemoveStudent = (studentId: string) => {
         setSelectedStudents((prev) => prev.filter((s) => s.id !== studentId));
     };
 
@@ -155,7 +155,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
             day: selectedDate,
             period: selectedPeriod,
             cause: reason,
-            students: selectedStudents.map(s => s.id),
+            students: selectedStudents.map(s => String(s.id)),
             studentDetails: selectedStudents,
         });
     };
@@ -170,16 +170,16 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
         if (isTeamMode) {
             const team = result as TeamSearchResponse;
             const newMembers = team.members
-                .filter((m) => !selectedStudents.some(s => s.id === m.id))
+                .filter((m) => !selectedStudents.some(s => s.id === String(m.id)))
                 .map((m) => ({
-                    id: m.id,
+                    id: String(m.id),
                     display: formatStudent(m),
                 }));
             setSelectedStudents([...selectedStudents, ...newMembers]);
         } else {
             // 학생 모드: 중복 체크
             const student = result as StudentSearchResponse;
-            const studentId = typeof student.id === 'number' ? student.id : parseInt(String(student.id));
+            const studentId = String(student.id);
             if (!selectedStudents.some(s => s.id === studentId)) {
                 setSelectedStudents([...selectedStudents, { 
                     id: studentId, 
@@ -273,7 +273,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                                         // 팀은 중복 체크 안 함
                                         return true;
                                     }
-                                    return !selectedStudents.some(s => s.id === result.id);
+                                    return !selectedStudents.some(s => s.id === String(result.id));
                                 }).slice(0, 3);
 
                                 return filteredResults.length > 0 ? (

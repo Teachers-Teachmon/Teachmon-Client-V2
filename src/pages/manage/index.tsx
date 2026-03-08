@@ -24,7 +24,7 @@ export default function Manage() {
     const [selectedPeriod, setSelectedPeriod] = useState<string>(initialPeriod);
     const [isMapEnabled, setIsMapEnabled] = useState<boolean>(false);
     const [highlightedPlace, setHighlightedPlace] = useState<string>('');
-    const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null);
+    const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
     const { changeStatus } = useStudentStatus();
 
     // 학생 상태 변경 핸들러
@@ -119,7 +119,7 @@ export default function Manage() {
                                 key={classNum}
                                 classNum={classNum}
                                 students={classStudents.map((student) => ({
-                                    id: student.student_id,
+                                    id: String(student.student_id),
                                     number: student.number,
                                     name: student.name,
                                     state: student.state,

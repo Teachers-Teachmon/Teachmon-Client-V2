@@ -1,7 +1,7 @@
 import type { Period } from '@/constants/movement';
 
 export interface LeaveSeatStudent {
-  id: number;
+  id: string;
   number: number;
   name: string;
   state: string;
@@ -39,7 +39,7 @@ export interface CreateLeaveSeatRequest {
   period: Period;
   place_id: number;
   cause: string;
-  students: number[];
+  students: string[];
 }
 
 export interface UpdateLeaveSeatRequest {
@@ -47,7 +47,7 @@ export interface UpdateLeaveSeatRequest {
   period: Period;
   place: number;
   cause: string;
-  students: number[];
+  students: string[];
 }
 
 export interface MessageResponse {

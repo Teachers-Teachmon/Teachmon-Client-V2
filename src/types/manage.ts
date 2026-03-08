@@ -23,7 +23,7 @@ export type Period =
 
 // Types
 export interface StudentSchedule {
-  student_id: number;
+  student_id: string;
   number: number;
   name: string;
   state: StudentState | null;

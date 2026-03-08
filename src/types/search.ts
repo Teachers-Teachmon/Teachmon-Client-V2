@@ -1,5 +1,5 @@
 export interface StudentSearchResponse {
-  id: number | string;
+  id: string;
   grade: number;
   classNumber: number;
   number: number;
@@ -21,7 +21,7 @@ export interface TeamSearchResponse {
   id: string;
   name: string;
   members: {
-    id: number;
+    id: string;
     number: number;
     name: string;
     grade: number;
