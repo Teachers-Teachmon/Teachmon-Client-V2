@@ -77,11 +77,12 @@ export default function MovementMap({ onBack, formData }: MovementMapProps) {
         if (occupiedPlaces.has(placeName)) {
             const occupiedSeats = leaveSeatList.filter(seat => seat.place === placeName);
             const studentNames = occupiedSeats.flatMap(seat => seat.students);
+            const uniqueStudentNames = [...new Set(studentNames)]; // 중복 제거
             
             setConfirmModal({
                 isOpen: true,
                 placeName,
-                students: studentNames,
+                students: uniqueStudentNames,
             });
             return;
         }
