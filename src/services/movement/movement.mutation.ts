@@ -19,9 +19,8 @@ export const useUpdateLeaveSeatMutation = () => {
   return useMutation({
     mutationFn: ({ leaveseatId, data }: { leaveseatId: string; data: Parameters<typeof updateLeaveSeat>[1] }) =>
       updateLeaveSeat(leaveseatId, data),
-    onSuccess: (_data, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['movement.list'] });
-      queryClient.invalidateQueries({ queryKey: ['movement.detail', variables.leaveseatId] });
     },
   });
 };
