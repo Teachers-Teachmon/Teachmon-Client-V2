@@ -38,6 +38,7 @@ export const Title = styled.h2`
 export const GradeTabs = styled.div`
   display: flex;
   gap: 0.5rem;
+  flex-direction: row;
 `;
 
 export const GradeTab = styled.button<{ $active: boolean }>`
@@ -59,6 +60,14 @@ export const GradeTab = styled.button<{ $active: boolean }>`
     padding: 0.25rem 0.75rem;
     font-size: ${fontSizes.Small};
   }
+`;
+
+export const SelectionContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const Container = styled.div`

@@ -7,11 +7,16 @@ import { DAYS, ITEMS_PER_PAGE, DAY_TO_ENGLISH } from '@/constants/after-school';
 import { afterSchoolQuery } from '@/services/after-school/afterSchool.query';
 import AfterSchoolDetailModal from '@/containers/after-school/detail-modal';
 import { API_WEEKDAY_TO_UI } from '@/utils/afterSchool';
+import Dropdown from '@/components/ui/input/dropdown';
 
 interface AllClassSectionProps {
   selectedGrade: 1 | 2 | 3;
   onGradeChange: (grade: 1 | 2 | 3) => void;
 }
+
+type Quarter = 1 | 2 | 3 | 4;
+
+const QUARTER_OPTIONS: Quarter[] = [1, 2, 3, 4];
 
 const getInitialDay = () => {
   const today = new Date().getDay();
@@ -28,23 +33,30 @@ export default function AllClassSection({
   const [timeSlotPages, setTimeSlotPages] = useState<Record<string, number>>({});
   const [selectedClass, setSelectedClass] = useState<AllAfterSchool | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedQuarter, setSelectedQuarter] = useState<Quarter>(1);
 
   const { data: branchInfo } = useQuery(afterSchoolQuery.branch());
 
   const currentBranch = branchInfo?.[0]?.number;
+
+  useEffect(() => {
+    if (branchInfo) {
+      setSelectedQuarter(currentBranch as Quarter);
+    }
+  }, [branchInfo]);
 
   const params: AfterSchoolSearchParams = {
     grade: selectedGrade,
     week_day: DAY_TO_ENGLISH[DAYS[selectedDay]],
     start_period: 8,
     end_period: 11,
-    branch: currentBranch,
+    branch: selectedQuarter,
   };
 
   // React Query가 자동으로 캐싱해줌 - 이미 요청한 요일은 다시 요청하지 않음
   const { data: classes = [] } = useQuery({
     ...afterSchoolQuery.all(params),
-    enabled: !!currentBranch && !!params.grade && !!params.week_day,
+    enabled: !!selectedQuarter && !!params.grade && !!params.week_day,
     staleTime: 5 * 60 * 1000, // 5분간 데이터를 fresh 상태로 유지
   });
 
@@ -116,7 +128,7 @@ export default function AllClassSection({
     };
     localStorage.setItem('currentAfterSchoolId', classData.id);
     navigate(`/admin/after-school/edit/${classData.id}`, {
-      state: { ...classData, selectedBranch: currentBranch, returnPath: '/after-school' },
+      state: { ...classData, selectedBranch: selectedQuarter, returnPath: '/after-school' },
     });
   };
 
@@ -124,11 +136,22 @@ export default function AllClassSection({
     <S.Wrapper>
       <S.TitleSection>
         <S.Title>전체 방과후</S.Title>
+        <S.SelectionContainer>
         <S.GradeTabs>
           <S.GradeTab $active={selectedGrade === 1} onClick={() => onGradeChange(1)}>1학년</S.GradeTab>
           <S.GradeTab $active={selectedGrade === 2} onClick={() => onGradeChange(2)}>2학년</S.GradeTab>
           <S.GradeTab $active={selectedGrade === 3} onClick={() => onGradeChange(3)}>3학년</S.GradeTab>
         </S.GradeTabs>
+        <Dropdown<Quarter>
+          placeholder="분기"
+          items={QUARTER_OPTIONS}
+          value={selectedQuarter}
+          onChange={setSelectedQuarter}
+          renderItem={(item) => `${item}분기`}
+          customWidth="100px"
+          customHeight="40px"
+        />
+        </S.SelectionContainer>
       </S.TitleSection>
 
       <S.Container>
