@@ -66,7 +66,7 @@ export const SelectionContainer = styled.div`
   display: flex;
   gap: 0.5rem;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 `;
 
