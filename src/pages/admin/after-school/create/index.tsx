@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Dropdown from '@/components/ui/input/dropdown';
 import TextInput from '@/components/ui/input/text-input';
 import SearchDropdown from '@/components/ui/input/dropdown/search';
@@ -42,6 +42,7 @@ const PERIOD_MAP: Record<string, { start: number; end: number }> = {
 
 export default function AfterSchoolFormPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { id } = useParams<{ id: string }>();
   const routerLocation = useLocation();
   const isEditMode = !!id;
@@ -55,7 +56,7 @@ export default function AfterSchoolFormPage() {
   
   // localStorage에서 afterschool ID 가져오기
   const afterSchoolId = localStorage.getItem('currentAfterSchoolId') || id || '';
-  
+
   const [teacher, setTeacher] = useState<Teacher | null>(
     isEditMode && editData ? { id: editData.teacherId, name: editData.teacher } : null
   );
@@ -172,7 +173,7 @@ export default function AfterSchoolFormPage() {
   const handleStudentEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     // 한글 입력 중일 때는 무시
     if (e.nativeEvent.isComposing) return;
-    
+
     if (e.key === 'Enter' && studentSearchQuery) {
       e.preventDefault();
       e.stopPropagation();
@@ -197,7 +198,7 @@ export default function AfterSchoolFormPage() {
           handleAddStudent(filteredStudents[0]);
         }
       }
-      
+
       setStudentSearchQuery('');
     }
   };
@@ -307,6 +308,7 @@ export default function AfterSchoolFormPage() {
         });
         // 수정 완료 후 localStorage 정리
         localStorage.removeItem('currentAfterSchoolId');
+        await queryClient.invalidateQueries({ queryKey: ['afterSchool.classes'] });
       } else {
         const baseRequest: Omit<CreateAfterSchoolRequest, 'period'> = {
           grade: selectedStudents.length > 0 ? selectedStudents[0].grade : selectedGrade,
