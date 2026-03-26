@@ -15,7 +15,7 @@ import type { CreateAfterSchoolRequest, AdminAfterSchoolClass, AfterSchoolRespon
 import { WEEKDAY_MAP } from '@/constants/admin';
 import type { Student as CommonStudent } from '@/types/common';
 import * as S from './style';
-
+import { useQueryClient } from '@tanstack/react-query';
 
 
 interface Student {
@@ -50,6 +50,8 @@ export default function AfterSchoolFormPage() {
   const selectedBranch = createData?.selectedBranch ?? editData?.selectedBranch ?? 1;
   const selectedGrade = createData?.selectedGrade ?? editData?.grade ?? 1;
   const returnPath = editData?.returnPath || '/admin/after-school';
+
+  const queryClient = useQueryClient();
   
   // localStorage에서 afterschool ID 가져오기
   const afterSchoolId = localStorage.getItem('currentAfterSchoolId') || id || '';
@@ -298,6 +300,10 @@ export default function AfterSchoolFormPage() {
         }
 
         toast.success('방과후가 성공적으로 수정되었습니다.');
+        // 서버 상태 업데이트
+        queryClient.invalidateQueries({
+          queryKey: ['afterSchool.classes'],
+        });
         // 수정 완료 후 localStorage 정리
         localStorage.removeItem('currentAfterSchoolId');
       } else {
