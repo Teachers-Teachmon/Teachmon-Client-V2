@@ -22,13 +22,16 @@ export default function MyClassTable() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const quitMutation = useQuitAfterSchoolMutation({
-  onSuccess: () => {
+  onSuccess: async () => {
     setIsTerminateModalOpen(false);
     setSelectedClassForTerminate(null);
-    // 모든 학년 쿼리를 무효화하여 데이터를 다시 가져오도록 함
-    queryClient.invalidateQueries({ queryKey: ['afterSchool.my', 1] });
-    queryClient.invalidateQueries({ queryKey: ['afterSchool.my', 2] });
-    queryClient.invalidateQueries({ queryKey: ['afterSchool.my', 3] });
+    // 관련된 모든 방과후 쿼리를 무효화하여 모든 화면에서 데이터를 다시 가져오도록 함
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['afterSchool.classes'] }),
+      queryClient.invalidateQueries({ queryKey: ['afterSchool.myToday'] }),
+      queryClient.invalidateQueries({ queryKey: ['afterSchool.my'] }),
+      queryClient.invalidateQueries({ queryKey: ['afterSchool.all'] }),
+    ]);
   },
 });
   const menuButtonRefs = useRef<Record<number, HTMLButtonElement | null>>({});

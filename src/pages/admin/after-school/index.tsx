@@ -129,7 +129,12 @@ export default function AdminAfterSchoolPage() {
         const ids = deleteTargetId.split(',').map(id => id.trim()).filter(Boolean);
         await Promise.all(ids.map(id => deleteAfterSchoolClass(id)));
         toast.success('방과후가 성공적으로 삭제되었습니다.');
-        await queryClient.invalidateQueries({ queryKey: ['afterSchool.classes'] });
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['afterSchool.classes'] }),
+          queryClient.invalidateQueries({ queryKey: ['afterSchool.myToday'] }),
+          queryClient.invalidateQueries({ queryKey: ['afterSchool.my'] }),
+          queryClient.invalidateQueries({ queryKey: ['afterSchool.all'] }),
+        ]);
       } catch {
         toast.error('방과후 삭제에 실패했습니다.');
       }
