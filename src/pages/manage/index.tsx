@@ -36,7 +36,10 @@ export default function Manage() {
     };
 
     const handleMovementClick = (student: { id: string; number: number; name: string }) => {
-        navigate(`/manage/movement?studentId=${student.id}&studentDisplay=${student.number} ${student.name}`);
+        const studentDisplay = `${student.number} ${student.name}`;
+        navigate(
+            `/manage/movement?studentId=${encodeURIComponent(student.id)}&studentDisplay=${encodeURIComponent(studentDisplay)}`
+        );
     };
 
     // 학년별 학생 스케줄 조회
