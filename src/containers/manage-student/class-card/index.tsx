@@ -19,10 +19,11 @@ interface ClassCardProps {
     selectedStudentId: string | null;
     onStudentSelect: (id: string | null) => void;
     onStatusChange?: (scheduleId: string, status: StatusType, currentState?: StudentState | null) => void;
+    onMovementClick?: (student: Student) => void;
     isLoading?: boolean;
 }
 
-export default function ClassCard({ classNum, students, selectedStudentId, onStudentSelect, onStatusChange, isLoading }: ClassCardProps) {
+export default function ClassCard({ classNum, students, selectedStudentId, onStudentSelect, onStatusChange, onMovementClick, isLoading }: ClassCardProps) {
     useEffect(() => {
         if (!selectedStudentId) return;
 
@@ -42,14 +43,18 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
     }, [selectedStudentId, onStudentSelect]);
 
     const getStatusOptions = (student: Student): StatusType[] => {
-        if (student.state === 'AWAY' || student.state === 'EXIT' || 
+        if (student.state === 'AWAY' || student.state === 'EXIT' ||
             student.state === 'EARLY_LEAVE' || student.state === 'EVASION') {
             return ['취소' as StatusType];
         }
-        return ['조퇴', '이탈'];
+        return ['조퇴', '이탈', '이석'];
     };
 
     const handleStatusClick = (student: Student, status: StatusType) => {
+        if (status === '이석') {
+            onMovementClick?.(student);
+            return;
+        }
         if (!student.scheduleId || !onStatusChange) return;
         onStatusChange(student.scheduleId, status, student.state);
     };
@@ -69,9 +74,9 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                         const displayBgColor = stateInfo?.backgroundColor || '#F5F5F5';
                         // 해당 학생이 방과후 상태인지 확인
                         const isStudentAfterSchool = student.state === 'AFTER_SCHOOL' || student.state === 'AFTER_SCHOOL_REINFORCEMENT';
-                        
+
                         return (
-                            <S.StudentCard 
+                            <S.StudentCard
                                 key={student.id}
                                 $stateColor={displayColor}
                                 $stateBgColor={displayBgColor}
@@ -89,7 +94,7 @@ export default function ClassCard({ classNum, students, selectedStudentId, onStu
                                 {selectedStudentId === student.id && !isStudentAfterSchool && (
                                     <S.StatusPopupContainer onClick={(e) => e.stopPropagation()}>
                                         {getStatusOptions(student).map((status, index) => (
-                                            <S.StatusBadgeWrapper 
+                                            <S.StatusBadgeWrapper
                                                 key={index}
                                                 onClick={() => handleStatusClick(student, status)}
                                             >

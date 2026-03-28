@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { HeaderLeft, HeaderRight } from '@/containers/manage-student/header';
 import ClassCard from '@/containers/manage-student/class-card';
@@ -17,7 +18,8 @@ import * as S from './style';
 export default function Manage() {
     const currentPeriod = getCurrentPeriod();
     const initialPeriod = currentPeriod ? PERIOD_TO_KOREAN[currentPeriod] : '7교시';
-    
+    const navigate = useNavigate();
+
     const [selectedGrade, setSelectedGrade] = useState<number>(1);
     const [selectedFloor, setSelectedFloor] = useState<number>(1);
     const [selectedDate, setSelectedDate] = useState<string>(getTodayDate());
@@ -33,6 +35,10 @@ export default function Manage() {
         setSelectedStudentId(null);
     };
 
+    const handleMovementClick = (student: { id: string; number: number; name: string }) => {
+        navigate(`/manage/movement?studentId=${student.id}&studentDisplay=${student.number} ${student.name}`);
+    };
+
     // 학년별 학생 스케줄 조회
     const { data: studentSchedules = [], isLoading: isLoadingSchedules } = useQuery({
         ...manageQuery.studentSchedule({
@@ -45,7 +51,7 @@ export default function Manage() {
 
     // 층별 장소 상태 조회 (맵 모드일 때만)
     const { data: placesByFloor } = useQuery({
-        ...manageQuery.placesByFloor({ 
+        ...manageQuery.placesByFloor({
             floor: selectedFloor,
             day: selectedDate,
             period: PERIOD_MAP[selectedPeriod] || 'SEVEN_PERIOD',
@@ -62,7 +68,7 @@ export default function Manage() {
     const handleSelectPlace = (place: { name: string; floor: number }) => {
         setSelectedFloor(place.floor);
         setHighlightedPlace(place.name);
-        
+
         // 4초 후 하이라이트 해제
         setTimeout(() => {
             setHighlightedPlace('');
@@ -102,8 +108,8 @@ export default function Manage() {
 
             {/* 메인 컨텐츠: 지도 or 학급 그리드 */}
             {isMapEnabled ? (
-                <Map 
-                    selectedFloor={selectedFloor} 
+                <Map
+                    selectedFloor={selectedFloor}
                     highlightedPlace={highlightedPlace}
                     placesData={placesByFloor}
                     selectedDate={selectedDate}
@@ -128,6 +134,7 @@ export default function Manage() {
                                 selectedStudentId={selectedStudentId}
                                 onStudentSelect={setSelectedStudentId}
                                 onStatusChange={handleStatusChange}
+                                onMovementClick={handleMovementClick}
                                 isLoading={isLoadingSchedules}
                             />
                         );

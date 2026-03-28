@@ -20,9 +20,10 @@ interface MovementFormProps {
     onCancel: () => void;
     initialData?: LeaveSeatDetail;
     savedFormData?: MovementFormData;
+    prefilledStudent?: { id: string; display: string };
 }
 
-export default function MovementForm({ onNext, onCancel, initialData, savedFormData }: MovementFormProps) {
+export default function MovementForm({ onNext, onCancel, initialData, savedFormData, prefilledStudent }: MovementFormProps) {
     const isProcessing = useRef(false);
     const [selectedDate, setSelectedDate] = useState<string>(savedFormData?.day || initialData?.day || getTodayDate());
     const [selectedPeriod, setSelectedPeriod] = useState<Period | ''>(savedFormData?.period || initialData?.period || '');
@@ -34,7 +35,8 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
         initialData?.students.map(student => ({
             id: String(student.id),
             display: `${student.number} ${student.name}`,
-        })) || []
+        })) ||
+        (prefilledStudent ? [prefilledStudent] : [])
     );
 
     // initialData가 바뀌면 폼 상태를 업데이트 (savedFormData가 없을 때만)
@@ -81,14 +83,14 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
     const handleEnterKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         // 한글 입력 중일 때는 무시
         if (e.nativeEvent.isComposing) return;
-        
+
         if (e.key === 'Enter' && studentSearch && searchResults.length > 0) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             if (isProcessing.current) return;
             isProcessing.current = true;
-            
+
             // 중복 제거된 결과에서 첫 번째 항목 선택
             const filteredResults = searchResults.filter((result: StudentSearchResponse | TeamSearchResponse) => {
                 if (isTeamMode) {
@@ -96,11 +98,11 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                 }
                 return !selectedStudents.some(s => s.id === result.id);
             });
-            
+
             if (filteredResults.length > 0) {
                 handleSelectResult(filteredResults[0]);
             }
-            
+
             setTimeout(() => {
                 isProcessing.current = false;
             }, 100);
@@ -111,7 +113,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
         const today = getTodayDate();
         const todayDate = new Date(today);
         const selectedDateObj = new Date(selectedDate);
-        
+
         // 날짜가 오늘보다 이전인지 확인
         if (selectedDate < today) {
             toast.warning('오늘 이전 날짜는 선택할 수 없습니다.');
@@ -124,7 +126,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
         const thisWeekSunday = new Date(todayDate);
         thisWeekSunday.setDate(todayDate.getDate() + daysUntilSunday);
         thisWeekSunday.setHours(23, 59, 59, 999); // 일요일 끝까지
-        
+
         if (selectedDateObj > thisWeekSunday) {
             toast.warning('이번주 이후의 이석 작성은 불가능합니다.');
             return;
@@ -181,9 +183,9 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
             const student = result as StudentSearchResponse;
             const studentId = String(student.id);
             if (!selectedStudents.some(s => s.id === studentId)) {
-                setSelectedStudents([...selectedStudents, { 
-                    id: studentId, 
-                    display: formatStudent(student) 
+                setSelectedStudents([...selectedStudents, {
+                    id: studentId,
+                    display: formatStudent(student)
                 }]);
             }
         }
@@ -195,7 +197,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
             <S.ContentWrapper>
                 <S.FormSection>
                     <S.FormTitle>이석작성</S.FormTitle>
-                    
+
                     <S.FormContent>
                         {/* 시간 */}
                         <S.FormGroup>
@@ -226,7 +228,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                         <S.FormGroup>
                             <S.TextAreaWrapper>
                                 <S.Label>사유</S.Label>
-                                <S.TextArea 
+                                <S.TextArea
                                     placeholder="사유를 입력해주세요"
                                     value={reason}
                                     onChange={(e) => setReason(e.target.value)}
@@ -257,14 +259,14 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                                 onChange={(e) => setStudentSearch(e.target.value)}
                                 onKeyDown={handleEnterKeyPress}
                                 leftIcon={
-                                    <img 
-                                        src="/icons/common/search.svg" 
+                                    <img
+                                        src="/icons/common/search.svg"
                                         alt="search"
                                         style={{ width: '20px', height: '20px' }}
                                     />
                                 }
                             />
-                            
+
                             {/* 검색 드롭다운 */}
                             {studentSearch && searchResults.length > 0 && (() => {
                                 // 중복 제거를 먼저 하고 slice
@@ -279,11 +281,11 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                                 return filteredResults.length > 0 ? (
                                     <S.StudentDropdown>
                                         {filteredResults.map((result: StudentSearchResponse | TeamSearchResponse) => {
-                                            const displayText = isTeamMode 
-                                                ? (result as TeamSearchResponse).name 
+                                            const displayText = isTeamMode
+                                                ? (result as TeamSearchResponse).name
                                                 : formatStudent(result as StudentSearchResponse);
                                             return (
-                                                <S.StudentDropdownItem 
+                                                <S.StudentDropdownItem
                                                     key={result.id}
                                                     onClick={() => {
                                                         if (isProcessing.current) return;
@@ -310,7 +312,7 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
                     <S.SelectedTitle>학생</S.SelectedTitle>
                     <S.SelectedStudentsGrid>
                         {selectedStudents.map((student) => (
-                            <S.SelectedStudentCard 
+                            <S.SelectedStudentCard
                                 key={student.id}
                                 onClick={() => handleRemoveStudent(student.id)}
                             >
@@ -324,10 +326,10 @@ export default function MovementForm({ onNext, onCancel, initialData, savedFormD
             {/* 하단 버튼 */}
             <S.ButtonWrapper>
                 <Button text="취소" width="100%" onClick={onCancel} variant="cancel" />
-                <Button 
-                    text="다음" 
-                    width="100%" 
-                    onClick={handleNext} 
+                <Button
+                    text="다음"
+                    width="100%"
+                    onClick={handleNext}
                     variant="confirm"
                 />
             </S.ButtonWrapper>
