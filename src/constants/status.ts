@@ -43,16 +43,16 @@ export const STATUS_CONFIG: Record<StatusType, {
     mapBackground: '#84FFC7', // 진한 초록색
   },
   [STATUS_TYPES.LEAVE_SEAT]: {
-    background: '#E6CFFF',
-    dotColor: '#6A1EC1', 
-    textColor: '#6A1EC1',
-    mapBackground: '#CCBCFF', // 연한 보라색
-  },
-  [STATUS_TYPES.EARLY_LEAVE]: {
     background: '#FFF6E4',
     dotColor: '#FF9000',
     textColor: '#FF9000',
     mapBackground: '#FFD699', // 진한 주황색
+  },
+  [STATUS_TYPES.EARLY_LEAVE]: {
+    background: '#E6CFFF',
+    dotColor: '#6A1EC1',
+    textColor: '#6A1EC1',
+    mapBackground: '#CCBCFF', // 연한 보라색
   },
   [STATUS_TYPES.ABSENT]: {
     background: '#FDF0EC',
@@ -62,8 +62,8 @@ export const STATUS_CONFIG: Record<StatusType, {
   },
   [STATUS_TYPES.DROPOUT]: {
     background: '#FFEBEA',
-    dotColor: colors.exit,
-    textColor: colors.exit,
+    dotColor: '#C0392B',
+    textColor: '#C0392B',
     mapBackground: '#F87067', // 진한 빨간색
   },
   [STATUS_TYPES.CANCEL]: {
