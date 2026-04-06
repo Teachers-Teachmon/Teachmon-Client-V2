@@ -35,6 +35,7 @@ export default defineConfig({
     },
   },
   build: {
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -65,7 +66,11 @@ export default defineConfig({
             return 'toast';
           }
 
-          if (id.includes('fullpage.js') || id.includes('lottie-react') || id.includes('lottie-web')) {
+          if (id.includes('lottie-web')) {
+            return 'lottie';
+          }
+
+          if (id.includes('fullpage.js') || id.includes('lottie-react')) {
             return 'motion';
           }
         },
