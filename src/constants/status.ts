@@ -25,15 +25,15 @@ export const STATUS_CONFIG: Record<StatusType, {
   mapBackground: string; // 지도 전용 배경색
 }> = {
   [STATUS_TYPES.AFTER_SCHOOL]: {
-    background: colors.primary100, // #EBF1FF
-    dotColor: colors.primary, // #2E6FF2
-    textColor: colors.primary, // #2E6FF2
+    background: '#FFFFFF',
+    dotColor: colors.primaryGray, // #9CA4BA
+    textColor: colors.primaryGray,
     mapBackground: '#A8C7FF', // 진한 파란색
   },
   [STATUS_TYPES.AFTER_SCHOOL_REINFORCEMENT]: {
-    background: colors.primary100, // #EBF1FF
-    dotColor: colors.primary, // #2E6FF2
-    textColor: colors.primary, // #2E6FF2
+    background: '#FFFFFF',
+    dotColor: colors.primaryGray, // #9CA4BA
+    textColor: colors.primaryGray,
     mapBackground: '#A8C7FF', // 진한 파란색
   },
   [STATUS_TYPES.SELF_STUDY]: {
@@ -43,16 +43,16 @@ export const STATUS_CONFIG: Record<StatusType, {
     mapBackground: '#84FFC7', // 진한 초록색
   },
   [STATUS_TYPES.LEAVE_SEAT]: {
-    background: '#FFF6E4',
-    dotColor: '#FF9000',
-    textColor: '#FF9000',
-    mapBackground: '#FFD699', // 진한 주황색
-  },
-  [STATUS_TYPES.EARLY_LEAVE]: {
     background: '#E6CFFF',
     dotColor: '#6A1EC1',
     textColor: '#6A1EC1',
     mapBackground: '#CCBCFF', // 연한 보라색
+  },
+  [STATUS_TYPES.EARLY_LEAVE]: {
+    background: '#FFF6E4',
+    dotColor: '#FF9000',
+    textColor: '#FF9000',
+    mapBackground: '#FFD699', // 진한 주황색
   },
   [STATUS_TYPES.ABSENT]: {
     background: '#FDF0EC',

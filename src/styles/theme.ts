@@ -1,7 +1,7 @@
 export const colors = {
   subcolor: '#F87067',
   primary: '#2E6FF2',
-  primary200: '#C8DBFF',
+  primary200: '#FFFFFF',
   primary100: '#EBF1FF',
   primaryGray: '#9CA4BA',
   primaryBackground: '#FBFCFF',
