@@ -62,8 +62,8 @@ export const STATUS_CONFIG: Record<StatusType, {
   },
   [STATUS_TYPES.DROPOUT]: {
     background: '#FFEBEA',
-    dotColor: '#C0392B',
-    textColor: '#C0392B',
+    dotColor: colors.exit,
+    textColor: colors.exit,
     mapBackground: '#F87067', // 진한 빨간색
   },
   [STATUS_TYPES.CANCEL]: {
