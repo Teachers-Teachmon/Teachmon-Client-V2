@@ -78,6 +78,7 @@ export const TableCell = styled.td`
     min-height: 72px;
     white-space: nowrap;
     text-overflow: ellipsis;
+    overflow: hidden;
 
     &:first-of-type {
         padding-left: 40px;
