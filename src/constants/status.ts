@@ -40,19 +40,19 @@ export const STATUS_CONFIG: Record<StatusType, {
     background: '#ECFDF3',
     dotColor: '#14BA6D',
     textColor: '#037847',
-    mapBackground: '#ECFDF3',
+    mapBackground: '#84FFC7',
   },
   [STATUS_TYPES.LEAVE_SEAT]: {
     background: '#E6CFFF',
     dotColor: '#6A1EC1',
     textColor: '#6A1EC1',
-    mapBackground: '#E6CFFF',
+    mapBackground: '#CCBCFF',
   },
   [STATUS_TYPES.EARLY_LEAVE]: {
     background: '#FFF6E4',
     dotColor: '#FF9000',
     textColor: '#FF9000',
-    mapBackground: '#FFF6E4',
+    mapBackground: '#FFD699',
   },
   [STATUS_TYPES.ABSENT]: {
     background: '#FDF0EC',
@@ -64,7 +64,7 @@ export const STATUS_CONFIG: Record<StatusType, {
     background: '#FFEBEA',
     dotColor: colors.exit,
     textColor: colors.exit,
-    mapBackground: '#FFEBEA',
+    mapBackground: '#F87067',
   },
   [STATUS_TYPES.CANCEL]: {
     background: '#F5F5F5',
